@@ -8,7 +8,7 @@
 
 
 $path_to_root = '../';
-require_once '../lib/functions.php';
+require_once $path_to_root.'lib/functions.php';
 restrict_access('A');
 
 
@@ -38,10 +38,10 @@ function show_page($err) {
 	
 	page_header('Post Message');
 	
-	$message_sent_msg;
-	if (isSet($_SESSION['MESSAGE_sent'])) {
-		session_unregister('MESSAGE_sent');
-		$message_sent_msg = "\n        <div class=\"alert\">Your message has been posted</div><br />\n";;
+	$message_sent_msg="";
+	if (isSet($_SESSION['MESSAGE_sent_id'])) {
+		$message_sent_msg = "\n        <div class=\"alert\">Your message has been posted. <a href='../Messages?View=".intval($_SESSION['MESSAGE_sent_id'])."'>View</a></div><br />\n";
+		unset($_SESSION['MESSAGE_sent_id']);
 	}
 	
 	// If an error message is given, put it inside this div
@@ -199,6 +199,8 @@ function post_message() {
 		. mysql_real_escape_string($subject) . '", "'
 		. mysql_real_escape_string($bb_body) . '")';
 	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$msg_insert_id = mysql_insert_id();
+	
 	
 	// Send email
 	if ($send_email) {
@@ -244,16 +246,14 @@ function post_message() {
 		$count = 0;
 		$bcc_list = '';
 		while ($row) {
-			if ($row['id'] != $_SESSION['user_id']) {	// don't send it to yourself
-				if ($count != 0)
-					$bcc_list .= ', ';
-				$bcc_list .= $row['name'] . ' <' . $row['email'] . ' >';
-				
-				if ($count++ > 90) {
-					send_multipart_list_email($bcc_list, $subject, $txt_body, $html_body, $reply_to, $list_id);
-					$count = 0;
-					$bcc_list="";
-				}
+			if ($count != 0)
+				$bcc_list .= ', ';
+			$bcc_list .= $row['name'] . ' <' . $row['email'] . ' >';
+			
+			if ($count++ > 90) {
+				send_multipart_list_email($bcc_list, $subject, $txt_body, $html_body, $reply_to, $list_id);
+				$count = 0;
+				$bcc_list="";
 			}
 			$row = mysql_fetch_assoc($result);
 		}
@@ -261,8 +261,7 @@ function post_message() {
 		if ($count != 0)
 			send_multipart_list_email($bcc_list, $subject, $txt_body, $html_body, $reply_to, $list_id);
 	}
-	
-	$_SESSION['MESSAGE_sent'] = true;
+	$_SESSION['MESSAGE_sent_id'] = $msg_insert_id;
 	header('Location: Post_Message');
 }
 
@@ -370,6 +369,28 @@ $html_body
     To unsubscribe from this list, visit [$site_url/Account/My_Profile]
   </body>
 HEREDOC;
+	
+	
+	/*
+	//It has been noted that PHP mail() is not a very efficient function for sending bulk mail,
+	//but since ~90 is not very "bulk" it doesn't really matter.
+	//This eliminates the complexity and overhead of PEAR::* stuff.
+	
+	$headers ='MIME-Version: 1.0' . "\r\n";
+	$headers.='Content-type: text/html; charset=iso-8859-1' . "\r\n";
+	$headers.="From: $from"."\r\n";
+	$headers.="To: $to"."\r\n";
+	$headers.="Reply-To: $reply_to"."\r\n";
+	$headers.="Subject: $subject"."\r\n";
+	$headers.="Precedence: bulk"."\r\n";
+	$headers.="List-Id: $list_id"."\r\n";
+	$headers.="List-Unsubscribe: <$site_url/Account/My_Profile>"."\r\n";
+	$headers.="Bcc: $bcc_list"."\r\n";
+	
+	$txt_body=str_replace("\n.", "\n..", wordwrap($txt_body, 70, "\r\n"));//As recommended by php.net
+	
+	if(!mail($to,$subject,$txt_body,$headers))trigger_error('Error sending email: ' . $subject, E_USER_ERROR);
+	*/
 	
 	$headers = array('From' => $from,
 		'To' => $to,
