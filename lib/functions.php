@@ -148,7 +148,7 @@ if (isSet($_SESSION['user_id'])) {
 // (this is in case an account is compromised without the password, i.e. left logged
 // in somewhere, or via intercepted verification email). Not that that's our most
 // significant worry.
-if (isSet($_SESSION['user_id']) && time >= $_SESSION['login_time'] + 28800) {
+if (isSet($_SESSION['user_id']) && time() >= $_SESSION['login_time'] + 28800) {
 	session_destroy();
 	session_name('Session');
 	session_start();

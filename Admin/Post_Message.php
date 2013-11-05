@@ -252,6 +252,7 @@ function post_message() {
 				if ($count++ > 90) {
 					send_multipart_list_email($bcc_list, $subject, $txt_body, $html_body, $reply_to, $list_id);
 					$count = 0;
+					$bcc_list="";
 				}
 			}
 			$row = mysql_fetch_assoc($result);
