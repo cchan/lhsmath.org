@@ -1,0 +1,53 @@
+#
+# .htaccess
+# LHS Math Club Website
+#
+
+
+# No funny business, all featues disabled;
+# Symlinks is necessary for URL Rewriting
+Options None +FollowSymLinks
+
+DirectoryIndex index.php
+
+# Error Pages
+ErrorDocument 400 /Error.php
+ErrorDocument 401 /Error.php
+ErrorDocument 403 /Error.php
+ErrorDocument 404 /Error.php
+ErrorDocument 500 /Error.php
+
+AddType application/x-java-jnlp-file .jnlp
+
+
+# Hide all files/directories starting with a dot
+#   for example, .htaccess
+<FilesMatch "^\.(.*)$">
+  Deny from all
+</FilesMatch>
+
+
+# URL RERWITING SECTION
+RewriteEngine on
+
+# To show a "Down for Repairs" message, uncomment this line:
+#RewriteRule ^(.*)$ Site_Down.php
+
+# Allow access to files without typing '.php' extension
+#   example: http://lhsmath.co.cc/file  --->  /file.php
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^(.*)$ $1.php
+
+# Allow access to /lmt as well as /LMT
+RewriteRule ^lmt(.*) LMT$1
+
+# Block all files and directories (and their contents) starting with a dot
+RewriteRule ^\.((.*)/(.*))*$ - [F]
+
+
+# PHP options
+php_value upload_max_filesize 5M
+php_value post_max_size 8M
+php_value max_execution_time 30
+php_value magic_quotes_gpc 0
