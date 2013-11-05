@@ -1,0 +1,193 @@
+/*
+ * res/lmt.css
+ * LHS Math Club Website
+ */
+
+html {
+  background-color: #f7fcff;
+  font-family: arial, serif;
+}
+
+#header {
+  background-color: #fd0;
+  color: #000;
+}
+
+a#title {
+  color: #009;
+}
+
+#user a {
+  color: #000;
+}
+
+
+/* Link Bar */
+
+#linkbar {
+  border-right: 1px solid #ccc;
+}
+
+#linkbar a {
+  color: #555;
+}
+
+#linkbar .selected {
+  color: #555;
+}
+
+/* Formatting Classes */
+a {
+  color: #693700;
+}
+
+.alert {
+  background-color: #fd0;
+  color: #009;
+}
+
+.lmt-logo {
+  height: 120px;
+  margin-top: 50px;
+  margin-bottom: 25px;
+}
+
+#googlemap {
+  width: 725px;
+  height: 350px;
+}
+
+h3 {
+  margin-top: 40px;
+}
+
+h4 {
+  margin-bottom: 10px;
+}
+
+table {
+  margin-bottom: 40px;
+}
+
+a img {
+  border-width: 0px;
+}
+
+.code {
+  font-family: courier;
+  font-size: 12px;
+}
+
+.box a {
+  padding: 20px;
+  margin: 10px;
+  
+  background-color: #bbf;
+  color: #009;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.registration-box {
+  text-align: center;
+  margin-top: 50px
+}
+
+.registration-box a {
+  padding: 20px;
+  margin: 10px;
+  
+  background-color: #bbf;
+  color: #009;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.registration-box .box-light {
+  background-color: #ddf;
+}
+
+.registration-box a:hover, .registration-box a:active {
+  background-color: #ccf;
+}
+
+.ui-autocomplete-category {
+  font-weight: bold;
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+.attendPerson {
+  font-size: 24px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+
+.checkBox {
+  margin-right: 10px;
+  width: 20px;
+  height: 20px;
+  border: 2px solid black;
+  float: left;
+}
+
+.printOnly {
+   display: none;
+}
+
+.dontMess {
+  color: red;
+  font-weight: bold;
+}
+
+.table-center {
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.alertLink {
+  color: blue;
+}
+
+.gutsFrame {
+  width: 352px;
+  height: 150px;
+  overflow: hidden;
+}
+
+#gutsTable td {
+  padding: 5px;
+}
+
+.gutsEmbedSetup {
+  width: 330px;
+  height: 128px;
+  border: 1px solid #bbf;
+  padding: 10px;
+}
+
+.gutsEmbedScoring {
+  width: 330px;
+  height: 128px;
+  padding: 10px;
+}
+
+.gutsEmbedBottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  margin-bottom: 6px;
+  padding-top: 2px;
+  padding: 2px;
+  text-align: center;
+}
+
+.noMargin {
+  margin: 0;
+}
+
+table.spaciousBig td, table.spaciousBig th {
+  padding-bottom: 7px;
+  padding-right: 20px;
+}

@@ -1,0 +1,27 @@
+#
+# LMT/.htaccess
+# LHS Math Club Website
+#
+
+# Error Pages
+ErrorDocument 400 /LMT/Error.php
+ErrorDocument 401 /LMT/Error.php
+ErrorDocument 403 /LMT/Error.php
+ErrorDocument 404 /LMT/Error.php
+ErrorDocument 500 /LMT/Error.php
+
+# MIME Type for Java Web Start
+AddType application/x-java-jnlp-file .jnlp
+
+RewriteEngine on
+
+# Send all page requests to PHP
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php !-f
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ Show_Page.php?Name=$1 [L]
+
+# Drop .php extension
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}\.php -f
+RewriteRule ^(.*)$ $1.php [L]

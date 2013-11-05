@@ -1,0 +1,35 @@
+/*
+ * res/print.css
+ * LHS Math Club Website
+ */
+
+html {
+  background-color: #fff;
+}
+
+body {
+  width: 100%;
+}
+
+#user #bar, #user a, #linkbar {
+  display: none;
+}
+
+#content {
+  width: 100%;
+  float: none;
+  padding: 0;
+  border: 0px;
+}
+
+.noPrint {
+  display: none;
+}
+
+.printOnly {
+  display: block;
+}
+
+.pageBreak {
+  page-break-after: always;
+}
