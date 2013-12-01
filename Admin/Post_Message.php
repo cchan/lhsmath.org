@@ -57,51 +57,53 @@ function show_page($err) {
 	// Previously-filled data?
 	global $subject, $body, $post_through, $email;
 	
-	$email_yes_checked = '';
-	$email_no_checked = '';
-	if ($email == 'no')
-		$email_no_checked = ' checked="checked"';
-	else
-		$email_yes_checked = ' checked="checked"';
+	
+	$email_checked=array('','','');
+	if($email=='yes-captains')
+		$email_checked[0] = ' checked="checked"';
+	elseif($email=='no')
+		$email_checked[2] = ' checked="checked"';
+	else//if($email=='yes-you')//default
+		$email_checked[1] = ' checked="checked"';
 	
 	// Assemble Page
 	echo <<<HEREDOC
-      <h1>Post a Message</h1>
-      $err$message_sent_msg
-      <form id="composeMessage" method="post" action="{$_SERVER['REQUEST_URI']}">
-        <table class="spacious">
-          <tr>
-            <td>By:</td>
-            <td>
-              <span class="b">$by_line</span><br />
-              <span class="small i">Replies will be directed to this address</span><br /><br />
-            </td>
-          </tr><tr>
-            <td>Subject:</td>
-            <td><input type="text" name="subject" value="$subject" size="45" maxlength="75"/></td>
-          </tr><tr>
-            <td>Body:</td>
-            <td>
-              <textarea name="body" rows="25" cols="80">$body</textarea>
-              <div class="small">You may use bold, italic, underline, named links and images with
-              <a href="http://www.bbcode.org/reference.php" rel="external">bbCode</a>.</div>
-              <br /><br />
-            </td>
-          </tr><tr>
-            <td>Mailing:&nbsp;</td>
-            <td>
-              <input type="radio" name="email" value="yes"$email_yes_checked/> Send to the mailing list and post online<br />
-              <input type="radio" name="email" value="no"$email_no_checked/> Post online only<br /><br />
-            </td>
-          </tr><tr>
-            <td></td>
-            <td>
-              <input type="hidden" name="xsrf_token" value="{$_SESSION['xsrf_token']}"/>
-              <input type="submit" name="do_preview_message" value="Preview Message"/>
-            </td>
-          </tr>
-        </table>
-      </form>
+<h1>Post a Message</h1>
+$err$message_sent_msg
+<form id="composeMessage" method="post" action="{$_SERVER['REQUEST_URI']}">
+<table class="spacious">
+  <tr>
+	<td>By:</td>
+	<td>
+	  <span class="b">$by_line</span><br />
+	</td>
+  </tr><tr>
+	<td>Subject:</td>
+	<td><input type="text" name="subject" value="$subject" size="45" maxlength="75"/></td>
+  </tr><tr>
+	<td>Body:</td>
+	<td>
+	  <textarea name="body" rows="25" cols="80">$body</textarea>
+	  <div class="small">You may use bold, italic, underline, named links and images with
+	  <a href="http://www.bbcode.org/reference.php" rel="external">bbCode</a>.</div>
+	  <br /><br />
+	</td>
+  </tr><tr>
+	<td>Mailing:&nbsp;</td>
+	<td>
+	  <input type="radio" name="email" value="yes-captains"{$email_checked[0]}/> Send to the mailing list, reply-to all captains, and post online<br />
+	  <input type="radio" name="email" value="yes-you"{$email_checked[1]}/> Send to the mailing list, reply-to only you, and post online<br />
+	  <input type="radio" name="email" value="no"{$email_checked[2]}/> Post online only<br /><br />
+	</td>
+  </tr><tr>
+	<td></td>
+	<td>
+	  <input type="hidden" name="xsrf_token" value="{$_SESSION['xsrf_token']}"/>
+	  <input type="submit" name="do_preview_message" value="Preview Message"/>
+	</td>
+  </tr>
+</table>
+</form>
 HEREDOC;
 	admin_page_footer('Post a Message');
 }
@@ -123,47 +125,49 @@ function preview_message() {
 	$row = mysql_fetch_assoc($result);
 	$by_line = $row['name'] . ' &lt;' . $row['email'] . '&gt;';
 	
-	$mailing_message = 'Send to the mailing list and post online';
-	if ($email == 'no')
+	$mailing_message = '';
+	if($email=='yes-captains')
+		$mailing_message = 'Send to the mailing list, reply-to all captains, and post online';
+	elseif($email=='no')
 		$mailing_message = 'Post online only';
+	else//if($email=='yes-you')//default
+		$mailing_message = 'Send to the mailing list, reply-to only you, and post online';
 	
 	page_header('Post Message');
 	
 	echo <<<HEREDOC
-      <h1>Post a Message</h1>
-      
-      <table class="spacious">
-        <tr>
-          <td>By:</td>
-          <td><span class="b">$by_line</span></td>
-        </tr><tr>
-          <td>Subject:</td>
-          <td><span class="b">[Math Club] $subject</span><br /><br /></td>
-        </tr><tr>
-          <td>Body:</td>
-          <td>$bb_body<br /><br /></td>
-        </tr><tr>
-          <td>Mailing:&nbsp;</td>
-          <td><span class="b">$mailing_message</span><br /><br /></td>
-        </tr><tr>
-          <td></td>
-          <td>
-            <form id="composeMessage" method="post" action="{$_SERVER['REQUEST_URI']}"><div>
-              <input type="hidden" name="subject" value="$subject"/>
-              <input type="hidden" name="body" value="$body"/>
-              <input type="hidden" name="email" value="$email"/>
-              <input type="hidden" name="xsrf_token" value="{$_SESSION['xsrf_token']}"/>
-              <input type="submit" name="do_reedit_message" value="Back to Editing"/>
-              <input type="submit" name="do_post_message" value="Post Message"/>
-            </div></form>
-          </td>
-        </tr><tr>
-          <td></td>
-          <td><span class="small">Please do not click the &quot;Post Message&quot; button twice!</span></td>
-        </tr>
-      </table>
-      
+<h1>Post a Message</h1>
 
+<table class="spacious">
+<tr>
+  <td>By:</td>
+  <td><span class="b">$by_line</span></td>
+</tr><tr>
+  <td>Subject:</td>
+  <td><span class="b">[Math Club] $subject</span><br /><br /></td>
+</tr><tr>
+  <td>Body:</td>
+  <td>$bb_body<br /><br /></td>
+</tr><tr>
+  <td>Mailing:&nbsp;</td>
+  <td><span class="b">$mailing_message</span><br /><br /></td>
+</tr><tr>
+  <td></td>
+  <td>
+	<form id="composeMessage" method="post" action="{$_SERVER['REQUEST_URI']}"><div>
+	  <input type="hidden" name="subject" value="$subject"/>
+	  <input type="hidden" name="body" value="$body"/>
+	  <input type="hidden" name="email" value="$email"/>
+	  <input type="hidden" name="xsrf_token" value="{$_SESSION['xsrf_token']}"/>
+	  <input type="submit" name="do_reedit_message" value="Back to Editing"/>
+	  <input type="submit" name="do_post_message" value="Post Message"/>
+	</div></form>
+  </td>
+</tr><tr>
+  <td></td>
+  <td><span class="small">Please do not click the &quot;Post Message&quot; button twice!</span></td>
+</tr>
+</table>
 HEREDOC;
 	
 	admin_page_footer('Post a Message');
@@ -189,10 +193,6 @@ function post_message() {
 	
 	global $subject, $bb_body, $body, $email, $use_rel_external_script;
 	
-	$send_email = true;
-	if ($email == 'no')
-		$send_email = false;
-	
 	// Insert into database
 	$query = 'INSERT INTO messages (author, subject, body) VALUES ("'
 		. mysql_real_escape_string($_SESSION['user_id']) . '", "'
@@ -203,12 +203,17 @@ function post_message() {
 	
 	
 	// Send email
-	if ($send_email) {
+	if ($email != 'no') {
+		if($email == 'yes-captains'){
+			$reply_to = 'captains@lhsmath.org';
+		}
+		else{//if($email == 'yes-you') //default
 		// Get info for the byline
-		$query = 'SELECT name, email FROM users WHERE id="' . $_SESSION['user_id'] . '"';
-		$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-		$row = mysql_fetch_assoc($result);
-		$reply_to = $row['name'] . ' <' . $row['email'] . '>';
+			$query = 'SELECT name, email FROM users WHERE id="' . $_SESSION['user_id'] . '"';
+			$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+			$row = mysql_fetch_assoc($result);
+			$reply_to = $row['name'] . ' <' . $row['email'] . '>';
+		}
 		
 		$site_url = str_replace('http://www.', '', get_site_url());
 		$site_url = str_replace('http://', '', $site_url);
@@ -246,21 +251,24 @@ function post_message() {
 		$count = 0;
 		$bcc_list = '';
 		while ($row) {
-			if ($count != 0)
-				$bcc_list .= ', ';
-			$bcc_list .= $row['name'] . ' <' . $row['email'] . ' >';
-			
-			if ($count++ > 90) {
-				send_multipart_list_email($bcc_list, $subject, $txt_body, $html_body, $reply_to, $list_id);
-				$count = 0;
-				$bcc_list="";
-			}
+			//if ($row['id'] != $_SESSION['user_id']) {	// don't send it to yourself
+				if ($count != 0)
+					$bcc_list .= ', ';
+				$bcc_list .= $row['name'] . ' <' . $row['email'] . ' >';
+				
+				if ($count++ > 90) {
+					send_multipart_list_email($bcc_list, $subject, $txt_body, $html_body, $reply_to, $list_id);
+					$count = 0;
+					$bcc_list="";
+				}
+			//}
 			$row = mysql_fetch_assoc($result);
 		}
 		
 		if ($count != 0)
 			send_multipart_list_email($bcc_list, $subject, $txt_body, $html_body, $reply_to, $list_id);
 	}
+	
 	$_SESSION['MESSAGE_sent_id'] = $msg_insert_id;
 	header('Location: Post_Message');
 }
@@ -391,6 +399,7 @@ HEREDOC;
 	
 	if(!mail($to,$subject,$txt_body,$headers))trigger_error('Error sending email: ' . $subject, E_USER_ERROR);
 	*/
+	//Actually, the above didn't work, so we're back to PEAR::*. And probably NSFN will make us pay to use email, so using Gmail SMTP is probably better.
 	
 	$headers = array('From' => $from,
 		'To' => $to,
@@ -406,6 +415,7 @@ HEREDOC;
 	$body = $mime->get();
 	$headers = $mime->headers($headers);
 	
+	//Connect to our secret mailbot@lhsmath.org Gmail account.
 	$smtp = Mail::factory('smtp',
 		array('host' => 'ssl://'.$SMTP_SERVER,
 			'port' => $SMTP_SERVER_PORT,

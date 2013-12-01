@@ -190,19 +190,18 @@ function connect_to_database() {
 function restrict_access($levels) {
 	global $path_to_root;
 	
-	$user_level = $_SESSION['permissions'];
 	
-	if (!isSet($_SESSION['permissions']))
+	if (!array_key_exists('permissions',$_SESSION))
 		$user_level = 'X';
+	else
+		$user_level = $_SESSION['permissions'];
 	
-	$levels = ' ' . $levels;	// so that strpos never returns pos=0 (found @ first character)
-	
-	if (strpos($levels, $user_level) == false) {
+	if (strpos($levels, $user_level) === false) {
 		// Access forbidden
 		if ($user_level == 'X') {
 			// Maybe they have permissions, they're just not logged in
 			// Show login page
-			require_once $path_to_root . 'Account/Signin.php';
+			require_once $path_to_root . 'Account/Signin';
 			die();
 		}
 		else if ($user_level == 'E') {
@@ -837,6 +836,7 @@ function page_header($title) {
       <div id="user"><span id="username">{$_SESSION['user_name']}</span><span id="bar"> | </span><a href="{$path_to_root}Account/Signout">Sign Out</a></div>
 HEREDOC;
 	
+	$rel_external_script = '';
 	if ($use_rel_external_script)
 		$rel_external_script = <<<HEREDOC
 
@@ -950,45 +950,42 @@ HEREDOC;
  */
 function default_page_footer($page_name) {
 	if (!isSet($_SESSION['user_id'])) {
-		$i = 0;
+		$names[] = 'Home';
+		$pages[] = 'Home';
 		
-		$names[$i] = 'Home';
-		$pages[$i] = 'Home';
-		$i++;
+		$names[] = 'Calendar';
+		$pages[] = 'Calendar';
 		
-		$names[$i] = 'Calendar';
-		$pages[$i] = 'Calendar';
-		$i++;
 		
-		$names[$i] = 'Contests';
-		$pages[$i] = 'Contests';
-		$i++;
+		$names[] = 'Contests';
+		$pages[] = 'Contests';
 		
-		$names[$i] = 'Contact';
-		$pages[$i] = 'Contact';
-		$i++;
+		
+		$names[] = 'Contact';
+		$pages[] = 'Contact';
+		
 		
 		if ($page_name == 'About' || $page_name == 'Contact') {
-			$names[$i] = 'About';
-			$pages[$i] = 'About';
-			$i++;
+			$names[] = 'About';
+			$pages[] = 'About';
+			
 		}
 		
-		$names[$i] = '';
-		$pages[$i] = '';
-		$i++;
+		$names[] = '';
+		$pages[] = '';
 		
-		$names[$i] = 'LMT';
-		$pages[$i] = 'LMT';
-		$i++;
 		
-		$names[$i] = '';
-		$pages[$i] = '';
-		$i++;
+		$names[] = 'LMT';
+		$pages[] = 'LMT';
 		
-		$names[$i] = 'Member Sign-in';
-		$pages[$i] = 'Account/Signin';
-		$i++;
+		
+		$names[] = '';
+		$pages[] = '';
+		
+		
+		$names[] = 'Member Sign-in';
+		$pages[] = 'Account/Signin';
+		
 		
 		for ($n = 0; $n < count($names); $n++) {
 			if ($names[$n] == $page_name)
@@ -998,69 +995,67 @@ function default_page_footer($page_name) {
 		page_footer($names, $pages);
 	}
 	else {
-		$i = 0;
+		$names[] = 'Home';
+		$pages[] = 'Home';
 		
-		$names[$i] = 'Home';
-		$pages[$i] = 'Home';
-		$i++;
 		
-		$names[$i] = 'LMT';
-		$pages[$i] = 'LMT';
-		$i++;
+		$names[] = 'LMT';
+		$pages[] = 'LMT';
 		
-		$names[$i] = 'Contact';
-		$pages[$i] = 'Contact';
-		$i++;
+		
+		$names[] = 'Contact';
+		$pages[] = 'Contact';
+		
 		
 		if ($page_name == 'About' || $page_name == 'Contact') {
-			$names[$i] = 'About';
-			$pages[$i] = 'About';
-			$i++;
+			$names[] = 'About';
+			$pages[] = 'About';
+			
 		}
 		
-		$names[$i] = '';
-		$pages[$i] = '';
-		$i++;
+		$names[] = '';
+		$pages[] = '';
 		
-		$names[$i] = 'Messages';
-		$pages[$i] = 'Messages';
-		$i++;
 		
-		$names[$i] = 'Calendar';
-		$pages[$i] = 'Calendar';
-		$i++;
+		$names[] = 'Messages';
+		$pages[] = 'Messages';
 		
-		$names[$i] = 'Contests';
-		$pages[$i] = 'Contests';
-		$i++;
 		
-		$names[$i] = 'Files';
-		$pages[$i] = 'Files';
-		$i++;
+		$names[] = 'Calendar';
+		$pages[] = 'Calendar';
 		
-		$names[$i] = '';
-		$pages[$i] = '';
-		$i++;
+		
+		$names[] = 'Contests';
+		$pages[] = 'Contests';
+		
+		
+		$names[] = 'Files';
+		$pages[] = 'Files';
+		
+		
+		$names[] = '';
+		$pages[] = '';
+		
 		
 		if ($_SESSION['permissions'] != 'L') {
-			$names[$i] = 'My Scores';
-			$pages[$i] = 'My_Scores';
-			$i++;
+			$names[] = 'My Scores';
+			$pages[] = 'My_Scores';
+			
 		}
 		
-		$names[$i] = 'My Profile';
-		$pages[$i] = 'Account/My_Profile';
-		$i++;
+		$names[] = 'My Profile';
+		$pages[] = 'Account/My_Profile';
+		
 		
 		// Link to Admin Control Panel
 		if ($_SESSION['permissions'] == 'A') {
-			$names[$i] = '';
-			$pages[$i] = '';
-			$i++;
+			$names[] = '';
+			$pages[] = '';
 			
-			$names[$i] = 'Admin Dashboard';
-			$pages[$i] = 'Admin/Dashboard';
-			$i++;
+			
+			$names[] = 'Admin Dashboard';
+			$pages[] = 'Admin/Dashboard';
+			
 		}
 		
 		for ($n = 0; $n < count($names); $n++) {
@@ -1080,100 +1075,98 @@ function default_page_footer($page_name) {
  * admin_page_footer()
  */
 function admin_page_footer($page_name) {
-	$i = 0;
+	$names[] = 'Home';
+	$pages[] = 'Home';
 	
-	$names[$i] = 'Home';
-	$pages[$i] = 'Home';
-	$i++;
 	
-	$names[$i] = 'Admin Dashboard';
-	$pages[$i] = 'Admin/Dashboard';
-	$i++;
+	$names[] = 'Admin Dashboard';
+	$pages[] = 'Admin/Dashboard';
 	
-	$names[$i] = '';
-	$pages[$i] = '';
-	$i++;
 	
-	$names[$i] = 'User List';
-	$pages[$i] = 'Admin/User_List';
-	$i++;
+	$names[] = '';
+	$pages[] = '';
 	
-	$names[$i] = 'Search Members';
-	$pages[$i] = 'Admin/Member_Search';
-	$i++;
 	
-	$names[$i] = 'Invite Members';
-	$pages[$i] = 'Admin/Invite_Members';
-	$i++;
+	$names[] = 'User List';
+	$pages[] = 'Admin/User_List';
 	
-	$names[$i] = 'Approve Users';
-	$pages[$i] = 'Admin/Approve_Users';
-	$i++;
 	
-	$names[$i] = 'Temporary Users';
-	$pages[$i] = 'Admin/Temporary_Users';
-	$i++;
+	$names[] = 'Search Members';
+	$pages[] = 'Admin/Member_Search';
 	
-	$names[$i] = 'Alumni';
-	$pages[$i] = 'Admin/Alumni';
-	$i++;
 	
-	$names[$i] = '';
-	$pages[$i] = '';
-	$i++;
+	$names[] = 'Invite Members';
+	$pages[] = 'Admin/Invite_Members';
 	
-	$names[$i] = 'Post a Message';
-	$pages[$i] = 'Admin/Post_Message';
-	$i++;
 	
-	$names[$i] = '';
-	$pages[$i] = '';
-	$i++;
+	$names[] = 'Approve Users';
+	$pages[] = 'Admin/Approve_Users';
 	
-	$names[$i] = 'Tests';
-	$pages[$i] = 'Admin/Tests';
-	$i++;
 	
-	$names[$i] = 'Calendar';
-	$pages[$i] = 'Calendar';
-	$i++;
+	$names[] = 'Temporary Users';
+	$pages[] = 'Admin/Temporary_Users';
+	
+	
+	$names[] = 'Alumni';
+	$pages[] = 'Admin/Alumni';
+	
+	
+	$names[] = '';
+	$pages[] = '';
+	
+	
+	$names[] = 'Post a Message';
+	$pages[] = 'Admin/Post_Message';
+	
+	
+	$names[] = '';
+	$pages[] = '';
+	
+	
+	$names[] = 'Tests';
+	$pages[] = 'Admin/Tests';
+	
+	
+	$names[] = 'Calendar';
+	$pages[] = 'Calendar';
+	
 		
-	$names[$i] = 'Files';
-	$pages[$i] = 'Admin/Files';
-	$i++;
-		
-	$names[$i] = '';
-	$pages[$i] = '';
-	$i++;
-		
-	$names[$i] = 'Edit Home Page';
-	$pages[$i] = 'Admin/Edit_Page?Home';
-	$i++;
-		
-	$names[$i] = 'Edit Contests Page';
-	$pages[$i] = 'Admin/Edit_Page?Contests';
-	$i++;
-		
-	$names[$i] = '';
-	$pages[$i] = '';
-	$i++;
+	$names[] = 'Files';
+	$pages[] = 'Admin/Files';
 	
-	$names[$i] = 'Uptime Report';
-	$pages[$i] = 'Admin/Uptime';
-	$i++;
 		
-	$names[$i] = 'Login Log';
-	$pages[$i] = 'Admin/Login_Log';
-	$i++;
+	$names[] = '';
+	$pages[] = '';
+	
 		
-	$names[$i] = 'Registration Log';
-	$pages[$i] = 'Admin/Registration_Log';
-	$i++;
+	$names[] = 'Edit Home Page';
+	$pages[] = 'Admin/Edit_Page?Home';
+	
+		
+	$names[] = 'Edit Contests Page';
+	$pages[] = 'Admin/Edit_Page?Contests';
+	
+		
+	$names[] = '';
+	$pages[] = '';
+	
+	
+	$names[] = 'Uptime Report';
+	$pages[] = 'Admin/Uptime';
+	
+		
+	$names[] = 'Login Log';
+	$pages[] = 'Admin/Login_Log';
+	
+		
+	$names[] = 'Registration Log';
+	$pages[] = 'Admin/Registration_Log';
+	
 	
 
-	$names[$i] = 'Database';
-	$pages[$i] = 'Admin/Database';
-	$i++;
+	$names[] = 'Database';
+	$pages[] = 'Admin/Database';
+	
 	
 	for ($n = 0; $n < count($names); $n++) {
 		if ($names[$n] == $page_name)

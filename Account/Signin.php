@@ -21,18 +21,18 @@ restrict_access('X');
 if (isSet($_POST['do_login']))
 	process_login_form();
 else
-	show_login_form('');
+	show_login_form('','');
 
 
 
 
 
 /*
- * show_login_form($err)
+ * show_login_form($err,$email)
  *
- * Shows the login page with an error message, if specified.
+ * Shows the login page with an error message, if specified, and keeping the email from the previous login attempt, if specified.
  */
-function show_login_form($err) {
+function show_login_form($err,$email) {
 	// A little javascript to put the cursor in the first field when the form loads;
 	// page_header() looks at the $body_onload variable and inserts it into the code.
 	global $body_onload;
@@ -51,11 +51,11 @@ function show_login_form($err) {
         <table>
           <tr>
             <td>Email Address:&nbsp;</td>
-            <td><input type="text" name="email" size="25"/></td>
+            <td><input type="text" name="email" size="25" value="$email"/></td>
           </tr><tr>
             <td>Password:</td>
             <td>
-              <input type="password" name="pass" size="25"/><br />
+              <input type="password" name="pass" size="25" value=""/><br />
               <a href="Password_Reset" class="small">Forgot your password?</a>
             </td>
           </tr><tr>
@@ -88,11 +88,13 @@ function process_login_form() {
 	//   a certain IP is banned from attempting to log in to
 	//   a specific account for 10 minutes after 10 login failures;
 	//   the counter is reset after a successful login.
-	$query = 'SELECT successful FROM login_attempts WHERE email="' . $email
-		. '" AND remote_ip="' . $_SERVER['REMOTE_ADDR']
-		. '" AND request_time > (NOW() - INTERVAL 10 MINUTE) ORDER BY request_time';
+	// --todo-- this creates unnecessary db queries; log to file instead.
+	$query = 'SELECT COUNT(*) AS attempts FROM login_attempts WHERE successful = 0'
+		. ' AND remote_ip="' . $_SERVER['REMOTE_ADDR']
+		. '" AND request_time > (NOW() - INTERVAL 10 MINUTE)';// ORDER BY request_time';
 	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 	
+	/* //Used to be up to "10 since last successful within timespan" now it's just up to "10 within timespan", far more efficient
 	$attempts = 0;
 	$row = mysql_fetch_assoc($result);
 	while ($row) {
@@ -102,9 +104,12 @@ function process_login_form() {
 			$attempts++;
 		$row = mysql_fetch_assoc($result);
 	}
-	
 	if ($attempts >= 10) {
-		show_login_form('You have been temporarily locked out. Please wait 10 minutes before attempting to sign in again.');
+	*/
+	
+	$row = mysql_fetch_assoc($result);
+	if($row["attempts"]>10){
+		show_login_form('You have been temporarily locked out. Please wait 10 minutes before attempting to sign in again.','');
 		return;
 	}
 	
@@ -139,7 +144,7 @@ function process_login_form() {
 	
 	if (mysql_num_rows($result) == 0) {
 		log_attempt($email, false);
-		show_login_form('Incorrect email address or password');
+		show_login_form('Incorrect email address or password',$email);
 		return;
 	}
 	
