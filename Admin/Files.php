@@ -57,6 +57,9 @@ function show_main_page() {
       <h1>File List</h1>
       $add_msg$edit_msg$delete_msg$f_add_msg$f_edit_msg$f_delete_msg
       <span class="b">Total Space Used:&nbsp;&nbsp;</span>$total_space
+	  
+	  <br /> <br />
+	  <div style='font-weight:bold'>2010-2013 files have been archived to <a href='https://www.dropbox.com/sh/6wo6f5i8il42m1c/RxpAYq6Pb1'>the Dropbox</a>.</div>
       
       <br /><br />
       <a href="Edit_File_Category?Add">+ Add a Category</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="Edit_File?Add">+ Upload a File</a><br />
@@ -66,7 +69,9 @@ HEREDOC;
 	
 	
 	$query = 'SELECT files.*, file_categories.name AS category_name, file_categories.category_id FROM files'
-		. ' RIGHT JOIN file_categories ON files.category=file_categories.category_id ORDER BY category_name, category_id, order_num';
+		. ' RIGHT JOIN file_categories ON files.category=file_categories.category_id '
+		. ' WHERE ( files.category <> 2 && files.category <> 5 && files.category <> 8 && files.category <> 9 ) '//temporary
+		. ' ORDER BY category_name, category_id, order_num';
 	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 	$row = mysql_fetch_assoc($result);
 	

@@ -17,7 +17,9 @@ function show_page() {
 	page_header('Files');
 	echo <<<HEREDOC
       <h1>Files</h1>
-      
+      <br />
+	  <div style='font-weight:bold'>2010-2013 files have been archived to <a href='https://www.dropbox.com/sh/6wo6f5i8il42m1c/RxpAYq6Pb1'>the Dropbox</a>.</div>
+      <br />
 
 HEREDOC;
 	
@@ -30,7 +32,8 @@ HEREDOC;
 	
 	$query = 'SELECT files.file_id, files.name, files.category, file_categories.name AS category_name, files.permissions FROM files'
 		. ' INNER JOIN file_categories ON files.category=file_categories.category_id'
-		. ' WHERE files.permissions="P" OR files.permissions="M"' . $admin_sql
+		. ' WHERE ( files.permissions="P" OR files.permissions="M"' . $admin_sql . ' ) '
+		. ' AND ( files.category <> 2 && files.category <> 5 && files.category <> 8 && files.category <> 9 ) '//temporary
 		. ' ORDER BY category_name, category_id, order_num';
 	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 	$row = mysql_fetch_assoc($result);
