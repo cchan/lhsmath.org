@@ -22,7 +22,7 @@ $DB_SERVER =			'lhsmath.db';  // to speficy a port, use 'hostname:port'
 $DB_USERNAME =			'php';
 $DB_PASSWORD =			'Dc8@O()oe.wmE7hhI?XYi1EP><';
 $DB_DATABASE =			'lhsmath';	// the name of the database for the regular site
-$LMT_DB_DATABASE =		'lmt';	// the LMT database name
+$LMT_DB_DATABASE =		'lmt';	// the LMT database name, should always be `lmt`
 $PHP_MY_ADMIN_LINK =	'https://phpmyadmin.nearlyfreespeech.net/index.php';
 
 
@@ -87,18 +87,21 @@ $PINGDOM_REPORT =			'http://stats.pingdom.com/wk0v6lomn491/225513';
 
 // BANHAMMER: To ban an IP address, add it to this list.
 // Please make all IPv6 addresses lowercase
-$i = 0;	// <-- (ignore this line)
-$BANNED_IPS[$i++] =			'999.999.999.999';
-$BANNED_IPS[$i++] =			'888.888.888.888';
+$BANNED_IPS =	array(
+				'999.999.999.999',
+				'888.888.888.888',
+				);
 
 
 
 
 
-$CATCH_ERRORS = true;			// For website debugging. Should normally be set to TRUE.
+$CATCH_ERRORS = true;			// For website debugging. Should normally be set to TRUE,
+								// which means it will just say "Whoops, something went wrong"
+								// rather than talk about the error.
 								
 @include 'CONFIG.local.php';	// DEVELOPERS: to override certain values in your
 								// testing environment, put them in 'CONFIG.local.php'
-								// and DO NOT add it to Mercurial.
+								// and DO NOT add it to source control.
 
 ?>
