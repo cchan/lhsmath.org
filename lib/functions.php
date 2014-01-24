@@ -15,6 +15,15 @@
  * 		$path_to_root = '../';								//Define the path_to_root to get to the root directory INCLUDING trailing slash
  * 		require_once $path_to_root . 'lib/functions.php';	//require_ONCE the functions.php library
  * 		restrict_access('A');								//Restrict access to admins only.
+ 
+ 
+ Hints for Debugging:
+ debug_print_backtrace()
+ register_shutdown_function()
+ set_error_handler()
+ Google, PHP.net, StackOverflow
+ Looking for cautionary comments [e.g. mail config $#%^$%#]
+ 
  */
  
  /*
@@ -68,9 +77,7 @@ require_once $path_to_root . 'lib/CONFIG.php';	// configuration information
  */
 function custom_errors($errno, $errstr, $errfile, $errline) {
 	global $path_to_root;
-	$rh = fopen($path_to_root . '.content/Errors.txt', 'a+');
-	fwrite($rh, date(DATE_RFC822) . ' Error [' . $errno . '] on line ' . $errline . ' in ' . $errfile . ': ' . $errstr . "\n");
-	fclose($rh);
+	file_put_contents($path_to_root . '.content/Errors.txt', date(DATE_RFC822) . ' Error [' . $errno . '] on line ' . $errline . ' in ' . $errfile . ': ' . $errstr . "\n", FILE_APPEND);
 	
 	if (headers_sent())
 		echo '<meta http-equiv="refresh" content="0;url=' . $path_to_root . 'Error">';
