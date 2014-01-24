@@ -5,7 +5,7 @@
  */
 
 if (!isSet($path_to_root))
-	$path_to_root = '../' . $path_to_lmt_root;
+	$path_to_root = '../'.$path_to_lmt_root; //this is wrong
 
 require_once $path_to_root . 'lib/CONFIG.php';
 
@@ -516,40 +516,10 @@ function lmt_hash_pass($email, $pass) {
  *  - $to: who to send the email to, as: 'Name <email@address>' (no quotes)
  *  - $subject: the subject line; '[LMT {YEAR}]'  is automatically prefixed
  *  - $body: the body of the message
- *
- *  NOTE: THIS FUNCTION REQUIRES THE PEAR::MAIL PACKAGE
  */
-function lmt_send_email($to, $subject, $body) {
-	global $EMAIL_ADDRESS, $EMAIL_USERNAME, $EMAIL_PASSWORD,
-		$SMTP_SERVER, $SMTP_SERVER_PORT, $LMT_EMAIL;
-	require_once('Mail.php');
-	
-	$from = 'LMT Mailbot <' . $EMAIL_ADDRESS . '>';
-	$subject = '[LMT ' . htmlentities(map_value('year')) . '] ' . $subject;
-	
-	$site_url = get_site_url() . '/LMT';
-	$body .= <<<HEREDOC
-
-
----
-Lexington Math Tournament
-$site_url
-HEREDOC;
-	
-	$headers = array('From' => $from,
-		'To' => $to,
-		'Reply-To' => $LMT_EMAIL,
-		'Subject' => $subject);
-	$smtp = Mail::factory('smtp',
-		array('host' => $SMTP_SERVER,
-			'port' => $SMTP_SERVER_PORT,
-			'auth' => true,
-			'username' => $EMAIL_USERNAME,
-			'password' => $EMAIL_PASSWORD));
-	$mail = $smtp->send($to, $headers, $body);
-	
-	if (PEAR::isError($mail))
-		trigger_error('Error sending email: ' . $mail->getMessage(), E_USER_ERROR);
+function lmt_send_email($to, $subject, $body){
+	global $LMT_EMAIL;
+	send_email($to,'[LMT '.intval(map_value('year')).'] '.$subject,$body,array($LMT_EMAIL=>'LMT Contact'),'Lexington Math Tournament\n'.get_site_url().'/LMT');
 }
 
 
@@ -904,14 +874,14 @@ function lmt_page_footer($page_name) {
  * lmt_backstage_footer($page_name)
  */
 function lmt_backstage_footer($page_name) {
-	$names = ['LMT Home','Backstage Home','','Check-in','Score Entry','Guts Round','Results','','Data','Verification','Backup'];
-	$pages = ['LMT/About','LMT/Backstage/Home','','LMT/Backstage/Checkin/Home','LMT/Backstage/Scoring/Home',
+	$names = array('LMT Home','Backstage Home','','Check-in','Score Entry','Guts Round','Results','','Data','Verification','Backup');
+	$pages = array('LMT/About','LMT/Backstage/Home','','LMT/Backstage/Checkin/Home','LMT/Backstage/Scoring/Home',
 		'LMT/Backstage/Guts/Home','LMT/Backstage/Results/Full','','Data','LMT/Backstage/Data/Home',
-		'LMT/Backstage/Database/Verify','LMT/Backstage/Database/Backup'];
+		'LMT/Backstage/Database/Verify','LMT/Backstage/Database/Backup');
 	
 	if ($_SESSION['permissions'] == 'A') {
-		array_splice($names,2,0,['','Status','Website','Email','Export']);
-		array_splice($pages,2,0,['','LMT/Backstage/Status','LMT/Backstage/Pages/List','LMT/Backstage/Email/Home','LMT/Backstage/Export']);
+		array_splice($names,2,0,array('','Status','Website','Email','Export'));
+		array_splice($pages,2,0,array('','LMT/Backstage/Status','LMT/Backstage/Pages/List','LMT/Backstage/Email/Home','LMT/Backstage/Export'));
 	}
 	
 	if(($n=array_search($page_name,$names))!==false)$pages[$n]='';
@@ -927,8 +897,8 @@ function lmt_backstage_footer($page_name) {
  * lmt_home_footer($page_name)
  */
 function lmt_home_footer() {
-	$names = ['About'];
-	$pages = ['LMT/About'];
+	$names = array('About');
+	$pages = array('LMT/About');
 	
 	page_footer($names, $pages);
 }

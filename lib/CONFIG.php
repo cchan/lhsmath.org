@@ -31,11 +31,13 @@ $PHP_MY_ADMIN_LINK =	'https://phpmyadmin.nearlyfreespeech.net/index.php';
 // SSL is used automatically.
 $EMAIL_ADDRESS =			'mailbot@lhsmath.org';
 $EMAIL_USERNAME =			'mailbot@lhsmath.org';
-$EMAIL_PASSWORD =			']|S~)h,oQ`tIfv6L}Jd)1s-W(dvl.^G7O}Ex{qCdJCMF]PIusG7.Op+F7MH36E-'; //There CANNOT be any backslashes.
+$EMAIL_PASSWORD =			']|S~)h,oQ`tIfv6L}Jd)1s-W(dvl.^G7O}Ex{qCdJCMF]PIusG7.Op+F7MH36E-'; //There CANNOT be any backslashes. Or quotes, duh.
 $SMTP_SERVER =				'smtp.gmail.com';
-$SMTP_SERVER_PORT =			'465';	//https://support.google.com/mail/answer/78775?hl=en
+$SMTP_SERVER_PORT =			'587';	//https://support.google.com/mail/answer/78775?hl=en
 									//The source of a month of failed email sendings when it changed 587 to 465 for whatever reason.
 									//Note to people: keep track of this number.
+									//And one part of the cause of another month of failed lmt email sendings when 465 started timing out.
+$SMTP_SERVER_PROTOCOL = 'tls';//tls for 587 and 25, ssl for 465
 
 
 // INCLUDE PATH: This web application requires PEAR packages

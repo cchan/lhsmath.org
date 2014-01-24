@@ -149,7 +149,6 @@ function process_form() {
 	$url = get_site_url() . '/LMT';
 	global $LMT_EMAIL;
 	
-	$to = $name . ' <' . $email . '>';
 	$subject = 'Registration Receipt';
 	$body = <<<HEREDOC
 Hi $name,
@@ -171,7 +170,7 @@ Email: $email
 Grade: $grade
 ______________________________________________________________
 HEREDOC;
-	lmt_send_email($to, $subject, $body);
+	lmt_send_email(array($email=>$name), $subject, $body);
 	
 	// Show the post-registration message
 	echo <<<HEREDOC

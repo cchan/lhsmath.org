@@ -47,9 +47,12 @@
 
 
 require_once $path_to_root . 'lib/CONFIG.php';	// configuration information
-//require_once $path_to_root . 'lib/Net_SMTP-1.6.1.php';	// added PEAR module //ALREADY INCLUDED IN PEAR "@&(%&*#$&@%$#^@(#%&*@$#&@*$%$(^*@()$!
-require_once "Net/SMTP.php";
-require_once $path_to_root . 'lib/class.DB.php'; //Better, OO'd database management, plus MySQLi
+
+//Do not use PEAR mail. It is OUTDATED, badly.
+//if(!class_exists('Net_SMTP'))require_once $path_to_root . 'lib/Net_SMTP-1.6.2.php';	// added PEAR module
+	//ALREADY INCLUDED IN SOME VERSIONS OF PEAR @#$%^&%$#@#$%$!?
+//require_once "Net/SMTP.php";
+//require_once $path_to_root . 'lib/class.DB.php'; //Better, OO'd database management, plus MySQLi
 
 
 
@@ -92,6 +95,9 @@ if ($CATCH_ERRORS) {
 	set_error_handler('custom_errors', E_ERROR | E_PARSE | E_USER_ERROR);
 	error_reporting(E_ERROR | E_PARSE | E_USER_ERROR);
 }
+else{function a(){debug_print_backtrace();}function b(){global $a;if($a)echo var_dump($a);}
+function c(){global $a;if(!$a)$a=array();$a[]=debug_backtrace();}set_error_handler('a',E_ALL&!E_NOTICE);
+register_shutdown_function('b');} //Debug backtracing; put c() wherever to output; will also output on program end
 
 
 
@@ -548,44 +554,39 @@ function form_autocomplete_query($input) {
  *  - $body: the body of the message
  *  - $reply_to: the email address to send replies to, if different from the TO address
  *
- *  NOTE: THIS FUNCTION REQUIRES THE PEAR::MAIL PACKAGE
+ *  NOTE: THIS FUNCTION REQUIRES THE SWIFT MAIL PACKAGE
  */
-function send_email($to, $subject, $body, $reply_to) {
-	global $EMAIL_ADDRESS, $EMAIL_USERNAME, $EMAIL_PASSWORD,
-		$SMTP_SERVER, $SMTP_SERVER_PORT;
-	require_once('Mail.php');
+function send_email($to, $subject, $body, $reply_to=array(), $footer='') {
+	if(!is_array($to)||!is_string($subject)||!is_string($body)||!is_array($reply_to)||!is_string($footer))
+		trigger_error('email: The webmaster messed up',E_USER_ERROR);
 	
-	$from = 'LHS Math Club Mailbot <'.$EMAIL_ADDRESS.'>';
-	$subject = '[Math Club] ' . $subject;
+	global $EMAIL_ADDRESS, $EMAIL_USERNAME, $EMAIL_PASSWORD,
+		$SMTP_SERVER, $SMTP_SERVER_PORT, $SMTP_SERVER_PROTOCOL, $LMT_EMAIL, $path_to_lmt_root;
+	require_once __DIR__."/swiftmailer/swift_required.php";
 	
 	$site_url = get_site_url();
-	$body .= <<<HEREDOC
+	if($reply_to=='')$reply_to=array($EMAIL_ADDRESS=>'LHS Math Club Mailbot');
+	if($footer=='')$footer="LHS Math Club\n$site_url";
+	$body .= "\n\n\n---\n$footer\n";
 
+	$transport = Swift_SmtpTransport::newInstance($SMTP_SERVER,$SMTP_SERVER_PORT,$SMTP_SERVER_PROTOCOL)
+	  ->setUsername($EMAIL_USERNAME)->setPassword($EMAIL_PASSWORD);
 
----
-LHS Math Club
-$site_url
-HEREDOC;
-	
-	if ($reply_to == '')
-		$headers = array('From' => $from,
-			'To' => $to,
-			'Subject' => $subject);
-	else
-		$headers = array('From' => $from,
-			'To' => $to,
-			'Reply-To' => $reply_to,
-			'Subject' => $subject);
-	$smtp = Mail::factory('smtp',
-		array('host' => $SMTP_SERVER,
-			'port' => $SMTP_SERVER_PORT,
-			'auth' => true,
-			'username' => $EMAIL_USERNAME,
-			'password' => $EMAIL_PASSWORD));
-	$mail = $smtp->send($to, $headers, $body);
-	
-	if (PEAR::isError($mail))
-		trigger_error('Error sending email: ' . $mail->getMessage(), E_USER_ERROR);
+	$mailer = Swift_Mailer::newInstance($transport);
+	$mailer->registerPlugin(new Swift_Plugins_AntiFloodPlugin(50));//Max 50 emails per send
+
+	try{
+		$message = Swift_Message::newInstance($subject)
+			->setFrom(array($EMAIL_ADDRESS=>'LHS Math Club Mailbot'))->setBcc($to)
+			->setBody($body);
+		$message->setReplyTo($reply_to);
+		
+		//Send the message
+		if(!$mailer->send($message))trigger_error('Error sending email', E_USER_ERROR);
+	}
+	catch(Exception $e){
+		trigger_error('email exception: '.$e->getMessage(),E_USER_ERROR);
+	}
 }
 
 

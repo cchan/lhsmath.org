@@ -103,7 +103,7 @@ function process_form() {
 	
 	// ** All information has been validated at this point **
 	
-	$access_code = generate_code(18);
+	$access_code = generate_code(5);
 	
 	// Create database entry
 	lmt_query('INSERT INTO schools (name, coach_email, access_code) VALUES ("'
@@ -122,7 +122,6 @@ function process_form() {
 	// Send the email
 	$url = get_site_url() . '/LMT/Registration/Signin?ID=' . $id . '&Code=' . $access_code;
 	
-	$to = $school_name . ' <' . $email . '>';
 	$subject = 'LMT Account';
 	$body = <<<HEREDOC
 To: $school_name
@@ -132,9 +131,7 @@ also enable you to modify teams as long as registration is open.
 
 $url
 HEREDOC;
-	echo "About to do it";
-	lmt_send_email($to, $subject, $body);
-	echo "Success";
+	lmt_send_email(array($email=>$school_name), $subject, $body);
 	
 	// Show the post-registration message
 	echo <<<HEREDOC
