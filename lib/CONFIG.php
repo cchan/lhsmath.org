@@ -31,7 +31,7 @@ $PHP_MY_ADMIN_LINK =	'https://phpmyadmin.nearlyfreespeech.net/index.php';
 // SSL is used automatically.
 $EMAIL_ADDRESS =			'mailbot@lhsmath.org';
 $EMAIL_USERNAME =			'mailbot@lhsmath.org';
-$EMAIL_PASSWORD =			'JG~(Pew&Ft21!{UzE(Hkjn@y:E=Ww^m`u:ch,&rDNUf(Gx%P!Q<}^3o]I{k}m*3';
+$EMAIL_PASSWORD =			']|S~)h,oQ`tIfv6L}Jd)1s-W(dvl.^G7O}Ex{qCdJCMF]PIusG7.Op+F7MH36E-'; //There CANNOT be any backslashes.
 $SMTP_SERVER =				'smtp.gmail.com';
 $SMTP_SERVER_PORT =			'465';	//https://support.google.com/mail/answer/78775?hl=en
 									//The source of a month of failed email sendings when it changed 587 to 465 for whatever reason.

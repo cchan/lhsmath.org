@@ -132,7 +132,9 @@ also enable you to modify teams as long as registration is open.
 
 $url
 HEREDOC;
+	echo "About to do it";
 	lmt_send_email($to, $subject, $body);
+	echo "Success";
 	
 	// Show the post-registration message
 	echo <<<HEREDOC

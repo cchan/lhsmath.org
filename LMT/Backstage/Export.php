@@ -10,19 +10,23 @@ $path_to_lmt_root = '../';
 require_once $path_to_lmt_root . '../lib/lmt-functions.php';
 backstage_access();
 
+if(!$EXPORT_STR){
 show_page();
-
+}
 
 
 
 
 function show_page() {
-	lmt_page_header('Export');
-	
-	echo <<<HEREDOC
+	global $EXPORT_STR;
+	//$EXPORT_STR=true makes it return a string of all the code. (and not echo anything)
+	if(!$EXPORT_STR){
+		lmt_page_header('Export');
+		echo <<<HEREDOC
 <h1>Export</h1>
 
 HEREDOC;
+	}
 	
 	$code = <<<HEREDOC
 <h3>Results</h3>
@@ -317,7 +321,8 @@ HEREDOC;
 	}
 	$code .= "</table>\n";
 	
-	echo nl2br(str_replace(' ', '&nbsp;', htmlentities($code)));
+	if($EXPORT_STR)return $code;
+	else echo nl2br(str_replace(' ', '&nbsp;', htmlentities($code)));
 	
 	lmt_backstage_footer('Export');
 }

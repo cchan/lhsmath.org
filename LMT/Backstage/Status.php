@@ -114,7 +114,7 @@ HEREDOC;
         $err$alert
         <form method="post" action="{$_SERVER['REQUEST_URI']}">
         <div><input type="hidden" name="xsrf_token" value="{$_SESSION['xsrf_token']}" /></div>
-          <table>
+          <table style='vertical-align:middle;'>
             <tr>
               <td>Registration:</td>
               <td><span class="b">$reg_status</span></td>
@@ -133,8 +133,8 @@ HEREDOC;
               <td><input id="lmtChangeDate" type="submit" name="lmt_update_date" value="Update" /></td>
             </tr><tr>
               <td>Year:</td>
-              <td><input type="text" name="year" value="$lmt_year" size="4" maxlength="4" onkeydown="return processKey(event, 'lmtChangeYear');" /></td>
-              <td><input id="lmtChangeYear" type="submit" name="lmt_update_year" value="Update" /></td>
+			  <td><input disabled type="text" name="year" value="$lmt_year" size="4" maxlength="4" onkeydown="return processKey(event, 'lmtChangeYear');" /></td>
+              <td><input id="lmtChangeYear" type="submit" name="lmt_update_year" value="Update" /><div style='color:red;'>Use <a href='Upgrade_Year'>Upgrade_Year</a> instead.</div></td>
             </tr><tr>
               <td>Individual Cost:</td>
               <td><input type="text" name="indiv_cost" value="$individual_cost" size="25" onkeydown="return processKey(event, 'lmtChangeIndiv');" /></td>
@@ -173,7 +173,7 @@ function do_close_reg() {
 	
 	map_set('registration', '0');
 	
-	add_alert('status', 'Registration has been closed');
+	add_alert('status', 'Registration has been closed. Be sure to update the About page.');
 	header('Location: Status');
 }
 
@@ -187,7 +187,7 @@ function do_open_reg() {
 	
 	map_set('registration', '1');
 	
-	add_alert('status', 'Registration has been opened');
+	add_alert('status', 'Registration has been opened. Be sure to update the About page.');
 	header('Location: Status');
 }
 
@@ -260,7 +260,7 @@ function do_update_date() {
 	
 	map_set('date', $_POST['date']);
 	
-	add_alert('status', 'Date has been changed');
+	add_alert('status', 'Date has been changed. Be sure to update the About page.');
 	header('Location: Status');
 }
 
@@ -278,7 +278,7 @@ function do_update_year() {
 	
 	map_set('year', $year);
 	
-	add_alert('status', 'Year has been changed');
+	add_alert('status', 'Year has been changed. Be sure to update the About page.');
 	header('Location: Status');
 }
 

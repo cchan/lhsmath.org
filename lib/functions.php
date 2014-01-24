@@ -5,22 +5,51 @@
  *
  * A library of functions. All pages should require_once this file.
  * Loading this file will also perform the following default actions:
- *  - hide the '.php' extention in the URL
+ *  - hide the '.php' extension in the URL
  *  - start a session
  *  - connect to the database
+ *  - attach custom_errors as custom error handler if $CATCH_ERRORS is true.
  *
- *  ABOUT $path_to_root: All pages should create a variable named
- *  $path_to_root and set it to the relative path to the root directory
- *  of this site. For example, the page '/Account/Signin.php' would have a
- *  path-to-root of '../', and the page '/Home.php' would have a
- *  path-to-root of ''. $path_to_root should be defined BEFORE including
- *  this file.
+ * Dependencies: $path_to_root defined as the relative path to the root directory of the site.
+ * For example, the admin page '/Admin/blah.php' needs to have at the top:
+ * 		$path_to_root = '../';								//Define the path_to_root to get to the root directory INCLUDING trailing slash
+ * 		require_once $path_to_root . 'lib/functions.php';	//require_ONCE the functions.php library
+ * 		restrict_access('A');								//Restrict access to admins only.
+ */
+ 
+ /*
+ Table of Contents and Descriptions (in progress!)
+ Use your IDE's 'find' function to get to these.
+ 
+ custom_errors($errno,$errstr,$errfile,$errline)	Custom error handler that logs error and displays opaque error page
+ connect_to_database()								Connects to database so that it can be accessed with mysql_query
+ restrict_access($levels)							Restricts permission levels to those specified, redirecting based on that. Levels: E,R,P,B,R,+,L,X
+ set_login_data($id)								Sets the SESSION variables that contain a logged-in user's information
+ log_attempt($email,$success)						?
+ hash_pass($email,$pass)							?
+ generate_code($length)								?
+ format_phone_number($num)							?
+ trim_email($email)									?
+ get_site_url()										?
+ form_autocomplete_query($input)					?
+ send_email($to,$subject,$body,$reply_to)			?
+ BBCode($string)									?
+ dirsize($path)										?
+ size_readable($size[,$max[,$system[,$retstring]]])	?
+ email_obfuscate($address[,$link_text][,$pre_text][,$post_text])	?
+ page_header($title)								?
+ page_footer($names,$pages)							?
+ default_page_footer($page_name)					?
+ admin_page_footer($page_name)						?
+ go_home_footer()									?
+ go_home_admin_footer()								?
  */
 
 
 require_once $path_to_root . 'lib/CONFIG.php';	// configuration information
-require_once $path_to_root . 'lib/Net_SMTP-1.6.1.php';	// added PEAR module
-
+//require_once $path_to_root . 'lib/Net_SMTP-1.6.1.php';	// added PEAR module //ALREADY INCLUDED IN PEAR "@&(%&*#$&@%$#^@(#%&*@$#&@*$%$(^*@()$!
+require_once "Net/SMTP.php";
+require_once $path_to_root . 'lib/class.DB.php'; //Better, OO'd database management, plus MySQLi
 
 
 
@@ -413,7 +442,7 @@ function trim_email($email) {
  *  - returns: the url of the site (e.g. 'http://lhsmath.co.cc')
  */
 function get_site_url() {
-	$protocol = $_SERVER['HTTPS'] == 'on' ? 'https' : 'http';
+	$protocol = (isSet($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https' : 'http';
 	return $protocol . '://' . $_SERVER['HTTP_HOST'];
 }
 

@@ -291,7 +291,8 @@ function lmt_reg_restrict_access($level) {
  * another page calls fetch_alert($name)
  */
 function add_alert($name, $value) {
-	$_SESSION['LMT_ALERT_' . $name] = $value;
+	if(@!$_SESSION['LMT_ALERT_' . $name])$_SESSION['LMT_ALERT_' . $name]=array();
+	$_SESSION['LMT_ALERT_' . $name][] = $value;
 }
 
 
@@ -304,7 +305,10 @@ function add_alert($name, $value) {
  */
 function fetch_alert($name) {
 	if (isSet($_SESSION['LMT_ALERT_' . $name])) {
-		$message = "\n        <div class=\"alert\">{$_SESSION['LMT_ALERT_' . $name]}</div><br />\n";
+		$message='';
+		foreach($_SESSION['LMT_ALERT_' . $name] as $alert){
+			$message .= "\n        <div class=\"alert\">{$alert}</div><br />\n";
+		}
 		unset($_SESSION['LMT_ALERT_' . $name]);
 		return $message;
 	}
@@ -344,6 +348,7 @@ function validate_email($email) {
  * Should be performed after a reCaptcha check, if necessary.
  */
 function validate_coach_email($email) {
+	//Todo: once safe DB is implemented, use if(filter_var($email,FILTER_VAR_EMAIL)===false)return 'That\'s not a valid email address';
 	if (!preg_match('/^([\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+\.)*[\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]'
 		.'+@((((([a-z0-9]{1}[a-z0-9\-]{0,62}[a-z0-9]{1})|[a-z])\.)+[a-z]{2,6})|(\d{1,3}\.){3}\d{1,3}(\:\d{1,5})?)$/i'
 		, $email))
@@ -371,7 +376,7 @@ function validate_name($name) {
 	if (strlen($name) > 25)
 		return 'Your name is too long';
 	if (!preg_match('/^[A-Za-z\s\-]+$/', $name))
-		return 'Names may only contain letters, hypens and spaces';
+		return 'Names may only contain letters, hyphens and spaces';
 	return true;
 }
 
@@ -389,7 +394,7 @@ function validate_school_name($name) {
 	if (strlen($name) > 35)
 		return 'The school name is too long';
 	if (!preg_match('/^[A-Za-z\s]+$/', $name))
-		return 'School names may only contain letters, hypens and spaces';
+		return 'School names may only contain letters, hyphens and spaces';
 	return true;
 }
 
@@ -407,7 +412,7 @@ function validate_team_name($name) {
 	if (strlen($name) > 25)
 		return 'The team name is too long';
 	if (!preg_match('/^[A-Za-z0-9\s]+$/', $name))
-		return 'Team names may only contain letters, numbers, hypens and spaces';
+		return 'Team names may only contain letters, numbers, hyphens and spaces';
 	return true;
 }
 
@@ -425,7 +430,7 @@ function validate_member_name($name) {
 	if (strlen($name) > 25)
 		return 'The name is too long';
 	if (!preg_match('/^[A-Za-z\s]+$/', $name))
-		return 'Names may only contain letters, hypens and spaces';
+		return 'Names may only contain letters, hyphens and spaces';
 	return true;
 }
 
@@ -775,6 +780,7 @@ function lmt_page_header($title) {
       <div id="user"><span id="username">{$_SESSION['user_name']}</span><span id="bar"> | </span><a href="{$path_to_root}Account/Signout">Sign Out</a></div>
 HEREDOC;
 	
+	$rel_external_script = '';
 	if ($use_rel_external_script)
 		$rel_external_script = <<<HEREDOC
 
@@ -846,25 +852,18 @@ HEREDOC;
  * lmt_page_footer($page_name)
  */
 function lmt_page_footer($page_name) {
-	$i = 0;
-	
 	if ($page_name == 'About')  {
-		$names[$i] = 'Math Club Home';
-		$pages[$i++] = 'Home';
+		$names[] = 'Math Club Home';
+		$pages[] = 'Home';
 		
 		global $BACKSTAGE_OPEN;
 		if ($_SESSION['permissions'] == 'A' ||
 			(($_SESSION['permissions'] == 'R' || $_SESSION['permissions'] == 'L') && backstage_is_open()))  {
-			$names[$i] = 'Backstage';
-			$pages[$i++] = 'LMT/Backstage/Home';
-			
-			$names[$i] = '';
-			$pages[$i++] = '';
+			$names[] = 'Backstage';
+			$pages[] = 'LMT/Backstage/Home';
 		}
-		else {
-			$names[$i] = '';
-			$pages[$i++] = '';
-		}
+		$names[] = '';
+		$pages[] = '';
 	}
 	
 	
@@ -874,28 +873,25 @@ function lmt_page_footer($page_name) {
 	while ($row) {
 		if ($row['page_id'] == '-1') {
 			if (registration_is_open()) {
-				$names[$i] = 'Registration';
-				$pages[$i++] = 'LMT/Registration/Home';
+				$names[] = 'Registration';
+				$pages[] = 'LMT/Registration/Home';
 				
-				$names[$i] = '';
-				$pages[$i++] = '';
+				$names[] = '';
+				$pages[] = '';
 			}
 		}
 		else if ($row['name'] == '') {
-			$names[$i] = '';
-			$pages[$i++] = '';
+			$names[] = '';
+			$pages[] = '';
 		}
 		else {
-			$names[$i] = $row['name'];
-			$pages[$i++] = 'LMT/' . str_replace(' ', '_', $row['name']);
+			$names[] = $row['name'];
+			$pages[] = 'LMT/' . str_replace(' ', '_', $row['name']);
 		}
 		$row = mysql_fetch_assoc($result);
 	}
 	
-	for ($n = 0; $n <= count($names); $n++) {
-		if ($names[$n] == $page_name)
-			$pages[$n] = '';
-	}
+	if(($n=array_search($page_name,$names))!==false)$pages[$n]='';
 	
 	page_footer($names, $pages);
 }
@@ -908,78 +904,17 @@ function lmt_page_footer($page_name) {
  * lmt_backstage_footer($page_name)
  */
 function lmt_backstage_footer($page_name) {
-	$i = 0;
-	
-	$names[$i] = 'LMT Home';
-	$pages[$i] = 'LMT/About';
-	$i++;
-	
-	$names[$i] = 'Backstage Home';
-	$pages[$i] = 'LMT/Backstage/Home';
-	$i++;
+	$names = ['LMT Home','Backstage Home','','Check-in','Score Entry','Guts Round','Results','','Data','Verification','Backup'];
+	$pages = ['LMT/About','LMT/Backstage/Home','','LMT/Backstage/Checkin/Home','LMT/Backstage/Scoring/Home',
+		'LMT/Backstage/Guts/Home','LMT/Backstage/Results/Full','','Data','LMT/Backstage/Data/Home',
+		'LMT/Backstage/Database/Verify','LMT/Backstage/Database/Backup'];
 	
 	if ($_SESSION['permissions'] == 'A') {
-		$names[$i] = '';
-		$pages[$i] = '';
-		$i++;
-		
-		$names[$i] = 'Status';
-		$pages[$i] = 'LMT/Backstage/Status';
-		$i++;
-		
-		$names[$i] = 'Website';
-		$pages[$i] = 'LMT/Backstage/Pages/List';
-		$i++;
-		
-		$names[$i] = 'Email';
-		$pages[$i] = 'LMT/Backstage/Email/Home';
-		$i++;
-	
-		$names[$i] = 'Export';
-		$pages[$i] = 'LMT/Backstage/Export';
-		$i++;
+		array_splice($names,2,0,['','Status','Website','Email','Export']);
+		array_splice($pages,2,0,['','LMT/Backstage/Status','LMT/Backstage/Pages/List','LMT/Backstage/Email/Home','LMT/Backstage/Export']);
 	}
 	
-	$names[$i] = '';
-	$pages[$i] = '';
-	$i++;
-	
-	$names[$i] = 'Check-in';
-	$pages[$i] = 'LMT/Backstage/Checkin/Home';
-	$i++;
-	
-	$names[$i] = 'Score Entry';
-	$pages[$i] = 'LMT/Backstage/Scoring/Home';
-	$i++;
-	
-	$names[$i] = 'Guts Round';
-	$pages[$i] = 'LMT/Backstage/Guts/Home';
-	$i++;
-	
-	$names[$i] = 'Results';
-	$pages[$i] = 'LMT/Backstage/Results/Full';
-	$i++;
-	
-	$names[$i] = '';
-	$pages[$i] = '';
-	$i++;
-	
-	$names[$i] = 'Data';
-	$pages[$i] = 'LMT/Backstage/Data/Home';
-	$i++;
-	
-	$names[$i] = 'Verification';
-	$pages[$i] = 'LMT/Backstage/Database/Verify';
-	$i++;
-	
-	$names[$i] = 'Backup';
-	$pages[$i] = 'LMT/Backstage/Database/Backup';
-	$i++;
-	
-	for ($n = 0; $n < count($names); $n++) {
-		if ($names[$n] == $page_name)
-			$pages[$n] = '';
-	}
+	if(($n=array_search($page_name,$names))!==false)$pages[$n]='';
 	
 	page_footer($names, $pages);
 }
@@ -992,8 +927,8 @@ function lmt_backstage_footer($page_name) {
  * lmt_home_footer($page_name)
  */
 function lmt_home_footer() {
-	$names[0] = 'About';
-	$pages[0] = 'LMT/About';
+	$names = ['About'];
+	$pages = ['LMT/About'];
 	
 	page_footer($names, $pages);
 }
