@@ -13,10 +13,12 @@ require_once $path_to_root . 'lib/CONFIG.php';
 connect_to_lmt_database();
 
 
-// include regular functions
-require_once 'functions.php';
-require_once 'lmt-scoring.php';
 
+// include regular functions
+require_once $path_to_root . 'lib/functions.php';
+require_once $path_to_root . 'lib/lmt-scoring.php';
+
+$lmt_database=new DB($DB_SERVER,$DB_USERNAME,$DB_PASSWORD,'lmt');
 
 //
 // DEFAULT ACTIONS:
@@ -126,17 +128,12 @@ function connect_to_lmt_database() {
  * a row will be returned; if there is not exactly one row, an error will be thrown.
  */
 function lmt_query($query, $get_row=false) {
-	global $LMT_DB;
-	$result = mysql_query($query, $LMT_DB)or
-		trigger_error(mysql_error($LMT_DB) . '<br /><strong>Query:</strong> '. htmlentities($query) . '<br />', E_USER_ERROR);
+	global $lmt_database;
 	
-	if (!$get_row)
-		return $result;
+	global $CATCH_ERRORS;if(!$CATCH_ERRORS)echo "Used lmt_query.<textarea>".var_export(debug_backtrace(),true)."</textarea>";
 	
-	// Get row
-	if (mysql_num_rows($result) != 1)
-		trigger_error('Incorrect number of rows for [' . $query . ']', E_USER_ERROR);
-	return mysql_fetch_assoc($result);
+	if($get_row)return $lmt_database->query_assoc($query);
+	else return $lmt_database->query($query);
 }
 
 
@@ -148,40 +145,61 @@ function lmt_query($query, $get_row=false) {
  * Returns the value associated with the given key
  * in the LMT map, or null if it does not exist.
  */
+$map_values=NULL;
+$map_values_changed=false;
 function map_value($key) {
-	$result = lmt_query('SELECT map_value FROM map WHERE map_key="'
-		. mysql_real_escape_string(strtolower($key)) . '"');
+	global $map_values;
+	if($map_values===NULL){//Caching
+		global $lmt_database;
+		$result=$lmt_database->query('SELECT map_key, map_value FROM map');
+		$map_values=$result->fetch_all(MYSQLI_ASSOC);
+	}
 	
-	if (mysql_num_rows($result) == 0)
-		return null;
-	
-	$row = mysql_fetch_assoc($result);
-	return $row['map_value'];
+	if(array_key_exists(strtolower($key),$map_values))
+		return $map_values[strtolower($key)];
+	else return NULL;
 }
-
-
-
-
 
 /*
  * map_set($key, $value)
  * Sets the value for a given key, creating the pair
  * if it does not already exist
  */
-function map_set($key, $value) {
-	if (map_value($key) === null)
-		lmt_query('INSERT INTO map (map_key, map_value) VALUES("'
-			. mysql_real_escape_string(strtolower($key)) . '", "'
-			. mysql_real_escape_string($value) . '")');
-	else
-		lmt_query('UPDATE map SET map_value="'
-			. mysql_real_escape_string($value) . '" WHERE map_key="'
-			. mysql_real_escape_string(strtolower($key)) . '" LIMIT 1');
+function map_set($key, $value) {//This takes TWO db queries each and every time.
+	global $map_values,$map_values_changed;
+	$map_values_changed=true;
+	if($map_values===NULL)map_value(0);//Load stuff into $map_values
+	$map_values[$key]=$value;
 }
-
-
-
-
+/*
+ * map_commit()
+ * Shutdown function that should not be used normally, but can be.
+ * Commits all the changes to the database, since PHP globals are faster than DB storage.
+ * May cause race condition problems if multiple people are editing at once,
+ * but there aren't that many admins.
+ *
+ * Note:Make sure that map_key is a primary key.
+ */
+function map_commit(){
+	global $map_values,$map_values_changed;
+	if($map_values_changed!==true)return;
+	
+	$query='INSERT INTO table (map_key,map_value) VALUES ';
+	$array=array();
+	$i=0;
+	foreach($map_values as $key=>$value){
+		$query.='(%'.intval($i).'%,%'.intval($i+1).'%),';
+		$i+=2;
+		$array[]=$key;
+		$array[]=$value;
+	}
+	$query=substr($query,0,-1).' ON DUPLICATE KEY UPDATE map_value=VALUES(map_value)';
+	global $lmt_database;
+	$lmt_database->query($query,$array);
+	
+	$map_values_changed=false;
+}
+register_shutdown_function('map_commit');
 
 /*
  * backstage_is_open()
@@ -330,9 +348,9 @@ function validate_email($email) {
 		, $email))
 		return 'That\'s not a valid email address';
 	
-	$row = lmt_query('SELECT COUNT(*) FROM individuals WHERE LOWER(email)="'
-		. mysql_real_escape_string(strtolower($email)) . '"', true);
-	if ($row['COUNT(*)'] != 0)
+	global $lmt_database;
+	$row = $lmt_database->query_assoc('SELECT COUNT(*) AS c FROM individuals WHERE LOWER(email)=%0%',strtolower($email));
+	if ($row['c'] != 0)
 		return 'An account with that email address already exists';
 			
 	return true;
@@ -348,15 +366,11 @@ function validate_email($email) {
  * Should be performed after a reCaptcha check, if necessary.
  */
 function validate_coach_email($email) {
-	//Todo: once safe DB is implemented, use if(filter_var($email,FILTER_VAR_EMAIL)===false)return 'That\'s not a valid email address';
-	if (!preg_match('/^([\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+\.)*[\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]'
-		.'+@((((([a-z0-9]{1}[a-z0-9\-]{0,62}[a-z0-9]{1})|[a-z])\.)+[a-z]{2,6})|(\d{1,3}\.){3}\d{1,3}(\:\d{1,5})?)$/i'
-		, $email))
-		return 'That\'s not a valid email address';
+	if(filter_var($email,FILTER_VAR_EMAIL)===false)return 'That\'s not a valid email address';
 	
-	$row = lmt_query('SELECT COUNT(*) FROM schools WHERE LOWER(coach_email)="'
-		. mysql_real_escape_string(strtolower($email)) . '"', true);
-	if ($row['COUNT(*)'] != 0)
+	global $lmt_database;
+	$row = $lmt_database->query_assoc('SELECT COUNT(*) AS c FROM schools WHERE LOWER(coach_email)=%0%',strtolower($email));
+	if ($row['c'] != 0)
 		return 'An account with that email address already exists';
 			
 	return true;
@@ -519,7 +533,7 @@ function lmt_hash_pass($email, $pass) {
  */
 function lmt_send_email($to, $subject, $body){
 	global $LMT_EMAIL;
-	send_email($to,'[LMT '.intval(map_value('year')).'] '.$subject,$body,array($LMT_EMAIL=>'LMT Contact'),'Lexington Math Tournament\n'.get_site_url().'/LMT');
+	send_email($to,$subject,$body,array($LMT_EMAIL=>'LMT Contact'),'[LMT '.intval(map_value('year')).']','Lexington Math Tournament\n'.get_site_url().'/LMT');
 }
 
 
@@ -615,7 +629,8 @@ function lmt_set_login_data($id) {
 		session_regenerate_id(true);  // change session id to prevent hijacking
 	}
 	
-	$row = lmt_query('SELECT * FROM schools WHERE school_id="' . mysql_escape_string($id) . '" LIMIT 1', true);
+	global $lmt_database;
+	$row = $lmt_database->query_assoc('SELECT name, school_id FROM schools WHERE school_id=%0% LIMIT 1', $id);
 	
 	$_SESSION['LMT_school_name'] = $row['name'];
 	
@@ -649,7 +664,7 @@ function lmt_set_login_data($id) {
  */
 function lmt_db_table($query, $headers=null, $links=null, $empty_message="None", $css="contrasting", $ordering=null) {
 	global $LMT_DB;
-	$result = lmt_query($query);
+	$result = lmt_query($query);//this is evil
 	
 	$return = <<<HEREDOC
       <table class="$css">
@@ -668,14 +683,14 @@ HEREDOC;
 		$return .= "        </tr>\n";
 	}
 	
-	$row = mysql_fetch_assoc($result);
+	$row = $result->fetch_assoc();
 	$row_number = 0;
 	
 	if (!$row) {
 		if (!is_null($headers))
 			$colspan = count($headers) + count($links);	// count(null) == 0
 		else
-			$colspan = mysql_num_fields($result) + count($links);
+			$colspan = $result->field_count + count($links);
 		$return .= <<<HEREDOC
         <tr>
           <td colspan="$colspan">$empty_message</td>
@@ -694,7 +709,7 @@ HEREDOC;
 			else
 				$return .= "          <td></td>\n";
 				
-			if ($row_number != mysql_num_rows($result) - 1)
+			if ($row_number != $result->num_rows - 1)
 				$return .= '          <td class="text-centered"><a href="' . $ordering['page'] . '?Down&amp;ID=' . $row[$ordering['field']]
 					. '&amp;xsrf_token=' . $_SESSION['xsrf_token'] . '" class="nounderline">&nbsp;&darr;&nbsp;</a></td>' . "\n";
 			else
@@ -713,7 +728,7 @@ HEREDOC;
 				foreach ($row as $field=>$value) {
 					$link = str_replace('{' . $field . '}', $value, $link);
 					$url = str_replace('{' . $field . '}', $value, $url);
-					$field = mysql_fetch_field($result);
+					//$field = $result->fetch_field();
 				}
 				$return .= "          <td><a href=\"$url\">$link</a></td>\n";
 			}
@@ -721,7 +736,7 @@ HEREDOC;
 		
 		$return .= "        </tr>\n";
 		
-		$row = mysql_fetch_assoc($result);
+		$row=$result->fetch_assoc();
 		$row_number++;
 	}
 	
@@ -827,8 +842,8 @@ function lmt_page_footer($page_name) {
 		$pages[] = 'Home';
 		
 		global $BACKSTAGE_OPEN;
-		if ($_SESSION['permissions'] == 'A' ||
-			(($_SESSION['permissions'] == 'R' || $_SESSION['permissions'] == 'L') && backstage_is_open()))  {
+		if (array_key_exists('permissions',$_SESSION) && ($_SESSION['permissions'] == 'A' ||
+			(($_SESSION['permissions'] == 'R' || $_SESSION['permissions'] == 'L') && backstage_is_open())))  {
 			$names[] = 'Backstage';
 			$pages[] = 'LMT/Backstage/Home';
 		}
@@ -836,11 +851,10 @@ function lmt_page_footer($page_name) {
 		$pages[] = '';
 	}
 	
+	global $lmt_database;
+	$result = $lmt_database->query('SELECT page_id, name FROM pages ORDER BY order_num');//Don't bother caching, this will only be called once
 	
-	$result = lmt_query('SELECT page_id, name FROM pages ORDER BY order_num');
-	$row = mysql_fetch_assoc($result);
-	
-	while ($row) {
+	while ($row = $result->fetch_assoc()) {
 		if ($row['page_id'] == '-1') {
 			if (registration_is_open()) {
 				$names[] = 'Registration';
@@ -858,7 +872,6 @@ function lmt_page_footer($page_name) {
 			$names[] = $row['name'];
 			$pages[] = 'LMT/' . str_replace(' ', '_', $row['name']);
 		}
-		$row = mysql_fetch_assoc($result);
 	}
 	
 	if(($n=array_search($page_name,$names))!==false)$pages[$n]='';
@@ -876,7 +889,7 @@ function lmt_page_footer($page_name) {
 function lmt_backstage_footer($page_name) {
 	$names = array('LMT Home','Backstage Home','','Check-in','Score Entry','Guts Round','Results','','Data','Verification','Backup');
 	$pages = array('LMT/About','LMT/Backstage/Home','','LMT/Backstage/Checkin/Home','LMT/Backstage/Scoring/Home',
-		'LMT/Backstage/Guts/Home','LMT/Backstage/Results/Full','','Data','LMT/Backstage/Data/Home',
+		'LMT/Backstage/Guts/Home','LMT/Backstage/Results/Full','','LMT/Backstage/Data/Home',
 		'LMT/Backstage/Database/Verify','LMT/Backstage/Database/Backup');
 	
 	if ($_SESSION['permissions'] == 'A') {

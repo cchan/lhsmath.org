@@ -98,7 +98,7 @@ $BANNED_IPS =	array(
 
 
 
-$CATCH_ERRORS = true;			// For website debugging. Should normally be set to TRUE,
+$CATCH_ERRORS = false;			// For website debugging. Should normally be set to TRUE,
 								// which means it will just say "Whoops, something went wrong"
 								// rather than talk about the error.
 								

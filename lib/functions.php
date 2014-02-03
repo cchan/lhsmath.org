@@ -9,6 +9,8 @@
  *  - start a session
  *  - connect to the database
  *  - attach custom_errors as custom error handler if $CATCH_ERRORS is true.
+ *  - Initialize a bunch of config variables
+ *  - Initialize $database global
  *
  * Dependencies: $path_to_root defined as the relative path to the root directory of the site.
  * For example, the admin page '/Admin/blah.php' needs to have at the top:
@@ -21,7 +23,7 @@
  debug_print_backtrace()
  register_shutdown_function()
  set_error_handler()
- Google, PHP.net, StackOverflow
+ Google, PHP.net, StackOverflow, past webmasters
  Looking for cautionary comments [e.g. mail config $#%^$%#]
  
  */
@@ -57,14 +59,10 @@
 
 require_once $path_to_root . 'lib/CONFIG.php';	// configuration information
 
-//Do not use PEAR mail. It is OUTDATED, badly.
+//Do not use PEAR mail. It is OUTDATED, badly. =>see SwiftMail included down in send_email function.
 //if(!class_exists('Net_SMTP'))require_once $path_to_root . 'lib/Net_SMTP-1.6.2.php';	// added PEAR module
 	//ALREADY INCLUDED IN SOME VERSIONS OF PEAR @#$%^&%$#@#$%$!?
 //require_once "Net/SMTP.php";
-//require_once $path_to_root . 'lib/class.DB.php'; //Better, OO'd database management, plus MySQLi
-
-
-
 
 //
 // DEFAULT ACTIONS:
@@ -102,11 +100,14 @@ if ($CATCH_ERRORS) {
 	set_error_handler('custom_errors', E_ERROR | E_PARSE | E_USER_ERROR);
 	error_reporting(E_ERROR | E_PARSE | E_USER_ERROR);
 }
-else{function a(){debug_print_backtrace();}function b(){global $a;if($a)echo var_dump($a);}
+/*else{function a(){debug_print_backtrace();}function b(){global $a;if($a)echo var_dump($a);}
 function c(){global $a;if(!$a)$a=array();$a[]=debug_backtrace();}set_error_handler('a',E_ALL&!E_NOTICE);
-register_shutdown_function('b');} //Debug backtracing; put c() wherever to output; will also output on program end
+register_shutdown_function('b');}*/ //Debug backtracing; put c() wherever to output; will also output on program end
 
 
+
+require_once $path_to_root . 'lib/class.DB.php'; //Better, OO'd database management, plus MySQLi
+$database=new DB($DB_SERVER,$DB_USERNAME,$DB_PASSWORD,$DB_DATABASE);
 
 
 
@@ -185,7 +186,6 @@ if (isSet($_SESSION['user_id'])) {
 		set_login_data($_SESSION['user_id']);
 }
 
-
 // everyone gets logged out after 8 hours, no matter what
 // (this is in case an account is compromised without the password, i.e. left logged
 // in somewhere, or via intercepted verification email). Not that that's our most
@@ -248,7 +248,7 @@ function restrict_access($levels) {
 		}
 		else if ($user_level == 'E') {
 			// Redirect to the 'Confirm your Email' page
-			header('Location: ' . $path_to_root . 'Account/Verify_Email');+
+			header('Location: ' . $path_to_root . 'Account/Verify_Email');
 			die();
 		}
 		else if ($user_level == 'P') {
@@ -283,12 +283,12 @@ function restrict_access($levels) {
  *  - $row: the result of mysql_fetch_assoc() on the query 'SELECT * FROM users WHERE id="..."'
  *
  * Sets the SESSION variables that contain a logged-in user's information
+ * 
+ * Note that this is an exceptionally vulnerable function, since calling set_login_data (some random id) will result in login.
  */
 function set_login_data($id) {
-	if ($_SESSION['permissions'] == '+')	// if you're already logged in as the Super-Admin, this would mess things up
+	if ($_SESSION['permissions'] == '+')	// if you're already logged in as the Super-Admin, this would mess things up cuz it's not in the database
 		return;
-	
-	
 	
 	if (!isSet($_SESSION['user_id'])) {
 		// ** THIS IS A LOG-IN, NOT A REFRESH OF EXISTING DATA, SO... ***
@@ -298,12 +298,17 @@ function set_login_data($id) {
 		session_regenerate_id(true);  // change session id to prevent hijacking
 	}
 	
-	$query = 'SELECT * FROM users WHERE id="' . mysql_escape_string($id) . '" LIMIT 1';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	global $database;
+	$row=$database->query_assoc('SELECT id, name, permissions, email, approved, password_reset_code, email_verification FROM users WHERE id=%0% LIMIT 1',array($id));
+	
+	if(!$row){
+		session_destroy();
+		trigger_error("Authentication error",E_USER_ERROR);
+	}
 	
 	$_SESSION['user_name'] = $row['name'];
 	$_SESSION['permissions'] = $row['permissions'];
+	$_SESSION['email'] = $row['email'];
 	
 	// SPECIAL PERMISSIONS
 	if ($_SESSION['permissions'] == 'C') {	// Captain is a type of Administrator
@@ -325,8 +330,7 @@ function set_login_data($id) {
 	// If a password reset has been requrested, cancel it -
 	// apparently, they remembered their password
 	if ($row['password_reset_code'] != '0') {
-		$query = 'UPDATE users SET password_reset_code="0" WHERE id="' . $row['id'] . '" LIMIT 1';
-		mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+		$database->query('UPDATE users SET password_reset_code="0" WHERE id=%0% LIMIT 1',array($row['id']));
 	}
 	
 	// REFRESH TIME
@@ -359,10 +363,8 @@ function log_attempt($email, $success) {
 	else
 		$success = '0';
 	
-	$query = 'INSERT INTO login_attempts (email, remote_ip, successful) VALUES ("'
-		. mysql_real_escape_string(htmlentities(strtolower($email))) . '", "' . mysql_real_escape_string(htmlentities(strtolower($_SERVER['REMOTE_ADDR']))) . '", "' . $success . '")';
-	
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	global $database;
+	$database->query('INSERT INTO login_attempts (email, remote_ip, successful) VALUES (%0%,%1%,%2%)',array(strtolower($email),strtolower($_SERVER['REMOTE_ADDR']),$success));
 }
 
 
@@ -478,7 +480,7 @@ function get_site_url() {
  * 		- ["result"] => the entire query result, with the pointer at the beginning
  * 		- ["exact"] => if this includes an exact match
  */
-function form_autocomplete_query($input) {
+function form_autocomplete_query($input) {//Restrict to admins, and then move it to JS.
 	$query = '';
 	$name = '';
 	$parts = preg_split('/[\(\)]+/', $input);
@@ -496,7 +498,7 @@ function form_autocomplete_query($input) {
 				$name = str_replace(" ", "%", $name);
 				$yog = $senior_year + 12 - $grade;
 				
-				$query = 'SELECT * FROM users WHERE name LIKE "%' . mysql_real_escape_string($name)
+				$query = 'SELECT * FROM users WHERE name LIKE "%' . mysql_real_escape_string($name)//NO WHY ARE YOU DOING THIS AGHHHH it hurts me
 					. '%" AND yog="' . mysql_real_escape_string($yog) . '" AND permissions!="T"';
 			}
 		}
@@ -556,16 +558,25 @@ function form_autocomplete_query($input) {
 
 /*
  * send_email($to, $subject, $body, $reply_to)
- *  - $to: who to send the email to, as: 'Name <email@address>' (no quotes)
- *  - $subject: the subject line; '[Math Club]'  is automatically prefixed
+ *  - $to: who to send the email to, as an string array of $email OR $email=>$name pairs
+ *  - $subject: the subject line; $prefix is automatically prefixed
  *  - $body: the body of the message
  *  - $reply_to: the email address to send replies to, if different from the TO address
  *
  *  NOTE: THIS FUNCTION REQUIRES THE SWIFT MAIL PACKAGE
  */
-function send_email($to, $subject, $body, $reply_to=array(), $footer='') {
-	if(!is_array($to)||!is_string($subject)||!is_string($body)||!is_array($reply_to)||!is_string($footer))
-		trigger_error('email: The webmaster messed up',E_USER_ERROR);
+ 
+ /*
+ Add this:
+		'Precedence' => 'bulk',
+		'List-Id' => $list_id,
+		'List-Unsubscribe' => '<' . $site_url . '/Account/My_Profile>'
+ */
+function send_email($to, $subject, $body, $reply_to=array(), $prefix=NULL, $footer='') {
+	if(!is_array($to)||!is_string($subject)||!is_string($body)||!is_array($reply_to)||!is_string($prefix)||!is_string($footer))
+		trigger_error('email: invalid params',E_USER_ERROR);
+	if(count($to)==0)return;
+	if(is_null($prefix))$prefix='[LHS Math Club]';
 	
 	global $EMAIL_ADDRESS, $EMAIL_USERNAME, $EMAIL_PASSWORD,
 		$SMTP_SERVER, $SMTP_SERVER_PORT, $SMTP_SERVER_PROTOCOL, $LMT_EMAIL, $path_to_lmt_root;
@@ -583,7 +594,7 @@ function send_email($to, $subject, $body, $reply_to=array(), $footer='') {
 	$mailer->registerPlugin(new Swift_Plugins_AntiFloodPlugin(50));//Max 50 emails per send
 
 	try{
-		$message = Swift_Message::newInstance($subject)
+		$message = Swift_Message::newInstance($prefix.' '.$subject)
 			->setFrom(array($EMAIL_ADDRESS=>'LHS Math Club Mailbot'))->setBcc($to)
 			->setBody($body);
 		$message->setReplyTo($reply_to);
@@ -774,19 +785,10 @@ function email_obfuscate($address, $link_text=null, $pre_text='', $post_text='')
 	$address = strtolower($address);
 	$coded = "";
 	$unmixedkey = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.@";
-	$inprogresskey = $unmixedkey;
-	$mixedkey="";
-	$unshuffled = strlen($unmixedkey);
-	for ($i = 0; $i <= strlen($unmixedkey); $i++) {
-		$ranpos = rand(0,$unshuffled-1);
-		$nextchar = $inprogresskey{$ranpos};
-		$mixedkey .= $nextchar;
-		$before = substr($inprogresskey,0,$ranpos);
-		$after = substr($inprogresskey,$ranpos+1,$unshuffled-($ranpos+1));
-		$inprogresskey = $before.''.$after;
-		$unshuffled -= 1;
-	}
-	$cipher = $mixedkey;
+	$len = strlen($unmixedkey);
+	for ($i = 0; $i < $len; $i++)
+		$unmixedkey.=$unmixedkey[rand(0,$len-1)];
+	$cipher = substr($unmixedkey,$len,2*$len);
 
 	$shift = strlen($address);
 

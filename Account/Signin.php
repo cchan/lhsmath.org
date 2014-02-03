@@ -139,10 +139,10 @@ function process_login_form() {
 		
 	
 	// Validate credentials
-	$query = 'SELECT id FROM users WHERE LOWER(email)="' . $email . '" AND passhash="' . $passhash . '" LIMIT 1';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	global $database;
+	$result = $database->query('SELECT id FROM users WHERE LOWER(email)=%0% AND passhash=%1% LIMIT 1',array($email,$passhash));
 	
-	if (mysql_num_rows($result) == 0) {
+	if ($database->num_rows == 0) {
 		log_attempt($email, false);
 		show_login_form('Incorrect email address or password',$email);
 		return;
@@ -151,7 +151,7 @@ function process_login_form() {
 	
 	// ** CREDENTIALS ARE VALIDATED AT THIS POINT ** //
 	log_attempt($email, true);
-	$row = mysql_fetch_assoc($result);
+	$row = $result->fetch_assoc();
 	set_login_data($row['id']);
 	
 	login_redirect();

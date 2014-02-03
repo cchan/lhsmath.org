@@ -18,13 +18,13 @@ show_page();
 
 function show_page() {
 	// If the Registration page does not exists, add it
-	$result = lmt_query('SELECT page_id FROM pages WHERE page_id="-1"');
-	if (mysql_num_rows($result) == 0) {
-		$row = lmt_query('SELECT MAX(order_num + 1) AS new_order FROM pages', true);
+	global $lmt_database;
+	$result = $lmt_database->query('SELECT page_id FROM pages WHERE page_id="-1"');
+	if ($lmt_database->num_rows == 0) {
+		$row = $lmt_database->query_assoc('SELECT MAX(order_num + 1) AS new_order FROM pages');
 		$new_order = $row['new_order'];
 		
-		lmt_query('INSERT INTO pages (page_id, name, content, order_num) VALUES ("-1", "Registration", "", "'
-			. mysql_real_escape_string($new_order) . '")');
+		$lmt_database->query('INSERT INTO pages (page_id, name, content, order_num) VALUES ("-1", "Registration", "", %0%)',array($new_order));
 	}
 	
 	

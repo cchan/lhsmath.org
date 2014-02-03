@@ -17,15 +17,15 @@ show_page();
 
 
 function show_page() {
-	$name = str_replace('_', ' ', $_GET['Name']);
-	$result = lmt_query('SELECT * FROM pages WHERE name="'
-		. mysql_real_escape_string($name) . '"');
-	if (mysql_num_rows($result) != 1) {
+	$name = str_replace('_', ' ', $_GET['Name']);//Why?
+	
+	global $lmt_database;
+	$row=$lmt_database->query_assoc('SELECT * FROM pages WHERE name=%0%',array($name));
+	if (!$row) {
 		header("HTTP/1.1 404 Not Found");
 		require 'Error.php';
 		die;
 	}
-	$row = mysql_fetch_assoc($result);
 	
 	$name = htmlentities($name);
 	$content = "      " . str_replace("\n", "\n      ", $row['content']);

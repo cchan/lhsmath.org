@@ -120,10 +120,7 @@ function preview_message() {
 	$use_rel_external_script = true;
 	
 	// Get info for the byline
-	$query = 'SELECT name, email FROM users WHERE id="' . $_SESSION['user_id'] . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
-	$by_line = $row['name'] . ' &lt;' . $row['email'] . '&gt;';
+	$by_line = array($_SESSION['email']=>$_SESSION['user_name']);
 	
 	$mailing_message = '';
 	if($email=='yes-captains')
@@ -191,33 +188,22 @@ function post_message() {
 	if (!validate_message())
 		return;
 	
-	global $subject, $bb_body, $body, $email, $use_rel_external_script;
+	global $subject, $bb_body, $body, $email, $use_rel_external_script, $database;
 	
 	// Insert into database
-	$query = 'INSERT INTO messages (author, subject, body) VALUES ("'
-		. mysql_real_escape_string($_SESSION['user_id']) . '", "'
-		. mysql_real_escape_string($subject) . '", "'
-		. mysql_real_escape_string($bb_body) . '")';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$msg_insert_id = mysql_insert_id();
+	$database->query('INSERT INTO messages (author, subject, body) VALUES (%0%,%1%,%2%)',$_SESSION['user_id'],$subject,$bb_body)
+	$msg_insert_id = $database->insert_id;
 	
 	
 	// Send email
 	if ($email != 'no') {
-		if($email == 'yes-captains'){
+		if($email == 'yes-captains')
 			$reply_to = 'captains@lhsmath.org';
-		}
-		else{//if($email == 'yes-you') //default
-		// Get info for the byline
-			$query = 'SELECT name, email FROM users WHERE id="' . $_SESSION['user_id'] . '"';
-			$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-			$row = mysql_fetch_assoc($result);
-			$reply_to = $row['name'] . ' <' . $row['email'] . '>';
-		}
+		else//if($email == 'yes-you') //default
+			$reply_to = array($_SESSION['email']=>$_SESSION['user_name']);
 		
-		$site_url = str_replace('http://www.', '', get_site_url());
-		$site_url = str_replace('http://', '', $site_url);
-		$list_id = '<members.' . $site_url . '>';
+		$site_url = str_replace(array('http://www.','http://'), '', get_site_url());
+		//$list_id = '<members.' . $site_url . '>';
 		
 		// remove bbCode from text-only version
 		$search = array(
@@ -243,30 +229,15 @@ function post_message() {
 		
 		$html_body = $bb_body;
 		
-		// send individual emails
-		$query = 'SELECT id, name, email FROM users WHERE mailings="1" AND permissions!="T" AND approved="1" AND email_verification="1"';
-		$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+		// send all emails
+		$result=$database->query('SELECT id, name, email FROM users WHERE mailings="1" AND permissions!="T" AND approved="1" AND email_verification="1"');
 		
-		$row = mysql_fetch_assoc($result);
-		$count = 0;
-		$bcc_list = '';
-		while ($row) {
-			//if ($row['id'] != $_SESSION['user_id']) {	// don't send it to yourself
-				if ($count != 0)
-					$bcc_list .= ', ';
-				$bcc_list .= $row['name'] . ' <' . $row['email'] . ' >';
-				
-				if ($count++ > 90) {
-					send_multipart_list_email($bcc_list, $subject, $txt_body, $html_body, $reply_to, $list_id);
-					$count = 0;
-					$bcc_list="";
-				}
-			//}
-			$row = mysql_fetch_assoc($result);
-		}
+		$bcc_list = array();
+		while ($row = $result->fetch_assoc())
+			//if ($row['id'] != $_SESSION['user_id'])	// don't send it to yourself
+				$bcc_list[] = array($row['email'] => $row['email']);
 		
-		if ($count != 0)
-			send_multipart_list_email($bcc_list, $subject, $txt_body, $html_body, $reply_to, $list_id);
+		send_email($bcc_list, $subject, $txt_body, $reply_to, NULL, "LHS Math Club\nTo unsubscribe from this list, visit [$site_url/Account/My_Profile]");
 	}
 	
 	$_SESSION['MESSAGE_sent_id'] = $msg_insert_id;

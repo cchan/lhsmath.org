@@ -6,8 +6,6 @@ Written by Clive Chan in PHP
 Licensed under a Creative Commons Attribution-ShareAlike 4.0 International License
 http://creativecommons.org/licenses/by-sa/4.0/
 
-Last Updated 1/23/2014
-
 Defines the DB class, through which consistently secure database queries can be made.
 */
 
@@ -67,6 +65,13 @@ final class DB{
 	*/
 	public $insert_id;
 	
+	/*
+	int $num_rows
+		Variable containing the (integer) number of rows found in a SELECT operation.
+		I don't know what it is for non-select statements, and you should not be doing that.
+	*/
+	public $num_rows;
+	
 	
 	/*
 	__construct(string $db)
@@ -76,11 +81,15 @@ final class DB{
 		
 		Don't call it directly, use the "new" keyword.
 	*/
-	public function __construct($db=NULL){//All this does is to try to connect to the db, and store that con in $this->con
-		global $DB_DOMAIN,$DB_UNAME,$DB_PASSW,$DB_DB;
-		if($db===NULL)$db=$DB_DB;
-		$this->con=new MySQLi($DB_DOMAIN,$DB_UNAME,$DB_PASSW,$db);
-		if(!$this->con||$this->con->connect_error)$this->err(24);//failed connecting
+	public function __construct($DB_SERVER=NULL,$DB_USERNAME=NULL,$DB_PASSWORD=NULL,$DB_DATABASE=NULL){//All this does is to try to connect to the db, and store that con in $this->con
+		//Better to specify it explicitly.
+		//if(is_null($DB_SERVER))global $DB_SERVER;
+		//if(is_null($DB_USERNAME))global $DB_USERNAME;
+		//if(is_null($DB_PASSWORD))global $DB_PASSWORD;
+		//if(is_null($DB_DATABASE))global $DB_DATABASE;
+		if(is_null($DB_SERVER)||is_null($DB_USERNAME)||is_null($DB_PASSWORD)||is_null($DB_DATABASE))$this->err('Bad connection parameters');
+		$this->con=new MySQLi($DB_SERVER,$DB_USERNAME,$DB_PASSWORD,$DB_DATABASE);
+		if(!$this->con||$this->con->connect_error)$this->err('Failed connection');
 		
 		//var_dump($this->con->query('SHOW GRANTS')->fetch_all());
 		
@@ -104,29 +113,30 @@ final class DB{
 		
 	*/
 	public function query($template,$replaceArr=array()){
-		if(!is_string($template))$this->err(62);//not a string
-		if(!is_array($replaceArr))$this->err(89);//not an array
+		if(!is_string($template))$this->err('Template not a string');//not a string
+		if(!is_array($replaceArr))$this->err('Replacements not an array');//not an array
 		
 		//Check that it's not *allowed* to do anything other than those three [this in constructor]
 		//self-modding self-verification [also in constructor]?
 		
 		//Check that it has no wildcard characters
 		//$quoteless=preg_replace("",$template);
-		//if(strpos($quoteless,'*')$this->err(85);//wildcard being used
+		//if(strpos($quoteless,'*')$this->err('wildcard being used');
 		
 		//Replace all the %0%,%1%,... things
 		foreach($replaceArr as $ind=>$replace)
-			if(!is_int($ind))$this->err(27);//not a number index
+			if(!is_int($ind))$this->err('Not a number index of replacement arr');
 			else $template=str_replace('%'.intval($ind).'%',$this->sanitize($replace),$template);
-		if(stripos($template,'%'))$this->err(33);//not all replaced
+		if(preg_match('/%\d+%/',$template))$this->err('Unsuccessful replacement');//not all replaced
 		
-		if($this->isDestructiveQuery($template))$this->err(65);//destructive query noooo
+		if($this->isDestructiveQuery($template))$this->err('destructive query');//destructive query noooo
 		
 		//if(stripos($template,'WHERE')!==false)//adding in a "AND Deleted=0" since that's the point of the Deleted thing
 		
 		if(($qresult=$this->con->query($template))===false)//On the Acer, the query takes avg 0.01 sec.
-			$this->err(17);//failed query
-		$this->insert_id=$this->con->insert_id;
+			$this->err('Query failed: '.$this->con->error);//failed query
+		$this->insert_id=intval($this->con->insert_id);
+		$this->num_rows=intval($qresult->num_rows);
 		
 		return $qresult;
 	}
@@ -139,6 +149,7 @@ final class DB{
 	*/
 	public function query_assoc($template,$replaceArr=array()){
 		$qresult=$this->query($template,$replaceArr);
+		if($this->num_rows != 1)$this->err('Query_assoc on more than one row (or zero)');
 		if($qresult===true)return true;//Not a data-gathering query, like INSERT or DELETE or UPDATE
 		return $qresult->fetch_assoc();//A data-gathering query, like SELECT
 	}
@@ -161,7 +172,7 @@ final class DB{
 		
 		//STRING: Below means it's a string of some sort, so it'll be thoroughly sanitized:
 			//str_replace'd, HTMLENTITIES'd, mysqli_real_escape_string'd, and put in double quotes.
-		if(!is_string($in))$this->err(47);//invalid parameter type
+		if(!is_string($in))$this->err('Invalid replacement-param type');
 		
 		//htmlentities troubleshooting :( It doesn't like weird characters.
 		$search = array(chr(145), //'smart' single quotes
@@ -180,7 +191,7 @@ final class DB{
 			htmlentities($processed,ENT_QUOTES|ENT_HTML401,'ISO-8859-1')//Trying to make HTMLENTITIES work.
 		);
 		
-		if($escaped=='')$this->err(13);//HTMLENTITIES failed.
+		if($escaped=='')$this->err('HTMLENTITIES failed on string "'.$processed.'"');
 		
 		return '"'.$escaped.'"';
 	}
@@ -202,16 +213,16 @@ final class DB{
 		//$DELETED_FLAG_IMPLEMENTED=true;
 		
 		//Check that its main command is indeed SELECT, INSERT, or UPDATE.
-		if(strpos($q,' ')===false)$this->err(45);//no spaces can't be right
+		if(strpos($q,' ')===false)$this->err('no spaces...?');
 		$maincmd=strtolower(substr($q,0,strpos($q,' ')));
-		if(!in_array($maincmd,['select','insert','update'],true))$this->err(46);//select insert update only.
+		if(!in_array($maincmd,['select','insert','update'],true))$this->err('Select, insert, and update only.');
 		
 		//Check that there's no DROP, TRUNCATE, or DELETE. Maybe should check others too.
 		if(stripos($q,'DROP ')!==false||stripos($q,'TRUNCATE ')!==false||stripos($q,'DELETE ')!==false
 			//&&($DELETED_FLAG_IMPLEMENTED||stripos($q,'LIMIT')===false)
-				)$this->err(65);
+				)$this->err('possibly dangerous query');
 		
-		if(stripos($q,'--')!==false)$this->err(79);//possible SQL injection
+		if(stripos($q,'--')!==false)$this->err('possible sql injection');
 		
 		return false;
 	}
@@ -223,10 +234,9 @@ final class DB{
 		Private; you don't need to use it.
 	*/
 	private function err($str){
-		//"security by obscurity" $str is actually some int.
-		//And notice how random error messages are generated.
-		if(!is_int($str))$this->err(52);//Error triggered weirdly. :)
-		trigger_error('ERROR #'.mt_rand(100,999).intval(htmlentities($str)).mt_rand(100,999),E_USER_ERROR);
+		$helpful=true;
+		if($helpful)trigger_error('DB error: '.htmlentities($str),E_USER_ERROR);
+		else trigger_error('Error.',E_USER_ERROR);
 		die();
 	}
 };
