@@ -285,6 +285,7 @@ function restrict_access($levels) {
  * Sets the SESSION variables that contain a logged-in user's information
  * 
  * Note that this is an exceptionally vulnerable function, since calling set_login_data (some random id) will result in login.
+ * I actually accidentally hijacked it, since DB query wasn't working, but it still logged in. O_o
  */
 function set_login_data($id) {
 	if ($_SESSION['permissions'] == '+')	// if you're already logged in as the Super-Admin, this would mess things up cuz it's not in the database
@@ -572,11 +573,10 @@ function form_autocomplete_query($input) {//Restrict to admins, and then move it
 		'List-Id' => $list_id,
 		'List-Unsubscribe' => '<' . $site_url . '/Account/My_Profile>'
  */
-function send_email($to, $subject, $body, $reply_to=array(), $prefix=NULL, $footer='') {
+function send_email($to, $subject, $body, $reply_to=array(), $prefix='[LHS Math Club]', $footer='') {
 	if(!is_array($to)||!is_string($subject)||!is_string($body)||!is_array($reply_to)||!is_string($prefix)||!is_string($footer))
 		trigger_error('email: invalid params',E_USER_ERROR);
 	if(count($to)==0)return;
-	if(is_null($prefix))$prefix='[LHS Math Club]';
 	
 	global $EMAIL_ADDRESS, $EMAIL_USERNAME, $EMAIL_PASSWORD,
 		$SMTP_SERVER, $SMTP_SERVER_PORT, $SMTP_SERVER_PROTOCOL, $LMT_EMAIL, $path_to_lmt_root;
@@ -603,7 +603,7 @@ function send_email($to, $subject, $body, $reply_to=array(), $prefix=NULL, $foot
 		if(!$mailer->send($message))trigger_error('Error sending email', E_USER_ERROR);
 	}
 	catch(Exception $e){
-		trigger_error('email exception: '.$e->getMessage(),E_USER_ERROR);
+		trigger_error('Email exception: '.$e->getMessage(),E_USER_ERROR);
 	}
 }
 

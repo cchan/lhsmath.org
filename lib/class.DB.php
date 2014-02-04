@@ -133,10 +133,14 @@ final class DB{
 		
 		//if(stripos($template,'WHERE')!==false)//adding in a "AND Deleted=0" since that's the point of the Deleted thing
 		
+		$this->insert_id=$this->num_rows=NULL;
+		
 		if(($qresult=$this->con->query($template))===false)//On the Acer, the query takes avg 0.01 sec.
 			$this->err('Query failed: '.$this->con->error);//failed query
-		$this->insert_id=intval($this->con->insert_id);
-		$this->num_rows=intval($qresult->num_rows);
+		else{
+			$this->insert_id=intval($this->con->insert_id);
+			if($qresult!==true)$this->num_rows=intval($qresult->num_rows);
+		}
 		
 		return $qresult;
 	}

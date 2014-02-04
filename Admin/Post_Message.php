@@ -120,7 +120,7 @@ function preview_message() {
 	$use_rel_external_script = true;
 	
 	// Get info for the byline
-	$by_line = array($_SESSION['email']=>$_SESSION['user_name']);
+	$by_line = $_SESSION['user_name'].' <'.$_SESSION['email'].'>';
 	
 	$mailing_message = '';
 	if($email=='yes-captains')
@@ -166,7 +166,7 @@ function preview_message() {
 </tr>
 </table>
 HEREDOC;
-	
+
 	admin_page_footer('Post a Message');
 }
 
@@ -191,7 +191,7 @@ function post_message() {
 	global $subject, $bb_body, $body, $email, $use_rel_external_script, $database;
 	
 	// Insert into database
-	$database->query('INSERT INTO messages (author, subject, body) VALUES (%0%,%1%,%2%)',$_SESSION['user_id'],$subject,$bb_body)
+	$database->query('INSERT INTO messages (author, subject, body) VALUES (%0%,%1%,%2%)',array($_SESSION['user_id'],$subject,$bb_body));
 	$msg_insert_id = $database->insert_id;
 	
 	
@@ -235,9 +235,9 @@ function post_message() {
 		$bcc_list = array();
 		while ($row = $result->fetch_assoc())
 			//if ($row['id'] != $_SESSION['user_id'])	// don't send it to yourself
-				$bcc_list[] = array($row['email'] => $row['email']);
+				$bcc_list[$row['email']] = $row['email'];
 		
-		send_email($bcc_list, $subject, $txt_body, $reply_to, NULL, "LHS Math Club\nTo unsubscribe from this list, visit [$site_url/Account/My_Profile]");
+		send_email($bcc_list, $subject, $txt_body, $reply_to, '', "LHS Math Club\nTo unsubscribe from this list, visit [$site_url/Account/My_Profile]");
 	}
 	
 	$_SESSION['MESSAGE_sent_id'] = $msg_insert_id;
