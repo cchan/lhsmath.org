@@ -40,7 +40,7 @@ else
 function display_individual($err, $selected_field) {
 	$row = lmt_query('SELECT individuals.*, teams.name AS team_name, (SELECT name AS school_name FROM schools WHERE schools.school_id=teams.school) AS school_name'
 		. ' FROM individuals LEFT JOIN teams ON individuals.team=teams.team_id'
-		. ' WHERE id="' . mysql_real_escape_string($_GET['ID']) . '"', true);
+		. ' WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"', true);
 	$name = htmlentities($row['name']);
 	$school = htmlentities($row['school_name']);
 	if ($row['grade'] == '6')
@@ -67,7 +67,7 @@ function display_individual($err, $selected_field) {
 	$themeround_checked = is_null($row['score_theme']) ? '' : ' checked="checked"';
 	$themeround_score = htmlentities($row['score_theme']);
 	
-	$row2 = lmt_query(individual_composite('', 'WHERE id="' . mysql_real_escape_string($_GET['ID']) . '"'), true);
+	$row2 = lmt_query(individual_composite('', 'WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"'), true);
 	$composite_score = $row2['score_composite'];
 	
 	if (is_null($composite_score))
@@ -230,14 +230,14 @@ function make_teams_dropdown($except) {
 	$result = lmt_query('SELECT teams.team_id, teams.name, schools.name AS school_name FROM teams'
 		. ' LEFT JOIN schools ON teams.school=schools.school_id WHERE team_id <> "'
 		. $except . '" AND teams.deleted="0" ORDER BY name');
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$school = htmlentities($row['school_name']);
 		if ($school == '')
 			$school = 'Individuals';
 		$return .= $sp . '  <option value="' . htmlentities($row['team_id']) . '">'
 			. htmlentities($row['name']) . '&nbsp;&nbsp;/&nbsp;&nbsp;' . $school . '</option>' . "\n";
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	$return .= $sp . '</select>';
 	return $return;
@@ -256,17 +256,17 @@ function do_change_name() {
 		display_individual($name_msg, 'document.forms[\'lmtDataIndividualName\'].name.focus();');
 	
 	$result = lmt_query('SELECT id FROM individuals WHERE name="'
-					. mysql_real_escape_string($_POST['name'])
-					. '" AND team = (SELECT team FROM individuals WHERE id="' . mysql_real_escape_string($_GET['ID'])
+					. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['name'])
+					. '" AND team = (SELECT team FROM individuals WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID'])
 					. '") AND team <> "-1" AND deleted="0"');
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	if ($row['id'] == $_GET['ID']) {
 		header('Location: Individual?ID=' . $_GET['ID']);
 		die;
 	}
 	
-	lmt_query('UPDATE individuals SET name="' . mysql_real_escape_string($_POST['name'])
-		. '" WHERE id="' . mysql_real_escape_string($_GET['ID']). '" LIMIT 1');
+	lmt_query('UPDATE individuals SET name="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['name'])
+		. '" WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']). '" LIMIT 1');
 	
 	if ($row)
 		add_alert('lmt_data_individual_update_name', 'Name was changed. WARNING: Another individual on the same team has that name.');
@@ -293,8 +293,8 @@ function do_change_grade() {
 		die;
 	}
 	
-	lmt_query('UPDATE individuals SET grade="' . mysql_real_escape_string($_POST['grade'])
-		. '" WHERE id="' . mysql_real_escape_string($_GET['ID']). '" LIMIT 1');
+	lmt_query('UPDATE individuals SET grade="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['grade'])
+		. '" WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']). '" LIMIT 1');
 	
 	add_alert('lmt_data_individual_update_grade', 'Grade was changed');
 	header('Location: Individual?ID=' . $_GET['ID']);
@@ -320,8 +320,8 @@ function do_change_email() {
 		die;
 	}
 	
-	lmt_query('UPDATE individuals SET email="' . mysql_real_escape_string($_POST['email'])
-		. '" WHERE id="' . mysql_real_escape_string($_GET['ID']). '" LIMIT 1');
+	lmt_query('UPDATE individuals SET email="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['email'])
+		. '" WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']). '" LIMIT 1');
 	
 	add_alert('lmt_data_individual_update_email', 'Email was changed');
 	header('Location: Individual?ID=' . $_GET['ID']);
@@ -342,8 +342,8 @@ function do_change_attendance() {
 	else
 		trigger_error('Invalid value of attendance', E_USER_ERROR);
 	
-	lmt_query('UPDATE individuals SET attendance="' . mysql_real_escape_string($attendance)
-		. '" WHERE id="' . mysql_real_escape_string($_GET['ID']). '" LIMIT 1');
+	lmt_query('UPDATE individuals SET attendance="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$attendance)
+		. '" WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']). '" LIMIT 1');
 	
 	add_alert('lmt_data_individual_update_attendance', 'Attendance was changed');
 	header('Location: Individual?ID=' . $_GET['ID']);
@@ -357,7 +357,7 @@ function do_change_team() {
 	if ($_POST['xsrf_token'] != $_SESSION['xsrf_token'])
 		trigger_error('XSRF code incorrect', E_USER_ERROR);
 	
-	$row = lmt_query('SELECT team FROM individuals WHERE id="' . mysql_real_escape_string($_GET['ID']) . '"', true);
+	$row = lmt_query('SELECT team FROM individuals WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"', true);
 	if ($row['team'] == $_POST['team'] || $_POST['team'] == '-2') {
 		header('Location: Individual?ID=' . $_GET['ID']);
 		die;
@@ -365,17 +365,17 @@ function do_change_team() {
 	
 	if ($_POST['team'] != '-1')
 		lmt_query('SELECT team_id FROM teams WHERE team_id="'
-			. mysql_real_escape_string($_POST['team']) . '"', true);
+			. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['team']) . '"', true);
 	
 	$result = lmt_query('SELECT id FROM individuals WHERE team="'
-		. mysql_real_escape_string($_POST['team'])
-		. '" AND name = (SELECT name FROM individuals WHERE id="' . mysql_real_escape_string($_GET['ID'])
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['team'])
+		. '" AND name = (SELECT name FROM individuals WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID'])
 		. '") AND team <> "-1" AND deleted="0"');
 	
-	lmt_query('UPDATE individuals SET team="' . mysql_real_escape_string($_POST['team'])
-		. '" WHERE id="' . mysql_real_escape_string($_GET['ID']) . '" LIMIT 1');
+	lmt_query('UPDATE individuals SET team="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['team'])
+		. '" WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" LIMIT 1');
 	
-	if (mysql_num_rows($result) > 0)
+	if (mysqli_num_rows($result) > 0)
 		add_alert('lmt_data_individual_update_team', 'Team was changed. WARNING: Another member of the team has the same name.');
 	else
 		add_alert('lmt_data_individual_update_team', 'Team was changed');
@@ -401,16 +401,16 @@ function do_change_individual_round() {
 		if ($score_msg !== true)
 			display_individual($score_msg, 'document.forms[\'lmtDataIndividualRoundScore\'].score.focus();');
 		
-		lmt_query('UPDATE individuals SET score_individual="' . mysql_real_escape_string($score)
-			. '" WHERE id="' . mysql_real_escape_string($_GET['ID'])
-			. '" AND (score_individual <> "' . mysql_real_escape_string($score) . '" OR score_individual IS NULL) LIMIT 1');
+		lmt_query('UPDATE individuals SET score_individual="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$score)
+			. '" WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID'])
+			. '" AND (score_individual <> "' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$score) . '" OR score_individual IS NULL) LIMIT 1');
 	}
 	else
-		lmt_query('UPDATE individuals SET score_individual=NULL WHERE id="' . mysql_real_escape_string($_GET['ID'])
+		lmt_query('UPDATE individuals SET score_individual=NULL WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID'])
 			. '" AND score_individual IS NOT NULL LIMIT 1');
 	
 	global $LMT_DB;
-	if (mysql_affected_rows($LMT_DB) == 1)
+	if (mysqli_affected_rows($LMT_DB) == 1)
 		add_alert('lmt_data_individual_update_individual_score', 'Individual round score was changed');
 	header('Location: Individual?ID=' . $_GET['ID']);
 }
@@ -436,16 +436,16 @@ function do_change_theme_round() {
 		if ($score_msg !== true)
 			display_individual($score_msg, 'document.forms[\'lmtDataThemeRoundScore\'].score.focus();');
 		
-		lmt_query('UPDATE individuals SET score_theme="' . mysql_real_escape_string($score)
-			. '" WHERE id="' . mysql_real_escape_string($_GET['ID'])
-			. '" AND (score_theme <> "' . mysql_real_escape_string($score) . '" OR score_theme IS NULL) LIMIT 1');
+		lmt_query('UPDATE individuals SET score_theme="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$score)
+			. '" WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID'])
+			. '" AND (score_theme <> "' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$score) . '" OR score_theme IS NULL) LIMIT 1');
 	}
 	else
-		lmt_query('UPDATE individuals SET score_theme=NULL WHERE id="' . mysql_real_escape_string($_GET['ID'])
+		lmt_query('UPDATE individuals SET score_theme=NULL WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID'])
 			. '" AND score_theme IS NOT NULL LIMIT 1');
 	
 	global $LMT_DB;
-	if (mysql_affected_rows($LMT_DB) == 1)
+	if (mysqli_affected_rows($LMT_DB) == 1)
 		add_alert('lmt_data_individual_update_theme_score', 'Theme round score was changed');
 	header('Location: Individual?ID=' . $_GET['ID']);
 }
@@ -459,7 +459,7 @@ function do_confirm_delete() {
 	
 	$row = lmt_query('SELECT individuals.name, teams.name AS team_name,'
 		. ' (SELECT name FROM schools WHERE schools.school_id=teams.school) AS school_name FROM individuals'
-		. ' LEFT JOIN teams ON individuals.team=teams.team_id WHERE id="' . mysql_real_escape_string($_GET['ID']) . '"', true);
+		. ' LEFT JOIN teams ON individuals.team=teams.team_id WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"', true);
 	$name = htmlentities($row['name']);
 	$team = htmlentities($row['team_name']);
 	$school = htmlentities($row['school_name']);
@@ -495,7 +495,7 @@ function do_delete() {
 	if ($_POST['xsrf_token'] != $_SESSION['xsrf_token'])
 		trigger_error('XSRF code incorrect', E_USER_ERROR);
 	
-	lmt_query('UPDATE individuals SET deleted="1" WHERE id="' . mysql_real_escape_string($_GET['ID']) . '" LIMIT 1');
+	lmt_query('UPDATE individuals SET deleted="1" WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" LIMIT 1');
 	
 	header('Location: Home');
 }

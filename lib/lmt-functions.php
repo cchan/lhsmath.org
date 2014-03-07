@@ -97,7 +97,7 @@ if (isSet($_SESSION['LMT_user_id']) && time() >= $_SESSION['LMT_last_refresh'] +
 // (this is in case an account is compromised without the password, i.e. left logged
 // in somewhere, or via intercepted verification email). Not that that's our most
 // significant worry.
-if (isSet($_SESSION['LMT_user_id']) && time >= $_SESSION['LMT_login_time'] + 7200)
+if (isSet($_SESSION['LMT_user_id']) && isSet($_SESSION['LMT_login_time']) && time() >= $_SESSION['LMT_login_time'] + 7200)
 	die('Signing Out... | ' . $_SESSION['LMT_user_id'] . ' | ' . $_SESSION['LMT_login_time'] . ' | ' . time());
 	//header('Location: ' . $path_to_lmt_root . 'Registration/Signout');
 
@@ -111,11 +111,11 @@ if (isSet($_SESSION['LMT_user_id']) && time >= $_SESSION['LMT_login_time'] + 720
  */
 function connect_to_lmt_database() {
 	global $DB_SERVER, $DB_USERNAME, $DB_PASSWORD, $LMT_DB_DATABASE, $TIMEZONE, $LMT_DB;
-	$LMT_DB = mysql_connect($DB_SERVER, $DB_USERNAME, $DB_PASSWORD) or trigger_error(mysql_error(), E_USER_ERROR);
-	mysql_select_db($LMT_DB_DATABASE, $LMT_DB) or trigger_error(mysql_error(), E_USER_ERROR);
+	$LMT_DB = mysqli_connect($DB_SERVER, $DB_USERNAME, $DB_PASSWORD) or trigger_error(mysqli_error($GLOBALS['LMT_DB']), E_USER_ERROR);
+	mysqli_select_db($GLOBALS['LMT_DB'], $LMT_DB_DATABASE) or trigger_error(mysqli_error($GLOBALS['LMT_DB']), E_USER_ERROR);
 	
-	$query = 'SET time_zone = "' . mysql_real_escape_string($TIMEZONE) . '"';
-	mysql_query($query, $LMT_DB) or trigger_error(mysql_error($LMT_DB), E_USER_ERROR);
+	$query = 'SET time_zone = "' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$TIMEZONE) . '"';
+	mysqli_query($GLOBALS['LMT_DB'],$query) or trigger_error(mysqli_error($GLOBALS['LMT_DB']), E_USER_ERROR);
 }
 
 
@@ -130,7 +130,9 @@ function connect_to_lmt_database() {
 function lmt_query($query, $get_row=false) {
 	global $lmt_database;
 	
-	global $CATCH_ERRORS;if(!$CATCH_ERRORS)echo "Used lmt_query.<textarea>".var_export(debug_backtrace(),true)."</textarea>";
+	//global $CATCH_ERRORS;if(!$CATCH_ERRORS)echo "Used lmt_query.<textarea>".var_export(debug_backtrace(),true)."</textarea>";
+	
+	if($e=$lmt_database->error)trigger_error($e,E_USER_ERROR);
 	
 	if($get_row)return $lmt_database->query_assoc($query);
 	else return $lmt_database->query($query);
@@ -152,7 +154,10 @@ function map_value($key) {
 	if($map_values===NULL){//Caching
 		global $lmt_database;
 		$result=$lmt_database->query('SELECT map_key, map_value FROM map');
-		$map_values=$result->fetch_all(MYSQLI_ASSOC);
+		$tmp=$result->fetch_all(MYSQLI_ASSOC);
+		$map_values=array();
+		foreach($tmp as $val)
+			$map_values[$val['map_key']]=$val['map_value'];
 	}
 	
 	if(array_key_exists(strtolower($key),$map_values))
@@ -167,9 +172,9 @@ function map_value($key) {
  */
 function map_set($key, $value) {//This takes TWO db queries each and every time.
 	global $map_values,$map_values_changed;
-	$map_values_changed=true;
 	if($map_values===NULL)map_value(0);//Load stuff into $map_values
-	$map_values[$key]=$value;
+	$map_values_changed=true;
+	$map_values[strtolower($key)]=$value;
 }
 /*
  * map_commit()
@@ -182,9 +187,10 @@ function map_set($key, $value) {//This takes TWO db queries each and every time.
  */
 function map_commit(){
 	global $map_values,$map_values_changed;
-	if($map_values_changed!==true)return;
 	
-	$query='INSERT INTO table (map_key,map_value) VALUES ';
+	if($map_values===NULL||!$map_values_changed)return;
+	
+	$query='INSERT INTO map (map_key,map_value) VALUES ';
 	$array=array();
 	$i=0;
 	foreach($map_values as $key=>$value){
@@ -349,7 +355,7 @@ function validate_email($email) {
 		return 'That\'s not a valid email address';
 	
 	global $lmt_database;
-	$row = $lmt_database->query_assoc('SELECT COUNT(*) AS c FROM individuals WHERE LOWER(email)=%0%',strtolower($email));
+	$row = $lmt_database->query_assoc('SELECT COUNT(*) AS c FROM individuals WHERE LOWER(email)=%0%',array(strtolower($email)));
 	if ($row['c'] != 0)
 		return 'An account with that email address already exists';
 			
@@ -366,10 +372,10 @@ function validate_email($email) {
  * Should be performed after a reCaptcha check, if necessary.
  */
 function validate_coach_email($email) {
-	if(filter_var($email,FILTER_VAR_EMAIL)===false)return 'That\'s not a valid email address';
+	if(filter_var($email,FILTER_VALIDATE_EMAIL)===false)return 'That\'s not a valid email address';
 	
 	global $lmt_database;
-	$row = $lmt_database->query_assoc('SELECT COUNT(*) AS c FROM schools WHERE LOWER(coach_email)=%0%',strtolower($email));
+	$row = $lmt_database->query_assoc('SELECT COUNT(*) AS c FROM schools WHERE LOWER(coach_email)=%0%',array(strtolower($email)));
 	if ($row['c'] != 0)
 		return 'An account with that email address already exists';
 			
@@ -533,7 +539,7 @@ function lmt_hash_pass($email, $pass) {
  */
 function lmt_send_email($to, $subject, $body){
 	global $LMT_EMAIL;
-	send_email($to,$subject,$body,array($LMT_EMAIL=>'LMT Contact'),'[LMT '.intval(map_value('year')).']','Lexington Math Tournament\n'.get_site_url().'/LMT');
+	send_email($to,$subject,$body,array($LMT_EMAIL=>'LMT Contact'),'[LMT '.intval(map_value('year')).']',"Lexington Math Tournament\n".get_site_url().'/LMT');
 }
 
 
@@ -616,7 +622,7 @@ HEREDOC;
 
 /*
  * lmt_set_login_data($id)
- *  - $row: the result of mysql_fetch_assoc() on the query 'SELECT * FROM users WHERE id="..."'
+ *  - $row: the result of mysqli_fetch_assoc() on the query 'SELECT * FROM users WHERE id="..."'
  *
  * Sets the SESSION variables that contain a logged-in user's information
  */
@@ -629,15 +635,15 @@ function lmt_set_login_data($id) {
 		session_regenerate_id(true);  // change session id to prevent hijacking
 	}
 	
-	global $lmt_database;
-	$row = $lmt_database->query_assoc('SELECT name, school_id FROM schools WHERE school_id=%0% LIMIT 1', $id);
-	
-	$_SESSION['LMT_school_name'] = $row['name'];
-	
-	// REFRESH TIME
 	$_SESSION['LMT_last_refresh'] = time();
 	
 	if (!isSet($_SESSION['LMT_user_id'])) {
+		global $lmt_database;
+		$row = $lmt_database->query_assoc('SELECT name, school_id FROM schools WHERE school_id=%0% LIMIT 1', array($id));
+		if(!$row)trigger_error('Invalid login.',E_USER_ERROR);
+		
+		$_SESSION['LMT_school_name'] = $row['name'];
+		
 		// ** THIS IS A LOG-IN, NOT A REFRESH OF EXISTING DATA, SO... ***
 		$_SESSION['LMT_login_time'] = time();
 		$_SESSION['LMT_user_id'] = $row['school_id'];	// the actual log-in
@@ -757,14 +763,18 @@ HEREDOC;
  */
 function lmt_page_header($title) {
 	global $path_to_root, $body_onload, $use_rel_external_script, $jquery_function, $javascript, $LOCAL_BORDER_COLOR, $header_noprint, $meta_refresh;
-	
+
 	$logged_in_header = '';
 	if (isSet($_SESSION['user_id']))
 		$logged_in_header = <<<HEREDOC
 
       <div id="user"><span id="username">{$_SESSION['user_name']}</span><span id="bar"> | </span><a href="{$path_to_root}Account/Signout">Sign Out</a></div>
 HEREDOC;
-	
+	elseif(isSet($_SESSION['LMT_user_id']))
+		$logged_in_header = <<<HEREDOC
+		<div id="user"><span id="username">School: {$_SESSION['LMT_school_name']}</span><span id="bar"> | </span><a href="{$path_to_root}LMT/Registration/Signout">Log Out</a></div>
+HEREDOC;
+
 	$rel_external_script = '';
 	if ($use_rel_external_script)
 		$rel_external_script = <<<HEREDOC

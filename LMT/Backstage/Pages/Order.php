@@ -37,7 +37,7 @@ function do_move() {
 	else
 		trigger_error('Neither Up nor Down specified', E_USER_ERROR);
 	
-	$row = lmt_query('SELECT order_num FROM pages WHERE page_id="' . mysql_real_escape_string($_GET['ID']) . '"', true);
+	$row = lmt_query('SELECT order_num FROM pages WHERE page_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"', true);
 	$order = $row['order_num'];
 	
 	$row = lmt_query('SELECT page_id, order_num FROM pages WHERE order_num' . $operator
@@ -45,10 +45,10 @@ function do_move() {
 	$other_id = $row['page_id'];
 	$new_order = (int)$order + $modifier;
 	
-	lmt_query('UPDATE pages SET order_num="' . mysql_real_escape_string($new_order) . '" WHERE page_id="'
-		. mysql_real_escape_string($_GET['ID']) . '" LIMIT 1');
-	lmt_query('UPDATE pages SET order_num="' . mysql_real_escape_string($order) . '" WHERE page_id="'
-		. mysql_real_escape_string($other_id) . '" LIMIT 1');
+	lmt_query('UPDATE pages SET order_num="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$new_order) . '" WHERE page_id="'
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" LIMIT 1');
+	lmt_query('UPDATE pages SET order_num="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$order) . '" WHERE page_id="'
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$other_id) . '" LIMIT 1');
 	
 	header('Location: List');
 }

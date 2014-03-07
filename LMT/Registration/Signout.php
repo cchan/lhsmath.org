@@ -12,6 +12,8 @@ do_signout();
 
 function do_signout() {
 	session_destroy();
+	unset($_SESSION);
+	session_start();
 	
 	lmt_page_header('Signed Out');
 	echo <<<HEREDOC

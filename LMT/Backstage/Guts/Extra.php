@@ -47,7 +47,7 @@ function download_csv() {
 	
 	$result = lmt_query('SELECT team_id, guts_ans_c, teams.name AS team_name, schools.name AS school_name FROM teams '
 		. 'LEFT JOIN schools ON teams.school=schools.school_id WHERE teams.deleted="0" ORDER BY team_id');
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$id = htmlentities($row['team_id']);
 		$team_name = htmlentities($row['team_name']);
@@ -59,7 +59,7 @@ function download_csv() {
 			$school_name = 'None';
 		
 		$file .= $id . "," . $team_name . "," . $school_name . ",\"" . $ans . "\"\n";
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	// Download File

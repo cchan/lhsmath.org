@@ -782,6 +782,9 @@ function size_readable($size, $max = null, $system = 'si', $retstring = '%01.2f 
  */
 function email_obfuscate($address, $link_text=null, $pre_text='', $post_text='')
 {
+	if(is_null($link_text))$link_text=$address;
+	return $pre_text."<a href='mailto:$address'>$link_text</a>".$post_text;
+	
 	$address = strtolower($address);
 	$coded = "";
 	$unmixedkey = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.@";

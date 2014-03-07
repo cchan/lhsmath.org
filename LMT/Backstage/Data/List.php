@@ -107,14 +107,14 @@ HEREDOC;
 		$return .= "        </tr>\n";
 	}
 	
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$row_number = 0;
 	
 	if (!$row) {
 		if (!is_null($headers))
 			$colspan = count($headers) + count($links);	// count(null) == 0
 		else
-			$colspan = mysql_num_fields($result) + count($links);
+			$colspan = mysqli_field_count($result) + count($links);
 		$return .= <<<HEREDOC
         <tr>
           <td colspan="$colspan">$empty_message</td>
@@ -133,7 +133,7 @@ HEREDOC;
 			else
 				$return .= "          <td></td>\n";
 				
-			if ($row_number != mysql_num_rows($result) - 1)
+			if ($row_number != mysqli_num_rows($result) - 1)
 				$return .= '          <td class="text-centered"><a href="' . $ordering['page'] . '?Down&amp;ID=' . $row[$ordering['field']]
 					. '&amp;xsrf_token=' . $_SESSION['xsrf_token'] . '" class="nounderline">&nbsp;&darr;&nbsp;</a></td>' . "\n";
 			else
@@ -160,7 +160,7 @@ HEREDOC;
 				foreach ($row as $field=>$value) {
 					$link = str_replace('{' . $field . '}', $value, $link);
 					$url = str_replace('{' . $field . '}', $value, $url);
-					$field = mysql_fetch_field($result);
+					$field = mysqli_fetch_field($result);
 				}
 				$return .= "          <td><a href=\"$url\">$link</a></td>\n";
 			}
@@ -168,7 +168,7 @@ HEREDOC;
 		
 		$return .= "        </tr>\n";
 		
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 		$row_number++;
 	}
 	
@@ -264,14 +264,14 @@ HEREDOC;
 		$return .= "        </tr>\n";
 	}
 	
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$row_number = 0;
 	
 	if (!$row) {
 		if (!is_null($headers))
 			$colspan = count($headers) + count($links);	// count(null) == 0
 		else
-			$colspan = mysql_num_fields($result) + count($links);
+			$colspan = mysqli_field_count($result) + count($links);
 		$return .= <<<HEREDOC
         <tr>
           <td colspan="$colspan">$empty_message</td>
@@ -290,7 +290,7 @@ HEREDOC;
 			else
 				$return .= "          <td></td>\n";
 				
-			if ($row_number != mysql_num_rows($result) - 1)
+			if ($row_number != mysqli_num_rows($result) - 1)
 				$return .= '          <td class="text-centered"><a href="' . $ordering['page'] . '?Down&amp;ID=' . $row[$ordering['field']]
 					. '&amp;xsrf_token=' . $_SESSION['xsrf_token'] . '" class="nounderline">&nbsp;&darr;&nbsp;</a></td>' . "\n";
 			else
@@ -319,7 +319,7 @@ HEREDOC;
 				foreach ($row as $field=>$value) {
 					$link = str_replace('{' . $field . '}', $value, $link);
 					$url = str_replace('{' . $field . '}', $value, $url);
-					$field = mysql_fetch_field($result);
+					$field = mysqli_fetch_field($result);
 				}
 				$return .= "          <td><a href=\"$url\">$link</a></td>\n";
 			}
@@ -327,7 +327,7 @@ HEREDOC;
 		
 		$return .= "        </tr>\n";
 		
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 		$row_number++;
 	}
 	
@@ -426,14 +426,14 @@ HEREDOC;
 		$return .= "        </tr>\n";
 	}
 	
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$row_number = 0;
 	
 	if (!$row) {
 		if (!is_null($headers))
 			$colspan = count($headers) + count($links);	// count(null) == 0
 		else
-			$colspan = mysql_num_fields($result) + count($links);
+			$colspan = mysqli_field_count($result) + count($links);
 		$return .= <<<HEREDOC
         <tr>
           <td colspan="$colspan">$empty_message</td>
@@ -452,7 +452,7 @@ HEREDOC;
 			else
 				$return .= "          <td></td>\n";
 				
-			if ($row_number != mysql_num_rows($result) - 1)
+			if ($row_number != mysqli_num_rows($result) - 1)
 				$return .= '          <td class="text-centered"><a href="' . $ordering['page'] . '?Down&amp;ID=' . $row[$ordering['field']]
 					. '&amp;xsrf_token=' . $_SESSION['xsrf_token'] . '" class="nounderline">&nbsp;&darr;&nbsp;</a></td>' . "\n";
 			else
@@ -494,7 +494,7 @@ HEREDOC;
 				foreach ($row as $field=>$value) {
 					$link = str_replace('{' . $field . '}', $value, $link);
 					$url = str_replace('{' . $field . '}', $value, $url);
-					$field = mysql_fetch_field($result);
+					$field = mysqli_fetch_field($result);
 				}
 				$return .= "          <td><a href=\"$url\">$link</a></td>\n";
 			}
@@ -502,7 +502,7 @@ HEREDOC;
 		
 		$return .= "        </tr>\n";
 		
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 		$row_number++;
 	}
 	
@@ -600,14 +600,14 @@ HEREDOC;
 		$return .= "        </tr>\n";
 	}
 	
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$row_number = 0;
 	
 	if (!$row) {
 		if (!is_null($headers))
 			$colspan = count($headers) + count($links);	// count(null) == 0
 		else
-			$colspan = mysql_num_fields($result) + count($links);
+			$colspan = mysqli_field_count($result) + count($links);
 		$return .= <<<HEREDOC
         <tr>
           <td colspan="$colspan">$empty_message</td>
@@ -626,7 +626,7 @@ HEREDOC;
 			else
 				$return .= "          <td></td>\n";
 				
-			if ($row_number != mysql_num_rows($result) - 1)
+			if ($row_number != mysqli_num_rows($result) - 1)
 				$return .= '          <td class="text-centered"><a href="' . $ordering['page'] . '?Down&amp;ID=' . $row[$ordering['field']]
 					. '&amp;xsrf_token=' . $_SESSION['xsrf_token'] . '" class="nounderline">&nbsp;&darr;&nbsp;</a></td>' . "\n";
 			else
@@ -664,7 +664,7 @@ HEREDOC;
 				foreach ($row as $field=>$value) {
 					$link = str_replace('{' . $field . '}', $value, $link);
 					$url = str_replace('{' . $field . '}', $value, $url);
-					$field = mysql_fetch_field($result);
+					$field = mysqli_fetch_field($result);
 				}
 				$return .= "          <td><a href=\"$url\">$link</a></td>\n";
 			}
@@ -672,7 +672,7 @@ HEREDOC;
 		
 		$return .= "        </tr>\n";
 		
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 		$row_number++;
 	}
 	

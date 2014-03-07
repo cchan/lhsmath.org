@@ -32,7 +32,7 @@ function generate_results() {
 	if ($_GET['term'] == '')
 		die();
 		
-	$query = mysql_real_escape_string($_GET['term']);
+	$query = mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['term']);
 	$query = str_replace(" ", "%", $query);
 	
 	$comma = "";
@@ -40,50 +40,50 @@ function generate_results() {
 	
 	if (isSet($_GET['Individual'])) {
 		$result = lmt_query('SELECT DISTINCT name FROM individuals WHERE name LIKE "%' . $query . '%" OR id="' . $query .'" AND deleted="0" LIMIT 5');
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 		while ($row) {
 			echo $comma . "\n" . ' { "label": "' . $row['name'] . '", "category": "Individuals" }';
 			$comma = ",";
-			$row = mysql_fetch_assoc($result);
+			$row = mysqli_fetch_assoc($result);
 		}
 	}
 	else if (isSet($_GET['Unaffiliated'])) {
 		$result = lmt_query('SELECT DISTINCT name FROM individuals WHERE name LIKE "%' . $query . '%" OR id="' . $query .'" AND email <> "" AND deleted="0" LIMIT 5');
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 		while ($row) {
 			echo $comma . "\n" . ' { "label": "' . $row['name'] . '", "category": "Individuals" }';
 			$comma = ",";
-			$row = mysql_fetch_assoc($result);
+			$row = mysqli_fetch_assoc($result);
 		}
 	}
 	
 	if (isSet($_GET['Team'])) {
 		$result = lmt_query('SELECT DISTINCT name FROM teams WHERE name LIKE "%' . $query . '%" OR team_id="' . $query .'" AND deleted="0" LIMIT 5');
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 		while ($row) {
 			echo $comma . "\n" . ' { "label": "' . $row['name'] . '", "category": "Teams" }';
 			$comma = ",";
-			$row = mysql_fetch_assoc($result);
+			$row = mysqli_fetch_assoc($result);
 		}
 	}
 	
 	if (isSet($_GET['School'])) {
 		$result = lmt_query('SELECT DISTINCT name FROM schools WHERE name LIKE "%' . $query . '%" OR school_id="' . $query .'" AND deleted="0" LIMIT 5');
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 		while ($row) {
 			echo $comma . "\n" . ' { "label": "' . $row['name'] . '", "category": "Schools" }';
 			$comma = ",";
-			$row = mysql_fetch_assoc($result);
+			$row = mysqli_fetch_assoc($result);
 		}
 	}
 	
 	if (isSet($_GET['Coach'])) {
 		$result = lmt_query('SELECT DISTINCT coach_email FROM schools WHERE coach_email LIKE "%' . $query . '%" AND deleted="0" LIMIT 5');
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 		while ($row) {
 			echo $comma . "\n" . ' { "label": "' . $row['coach_email'] . '", "category": "Coaches" }';
 			$comma = ",";
-			$row = mysql_fetch_assoc($result);
+			$row = mysqli_fetch_assoc($result);
 		}
 	}
 

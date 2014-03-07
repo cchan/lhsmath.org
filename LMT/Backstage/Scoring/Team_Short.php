@@ -93,14 +93,14 @@ function do_enter_team_score() {
 		show_page($score_msg, '');
 	
 	$result = lmt_query('SELECT team_id, name, score_team_short FROM teams WHERE name="'
-		. mysql_real_escape_string($_POST['name']) . '" AND deleted="0"');
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['name']) . '" AND deleted="0"');
 	
-	if (mysql_num_rows($result) == 0)
+	if (mysqli_num_rows($result) == 0)
 		show_page('An team named "' . htmlentities($_POST['name']) .'" not found', '');
-	if (mysql_num_rows($result) > 1)
+	if (mysqli_num_rows($result) > 1)
 		show_multiple_results_page();
 	
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	if (!is_null($row['score_team_short'])) {
 		$msg = 'A score of ' . htmlentities($row['score_team_short'])
 			. ' has already been entered for ' . htmlentities($row['name']);
@@ -112,8 +112,8 @@ function do_enter_team_score() {
 	}
 	
 	lmt_query('UPDATE teams SET score_team_short="'
-		. mysql_real_escape_string($_POST['score']) . '" WHERE team_id="'
-		. mysql_real_escape_string($row['team_id']) . '" LIMIT 1');
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['score']) . '" WHERE team_id="'
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$row['team_id']) . '" LIMIT 1');
 
 	$msg = 'A score of ' . htmlentities($_POST['score']) . ' was entered for '
 		. htmlentities($row['name']);
@@ -138,7 +138,7 @@ function show_multiple_results_page() {
 	
 	$result = lmt_query('SELECT team_id, teams.name AS name, schools.name AS school_name '
 		. 'FROM teams LEFT JOIN schools ON teams.school=schools.school_id WHERE teams.name="'
-		. mysql_real_escape_string($_POST['name']) . '" WHERE teams.deleted="0"');
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['name']) . '" WHERE teams.deleted="0"');
 	
 	echo <<<HEREDOC
       <h1>Team Round (Short) Score Entry</h1>
@@ -158,7 +158,7 @@ HEREDOC;
 	
 	$score = htmlentities($_POST['score']);
 	
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$id = htmlentities($row['team_id']);
 		$team = htmlentities($row['name']);
@@ -170,7 +170,7 @@ HEREDOC;
         </tr>
 
 HEREDOC;
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	echo <<<HEREDOC
@@ -191,7 +191,7 @@ function do_enter_clarified_score() {
 		trigger_error('Score isn\'t valid this time?!', E_USER_ERROR);
 	
 	$row = lmt_query('SELECT name, score_team_short FROM teams WHERE team_id="'
-		. mysql_real_escape_string($_GET['ID']) . '"', true);
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"', true);
 	
 	if (!is_null($row['score_team_short']) && !isSet($_GET['Overwrite'])) {
 		if (isSet($_GET['xsrf_token'])) {
@@ -214,8 +214,8 @@ function do_enter_clarified_score() {
 		trigger_error('XSRF code incorrect', E_USER_ERROR);
 	
 	lmt_query('UPDATE teams SET score_team_short="'
-		. mysql_real_escape_string($_GET['Score']) . '" WHERE team_id="'
-		. mysql_real_escape_string($_GET['ID']) . '" LIMIT 1');
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['Score']) . '" WHERE team_id="'
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" LIMIT 1');
 	$msg = 'A score of ' . htmlentities($_GET['Score']) . ' was entered for '
 		. htmlentities($row['name']);
 	

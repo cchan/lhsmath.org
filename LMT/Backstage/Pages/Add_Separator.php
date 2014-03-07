@@ -26,7 +26,7 @@ function do_add_separator() {
 	$new_order = $row['new_order'];
 	
 	lmt_query('INSERT INTO pages (name, content, order_num) VALUES ("", "", "'
-		. mysql_real_escape_string($new_order) . '")');
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$new_order) . '")');
 	
 	header('Location: List');
 }

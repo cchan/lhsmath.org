@@ -34,7 +34,7 @@ HEREDOC;
 		. '(SELECT MAX(problem_set) FROM guts WHERE team=team_id) AS current_problem, score_guts FROM teams WHERE deleted="0" ORDER BY score_guts DESC');
 	
 	$n = 1;
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$place = htmlentities($n++);
 		$team = htmlentities($row['name']);
@@ -51,7 +51,7 @@ HEREDOC;
 <tr><td>$place.</td><td class="team">$team</td><td class="school">$school</td><td class="score">$score</td><td class="currProb">$curr</td></tr>
 
 HEREDOC;
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	echo "</table></center>";

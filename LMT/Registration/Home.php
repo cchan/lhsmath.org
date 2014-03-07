@@ -42,7 +42,7 @@ HEREDOC;
 
 
 function show_logged_in_page() {
-	$row = lmt_query('SELECT COUNT(*) FROM teams WHERE school="' . mysql_real_escape_string($_SESSION['LMT_user_id']) . '"', true);
+	$row = lmt_query('SELECT COUNT(*) FROM teams WHERE school="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_SESSION['LMT_user_id']) . '"', true);
 	if ($row['COUNT(*)'] == 0) {
 		header('Location: Team?Add');
 		die;
@@ -54,7 +54,7 @@ function show_logged_in_page() {
 	$school_name = htmlentities($_SESSION['LMT_school_name']);
 	$table = lmt_db_table(	'SELECT team_id, name, school, (SELECT COUNT(*) FROM individuals WHERE individuals.team = teams.team_id AND individuals.deleted="0")'
 								. ' AS size FROM teams WHERE school="'
-								. mysql_real_escape_string($_SESSION['LMT_user_id']) . '" AND deleted="0" ORDER BY size, name',
+								. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_SESSION['LMT_user_id']) . '" AND deleted="0" ORDER BY size, name',
 							array(	'name' => 'Name',
 									'size' => 'Size'),
 							array(	'<img src="../../res/icons/edit.png" alt="Edit" />' => 'Team?Edit={team_id}',

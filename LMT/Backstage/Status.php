@@ -134,8 +134,8 @@ HEREDOC;
               <td><input id="lmtChangeDate" type="submit" name="lmt_update_date" value="Update" /></td>
             </tr><tr>
               <td>Year:</td>
-			  <td><input disabled type="text" name="year" value="$lmt_year" size="4" maxlength="4" onkeydown="return processKey(event, 'lmtChangeYear');" /></td>
-              <td><input id="lmtChangeYear" type="submit" name="lmt_update_year" value="Update" /><div style='color:red;'>Use <a href='Upgrade_Year'>Upgrade_Year</a> instead.</div></td>
+			  <td><input type="text" name="year" value="$lmt_year" size="4" maxlength="4" onkeydown="return processKey(event, 'lmtChangeYear');" /></td>
+              <td><input id="lmtChangeYear" type="submit" name="lmt_update_year" value="Update" /><!--div style='color:red;'>Use <a href='Upgrade_Year'>Upgrade_Year</a> instead.</div--></td>
             </tr><tr>
               <td>Individual Cost:</td>
               <td><input type="text" name="indiv_cost" value="$individual_cost" size="25" onkeydown="return processKey(event, 'lmtChangeIndiv');" /></td>
@@ -175,7 +175,7 @@ function do_close_reg() {
 	map_set('registration', '0');
 	
 	add_alert('status', 'Registration has been closed. Be sure to update the About page.');
-	header('Location: Status');
+	show_page('');
 }
 
 
@@ -189,7 +189,8 @@ function do_open_reg() {
 	map_set('registration', '1');
 	
 	add_alert('status', 'Registration has been opened. Be sure to update the About page.');
-	header('Location: Status');
+	
+	show_page('');
 }
 
 
@@ -203,7 +204,8 @@ function do_close_backstage() {
 	map_set('backstage', '0');
 	
 	add_alert('status', 'Backstage has been closed');
-	header('Location: Status');
+	
+	show_page('');
 }
 
 
@@ -217,7 +219,8 @@ function do_open_backstage() {
 	map_set('backstage', '1');
 	
 	add_alert('status', 'Backstage has been opened');
-	header('Location: Status');
+	
+	show_page('');
 }
 
 
@@ -231,7 +234,8 @@ function do_freeze_scoring() {
 	map_set('scoring', '0');
 	
 	add_alert('status', 'Score entry has been frozen');
-	header('Location: Status');
+	
+	show_page('');
 }
 
 
@@ -245,7 +249,7 @@ function do_enable_scoring() {
 	map_set('scoring', '1');
 	
 	add_alert('status', 'Score entry has been enabled');
-	header('Location: Status');
+	show_page('');
 }
 
 
@@ -262,7 +266,7 @@ function do_update_date() {
 	map_set('date', $_POST['date']);
 	
 	add_alert('status', 'Date has been changed. Be sure to update the About page.');
-	header('Location: Status');
+	show_page('');
 }
 
 
@@ -280,7 +284,7 @@ function do_update_year() {
 	map_set('year', $year);
 	
 	add_alert('status', 'Year has been changed. Be sure to update the About page.');
-	header('Location: Status');
+	show_page('');
 }
 
 
@@ -297,7 +301,7 @@ function do_update_indiv_cost() {
 	map_set('indiv_cost', $_POST['indiv_cost']);
 	
 	add_alert('status', 'Individual cost has been changed');
-	header('Location: Status');
+	show_page('');
 }
 
 
@@ -314,7 +318,7 @@ function do_update_team_cost() {
 	map_set('team_cost', $_POST['team_cost']);
 	
 	add_alert('status', 'Team cost has been changed');
-	header('Location: Status');
+	show_page('');
 }
 
 
@@ -331,7 +335,7 @@ function do_update_backstage_message() {
 	map_set('backstage_message', $_POST['backstage_message']);
 	
 	add_alert('status', 'Backstage message has been changed');
-	header('Location: Status');
+	show_page('');
 }
 
 ?>

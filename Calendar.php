@@ -200,8 +200,12 @@ function process_add_event() {
  */
 function draw_calendar($month, $year) {
 	
+	$calendar = '';
+	
+	$calendar .= '<style>.cal-now{background-color:#99f}.cal-before{background-color:#ccc}.cal-after{background-color:#fff}</style>';
+	
 	/* draw table */
-	$calendar = '<table cellpadding="0" cellspacing="0" class="calendar">';
+	$calendar .= '<table cellpadding="0" cellspacing="0" class="calendar">';
 
 	/* table headings */
 	$headings = array('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday');
@@ -213,6 +217,9 @@ function draw_calendar($month, $year) {
 	$days_in_this_week = 1;
 	$day_counter = 0;
 	$dates_array = array();
+	$now_day = intval(date('j'));
+	$now_month = intval(date('m'));
+	$now_year = intval(date('Y'));
 	
 	
 	// Query Database
@@ -234,7 +241,13 @@ function draw_calendar($month, $year) {
 
 	/* keep going with days.... */
 	for($list_day = 1; $list_day <= $days_in_month; $list_day++):
-		$calendar.= '<td class="calendar-day">';
+		if($list_day==$now_day&&$month==$now_month&&$year==$now_year)
+			$calendar.= '<td class="calendar-day cal-now">';
+		elseif($list_day<$now_day&&$month==$now_month||$month<$now_month&&$year==$now_year||$year<$now_year)
+			$calendar.= '<td class="calendar-day cal-before">';
+		else
+			$calendar.= '<td class="calendar-day cal-after">';
+			
 			/* add in the day number */
 			$calendar.= '<div class="day-number">'.$list_day.'</div>';
 
@@ -245,7 +258,7 @@ function draw_calendar($month, $year) {
 			/* QUERY THE DATABASE FOR AN ENTRY FOR THIS DAY !!  IF MATCHES FOUND, PRINT THEM !! */
 			while ($row && $row['day'] == $list_day) {
 				$title = htmlentities($row['title']);
-				$calendar .= "<a href=\"View_Event?ID={$row['event_id']}\" onclick=\"popup_id('{$row['event_id']}'); return false;\">$title</a><br /><br />";
+				$calendar .= "<a href=\"View_Event?ID={$row['event_id']}\" style='display:block;width:100%;height:100%;' onclick=\"popup_id('{$row['event_id']}'); return false;\">$title</a><br /><br />";
 				$row = mysql_fetch_assoc($result);
 			}
 			

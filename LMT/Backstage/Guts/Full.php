@@ -60,7 +60,7 @@ HEREDOC;
 	
 	$row = lmt_query('SELECT name, guts_ans_a, guts_ans_b, guts_ans_c, '
 		. '(SELECT name FROM schools WHERE schools.school_id=teams.school) AS school_name '
-		. 'FROM teams WHERE team_id="' . mysql_real_escape_string($_GET['ID']) . '"', true);
+		. 'FROM teams WHERE team_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"', true);
 	
 	$team_name = htmlentities($row['name']);
 	$school_name = htmlentities($row['school_name']);
@@ -94,14 +94,14 @@ HEREDOC;
 	}
 	
 	$result = lmt_query('SELECT problem_set, score FROM guts WHERE team="'
-		. mysql_real_escape_string($_GET['ID']) . '" ORDER BY problem_set');
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" ORDER BY problem_set');
 	
 	$selected = array();
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$selected[$row['problem_set']][$row['score']] = ' selected="selected"';
 		$scores[$row['problem_set']] = htmlentities($row['score']);
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	$table = '';
 	for ($set = 1; $set < 12; $set++) {
@@ -235,8 +235,8 @@ function process_form() {
 	
 	if ($_POST['previous_value_' . $set] == 'None') {
 		$row = lmt_query('SELECT COUNT(*) FROM guts WHERE problem_set="'
-			. mysql_real_escape_string($set) . '" AND team="'
-			. mysql_real_escape_string($_GET['ID']) . '"', true);
+			. mysqli_real_escape_string($GLOBALS['LMT_DB'],$set) . '" AND team="'
+			. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"', true);
 		if ($row['COUNT(*)'] != '0')
 			show_page('The value of that field has changed. Make sure no '
 				. 'one else is currently entering scores for this team, and '
@@ -244,29 +244,29 @@ function process_form() {
 		
 		if (!is_null($score)) {
 			lmt_query('INSERT INTO guts (team, problem_set, score) VALUES ("'
-				. mysql_real_escape_string($_GET['ID']) . '", "'
-				. mysql_real_escape_string($set) . '", "'
-				. mysql_real_escape_string($score) . '")');
+				. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '", "'
+				. mysqli_real_escape_string($GLOBALS['LMT_DB'],$set) . '", "'
+				. mysqli_real_escape_string($GLOBALS['LMT_DB'],$score) . '")');
 		}
 	}
 	else {
 		$result = lmt_query('SELECT score FROM guts WHERE problem_set="'
-			. mysql_real_escape_string($set) . '" AND team="'
-			. mysql_real_escape_string($_GET['ID']) . '"');
-		if (mysql_num_rows($result) == 0)
+			. mysqli_real_escape_string($GLOBALS['LMT_DB'],$set) . '" AND team="'
+			. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"');
+		if (mysqli_num_rows($result) == 0)
 			show_page('The value of that field has changed. Make sure no '
 				. 'one else is currently entering scores for this team, and '
 				. 'try again.');
 		
 		if (is_null($score)) {
 			lmt_query('DELETE FROM guts WHERE team="'
-				. mysql_real_escape_string($_GET['ID']) . '" AND problem_set="'
-				. mysql_real_escape_string($set) . '"');
+				. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" AND problem_set="'
+				. mysqli_real_escape_string($GLOBALS['LMT_DB'],$set) . '"');
 		}
 		else {
-			lmt_query('UPDATE guts SET score="' . mysql_real_escape_string($score)
-				. '" WHERE team="' . mysql_real_escape_string($_GET['ID'])
-				. '" AND problem_set="' . mysql_real_escape_string($set) . '"');
+			lmt_query('UPDATE guts SET score="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$score)
+				. '" WHERE team="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID'])
+				. '" AND problem_set="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$set) . '"');
 		}
 	}
 	add_alert('gutsFull', 'The score for set ' . $set . ' has been updated');
@@ -315,11 +315,11 @@ function process_special_form() {
 	if (is_null($new))
 		$new = 'NULL';
 	else
-		$new = '"' . mysql_real_escape_string($new) . '"';
+		$new = '"' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$new) . '"';
 	
-	lmt_query('UPDATE teams SET ' . mysql_real_escape_string($field) . '='
+	lmt_query('UPDATE teams SET ' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$field) . '='
 		. $new . ' WHERE team_id="'
-		. mysql_real_escape_string($_GET['ID']) . '" LIMIT 1');
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" LIMIT 1');
 	
 	add_alert('gutsFull', 'The score for problem ' . $problem . ' has been updated');
 	header('Location: ' . $_SERVER['REQUEST_URI']);

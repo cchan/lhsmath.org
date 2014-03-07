@@ -20,6 +20,7 @@ Potential improvements:
 	UNDELETE... (LIMIT 1)-> UPDATE... SET Deleted=0 (LIMIT 1)
 	Honeypotting to a dud db when there's an obvious attack
 	Using Show grants to make sure this user can do the very few specific things, and only those.
+	Encryption option
 
 USAGE:
 Initialization
@@ -55,23 +56,28 @@ final class DB{
 		Represents connection to database made upon DB() construction, through which stuff is done.
 		Private; don't use it.
 	*/
-	private $con;
+	private $con=NULL;
 	
 	
 	/*
 	mixed $insert_id
-		Variable containing the (integer) inserted id for INSERT statements in AUTO_INCREMENT tables.
+		The (integer) inserted id for INSERT statements in AUTO_INCREMENT tables.
 		I don't know what it is for non-insert statements, and you should not be doing that.
 	*/
-	public $insert_id;
+	public $insert_id=NULL;
 	
 	/*
 	int $num_rows
-		Variable containing the (integer) number of rows found in a SELECT operation.
+		The (integer) number of rows found in a SELECT operation.
 		I don't know what it is for non-select statements, and you should not be doing that.
 	*/
-	public $num_rows;
+	public $num_rows=NULL;
 	
+	/*
+	string $error
+		In case of an error, this describes it.
+	*/
+	public $error = NULL;
 	
 	/*
 	__construct(string $db)
@@ -102,9 +108,12 @@ final class DB{
 			or just let PHP automatically do it upon program end.
 	*/
 	public function __destruct(){
-		$this->con->kill($this->con->thread_id);
-		$this->con->close();
+		if(isSet($this->con)){
+			$this->con->kill($this->con->thread_id);
+			$this->con->close();
+		}
 		unset($this->con);
+		//if($this->error)echo 'DB ERROR: '.$this->error;
 	}
 	
 	
@@ -115,6 +124,7 @@ final class DB{
 	public function query($template,$replaceArr=array()){
 		if(!is_string($template))$this->err('Template not a string');//not a string
 		if(!is_array($replaceArr))$this->err('Replacements not an array');//not an array
+		if($this->error)return false;
 		
 		//Check that it's not *allowed* to do anything other than those three [this in constructor]
 		//self-modding self-verification [also in constructor]?
@@ -127,7 +137,7 @@ final class DB{
 		foreach($replaceArr as $ind=>$replace)
 			if(!is_int($ind))$this->err('Not a number index of replacement arr');
 			else $template=str_replace('%'.intval($ind).'%',$this->sanitize($replace),$template);
-		if(preg_match('/%\d+%/',$template))$this->err('Unsuccessful replacement');//not all replaced
+		if(preg_match('/%\d+%/',$template))$this->err('Unsuccessful replacement '.$template);//not all replaced
 		
 		if($this->isDestructiveQuery($template))$this->err('destructive query');//destructive query noooo
 		
@@ -135,8 +145,10 @@ final class DB{
 		
 		$this->insert_id=$this->num_rows=NULL;
 		
-		if(($qresult=$this->con->query($template))===false)//On the Acer, the query takes avg 0.01 sec.
+		if(@!$this->con)return false;
+		if(($qresult=$this->con->query($template))===false){//On the Acer, the query takes avg 0.01 sec.
 			$this->err('Query failed: '.$this->con->error);//failed query
+		}
 		else{
 			$this->insert_id=intval($this->con->insert_id);
 			if($qresult!==true)$this->num_rows=intval($qresult->num_rows);
@@ -152,10 +164,14 @@ final class DB{
 		For non-SELECT (non-data-gathering) queries, it just returns true, exactly like query().
 	*/
 	public function query_assoc($template,$replaceArr=array()){
+		if(@!$this->con)return false;
+		
 		$qresult=$this->query($template,$replaceArr);
+		if(@!$this->con)return false;
 		if($this->num_rows != 1)$this->err('Query_assoc on more than one row (or zero)');
 		if($qresult===true)return true;//Not a data-gathering query, like INSERT or DELETE or UPDATE
-		return $qresult->fetch_assoc();//A data-gathering query, like SELECT
+		else if(!$qresult)$this->err('Invalid query result - '.$this->con->error);//Something went wrong
+		else return $qresult->fetch_assoc();//A data-gathering query, like SELECT
 	}
 	
 	/*
@@ -191,11 +207,15 @@ final class DB{
 							 '-');
 		$processed=str_replace($search, $replace, $in);
 		
+		
+		//This feels so dangerous.
+		
 		$escaped=$this->con->real_escape_string(
-			htmlentities($processed,ENT_QUOTES|ENT_HTML401,'ISO-8859-1')//Trying to make HTMLENTITIES work.
+			$processed //Because HTMLENTITIES stupidly encodes quotes, which therefore pass and cancel out somehow. Which means bad things.
+			//htmlentities($processed,ENT_QUOTES|ENT_HTML401,'ISO-8859-1')//Trying to make HTMLENTITIES work.
 		);
 		
-		if($escaped=='')$this->err('HTMLENTITIES failed on string "'.$processed.'"');
+		//if($escaped=='')$this->err('HTMLENTITIES failed on string "'.$processed.'"');
 		
 		return '"'.$escaped.'"';
 	}
@@ -214,16 +234,18 @@ final class DB{
 			instead of DELETE FROM asdf SET Deleted=1 WHERE qwer=123 LIMIT 1
 	*/
 	private function isDestructiveQuery($q){
-		//$DELETED_FLAG_IMPLEMENTED=true;
+		$DELETED_FLAG_IMPLEMENTED=false;
+		
+		$q=trim($q);
 		
 		//Check that its main command is indeed SELECT, INSERT, or UPDATE.
 		if(strpos($q,' ')===false)$this->err('no spaces...?');
-		$maincmd=strtolower(substr($q,0,strpos($q,' ')));
-		if(!in_array($maincmd,['select','insert','update'],true))$this->err('Select, insert, and update only.');
+		//$maincmd=strtolower(substr($q,0,strpos($q,' ')));
+		//if(!in_array($maincmd,array('select','insert','update'),true))$this->err('Select, insert, and update only.');
 		
 		//Check that there's no DROP, TRUNCATE, or DELETE. Maybe should check others too.
 		if(stripos($q,'DROP ')!==false||stripos($q,'TRUNCATE ')!==false||stripos($q,'DELETE ')!==false
-			//&&($DELETED_FLAG_IMPLEMENTED||stripos($q,'LIMIT')===false)
+			&&($DELETED_FLAG_IMPLEMENTED||stripos($q,'LIMIT')===false)
 				)$this->err('possibly dangerous query');
 		
 		if(stripos($q,'--')!==false)$this->err('possible sql injection');
@@ -239,9 +261,9 @@ final class DB{
 	*/
 	private function err($str){
 		$helpful=true;
-		if($helpful)trigger_error('DB error: '.htmlentities($str),E_USER_ERROR);
-		else trigger_error('Error.',E_USER_ERROR);
-		die();
+		if($helpful)$this->error='DB error: '.htmlentities($str);
+		else $this->error='Error.';
+		$this->__destruct();
 	}
 };
 ?>

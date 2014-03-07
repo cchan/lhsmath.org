@@ -235,7 +235,7 @@ function post_message() {
 		$bcc_list = array();
 		while ($row = $result->fetch_assoc())
 			//if ($row['id'] != $_SESSION['user_id'])	// don't send it to yourself
-				$bcc_list[$row['email']] = $row['email'];
+				$bcc_list[] = $row['email'];
 		
 		send_email($bcc_list, $subject, $txt_body, $reply_to, '', "LHS Math Club\nTo unsubscribe from this list, visit [$site_url/Account/My_Profile]");
 	}

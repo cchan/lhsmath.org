@@ -23,7 +23,7 @@ function do_add_separator() {
 	if ($_GET['xsrf_token'] != $_SESSION['xsrf_token'])
 		trigger_error('XSRF code incorrect', E_USER_ERROR);
 	
-	lmt_query('DELETE FROM pages WHERE page_id="' . mysql_real_escape_string($_GET['ID']) . '" LIMIT 1');
+	lmt_query('DELETE FROM pages WHERE page_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" LIMIT 1');
 	
 	header('Location: List');
 }

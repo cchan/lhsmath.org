@@ -32,7 +32,7 @@ else
 
 
 function display_school($err, $selected_field) {
-	$row = lmt_query('SELECT * FROM schools WHERE school_id="' . mysql_real_escape_string($_GET['ID']) . '"', true);
+	$row = lmt_query('SELECT * FROM schools WHERE school_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"', true);
 	$school_name = htmlentities($row['name']);
 	$coach_email = htmlentities($row['coach_email']);
 	$team_list = make_teams_list();
@@ -122,10 +122,10 @@ function make_teams_list() {
 	$return = '';
 	
 	$result = lmt_query('SELECT team_id, name FROM teams WHERE school="' . htmlentities($_GET['ID']) . '" AND deleted="0" ORDER BY name');
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$return .= $sp . '<a href="Team?ID=' . htmlentities($row['team_id']) . '">' . htmlentities($row['name']) . '</a><br />' . "\n";
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	if ($return == '')
@@ -147,14 +147,14 @@ function do_change_name() {
 	if ($name_msg !== true)
 		display_school($name_msg, 'document.forms[\'lmtDataSchoolName\'].school_name.focus();');
 	
-	lmt_query('UPDATE schools SET name="' . mysql_real_escape_string($name)
-		. '" WHERE school_id="' . mysql_real_escape_string($_GET['ID'])
-		. '" AND name <> "' . mysql_real_escape_string($name) . '" LIMIT 1');
+	lmt_query('UPDATE schools SET name="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$name)
+		. '" WHERE school_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID'])
+		. '" AND name <> "' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$name) . '" LIMIT 1');
 	
 	global $LMT_DB;
-	if (mysql_affected_rows($LMT_DB) == 1) {
-		$row = lmt_query('SELECT COUNT(*) FROM schools WHERE name="' . mysql_real_escape_string($name)
-			. '" AND school_id <> "' . mysql_real_escape_string($_GET['ID']) . '" AND deleted="0"', true);
+	if (mysqli_affected_rows($LMT_DB) == 1) {
+		$row = lmt_query('SELECT COUNT(*) FROM schools WHERE name="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$name)
+			. '" AND school_id <> "' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" AND deleted="0"', true);
 		if ($row['COUNT(*)'] > 0)
 			add_alert('lmt_data_school_update_name', 'School name was changed. WARNING: Another school has the same name.');
 		else
@@ -173,7 +173,7 @@ function do_change_email() {
 	
 	$email = $_POST['coach_email'];
 	
-	$row = lmt_query('SELECT coach_email FROM schools WHERE school_id="' . mysql_real_escape_string($_GET['ID']) . '"', true);
+	$row = lmt_query('SELECT coach_email FROM schools WHERE school_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"', true);
 	if ($email == $row['coach_email']) {
 		header('Location: School?ID=' . $_GET['ID']);
 		die;
@@ -183,8 +183,8 @@ function do_change_email() {
 	if ($email_msg !== true)
 		display_school($email_msg, 'document.forms[\'lmtDataSchoolEmail\'].coach_email.focus();');
 	
-	lmt_query('UPDATE schools SET coach_email="' . mysql_real_escape_string($email)
-		. '" WHERE school_id="' . mysql_real_escape_string($_GET['ID']) . '" LIMIT 1');
+	lmt_query('UPDATE schools SET coach_email="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$email)
+		. '" WHERE school_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" LIMIT 1');
 	
 	add_alert('lmt_data_school_update_email', 'Coach email was changed');
 	header('Location: School?ID=' . $_GET['ID']);
@@ -234,7 +234,7 @@ function do_change_paid() {
 		. '" AND teams_paid <> "' . htmlentities(intval($_POST['teams_paid'])) . '" LIMIT 1');
 	
 	global $LMT_DB;
-	if (mysql_affected_rows($LMT_DB) == 1)
+	if (mysqli_affected_rows($LMT_DB) == 1)
 		add_alert('lmt_data_school_update_paid', 'Number of teams paid was changed');
 	header('Location: School?ID=' . $_GET['ID']);
 }
@@ -246,7 +246,7 @@ function do_change_paid() {
 function do_confirm_delete() {
 	$id = htmlentities($_GET['ID']);
 	
-	$row = lmt_query('SELECT name FROM schools WHERE school_id="' . mysql_real_escape_string($_GET['ID']) . '"', true);
+	$row = lmt_query('SELECT name FROM schools WHERE school_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"', true);
 	$school_name = htmlentities($row['name']);
 	
 	lmt_page_header('Delete School');
@@ -275,9 +275,9 @@ function do_delete() {
 	if ($_POST['xsrf_token'] != $_SESSION['xsrf_token'])
 		trigger_error('XSRF code incorrect', E_USER_ERROR);
 	
-	lmt_query('UPDATE individuals SET deleted="1" WHERE team = ANY (SELECT team_id FROM teams WHERE school="' . mysql_real_escape_string($_GET['ID']) . '")');
-	lmt_query('UPDATE teams SET deleted="1" WHERE school="' . mysql_real_escape_string($_GET['ID']) . '"');
-	lmt_query('UPDATE schools SET deleted="1" WHERE school_id="' . mysql_real_escape_string($_GET['ID']) . '" LIMIT 1');
+	lmt_query('UPDATE individuals SET deleted="1" WHERE team = ANY (SELECT team_id FROM teams WHERE school="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '")');
+	lmt_query('UPDATE teams SET deleted="1" WHERE school="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"');
+	lmt_query('UPDATE schools SET deleted="1" WHERE school_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" LIMIT 1');
 	
 	header('Location: Home');
 }

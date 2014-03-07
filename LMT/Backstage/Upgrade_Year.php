@@ -124,7 +124,7 @@ HEREDOC;
 	global $EXPORT_STR;$EXPORT_STR=true;
 	require_once 'Export.php';//Supposedly also in Backstage dir
 	$content.=show_page();
-	$content=mysql_real_escape_string($content);
+	$content=mysqli_real_escape_string($GLOBALS['LMT_DB'],$content);
 	
 	//Insert it
 	$order_num=3000-$yrfrom;//specially determined formula for ordering in reverse, yet never overflowing. Not for 900 years.

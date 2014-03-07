@@ -86,12 +86,12 @@ function do_add_page() {
 	$new_order = $row['new_order'];
 	
 	lmt_query('INSERT INTO pages (name, content, order_num) VALUES ("'
-		. mysql_real_escape_string($name)
-		. '", "' . mysql_real_escape_string($content)
-		. '", "' . mysql_real_escape_string($new_order) . '")');
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$name)
+		. '", "' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$content)
+		. '", "' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$new_order) . '")');
 	
 	$row = lmt_query('SELECT page_id FROM pages WHERE order_num="'
-		. mysql_real_escape_string($new_order) . '"', true);
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$new_order) . '"', true);
 	
 	header('Location: View?ID=' . $row['page_id']);
 }

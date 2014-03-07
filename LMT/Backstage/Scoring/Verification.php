@@ -49,7 +49,7 @@ HEREDOC;
 	$query = "SELECT team_id, name, $sum_indiv, $sum_theme, score_team_short, score_team_long FROM teams WHERE deleted=\"0\" ORDER BY team_id";
 	$result = lmt_query($query);
 	
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$team_id = htmlentities($row['team_id']);
 		$name = htmlentities($row['name']);
@@ -77,7 +77,7 @@ HEREDOC;
           <td>$team_long</td>
         </tr>
 HEREDOC;
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	echo "      </table>\n";
 	

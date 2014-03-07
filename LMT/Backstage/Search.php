@@ -49,7 +49,7 @@ function do_search() {
 	$scope = ' ' . $_GET['Scope'];
 	$return = $_GET['Return'];
 	
-	$query = mysql_real_escape_string($_GET['Query']);
+	$query = mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['Query']);
 	$query = str_replace(" ", "%", $query);
 	
 	if (strpos($scope, 'Individual') !== false) {
@@ -57,7 +57,7 @@ function do_search() {
 			. ' (SELECT name FROM schools WHERE schools.school_id=teams.school) AS school_name'
 			. ' FROM individuals LEFT JOIN teams ON individuals.team=teams.team_id'
 			. ' WHERE individuals.name LIKE "%' . $query . '%" AND individuals.deleted="0" ORDER BY individuals.name');
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 		
 		$table = false;
 		if ($row) {
@@ -85,7 +85,7 @@ HEREDOC;
 			}
 			$url = $urlbase . '/Individual?ID=' . htmlentities($row['id']);
 			$result_table .= "        <tr><td><a href=\"$url\">$label</a></td><td class=\"text-centered\">$grade</td><td>$school_name</td><td>$team_name</td></tr>\n";
-			$row = mysql_fetch_assoc($result);
+			$row = mysqli_fetch_assoc($result);
 		}
 		
 		if ($table)
@@ -94,7 +94,7 @@ HEREDOC;
 		$result = lmt_query('SELECT individuals.*, teams.name AS team_name FROM individuals'
 			. ' LEFT JOIN teams ON individuals.team=teams.team_id'
 			. ' WHERE individuals.name LIKE "%' . $query . '%" AND email <> "" ORDER BY individuals.name');
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 		
 		$table = false;
 		if ($row) {
@@ -118,7 +118,7 @@ HEREDOC;
 			if ($row['team'] == -1)
 				$team = '<span class="i">Not Assigned</span>';
 			$result_table .= "        <tr><td><a href=\"$url\">$label</a></td><td class=\"text-centered\">$grade</td><td>$team</td></tr>\n";
-			$row = mysql_fetch_assoc($result);
+			$row = mysqli_fetch_assoc($result);
 		}
 		
 		if ($table)
@@ -129,7 +129,7 @@ HEREDOC;
 		$result = lmt_query('SELECT teams.team_id, teams.name, teams.school, schools.name AS school_name'
 			. ' FROM teams LEFT JOIN schools ON teams.school=schools.school_id'
 			. ' WHERE teams.name LIKE "%' . $query . '%" AND teams.deleted="0" ORDER BY teams.name');
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 		
 		$table = false;
 		if ($row) {
@@ -149,7 +149,7 @@ HEREDOC;
 			$url = $urlbase . '/Team?ID=' . htmlentities($row['team_id']);
 			$school = htmlentities($row['school_name']);
 			$result_table .= "        <tr><td><a href=\"$url\">$label</a><td>$school</td></td></tr>\n";
-			$row = mysql_fetch_assoc($result);
+			$row = mysqli_fetch_assoc($result);
 		}
 		
 		if ($table)
@@ -158,7 +158,7 @@ HEREDOC;
 
 	if (strpos($scope, 'School') !== false) {
 		$result = lmt_query('SELECT school_id, name FROM schools WHERE name LIKE "%' . $query . '%" AND deleted="0"');
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 		
 		$table = false;
 		if ($row) {
@@ -176,7 +176,7 @@ HEREDOC;
 			$label = htmlentities($row['name']);
 			$url = $urlbase . '/School?ID=' . htmlentities($row['school_id']);
 			$result_table .= "        <tr><td><a href=\"$url\">$label</a></td></tr>\n";
-			$row = mysql_fetch_assoc($result);
+			$row = mysqli_fetch_assoc($result);
 		}
 		
 		if ($table)
@@ -185,7 +185,7 @@ HEREDOC;
 
 	if (strpos($scope, 'Coach') !== false) {
 		$result = lmt_query('SELECT school_id, name, coach_email FROM schools WHERE coach_email LIKE "%' . $query . '%" AND deleted="0"');
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 		
 		$table = false;
 		if ($row) {
@@ -205,7 +205,7 @@ HEREDOC;
 			$url = $urlbase . '/School?ID=' . htmlentities($row['school_id']);
 			$school = htmlentities($row['name']);
 			$result_table .= "        <tr><td><a href=\"$url\">$label</a></td><td>$school</td></tr>\n";
-			$row = mysql_fetch_assoc($result);
+			$row = mysqli_fetch_assoc($result);
 		}
 		
 		if ($table)

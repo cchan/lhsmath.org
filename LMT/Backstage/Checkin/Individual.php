@@ -21,7 +21,7 @@ else
 
 function show_page() {
 	$row = lmt_query('SELECT id, name, email, grade, paid, attendance FROM individuals WHERE id="'
-		. mysql_real_escape_string($_GET['ID']) . '" AND deleted="0"', true);
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" AND deleted="0"', true);
 	$id = htmlentities($row['id']);
 	$name = htmlentities($row['name']);
 	$email = htmlentities($row['email']);
@@ -89,13 +89,13 @@ function process_form() {
 	$attendance = ($_POST['attendance'] == 'Yes') ? '1' : '0';
 	
 	$row = lmt_query('SELECT name FROM individuals WHERE id="'
-		. mysql_real_escape_string($_GET['ID']) . '"', true);
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"', true);
 	$name = htmlentities($row['name']);
 	
 	lmt_query('UPDATE individuals SET paid="'
-		. mysql_real_escape_string($paid) . '", attendance="'
-		. mysql_real_escape_string($attendance) . '" WHERE id="'
-		. mysql_real_escape_string($_GET['ID']) . '" LIMIT 1');
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$paid) . '", attendance="'
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$attendance) . '" WHERE id="'
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" LIMIT 1');
 	
 	add_alert('checkinIndividual', $name . ' has been checked in. (<a href="Individual?ID='
 		. htmlentities($_GET['ID']) . '" style="color: blue">go back</a>)');

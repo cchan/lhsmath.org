@@ -33,7 +33,7 @@ HEREDOC;
 	$result = lmt_query('SELECT team_id, teams.name AS team_name, teams.school AS school_id,'
 		. ' schools.name AS school_name FROM teams LEFT JOIN schools'
 		. ' ON teams.school=schools.school_id WHERE teams.deleted="0" ORDER BY school_name, team_name');
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$team_id = htmlentities($row['team_id']);
 		$team_name = htmlentities($row['team_name']);
@@ -49,18 +49,18 @@ HEREDOC;
 HEREDOC;
 		
 		$result2 = lmt_query('SELECT name FROM individuals WHERE team="'
-			. mysql_real_escape_string($team_id) . '" AND deleted="0" ORDER BY name');
-		$row2 = mysql_fetch_assoc($result2);
+			. mysqli_real_escape_string($GLOBALS['LMT_DB'],$team_id) . '" AND deleted="0" ORDER BY name');
+		$row2 = mysqli_fetch_assoc($result2);
 		if (!$row2)
 			echo "\n" . '        <h3 class="text-centered">No Members</span>' . "\n\n";
 		
 		while ($row2) {
 			$name = htmlentities($row2['name']);
 			echo "\n" . '        <div class="attendPerson"><div class="checkBox"></div>' . $name . '</div>';
-			$row2 = mysql_fetch_assoc($result2);
+			$row2 = mysqli_fetch_assoc($result2);
 		}
 		echo "\n" . '        <div class="pageBreak"></div>' . "\n\n";
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	echo "      </div>";

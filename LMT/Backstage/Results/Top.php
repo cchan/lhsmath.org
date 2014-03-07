@@ -52,7 +52,7 @@ HEREDOC;
 	$query ='SELECT id, individuals.name AS name, (SELECT name FROM schools WHERE school_id=teams.school) AS school_name, '
 		. 'RAND() AS rand, score_individual FROM individuals LEFT JOIN teams ON team=teams.team_id WHERE individuals.deleted="0" AND attendance="1" ORDER BY score_individual DESC, rand';
 	$result = lmt_query($query);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$place = 0;
 	$num = 0;
 	$last_score = null;
@@ -78,7 +78,7 @@ HEREDOC;
           <td class="b">$score_individual</td>
         </tr>
 HEREDOC;
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	echo "      </table>\n";
 	
@@ -96,7 +96,7 @@ HEREDOC;
 	$query ='SELECT id, individuals.name AS name, (SELECT name FROM schools WHERE school_id=teams.school) AS school_name, '
 		. 'RAND() AS rand, score_theme FROM individuals LEFT JOIN teams ON team=teams.team_id WHERE individuals.deleted="0" AND attendance="1" ORDER BY score_theme DESC, rand';
 	$result = lmt_query($query);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$place = 0;
 	$num = 0;
 	$last_score = null;
@@ -122,7 +122,7 @@ HEREDOC;
           <td class="b">$score_theme</td>
         </tr>
 HEREDOC;
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	echo "      </table>\n";
 	
@@ -140,7 +140,7 @@ HEREDOC;
 	$query = individual_composite('id, individuals.name AS name, (SELECT name FROM schools WHERE school_id=teams.school) AS school_name, '
 		. 'RAND() AS rand,', 'LEFT JOIN teams ON team=teams.team_id WHERE individuals.deleted="0" AND attendance="1" ORDER BY score_composite DESC, rand');
 	$result = lmt_query($query);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$place = 0;
 	$num = 0;
 	$last_score = null;
@@ -166,7 +166,7 @@ HEREDOC;
           <td class="b">$score_composite</td>
         </tr>
 HEREDOC;
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	echo "      </table>\n";
 	
@@ -185,7 +185,7 @@ HEREDOC;
 	
 	$query = 'SELECT team_id, name, IFNULL(score_team_short, 0) + IFNULL(score_team_long, 0) AS score_team, RAND() AS rand FROM teams WHERE deleted="0" ORDER BY score_team DESC, rand';
 	$result = lmt_query($query);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$place = 0;
 	$num = 0;
 	$last_score = null;
@@ -210,7 +210,7 @@ HEREDOC;
           <td class="b">$score_team</td>
         </tr>
 HEREDOC;
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	echo "      </table>\n";
 	
@@ -229,7 +229,7 @@ HEREDOC;
 	
 	$query = 'SELECT team_id, name, score_guts, RAND() AS rand FROM teams WHERE deleted="0" ORDER BY score_guts DESC, rand';
 	$result = lmt_query($query);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$place = 0;
 	$num = 0;
 	$last_score = null;
@@ -254,7 +254,7 @@ HEREDOC;
           <td class="b">$score_guts</td>
         </tr>
 HEREDOC;
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	echo "      </table>\n";
 	
@@ -275,7 +275,7 @@ HEREDOC;
 	
 	$query = team_composite('team_id, name, IFNULL(score_team_short, 0) + IFNULL(score_team_long, 0) AS score_team, score_guts, RAND() AS rand,', 'WHERE deleted="0" ORDER BY team_composite DESC, rand');
 	$result = lmt_query($query);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$place = 0;
 	$num = 0;
 	$last_score = null;
@@ -306,7 +306,7 @@ HEREDOC;
           <td class="b">$score_composite</td>
         </tr>
 HEREDOC;
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	echo "      </table>\n";
 	

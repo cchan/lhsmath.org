@@ -89,8 +89,8 @@ function preview_message() {
 	
 	// Get info for the byline
 	$query = 'SELECT name, email FROM users WHERE id="' . $_SESSION['user_id'] . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = lmt_query($query);
+	$row = mysqli_fetch_assoc($result);
 	$disp_subject = '[LMT ' . htmlentities(map_value('year')) . '] ' . $subject;
 	
 	lmt_page_header('Email Coaches');
@@ -188,7 +188,7 @@ function post_message() {
 	// send individual emails
 	$result = lmt_query('SELECT name, coach_email FROM schools WHERE deleted="0" AND coach_email!=""');
 	
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$count = 0;
 	$bcc_list = '';
 	while ($row) {
@@ -200,7 +200,7 @@ function post_message() {
 			lmt_send_multipart_list_email($bcc_list, $subject, $txt_body, $html_body, $reply_to, $list_id);
 			$count = 0;
 		}
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	if ($count != 0)

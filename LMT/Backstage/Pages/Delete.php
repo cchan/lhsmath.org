@@ -20,7 +20,7 @@ else
 
 function show_page() {
 	$row = lmt_query('SELECT * FROM pages WHERE page_id="'
-		. mysql_real_escape_string($_GET['ID']) . '"', true);
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"', true);
 	
 	$name = htmlentities($row['name']);
 	$content = "      " . str_replace("\n", "\n      ", $row['content']);
@@ -59,11 +59,11 @@ function do_delete_page() {
 		trigger_error('XSRF code incorrect', E_USER_ERROR);
 	
 	$row = lmt_query('SELECT name FROM pages WHERE page_id="'
-		. mysql_real_escape_string($_GET['ID']) . '"', true);
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"', true);
 	$page_name = htmlentities($row['name']);
 	
 	lmt_query('DELETE FROM pages WHERE page_id="'
-		. mysql_real_escape_string($_GET['ID']) . '" LIMIT 1');
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" LIMIT 1');
 	
 	add_alert('deletePage', 'The page &quot;' . $page_name . '&quot; has been deleted');
 	header('Location: List');

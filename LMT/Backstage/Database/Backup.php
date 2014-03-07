@@ -52,26 +52,23 @@ function do_download() {
 	ob_clean();
 	flush();
 	
-	global $DB_DATABASE, $LMT_DB_DATABASE;
-	mysql_select_db($LMT_DB_DATABASE) or trigger_error(mysql_error(), E_USER_ERROR);
-	
 	echo 'CREATE DATABASE `lmt-bak` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;' . "\n" .  'USE `lmt-bak`;' . "\n\n\n";
 	$tables = array();
-	$result = mysql_query('SHOW TABLES');
-	while($row = mysql_fetch_row($result))
+	$result = lmt_query('SHOW TABLES');
+	while($row = mysqli_fetch_row($result))
 		$tables[] = $row[0];
 	
 	foreach($tables as $table) {
-		$result = mysql_query('SELECT * FROM '.$table);
-		$num_fields = mysql_num_fields($result);
+		$result = lmt_query('SELECT * FROM '.$table);
+		$num_fields = mysqli_field_count($result);
 		
 		echo 'DROP TABLE IF EXISTS '.$table.';';
-		$row2 = mysql_fetch_row(mysql_query('SHOW CREATE TABLE '.$table));
+		$row2 = mysqli_fetch_row(lmt_query('SHOW CREATE TABLE '.$table));
 		echo "\n\n".$row2[1].";\n\n";
 		
 		for ($i = 0; $i < $num_fields; $i++)
 		{
-			while($row = mysql_fetch_row($result))
+			while($row = mysqli_fetch_row($result))
 			{
 				echo 'INSERT INTO '.$table.' VALUES(';
 				for($j=0; $j<$num_fields; $j++)

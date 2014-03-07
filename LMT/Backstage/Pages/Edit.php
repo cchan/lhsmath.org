@@ -34,7 +34,7 @@ function show_form($err) {
 	// Fetch data if this is the first time the form has been shown
 	if ($name == '' || $content == '') {
 		$row = lmt_query('SELECT name, content FROM pages WHERE page_id="'
-			. mysql_real_escape_string($_GET['ID']) . '"', true);
+			. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"', true);
 		
 		if ($name == '')
 			$name = htmlentities($row['name']);
@@ -98,9 +98,9 @@ function do_edit_page() {
 	// ** VALIDATION COMPLETE ** \\
 	
 	lmt_query('UPDATE pages SET name="'
-		. mysql_real_escape_string($name)
-		. '", content="' . mysql_real_escape_string($content)
-		. '" WHERE page_id="' . mysql_real_escape_string($_GET['ID']) . '" LIMIT 1');
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$name)
+		. '", content="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$content)
+		. '" WHERE page_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" LIMIT 1');
 	
 	header('Location: View?ID=' . $_GET['ID']);
 }

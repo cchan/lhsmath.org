@@ -92,14 +92,14 @@ function do_enter_theme_score() {
 		show_page($score_msg, '');
 	
 	$result = lmt_query('SELECT id, name, attendance, score_theme FROM individuals WHERE name="'
-		. mysql_real_escape_string($_POST['name']) . '" AND deleted="0"');
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['name']) . '" AND deleted="0"');
 	
-	if (mysql_num_rows($result) == 0)
+	if (mysqli_num_rows($result) == 0)
 		show_page('An individual named "' . htmlentities($_POST['name']) .'" not found', '');
-	if (mysql_num_rows($result) > 1)
+	if (mysqli_num_rows($result) > 1)
 		show_multiple_results_page();
 	
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	
 	if ($row['attendance'] == '0')
 		show_page(htmlentities($row['name']) . ' is absent', '');
@@ -115,8 +115,8 @@ function do_enter_theme_score() {
 	}
 	
 	lmt_query('UPDATE individuals SET score_theme="'
-		. mysql_real_escape_string($_POST['score']) . '" WHERE id="'
-		. mysql_real_escape_string($row['id']) . '" LIMIT 1');
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['score']) . '" WHERE id="'
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$row['id']) . '" LIMIT 1');
 
 	$msg = 'A score of ' . htmlentities($_POST['score']) . ' was entered for '
 		. htmlentities($row['name']);
@@ -142,7 +142,7 @@ function show_multiple_results_page() {
 	$result = lmt_query('SELECT id, individuals.name AS name, grade, teams.name AS team_name, '
 		. '(SELECT name FROM schools WHERE schools.school_id=teams.school) AS school_name '
 		. 'FROM individuals LEFT JOIN teams ON individuals.team=teams.team_id WHERE individuals.name="'
-		. mysql_real_escape_string($_POST['name']) . '" AND teams.deleted="0"');
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['name']) . '" AND teams.deleted="0"');
 	
 	echo <<<HEREDOC
       <h1>Theme Round Score Entry</h1>
@@ -164,7 +164,7 @@ HEREDOC;
 	
 	$score = htmlentities($_POST['score']);
 	
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$id = htmlentities($row['id']);
 		$name = htmlentities($row['name']);
@@ -180,7 +180,7 @@ HEREDOC;
         </tr>
 
 HEREDOC;
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	echo <<<HEREDOC
@@ -201,7 +201,7 @@ function do_enter_clarified_score() {
 		trigger_error('Score isn\'t valid this time?!', E_USER_ERROR);
 	
 	$row = lmt_query('SELECT name, score_theme FROM individuals WHERE id="'
-		. mysql_real_escape_string($_GET['ID']) . '"', true);
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"', true);
 	
 	if (!is_null($row['score_theme']) && !isSet($_GET['Overwrite'])) {
 		if (isSet($_GET['xsrf_token'])) {
@@ -224,8 +224,8 @@ function do_enter_clarified_score() {
 		trigger_error('XSRF code incorrect', E_USER_ERROR);
 	
 	lmt_query('UPDATE individuals SET score_theme="'
-		. mysql_real_escape_string($_GET['Score']) . '" WHERE id="'
-		. mysql_real_escape_string($_GET['ID']) . '" LIMIT 1');
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['Score']) . '" WHERE id="'
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" LIMIT 1');
 	$msg = 'A score of ' . htmlentities($_GET['Score']) . ' was entered for '
 		. htmlentities($row['name']);
 	

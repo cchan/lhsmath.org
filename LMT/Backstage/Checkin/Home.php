@@ -95,11 +95,11 @@ HEREDOC;
 
 function find_school() {
 	$result = lmt_query('SELECT school FROM teams WHERE team_id="'
-		. mysql_real_escape_string($_POST['id']) . '" AND deleted="0"');
-	if (mysql_num_rows($result) != 1)
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['id']) . '" AND deleted="0"');
+	if (mysqli_num_rows($result) != 1)
 		show_page('School not found');
 	
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	
 	header('Location: School?ID=' . $row['school']);
 }
@@ -110,7 +110,7 @@ function find_school() {
 
 function find_individual() {
 	$row = lmt_query('SELECT COUNT(*), email FROM individuals WHERE id="'
-		. mysql_real_escape_string($_POST['id']) . '" AND deleted="0"', true);
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['id']) . '" AND deleted="0"', true);
 	if ($row['COUNT(*)'] != 1)
 		show_page('Individual not found');
 	if ($row['email'] == "")

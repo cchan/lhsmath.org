@@ -52,11 +52,11 @@ function do_verify() {
 	$new_output = '';
 	$query = 'SELECT id, name FROM individuals WHERE name NOT REGEXP "^[A-Za-z ]{1,25}$" AND deleted="0"';
 	$result = lmt_query($query);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$new_output .= '      <span style="color: #a00;">Individual &quot;<a href="../Data/Individual?ID=' . htmlentities($row['id'])
 			. '" rel="external">' . htmlentities($row['name']) . '</a>&quot; does not have a valid name</span><br />' . "\n";
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	if ($new_output == '')
@@ -67,11 +67,11 @@ function do_verify() {
 	$new_output = '';
 	$query = 'SELECT team_id, name FROM teams WHERE name NOT REGEXP "^[A-Za-z0-9 ]{1,25}$" AND deleted="0"';
 	$result = lmt_query($query);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$new_output .= '      <span style="color: #a00;">Team &quot;<a href="../Data/Team?ID=' . htmlentities($row['team_id'])
 			. '" rel="external">' . htmlentities($row['name']) . '</a>&quot; does not have a valid name</span><br />' . "\n";
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	if ($new_output == '')
@@ -82,11 +82,11 @@ function do_verify() {
 	$new_output = '';
 	$query = 'SELECT school_id, name FROM schools WHERE name NOT REGEXP "^[A-Za-z ]{1,25}$" AND deleted="0"';
 	$result = lmt_query($query);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$new_output .= '      <span style="color: #a00;">School &quot;<a href="../Data/School?ID=' . htmlentities($row['school_id'])
 			. '" rel="external">' . htmlentities($row['name']) . '</a>&quot; does not have a valid name</span><br />' . "\n";
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	if ($new_output == '')
@@ -97,11 +97,11 @@ function do_verify() {
 	$new_output = '';
 	$query = 'SELECT id, name FROM individuals WHERE team="-1" AND deleted="0"';
 	$result = lmt_query($query);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$new_output .= '      <span style="color: #a00;">Individual &quot;<a href="../Data/Individual?ID=' . htmlentities($row['id'])
 			. '" rel="external">' . htmlentities($row['name']) . '</a>&quot; has not been placed on a team</span><br />' . "\n";
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	if ($new_output == '')
@@ -112,12 +112,12 @@ function do_verify() {
 	$new_output = '';
 	$query = 'SELECT id, name, team FROM individuals WHERE NOT EXISTS (SELECT team_id FROM teams WHERE team_id=team AND deleted="0") AND team != "-1" AND deleted="0"';
 	$result = lmt_query($query);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$new_output .= '      <span style="color: #a00;">Individual &quot;<a href="../Data/Individual?ID=' . htmlentities($row['id'])
 			. '" rel="external">' . htmlentities($row['name']) . '</a>&quot; does not have a real team ('
 			. htmlentities($row['team']) . ')</span><br />' . "\n";
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	if ($new_output == '')
@@ -128,12 +128,12 @@ function do_verify() {
 	$new_output = '';
 	$query = 'SELECT team_id, name, school FROM teams WHERE NOT EXISTS (SELECT school_id FROM schools WHERE school_id=school AND deleted="0") AND school!= "-1" AND deleted="0"';
 	$result = lmt_query($query);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$new_output .= '      <span style="color: #a00;">Team &quot;<a href="../Data/Team?ID=' . htmlentities($row['team_id'])
 			. '" rel="external">' . htmlentities($row['name']) . '</a>&quot; does not have a real school ('
 			. htmlentities($row['school']) . ')</span><br />' . "\n";
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	if ($new_output == '')
@@ -144,10 +144,10 @@ function do_verify() {
 	$new_output = '';
 	$query = 'SELECT name FROM individuals WHERE deleted="0" GROUP BY name HAVING COUNT(*) > 1';
 	$result = lmt_query($query);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$new_output .= '      <span style="color: #a00;">Duplicate individual name: &quot;' . htmlentities($row['name']) . '&quot;</span><br />' . "\n";
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	if ($new_output == '')
@@ -158,10 +158,10 @@ function do_verify() {
 	$new_output = '';
 	$query = 'SELECT name FROM teams WHERE deleted="0" GROUP BY name HAVING COUNT(*) > 1';
 	$result = lmt_query($query);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$new_output .= '      <span style="color: #a00;">Duplicate team name: &quot;' . htmlentities($row['name']) . '&quot;</span><br />' . "\n";
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	if ($new_output == '')
@@ -178,11 +178,11 @@ function do_verify() {
 	$new_output = '';
 	$query = 'SELECT id, name FROM individuals WHERE email<>"" AND paid="0" AND attendance="1" AND deleted="0"';
 	$result = lmt_query($query);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$new_output .= '      <span style="color: #a00;">Unaffiliated individual &quot;<a href="../Data/Individual?ID=' . htmlentities($row['id'])
 			. '" rel="external">' . htmlentities($row['name']) . '</a>&quot; has not paid</span><br />' . "\n";
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	if ($new_output == '')
@@ -193,11 +193,11 @@ function do_verify() {
 	$new_output = '';
 	$query = 'SELECT school_id, name FROM schools WHERE (SELECT COUNT(team_id) FROM teams WHERE school=school_id) > teams_paid AND deleted="0"';
 	$result = lmt_query($query);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$new_output .= '      <span style="color: #a00;">School &quot;<a href="../Data/School?ID=' . htmlentities($row['school_id'])
 			. '" rel="external">' . htmlentities($row['name']) . '</a>&quot; has unpaid teams</span><br />' . "\n";
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	if ($new_output == '')
@@ -208,11 +208,11 @@ function do_verify() {
 	$new_output = '';
 	$query = 'SELECT school_id, name FROM schools WHERE (SELECT COUNT(team_id) FROM teams WHERE school=school_id) < teams_paid AND deleted="0"';
 	$result = lmt_query($query);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$new_output .= '      <span style="color: #a00;">School &quot;<a href="../Data/School?ID=' . htmlentities($row['school_id'])
 			. '" rel="external">' . htmlentities($row['name']) . '</a>&quot; has paid for too many teams</span><br />' . "\n";
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	if ($new_output == '')
@@ -223,11 +223,11 @@ function do_verify() {
 	$new_output = '';
 	$query = 'SELECT id, name FROM individuals WHERE attendance="0" AND deleted="0"';
 	$result = lmt_query($query);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$new_output .= '      <span style="color: #a00;">Individual &quot;<a href="../Data/Individual?ID=' . htmlentities($row['id'])
 			. '" rel="external">' . htmlentities($row['name']) . '</a>&quot; is absent</span><br />' . "\n";
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	if ($new_output == '')
@@ -238,11 +238,11 @@ function do_verify() {
 	$new_output = '';
 	$query = 'SELECT id, name FROM individuals WHERE (score_individual IS NOT NULL OR score_theme IS NOT NULL) AND deleted="0"';
 	$result = lmt_query($query);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$new_output .= '      <span style="color: #a00;">Individual &quot;<a href="../Data/Individual?ID=' . htmlentities($row['id'])
 			. '" rel="external">' . htmlentities($row['name']) . '</a>&quot; has scores entered already</span><br />' . "\n";
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	if ($new_output == '')
@@ -253,11 +253,11 @@ function do_verify() {
 	$new_output = '';
 	$query = 'SELECT team_id, name FROM teams WHERE (score_team_short IS NOT NULL OR score_team_long IS NOT NULL) AND deleted="0"';
 	$result = lmt_query($query);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$new_output .= '      <span style="color: #a00;">Team &quot;<a href="../Data/Team?ID=' . htmlentities($row['team_id'])
 			. '" rel="external">' . htmlentities($row['name']) . '</a>&quot; has team round scores entered already</span><br />' . "\n";
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	if ($new_output == '')
@@ -268,18 +268,18 @@ function do_verify() {
 	$new_output = '';
 	$query = 'SELECT COUNT(*) FROM guts';
 	$result = lmt_query($query);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	
 	if ($row['COUNT(*)'] != '0')
 		 $new_output .= '      <span style="color: #a00;">Early-round guts scores have been entered already</span><br />' . "\n";
 	
 	$query = 'SELECT team_id, name FROM teams WHERE (guts_ans_a IS NOT NULL OR guts_ans_B IS NOT NULL or guts_ans_c IS NOT NULL) AND deleted="0"';
 	$result = lmt_query($query);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$new_output .= '      <span style="color: #a00;">Team &quot;<a href="../Data/Team?ID=' . htmlentities($row['team_id'])
 			. '" rel="external">' . htmlentities($row['name']) . '</a>&quot; has final-round guts answers entered already</span><br />' . "\n";
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	if ($new_output == '')
@@ -296,11 +296,11 @@ function do_verify() {
 	$new_output = '';
 	$query = 'SELECT id, name FROM individuals WHERE score_individual IS NULL AND attendance="1" AND deleted="0"';
 	$result = lmt_query($query);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$new_output .= '      <span style="color: #a00;">Individual &quot;<a href="../Data/Individual?ID=' . htmlentities($row['id'])
 			. '" rel="external">' . htmlentities($row['name']) . '</a>&quot; is missing an individual round score</span><br />' . "\n";
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	if ($new_output == '')
@@ -311,11 +311,11 @@ function do_verify() {
 	$new_output = '';
 	$query = 'SELECT id, name FROM individuals WHERE score_theme IS NULL AND attendance="1" AND deleted="0"';
 	$result = lmt_query($query);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$new_output .= '      <span style="color: #a00;">Individual &quot;<a href="../Data/Individual?ID=' . htmlentities($row['id'])
 			. '" rel="external">' . htmlentities($row['name']) . '</a>&quot; is missing a theme round score</span><br />' . "\n";
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	if ($new_output == '')
@@ -326,11 +326,11 @@ function do_verify() {
 	$new_output = '';
 	$query = 'SELECT team_id, name FROM teams WHERE (score_team_short IS NULL OR score_team_long IS NULL) AND deleted="0"';
 	$result = lmt_query($query);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$new_output .= '      <span style="color: #a00;">Team &quot;<a href="../Data/Team?ID=' . htmlentities($row['team_id'])
 			. '" rel="external">' . htmlentities($row['name']) . '</a>&quot; is missing a team round score</span><br />' . "\n";
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	if ($new_output == '')
@@ -350,11 +350,11 @@ function do_verify() {
 	$new_output = '';
 	$query = 'SELECT team_id, name FROM teams WHERE (SELECT COUNT(*) FROM guts WHERE team=team_id) > 11 AND deleted="0"';
 	$result = lmt_query($query);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$new_output .= '      <span style="color: #a00;">Team &quot;<a href="../Data/Team?ID=' . htmlentities($row['team_id'])
 			. '" rel="external">' . htmlentities($row['name']) . '</a>&quot; has too many guts scores</span><br />' . "\n";
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	if ($new_output == '')
@@ -365,11 +365,11 @@ function do_verify() {
 	$new_output = '';
 	$query = 'SELECT team_id, name FROM teams WHERE (SELECT COUNT(*) FROM guts WHERE team=team_id) < 11 AND deleted="0"';
 	$result = lmt_query($query);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$new_output .= '      <span style="color: #a00;">Team &quot;<a href="../Data/Team?ID=' . htmlentities($row['team_id'])
 			. '" rel="external">' . htmlentities($row['name']) . '</a>&quot; has too few guts scores</span><br />' . "\n";
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	if ($new_output == '')
@@ -380,11 +380,11 @@ function do_verify() {
 	$new_output = '';
 	$query = 'SELECT team_id, name FROM teams WHERE (guts_ans_a IS NULL OR guts_ans_b IS NULL OR guts_ans_c IS NULL) AND deleted="0"';
 	$result = lmt_query($query);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$new_output .= '      <span style="color: #a00;">Team &quot;<a href="../Data/Team?ID=' . htmlentities($row['team_id'])
 			. '" rel="external">' . htmlentities($row['name']) . '</a>&quot; has not answered the last 3 guts questions</span><br />' . "\n";
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	if ($new_output == '')
