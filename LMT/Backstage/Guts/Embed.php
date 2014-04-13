@@ -91,8 +91,8 @@ function make_teams_dropdown() {
 		. $sp . '  <option value="-1"></option>' . "\n";
 	
 	$result = lmt_query('SELECT teams.team_id, teams.name, schools.name AS school_name FROM teams'
-		. ' LEFT JOIN schools ON teams.school=schools.school_id WHERE team_id <> "'
-		. $except . '" AND teams.deleted="0" ORDER BY name');
+		. ' LEFT JOIN schools ON teams.school=schools.school_id WHERE '. /*'team_id <> "'
+		. $except . '" AND'.*/ ' teams.deleted="0" ORDER BY name');
 	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$school = htmlentities($row['school_name']);
@@ -149,6 +149,9 @@ function show_scoring_page() {
         <input type="submit" name="go_back" value="Cancel" />
         <div class="halfbreak"></div>
 HEREDOC;
+	}
+	else{
+		$previous_right='';
 	}
 	
 	echo <<<HEREDOC
@@ -227,8 +230,7 @@ function show_special_input_page($team_name, $last_score) {
         <tr>
           <td>Team:&nbsp;</td>
           <td class="b">$team_name</td>
-          <td></td>
-          <td></td>
+          <td colspan='2' style='font-size:0.65em;'><div style='position:absolute;top:7px;'>Invalid answers will be marked blank.</div></td>
         </tr><tr>
           <td>34:</td>
           <td><input type="text" name="ans34" size="10" tabindex="1" maxlength="100" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
@@ -457,7 +459,7 @@ function cancel_score() {
 	} else {
 		lmt_query('DELETE FROM guts WHERE team="'
 			. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" AND problem_set="'
-			. mysqli_real_escape_string($GLOBALS['LMT_DB'],$set) . '"');
+			. mysqli_real_escape_string($GLOBALS['LMT_DB'],$set) . '" LIMIT 3');
 	}
 	
 	show_scoring_page();

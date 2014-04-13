@@ -97,10 +97,13 @@ HEREDOC;
 		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" ORDER BY problem_set');
 	
 	$selected = array();
+	for($i=1;$i<12;$i++)$selected[$i]=array('','','','');
 	$row = mysqli_fetch_assoc($result);
 	while ($row) {
-		$selected[$row['problem_set']][$row['score']] = ' selected="selected"';
-		$scores[$row['problem_set']] = htmlentities($row['score']);
+		if(isSet($row['score'])){
+			$selected[$row['problem_set']][$row['score']] = ' selected="selected"';
+			$scores[$row['problem_set']] = htmlentities($row['score']);
+		}
 		$row = mysqli_fetch_assoc($result);
 	}
 	$table = '';
@@ -135,7 +138,7 @@ HEREDOC;
           </td>
         </tr>
 HEREDOC;
-		$row = $next_row;
+		//$row = $next_row;
 		
 	}
 	
@@ -226,7 +229,7 @@ function process_form() {
 		trigger_error('No button clicked', E_USER_ERROR);
 	
 	if ($_POST[$set] == 'None')
-		$score = null;
+		$score = NULL;
 	else {
 		$score = (int) htmlentities($_POST[$set]);
 		if ($score < 0 || $score > 3)
@@ -261,7 +264,7 @@ function process_form() {
 		if (is_null($score)) {
 			lmt_query('DELETE FROM guts WHERE team="'
 				. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" AND problem_set="'
-				. mysqli_real_escape_string($GLOBALS['LMT_DB'],$set) . '"');
+				. mysqli_real_escape_string($GLOBALS['LMT_DB'],$set) . '" LIMIT 1');
 		}
 		else {
 			lmt_query('UPDATE guts SET score="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$score)

@@ -113,16 +113,20 @@ function validate_team_long_score($score) {
  */
 function prescreen_guts($problem, $value) {
 	if ($problem == 34) {
-		$new_value = (float) $value;
+		$new_value = (int) $value;
 		if ((String)$new_value != $value)
 			return '';
 		
 		return $new_value;
 	}
 	else if ($problem == 35) {
-		$new_value = (float) $value;
+		$new_value = (int) $value;
 		if ((String)$new_value != $value)
 			return '';
+		if ($new_value < 3091)
+			return null;
+		if ($new_value > 15)
+			return null;
 		return $new_value;
 	}
 	else if ($problem == 36) {
@@ -211,6 +215,11 @@ HEREDOC;
  * RULE: it's complicated. see comments.
  */
 function score_guts() {
+	
+	$N=283086;
+	//15 * min($m/$N, $N/$m);
+	
+	
 	// These are the point values per round.
 	// BTW, round 12 has a maximum of 15, for
 	//   a total of 200 points in Guts
@@ -226,8 +235,8 @@ function score_guts() {
 				10 => 11,
 				11 => 13);
 	// Answers for 34 & 35
-	$ans_a = 1360;
-	$ans_b = 30178;
+	$ans_b = 283086;
+	$ans_a = 3090;
 	
 	// Code to add up values for rounds 1 to 11
 	$main = "( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=1), 0) * {$points[1]})\n";
@@ -235,8 +244,8 @@ function score_guts() {
 		$main .= " + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=$n), 0) * {$points[$n]})\n";
 	
 	// Code to score 34 & 35
-    $a = "GREATEST( 0, FLOOR(15.5 - (POW($ans_a - guts_ans_a, 2) / 6039)))";
-	$b = "GREATEST( 0,  FLOOR(15.5 - (ABS(guts_ans_b - $ans_b) / 1337)))";
+	$a = "GREATEST( 0, FLOOR(15 - 5*LOG10(guts_ans_a - $ans_a)))";
+    $b = "GREATEST( 0, FLOOR(MIN($ans_a/guts_ans_b, guts_ans_b/$ans_b)))";
 	
 	// Problem 36:
 	//$c_sub = "SELECT (SELECT AVG(guts_ans_c) FROM teams WHERE deleted=\"0\") as avg";
