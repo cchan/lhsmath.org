@@ -61,10 +61,10 @@ $SECRET_SALT = 'msl18kandgnkoq90u4@3ye56ta*74u89iit guya@0p349pti#7hw5fuj90f';
 // - this disables the lhsmath account.
 $LHSMATH_PASSWORD =		'';
 
-// just ignore this part ____________________________________________
+// just ignore this part, lets you sign in with that password _____________
 if ($LHSMATH_PASSWORD != '')
 	$LHSMATH_PASSWORD = hash_pass('lhsmath', $LHSMATH_PASSWORD);
-// __________________________________________________________________
+// ________________________________________________________________________
 
 
 
@@ -98,7 +98,7 @@ $BANNED_IPS =	array(
 
 
 
-$CATCH_ERRORS = true;			// For website debugging. Should normally be set to TRUE,
+$CATCH_ERRORS = false;			// For website debugging. Should normally be set to TRUE,
 								// which means it will just say "Whoops, something went wrong"
 								// rather than talk about the error.
 								

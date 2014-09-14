@@ -92,6 +92,8 @@ function do_edit_page() {
 	if (strlen($name) > 25)
 		show_form('The page name may not be longer than 25 characters');
 	
+	str_replace($content,"{INDIVCOST}",map_value());
+	
 	if (strlen($content) > 20000)
 		show_form('The content may not be longer than 20,000 characters');
 	

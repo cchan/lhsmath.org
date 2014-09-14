@@ -243,7 +243,7 @@ function restrict_access($levels) {
 		if ($user_level == 'X') {
 			// Maybe they have permissions, they're just not logged in
 			// Show login page
-			require_once $path_to_root . 'Account/Signin';
+			require_once $path_to_root . 'Account/Signin.php';
 			die();
 		}
 		else if ($user_level == 'E') {
@@ -1027,6 +1027,10 @@ function default_page_footer($page_name) {
 		
 		$names[] = 'Member Sign-in';
 		$pages[] = 'Account/Signin';
+		
+		
+		$names[] = 'Member Registration';
+		$pages[] = 'Account/Register';
 		
 		
 		for ($n = 0; $n < count($names); $n++) {

@@ -97,9 +97,9 @@ function show_form(){
 	</form>
 	<b>In addition to this, you also need to...</b>
 	<ul>
-		<li>Depending whether you have a 2014 Archive page right now, you may have to delete the old one (Website)</li>
+		<li>Depending whether you have an Archive page right now, you may have to delete the old one (Website)</li>
 		<li>Link the flickr album on the archive page (Website)</li>
-		<li>Put all problems, solutions, and the zip file into the LMT Dropbox folder</li>
+		<li>Put all problems, solutions, and the full zip file into the LMT Dropbox folder</li>
 		<li>Change any necessary general information in <a href="Status" target="_blank">Status</a></li>
 	</ul>
 HEREDOC;
@@ -155,14 +155,14 @@ function archive_lmt_db($uname,$passw,$yrfrom,$yrto){
 	
 	//copy db info to new db
 	//This can be done dynamically using SHOW TABLES but this is easier.
-	$tables=['guts','individuals','map','pages','schools','teams'];
+	$tables=array('guts','individuals','map','pages','schools','teams');
 	foreach($tables as $table){
 		lmt_query("CREATE TABLE  `lmt-$yrfrom`.`$table` LIKE `lmt`.`$table`");
 		lmt_query("INSERT `lmt-$yrfrom`.`$table` SELECT * FROM `lmt`.`$table`");
 	}
 	
 	//truncate necessary fields in original, now-current lmt db.
-	$tables_truncate=['guts','individuals','schools','teams'];
+	$tables_truncate=array('guts','individuals','schools','teams');
 	foreach($tables_truncate as $table)
 		lmt_query("TRUNCATE TABLE `lmt`.`$table`");
 	

@@ -91,7 +91,7 @@ function send_verification_email() {
 	'/Verify_Email?id=' . $_SESSION['user_id'] . '&code=' . $verification_code;
 	
 	// Assemble the email
-	$to = $name . ' <' . $email . '>';
+	$to = $email; //'"' . $name . '" <' . $email . '>'; //For some reason this gives an error about RFC format.
 	$subject = 'Verify your Email Address';
 	$body = <<<HEREDOC
 Welcome to the LHS Math Club website, $name!
@@ -103,7 +103,7 @@ $link
 To report abuse, please contact <$WEBMASTER_EMAIL>.
 HEREDOC;
 
-	send_email($to, $subject, $body, $WEBMASTER_EMAIL);
+	send_email(array($to), $subject, $body, array($WEBMASTER_EMAIL));
 	
 	if (isSet($_SESSION['ACCOUNT_do_send_verification_email']))
 		session_unregister('ACCOUNT_do_send_verification_email'); // only send it once

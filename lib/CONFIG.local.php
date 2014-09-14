@@ -22,6 +22,6 @@ $PHP_MY_ADMIN_LINK =	'http://localhost/phpmyadmin/';
 // CUSTOM STYLING:
 $LOCAL_BORDER_COLOR = "#00FF00";
 
-$CATCH_ERRORS=false;//will not just display an "An error occurred" page
+$CATCH_ERRORS = false;//whether it will just display an "An error occurred" page
 
 ?>
