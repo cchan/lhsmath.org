@@ -84,8 +84,8 @@ $err$message_sent_msg
 	<td>Body:</td>
 	<td>
 	  <textarea name="body" rows="25" cols="80">$body</textarea>
-	  <div class="small">You may use bold, italic, underline, named links and images with
-	  <a href="http://www.bbcode.org/reference.php" rel="external">bbCode</a>.</div>
+	  <!--div class="small">You may use bold, italic, underline, named links and images with
+	  <a href="http://www.bbcode.org/reference.php" rel="external">bbCode</a>.</div-->
 	  <br /><br />
 	</td>
   </tr><tr>
@@ -230,14 +230,7 @@ function post_message() {
 		$html_body = $bb_body;
 		
 		// send all emails
-		$result=$database->query('SELECT id, name, email FROM users WHERE mailings="1" AND permissions!="T" AND approved="1" AND email_verification="1"');
-		
-		$bcc_list = array();
-		while ($row = $result->fetch_assoc())
-			//if ($row['id'] != $_SESSION['user_id'])	// don't send it to yourself
-				$bcc_list[] = $row['email'];
-		
-		send_email($bcc_list, $subject, $txt_body, $reply_to, '', "LHS Math Club\nTo unsubscribe from this list, visit [$site_url/Account/My_Profile]");
+		send_email(get_bcc_list(), $subject, $txt_body, $reply_to, '[LHS Math Club] ', "LHS Math Club\nTo unsubscribe from this list, visit [$site_url/Account/My_Profile]");
 	}
 	
 	$_SESSION['MESSAGE_sent_id'] = $msg_insert_id;
@@ -312,7 +305,7 @@ function validate_message() {
 
 
 
-
+/*
 function send_multipart_list_email($bcc_list, $subject, $txt_body, $html_body, $reply_to, $list_id) {
 	global $EMAIL_ADDRESS, $EMAIL_USERNAME, $EMAIL_PASSWORD,
 		$SMTP_SERVER, $SMTP_SERVER_PORT;
@@ -350,27 +343,28 @@ $html_body
 HEREDOC;
 	
 	
-	/*
+	
 	//It has been noted that PHP mail() is not a very efficient function for sending bulk mail,
 	//but since ~90 is not very "bulk" it doesn't really matter.
 	//This eliminates the complexity and overhead of PEAR::* stuff.
 	
-	$headers ='MIME-Version: 1.0' . "\r\n";
-	$headers.='Content-type: text/html; charset=iso-8859-1' . "\r\n";
-	$headers.="From: $from"."\r\n";
-	$headers.="To: $to"."\r\n";
-	$headers.="Reply-To: $reply_to"."\r\n";
-	$headers.="Subject: $subject"."\r\n";
-	$headers.="Precedence: bulk"."\r\n";
-	$headers.="List-Id: $list_id"."\r\n";
-	$headers.="List-Unsubscribe: <$site_url/Account/My_Profile>"."\r\n";
-	$headers.="Bcc: $bcc_list"."\r\n";
+	// $headers ='MIME-Version: 1.0' . "\r\n";
+	// $headers.='Content-type: text/html; charset=iso-8859-1' . "\r\n";
+	// $headers.="From: $from"."\r\n";
+	// $headers.="To: $to"."\r\n";
+	// $headers.="Reply-To: $reply_to"."\r\n";
+	// $headers.="Subject: $subject"."\r\n";
+	// $headers.="Precedence: bulk"."\r\n";
+	// $headers.="List-Id: $list_id"."\r\n";
+	// $headers.="List-Unsubscribe: <$site_url/Account/My_Profile>"."\r\n";
+	// $headers.="Bcc: $bcc_list"."\r\n";
 	
-	$txt_body=str_replace("\n.", "\n..", wordwrap($txt_body, 70, "\r\n"));//As recommended by php.net
+	// $txt_body=str_replace("\n.", "\n..", wordwrap($txt_body, 70, "\r\n"));//As recommended by php.net
 	
-	if(!mail($to,$subject,$txt_body,$headers))trigger_error('Error sending email: ' . $subject, E_USER_ERROR);
-	*/
+	// if(!mail($to,$subject,$txt_body,$headers))trigger_error('Error sending email: ' . $subject, E_USER_ERROR);
+	
 	//Actually, the above didn't work, so we're back to PEAR::*. And probably NSFN will make us pay to use email, so using Gmail SMTP is probably better.
+	//Actually, cancel all of the above. SwiftMail works well.
 	
 	$headers = array('From' => $from,
 		'To' => $to,
@@ -393,10 +387,11 @@ HEREDOC;
 			'auth' => true,
 			'username' => $EMAIL_USERNAME,
 			'password' => $EMAIL_PASSWORD));
-	$mail = $smtp->send($bcc_list, $headers, $body);
+	$mail = $smtp->send($bcc_list, $headers, $body);//feed it the mail
 	
 	if (PEAR::isError($mail))
 		trigger_error('Error sending email: ' . $mail->getMessage(), E_USER_ERROR);
 }
+*/
 
 ?>

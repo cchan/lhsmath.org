@@ -573,8 +573,8 @@ function form_autocomplete_query($input) {//Restrict to admins, and then move it
 		'List-Id' => $list_id,
 		'List-Unsubscribe' => '<' . $site_url . '/Account/My_Profile>'
  */
-function send_email($to, $subject, $body, $reply_to=array(), $prefix='[LHS Math Club]', $footer='') {
-	if(!is_array($to)||!is_string($subject)||!is_string($body)||!is_array($reply_to)||!is_string($prefix)||!is_string($footer))
+function send_email($to, $subject, $body, $reply_to=array(), $prefix='[LHS Math Club] ', $footer='') {
+	if(!is_array($to)||!is_string($subject)||!is_string($body)||(!is_array($reply_to)&&!is_string($reply_to))||!is_string($prefix)||!is_string($footer))
 		trigger_error('email: invalid params',E_USER_ERROR);
 	if(count($to)==0)return;
 	
@@ -582,20 +582,26 @@ function send_email($to, $subject, $body, $reply_to=array(), $prefix='[LHS Math 
 		$SMTP_SERVER, $SMTP_SERVER_PORT, $SMTP_SERVER_PROTOCOL, $LMT_EMAIL, $path_to_lmt_root;
 	require_once __DIR__."/swiftmailer/swift_required.php";
 	
+	//Preprocess some stuff (only sending in text, no BBCode unfortunately)
 	$site_url = get_site_url();
-	if($reply_to=='')$reply_to=array($EMAIL_ADDRESS=>'LHS Math Club Mailbot');
+	if(strpos(strtolower($subject),"lhs math")===false)$subject=$prefix.$subject;
+	if(count($reply_to)==0 || $reply_to=='')$reply_to=array($EMAIL_ADDRESS=>'LHS Math Club Mailbot');
 	if($footer=='')$footer="LHS Math Club\n$site_url";
 	$body .= "\n\n\n---\n$footer\n";
-
+	
+	//Connect to the super-secret LHS Math Club Mailbot Gmail account
 	$transport = Swift_SmtpTransport::newInstance($SMTP_SERVER,$SMTP_SERVER_PORT,$SMTP_SERVER_PROTOCOL)
 	  ->setUsername($EMAIL_USERNAME)->setPassword($EMAIL_PASSWORD);
-
+	
+	//Make a Mailer that will send through that transport (limiting to 50/send)
 	$mailer = Swift_Mailer::newInstance($transport);
 	$mailer->registerPlugin(new Swift_Plugins_AntiFloodPlugin(50));//Max 50 emails per send
 
 	try{
+		//Mush all info into the Mailer
 		$message = Swift_Message::newInstance($prefix.' '.$subject)
-			->setFrom(array($EMAIL_ADDRESS=>'LHS Math Club Mailbot'))->setBcc($to)
+			->setFrom(array($EMAIL_ADDRESS=>'LHS Math Club Mailbot'))
+			->setBcc($to)
 			->setBody($body);
 		$message->setReplyTo($reply_to);
 		
@@ -605,6 +611,18 @@ function send_email($to, $subject, $body, $reply_to=array(), $prefix='[LHS Math 
 	catch(Exception $e){
 		trigger_error('Email exception: '.$e->getMessage(),E_USER_ERROR);
 	}
+}
+
+function get_bcc_list(){
+	static $list=0;
+	if($list === 0){
+		$list = array();
+		$database->query('SELECT id, name, email FROM users WHERE mailings="1" AND permissions!="T" AND email_verification="1"');//Doesn't have to be approved.
+		while ($row = $result->fetch_assoc())
+			//if ($row['id'] != $_SESSION['user_id'])	// don't send it to yourself
+				$list[] = $row['email'];
+	}
+	return $list;
 }
 
 
