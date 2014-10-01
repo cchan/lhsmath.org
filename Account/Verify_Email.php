@@ -97,8 +97,10 @@ function send_verification_email() {
 Welcome to the LHS Math Club website, $name!
 Please click on the link below to verify your email address.
 
-$link
+[b][url]$link[/url][/b]
 
+
+If you didn't create an account, just ignore this email and nothing will happen.
 
 To report abuse, please contact <$WEBMASTER_EMAIL>.
 HEREDOC;

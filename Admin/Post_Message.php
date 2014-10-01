@@ -84,8 +84,7 @@ $err$message_sent_msg
 	<td>Body:</td>
 	<td>
 	  <textarea name="body" rows="25" cols="80">$body</textarea>
-	  <!--div class="small">You may use bold, italic, underline, named links and images with
-	  <a href="http://www.bbcode.org/reference.php" rel="external">bbCode</a>.</div-->
+	  <div class="small">LHSMATH features <a href="Captains#BBCode" target="_blank">bbCode-like syntax</a>.</div>
 	  <br /><br />
 	</td>
   </tr><tr>
@@ -116,7 +115,7 @@ function preview_message() {
 	if (!validate_message())
 		return;
 	
-	global $subject, $bb_body, $body, $email, $use_rel_external_script;
+	global $subject, $html_body, $body, $email, $use_rel_external_script;
 	$use_rel_external_script = true;
 	
 	// Get info for the byline
@@ -144,7 +143,7 @@ function preview_message() {
   <td><span class="b">[Math Club] $subject</span><br /><br /></td>
 </tr><tr>
   <td>Body:</td>
-  <td>$bb_body<br /><br /></td>
+  <td>$html_body<br /><br /></td>
 </tr><tr>
   <td>Mailing:&nbsp;</td>
   <td><span class="b">$mailing_message</span><br /><br /></td>
@@ -188,12 +187,11 @@ function post_message() {
 	if (!validate_message())
 		return;
 	
-	global $subject, $bb_body, $body, $email, $use_rel_external_script, $database;
+	global $subject, $html_body, $body, $email, $use_rel_external_script, $database;
 	
 	// Insert into database
-	$database->query('INSERT INTO messages (author, subject, body) VALUES (%0%,%1%,%2%)',array($_SESSION['user_id'],$subject,$bb_body));
-	$msg_insert_id = $database->insert_id;
-	
+	$database->query('INSERT INTO messages (author, subject, body) VALUES (%0%,%1%,%2%)',array($_SESSION['user_id'],$subject,$html_body));
+	$_SESSION['MESSAGE_sent_id']= $database->insert_id;
 	
 	// Send email
 	if ($email != 'no') {
@@ -202,38 +200,13 @@ function post_message() {
 		else//if($email == 'yes-you') //default
 			$reply_to = array($_SESSION['email']=>$_SESSION['user_name']);
 		
-		$site_url = str_replace(array('http://www.','http://'), '', get_site_url());
-		//$list_id = '<members.' . $site_url . '>';
-		
-		// remove bbCode from text-only version
-		$search = array(
-			'@\[(?i)b\](.*?)\[/(?i)b\]@si',
-			'@\[(?i)i\](.*?)\[/(?i)i\]@si',
-			'@\[(?i)u\](.*?)\[/(?i)u\]@si',
-			'@\[(?i)img\](.*?)\[/(?i)img\]@si',
-			'@\[(?i)url=(.*?)\](.*?)\[/(?i)url\]@si',
-			'@\[(?i)div=(.*?)\](.*?)\[/(?i)div\]@si',
-			'@\[(?i)span=(.*?)\](.*?)\[/(?i)span\]@si'
-		);
-		$replace = array(
-			'\\1',
-			'\\1',
-			'\\1',
-			'\\1',
-			'\\1',
-			'\\2',
-			'\\2'
-		);
 		$txt_body = htmlentities($body);
 		$txt_body = preg_replace($search, $replace, $txt_body);
 		
-		$html_body = $bb_body;
-		
 		// send all emails
-		send_email(get_bcc_list(), $subject, $txt_body, $reply_to, '[LHS Math Club] ', "LHS Math Club\nTo unsubscribe from this list, visit [$site_url/Account/My_Profile]");
+		send_list_email($subject, $txt_body, $reply_to);
 	}
 	
-	$_SESSION['MESSAGE_sent_id'] = $msg_insert_id;
 	header('Location: Post_Message');
 }
 
@@ -252,28 +225,12 @@ function validate_message() {
 		trigger_error('XSRF code incorrect', E_USER_ERROR);
 	
 	// Get data
-	global $subject, $body, $bb_body, $email;
+	global $subject, $body, $email;
 	$subject = htmlentities($_POST['subject']);
 	
-	$search = array(
-		'@\[(?i)b\](.*?)\[/(?i)b\]@si',
-		'@\[(?i)i\](.*?)\[/(?i)i\]@si',
-		'@\[(?i)u\](.*?)\[/(?i)u\]@si',
-		'@\[(?i)img\](.*?)\[/(?i)img\]@si',
-		'@\[(?i)url=(.*?)\](.*?)\[/(?i)url\]@si'
-	);
-	$replace = array(
-		'<span style="font-weight: bold;">\\1</span>',
-		'<span style="font-style: italic;">\\1</span>',
-		'<span style="text-decoration: underline;">\\1</span>',
-		'<img src="\\1" alt=""/>',
-		'<a href="\\1" target="_blank">\\2</a>'
-	);
-	$bb_body = htmlentities($_POST['body']);
-	$bb_body = preg_replace($search, $replace, $bb_body);
-	$bb_body = nl2br($bb_body);
+	$html_body = BBCode($_POST['body']);
+	$body = BBCode($_POST['body'],true);
 	
-	$body = htmlentities($_POST['body']);
 	$email = htmlentities($_POST['email']);
 	
 	// Validate Data

@@ -49,7 +49,7 @@ Closing
 */
 
 
-final class DB{
+final class cDB{
 	/*
 	mysqli $con
 		The original purpose of $DB, to encapsulate privately the $con variable.
@@ -95,7 +95,7 @@ final class DB{
 		//if(is_null($DB_DATABASE))global $DB_DATABASE;
 		if(is_null($DB_SERVER)||is_null($DB_USERNAME)||is_null($DB_PASSWORD)||is_null($DB_DATABASE))$this->err('Bad connection parameters');
 		$this->con=new MySQLi($DB_SERVER,$DB_USERNAME,$DB_PASSWORD,$DB_DATABASE);
-		if(!$this->con||$this->con->connect_error)$this->err('Failed connection');
+		if(!$this->con||$this->con->connect_error)$this->err('Failed connection DB ERROR (Did you forget to remove CONFIG.local.php?)',true);
 		
 		//var_dump($this->con->query('SHOW GRANTS')->fetch_all());
 		
@@ -113,7 +113,7 @@ final class DB{
 			$this->con->close();
 		}
 		unset($this->con);
-		//if($this->error)echo 'DB ERROR: '.$this->error;
+		if($this->error)echo '<div><b>DB Error</b>:'.$this->error.'</div>';
 	}
 	
 	
@@ -259,11 +259,11 @@ final class DB{
 		Triggers a custom error specifically for class DB.
 		Private; you don't need to use it.
 	*/
-	private function err($str){
+	private function err($str,$destroy=false){
 		$helpful=true;
 		if($helpful)$this->error='DB error: '.htmlentities($str);
 		else $this->error='Error.';
-		$this->__destruct();
+		if($destroy)$this->__destruct();
 	}
 };
 ?>

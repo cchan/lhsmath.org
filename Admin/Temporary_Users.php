@@ -44,7 +44,7 @@ function show_list() {
       <div class="instruction">
         Temporary accounts can be created from the Enter Scores page when the actual
         user does not yet have an account. When the user creates their real account,
-        use this page to combine the two.
+        and has been approved, use this page to combine the two.
       </div>
       
 

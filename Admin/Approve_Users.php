@@ -37,7 +37,7 @@ function show_page($err, $msg) {
       
       <div class="instruction">
         Before users can access this site, they must be
-        approved by an Admin. They will be promted to print out a sheet
+        approved by an Admin. They will be prompted to print out a sheet
         and bring it to the Captains. To activate a user's account, locate
         his or her ID on that sheet and enter it below.<br />
       </div><br />
@@ -63,7 +63,7 @@ HEREDOC;
 		echo <<<HEREDOC
 
       <br /><br />
-      <h4 class="smbottom">Recently Approved Users (to copy into Yahoo! Groups)</h4><div class="halfbreak"></div>
+      <h4 class="smbottom">Recently Approved Users</h4><div class="halfbreak"></div>
       <div class="indented">
 HEREDOC;
 		for ($i = 1; $i <= $_SESSION['approved_list_size']; $i++)
@@ -82,7 +82,7 @@ function process_form() {
 	if ($_SESSION['xsrf_token'] != $_POST['xsrf_token'])
 		trigger_error('XSRF token invalid', E_USER_ERROR);
 	
-	$query = 'SELECT name, email, approved FROM users WHERE id="' . mysql_real_escape_string($_POST['id']) . '"';
+	$query = 'SELECT name, email, mailings, approved, email_verification FROM users WHERE id="' . mysql_real_escape_string($_POST['id']) . '"';
 	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 	
 	if (mysql_num_rows($result)!= 1) {
@@ -95,6 +95,14 @@ function process_form() {
 	if ($row['approved'] == '1') {
 		show_page('User already approved.', '');
 		return;
+	}
+	if ($row['email_verification'] != '1') {
+		show_page('User\'s email not yet verified.', '');
+		return;
+	}
+	$email_warning = "";
+	if($row["mailings"] == '0') {
+		$email_warning = " <b>Warning:</b> This user has mailings turned off.";
 	}
 	
 	// ** OK To Proceed **
@@ -113,7 +121,7 @@ function process_form() {
 		$_SESSION['approved_list'][$_SESSION['approved_list_size']] = htmlentities($row['email']);
 	}
 	
-	show_page('', 'Approved: ' . $user_string);
+	show_page('', 'Approved: ' . $user_string . $email_warning);
 }
 
 ?>

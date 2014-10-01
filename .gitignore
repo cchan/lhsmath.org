@@ -214,5 +214,15 @@ pip-log.txt
 #Mr Developer
 .mr.developer.cfg
 
+
+
+#LHSMATH
+
 #Local Config
 .local.php
+
+#Database backups
+db-backup-*.sql
+
+#Error logs
+.content/Errors.txt
