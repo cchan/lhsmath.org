@@ -93,11 +93,13 @@ function send_verification_email() {
 	// Assemble the email
 	$to = $email; //'"' . $name . '" <' . $email . '>'; //For some reason this gives an error about RFC format.
 	$subject = 'Verify your Email Address';
+	//NOTE: in PHP Heredocs, apparently [] means something for variable interpolation,
+		//so you need to escape the first bracket before using BBCode.
 	$body = <<<HEREDOC
 Welcome to the LHS Math Club website, $name!
 Please click on the link below to verify your email address.
 
-[b][url]$link[/url][/b]
+[b][url]$link\[/url]\[/b]
 
 
 If you didn't create an account, just ignore this email and nothing will happen.
