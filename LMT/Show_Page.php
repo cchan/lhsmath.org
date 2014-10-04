@@ -19,8 +19,7 @@ show_page();
 function show_page() {
 	$name = str_replace('_', ' ', $_GET['Name']);//Why?
 	
-	global $lmt_database;
-	$row=$lmt_database->query_assoc('SELECT * FROM pages WHERE name=%0%',array($name));
+	$row=DB::queryFirstRow('SELECT * FROM pages WHERE name=%s',$name);
 	if (!$row) {
 		header("HTTP/1.1 404 Not Found");
 		require 'Error.php';

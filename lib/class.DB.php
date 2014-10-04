@@ -49,7 +49,7 @@ Closing
 */
 
 
-final class cDB{
+final class DB{
 	/*
 	mysqli $con
 		The original purpose of $DB, to encapsulate privately the $con variable.

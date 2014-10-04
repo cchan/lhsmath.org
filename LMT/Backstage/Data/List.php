@@ -88,7 +88,7 @@ HEREDOC;
 	
 	
 	global $LMT_DB;
-	$result = lmt_query($query);
+	$result = DB::queryRaw($query);
 	
 	$return = <<<HEREDOC
       <table class="$css">
@@ -245,7 +245,7 @@ HEREDOC;
 	
 	
 	global $LMT_DB;
-	$result = lmt_query($query);
+	$result = DB::queryRaw($query);
 	
 	$return = <<<HEREDOC
       <table class="$css">
@@ -407,7 +407,7 @@ HEREDOC;
 	
 	
 	global $LMT_DB;
-	$result = lmt_query($query);
+	$result = DB::queryRaw($query);
 	
 	$return = <<<HEREDOC
       <table class="$css">
@@ -581,7 +581,7 @@ HEREDOC;
 	
 	
 	global $LMT_DB;
-	$result = lmt_query($query);
+	$result = DB::queryRaw($query);
 	
 	$return = <<<HEREDOC
       <table class="$css">

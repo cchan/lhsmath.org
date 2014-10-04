@@ -139,10 +139,9 @@ function process_login_form() {
 		
 	
 	// Validate credentials
-	global $database;
-	$result = $database->query('SELECT id FROM users WHERE LOWER(email)=%0% AND passhash=%1% LIMIT 1',array($email,$passhash));
+	$result = DB::queryFirstField('SELECT COUNT(*) FROM users WHERE LOWER(email)=%s AND passhash=%s LIMIT 1',$email,$passhash);
 	
-	if ($database->num_rows == 0) {
+	if ($result == 0) {
 		log_attempt($email, false);
 		show_login_form('Incorrect email address or password',$email);
 		return;

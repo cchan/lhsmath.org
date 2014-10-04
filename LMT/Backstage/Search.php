@@ -53,7 +53,7 @@ function do_search() {
 	$query = str_replace(" ", "%", $query);
 	
 	if (strpos($scope, 'Individual') !== false) {
-		$result = lmt_query('SELECT individuals.*, teams.name AS team_name,'
+		$result = DB::queryRaw('SELECT individuals.*, teams.name AS team_name,'
 			. ' (SELECT name FROM schools WHERE schools.school_id=teams.school) AS school_name'
 			. ' FROM individuals LEFT JOIN teams ON individuals.team=teams.team_id'
 			. ' WHERE individuals.name LIKE "%' . $query . '%" AND individuals.deleted="0" ORDER BY individuals.name');
@@ -91,7 +91,7 @@ HEREDOC;
 		if ($table)
 			$result_table .= "      </table>\n";
 	} else if (strpos($scope, 'Unaffiliated') !== false) {
-		$result = lmt_query('SELECT individuals.*, teams.name AS team_name FROM individuals'
+		$result = DB::queryRaw('SELECT individuals.*, teams.name AS team_name FROM individuals'
 			. ' LEFT JOIN teams ON individuals.team=teams.team_id'
 			. ' WHERE individuals.name LIKE "%' . $query . '%" AND email <> "" ORDER BY individuals.name');
 		$row = mysqli_fetch_assoc($result);
@@ -126,7 +126,7 @@ HEREDOC;
 	}
 	
 	if (strpos($scope, 'Team') !== false) {
-		$result = lmt_query('SELECT teams.team_id, teams.name, teams.school, schools.name AS school_name'
+		$result = DB::queryRaw('SELECT teams.team_id, teams.name, teams.school, schools.name AS school_name'
 			. ' FROM teams LEFT JOIN schools ON teams.school=schools.school_id'
 			. ' WHERE teams.name LIKE "%' . $query . '%" AND teams.deleted="0" ORDER BY teams.name');
 		$row = mysqli_fetch_assoc($result);
@@ -157,7 +157,7 @@ HEREDOC;
 	}
 
 	if (strpos($scope, 'School') !== false) {
-		$result = lmt_query('SELECT school_id, name FROM schools WHERE name LIKE "%' . $query . '%" AND deleted="0"');
+		$result = DB::queryRaw('SELECT school_id, name FROM schools WHERE name LIKE "%' . $query . '%" AND deleted="0"');
 		$row = mysqli_fetch_assoc($result);
 		
 		$table = false;
@@ -184,7 +184,7 @@ HEREDOC;
 	}
 
 	if (strpos($scope, 'Coach') !== false) {
-		$result = lmt_query('SELECT school_id, name, coach_email FROM schools WHERE coach_email LIKE "%' . $query . '%" AND deleted="0"');
+		$result = DB::queryRaw('SELECT school_id, name, coach_email FROM schools WHERE coach_email LIKE "%' . $query . '%" AND deleted="0"');
 		$row = mysqli_fetch_assoc($result);
 		
 		$table = false;

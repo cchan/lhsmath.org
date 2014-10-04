@@ -58,9 +58,9 @@ HEREDOC;
 	
 	lmt_page_header('Guts Round');
 	
-	$row = lmt_query('SELECT name, guts_ans_a, guts_ans_b, guts_ans_c, '
+	$row = DB::queryFirstRow('SELECT name, guts_ans_a, guts_ans_b, guts_ans_c, '
 		. '(SELECT name FROM schools WHERE schools.school_id=teams.school) AS school_name '
-		. 'FROM teams WHERE team_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"', true);
+		. 'FROM teams WHERE team_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"');
 	
 	$team_name = htmlentities($row['name']);
 	$school_name = htmlentities($row['school_name']);
@@ -93,7 +93,7 @@ HEREDOC;
 		$c_checked = ' checked="checked"';
 	}
 	
-	$result = lmt_query('SELECT problem_set, score FROM guts WHERE team="'
+	$result = DB::queryRaw('SELECT problem_set, score FROM guts WHERE team="'
 		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" ORDER BY problem_set');
 	
 	$selected = array();
@@ -237,23 +237,23 @@ function process_form() {
 	}
 	
 	if ($_POST['previous_value_' . $set] == 'None') {
-		$row = lmt_query('SELECT COUNT(*) FROM guts WHERE problem_set="'
+		$row = DB::queryFirstRow('SELECT COUNT(*) FROM guts WHERE problem_set="'
 			. mysqli_real_escape_string($GLOBALS['LMT_DB'],$set) . '" AND team="'
-			. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"', true);
+			. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"');
 		if ($row['COUNT(*)'] != '0')
 			show_page('The value of that field has changed. Make sure no '
 				. 'one else is currently entering scores for this team, and '
 				. 'try again.');
 		
 		if (!is_null($score)) {
-			lmt_query('INSERT INTO guts (team, problem_set, score) VALUES ("'
+			DB::queryRaw('INSERT INTO guts (team, problem_set, score) VALUES ("'
 				. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '", "'
 				. mysqli_real_escape_string($GLOBALS['LMT_DB'],$set) . '", "'
 				. mysqli_real_escape_string($GLOBALS['LMT_DB'],$score) . '")');
 		}
 	}
 	else {
-		$result = lmt_query('SELECT score FROM guts WHERE problem_set="'
+		$result = DB::queryRaw('SELECT score FROM guts WHERE problem_set="'
 			. mysqli_real_escape_string($GLOBALS['LMT_DB'],$set) . '" AND team="'
 			. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"');
 		if (mysqli_num_rows($result) == 0)
@@ -262,12 +262,12 @@ function process_form() {
 				. 'try again.');
 		
 		if (is_null($score)) {
-			lmt_query('DELETE FROM guts WHERE team="'
+			DB::queryRaw('DELETE FROM guts WHERE team="'
 				. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" AND problem_set="'
 				. mysqli_real_escape_string($GLOBALS['LMT_DB'],$set) . '" LIMIT 1');
 		}
 		else {
-			lmt_query('UPDATE guts SET score="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$score)
+			DB::queryRaw('UPDATE guts SET score="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$score)
 				. '" WHERE team="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID'])
 				. '" AND problem_set="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$set) . '"');
 		}
@@ -320,7 +320,7 @@ function process_special_form() {
 	else
 		$new = '"' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$new) . '"';
 	
-	lmt_query('UPDATE teams SET ' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$field) . '='
+	DB::queryRaw('UPDATE teams SET ' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$field) . '='
 		. $new . ' WHERE team_id="'
 		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" LIMIT 1');
 	

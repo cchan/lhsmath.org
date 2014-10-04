@@ -32,7 +32,7 @@ function show_page() {
 
 HEREDOC;
 	
-	$result = lmt_query('SELECT id, name FROM individuals WHERE deleted="1"');
+	$result = DB::queryRaw('SELECT id, name FROM individuals WHERE deleted="1"');
 	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		echo '      <a href="Undelete?Individual=' . htmlentities($row['id'])
@@ -42,7 +42,7 @@ HEREDOC;
 	
 	echo "\n      <h3>Teams</h3>\n";
 	
-	$result = lmt_query('SELECT team_id, name FROM teams WHERE deleted="1"');
+	$result = DB::queryRaw('SELECT team_id, name FROM teams WHERE deleted="1"');
 	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		echo '      <a href="Undelete?Team=' . htmlentities($row['team_id'])
@@ -52,7 +52,7 @@ HEREDOC;
 	
 	echo "\n      <h3>Schools</h3>\n";
 	
-	$result = lmt_query('SELECT school_id, name FROM schools WHERE deleted="1"');
+	$result = DB::queryRaw('SELECT school_id, name FROM schools WHERE deleted="1"');
 	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		echo '      <a href="Undelete?School=' . htmlentities($row['school_id'])
@@ -67,7 +67,7 @@ HEREDOC;
 
 
 function do_individual() {
-	lmt_query('UPDATE individuals SET deleted="0" WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['Individual']) . '" LIMIT 1');
+	DB::queryRaw('UPDATE individuals SET deleted="0" WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['Individual']) . '" LIMIT 1');
 	
 	global $LMT_DB;
 	if (mysqli_affected_rows($LMT_DB) != 1)
@@ -81,7 +81,7 @@ function do_individual() {
 
 
 function do_team() {
-	lmt_query('UPDATE teams SET deleted="0" WHERE team_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['Team']) . '" LIMIT 1');
+	DB::queryRaw('UPDATE teams SET deleted="0" WHERE team_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['Team']) . '" LIMIT 1');
 	
 	global $LMT_DB;
 	if (mysqli_affected_rows($LMT_DB) != 1)
@@ -95,7 +95,7 @@ function do_team() {
 
 
 function do_school() {
-	lmt_query('UPDATE schools SET deleted="0" WHERE school_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['School']) . '" LIMIT 1');
+	DB::queryRaw('UPDATE schools SET deleted="0" WHERE school_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['School']) . '" LIMIT 1');
 	
 	global $LMT_DB;
 	if (mysqli_affected_rows($LMT_DB) != 1)

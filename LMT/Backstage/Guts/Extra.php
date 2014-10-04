@@ -27,7 +27,7 @@ function show_page() {
 HEREDOC;
 	
 	$c_sub = "SELECT (SELECT AVG(guts_ans_c) FROM teams WHERE deleted=\"0\") as avg";
-	$row = lmt_query($c_sub, true);
+	$row = DB::queryFirstRow($c_sub);
 	$avg = $row['avg'];
 	if ($avg == '' || is_null($avg))
 		$avg = '0';
@@ -45,7 +45,7 @@ function download_csv() {
 	// Get Data
 	$file = "Team ID,Team Name,School,Answer\n";
 	
-	$result = lmt_query('SELECT team_id, guts_ans_c, teams.name AS team_name, schools.name AS school_name FROM teams '
+	$result = DB::queryRaw('SELECT team_id, guts_ans_c, teams.name AS team_name, schools.name AS school_name FROM teams '
 		. 'LEFT JOIN schools ON teams.school=schools.school_id WHERE teams.deleted="0" ORDER BY team_id');
 	$row = mysqli_fetch_assoc($result);
 	while ($row) {

@@ -12,33 +12,7 @@ $path_to_lmt_root = '../';
 require_once $path_to_lmt_root . '../lib/lmt-functions.php';
 restrict_access('A');
 
-
-/*
-                                                                                                  
-                                                                                                  
-                                                                                                  
-                                                                                                  
-                                                                                                  
-                                                                                                  
-                                                                                                  
-                                                                                                  
-*/
-//Just to make sure you're the webmaster. It self-modifies this field, so please don't touch it.
-/*UPYEAR_SECRET_CODE_START*/
-$upyear_secret_code="6706f22d";
-/*UPYEAR_SECRET_CODE_END*/
-/*
-                                                                                                  
-                                                                                                  
-                                                                                                  
-                                                                                                  
-                                                                                                  
-                                                                                                  
-                                                                                                  
-                                                                                                  
-*/
-
-
+$upyear_secret_code = 'hellofromLMT';
 
 if(@$_POST['upyear']){
 	$good=true;
@@ -64,7 +38,6 @@ if(@$_POST['upyear']){
 		insert_archive_page($yrfrom,$yrto);
 		archive_lmt_db($_POST['uname'],$_POST['passw'],$yrfrom,$yrto);
 		reset_map_data($yrfrom,$yrto);//should be pretty much last
-		change_code();//self-modification! Terrible on source control, but fun and securing.
 		add_alert('upyear',"Successfully updated year from $yrfrom to $yrto.");
 	}
 }
@@ -124,11 +97,10 @@ HEREDOC;
 	global $EXPORT_STR;$EXPORT_STR=true;
 	require_once 'Export.php';//Supposedly also in Backstage dir
 	$content.=show_page();
-	$content=mysqli_real_escape_string($GLOBALS['LMT_DB'],$content);
 	
 	//Insert it
 	$order_num=3000-$yrfrom;//specially determined formula for ordering in reverse, yet never overflowing. Not for 900 years.
-	lmt_query("INSERT INTO pages (name,content,order_num) VALUES ('$yrfrom Archive','$content','$order_num')");
+	DB::insert('pages',array('name'=>"$yrfrom Archive",'content'=>$content,'order_num'=>$order_num));
 }
 
 
@@ -141,51 +113,29 @@ function reset_map_data($yrfrom,$yrto){
 }
 
 function archive_lmt_db($uname,$passw,$yrfrom,$yrto){
+	$yrfrom = intval($yrfrom);
+	$yrto = intval($yrto);
+	
 	//Reconnect with the new username/password with more privileges
-	global $DB_USERNAME, $DB_PASSWORD;
-	$DB_USERNAME_OLD=$DB_USERNAME;
-	$DB_PASSWORD_OLD=$DB_PASSWORD;
-	$DB_USERNAME=$uname;
-	$DB_PASSWORD=$passw;
-	connect_to_lmt_database();
+	$adminDB = new MeekroDB(NULL,$uname,$passw);
 	
 	//create new db
-	//triggers error if already exists
-	lmt_query("CREATE DATABASE  `lmt-$yrfrom` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci");
+	//probably triggers error if already exists
+	$adminDB->query("CREATE DATABASE  `lmt-$yrfrom` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci");
+	$adminDB->useDB('lmt-'.$yrfrom);
 	
 	//copy db info to new db
 	//This can be done dynamically using SHOW TABLES but this is easier.
 	$tables=array('guts','individuals','map','pages','schools','teams');
 	foreach($tables as $table){
-		lmt_query("CREATE TABLE  `lmt-$yrfrom`.`$table` LIKE `lmt`.`$table`");
-		lmt_query("INSERT `lmt-$yrfrom`.`$table` SELECT * FROM `lmt`.`$table`");
+		$adminDB->query("CREATE TABLE  `lmt-$yrfrom`.`$table` LIKE `lmt`.`$table`");
+		$adminDB->query("INSERT `lmt-$yrfrom`.`$table` SELECT * FROM `lmt`.`$table`");
 	}
 	
-	//truncate necessary fields in original, now-current lmt db.
+	//truncate necessary fields in LMT db, since it's already archived.
 	$tables_truncate=array('guts','individuals','schools','teams');
 	foreach($tables_truncate as $table)
-		lmt_query("TRUNCATE TABLE `lmt`.`$table`");
-	
-	$DB_USERNAME=$DB_USERNAME_OLD;
-	$DB_PASSWORD=$DB_PASSWORD_OLD;
-	connect_to_lmt_database();
-}
-
-
-function change_code(){
-	$contents=file_get_contents(__FILE__);
-	file_put_contents('upgrade_year_backup.txt',$contents);//backup
-	$com1='/*UPYEAR_SECRET_CODE_START*/';
-	$com2='/*UPYEAR_SECRET_CODE_END*/';
-	$redef='$upyear_secret_code="'.substr(hash('sha1',uniqid($_SERVER['REMOTE_ADDR'].mt_rand(),true)),0,8).'";';
-	
-	$pos1=strpos($contents,$com1)+strlen($com1);
-	$pos2=strpos($contents,$com2);
-	if($pos1===false||$pos2===false||$pos2-$pos1>40)return false;
-	
-	$contents=substr_replace($contents,"\n".$redef."\n",$pos1,$pos2-$pos1);
-	
-	file_put_contents(__FILE__,$contents);
+		$adminDB->query("TRUNCATE TABLE `lmt`.`$table`");
 }
 
 ?>

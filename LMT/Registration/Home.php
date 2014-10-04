@@ -42,8 +42,8 @@ HEREDOC;
 
 
 function show_logged_in_page() {
-	$row = lmt_query('SELECT COUNT(*) FROM teams WHERE school="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_SESSION['LMT_user_id']) . '"', true);
-	if ($row['COUNT(*)'] == 0) {
+	//If there's no such school, we're in the middle of adding it or something.
+	if (DB::queryFirstField('SELECT COUNT(*) FROM teams WHERE school=%i', $_SESSION['LMT_user_id']) == 0) {
 		header('Location: Team?Add');
 		die;
 	}

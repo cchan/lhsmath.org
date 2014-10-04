@@ -10,7 +10,6 @@
  *  - connect to the database
  *  - attach custom_errors as custom error handler if $CATCH_ERRORS is true.
  *  - Initialize a bunch of config variables
- *  - Initialize $database global
  *
  * Dependencies: $path_to_root defined as the relative path to the root directory of the site.
  * For example, the admin page '/Admin/blah.php' needs to have at the top:
@@ -33,7 +32,6 @@
  Use your IDE's 'find' function to get to these.
  
  custom_errors($errno,$errstr,$errfile,$errline)	Custom error handler that logs error and displays opaque error page
- connect_to_database()								Connects to database so that it can be accessed with mysql_query
  restrict_access($levels)							Restricts permission levels to those specified, redirecting based on that. Levels: E,R,P,B,R,+,L,X
  set_login_data($id)								Sets the SESSION variables that contain a logged-in user's information
  log_attempt($email,$success)						?
@@ -59,14 +57,142 @@
 
 require_once $path_to_root . 'lib/CONFIG.php';	// configuration information
 
-//Do not use PEAR mail. It is OUTDATED, badly. =>see SwiftMail included down in send_email function.
-//if(!class_exists('Net_SMTP'))require_once $path_to_root . 'lib/Net_SMTP-1.6.2.php';	// added PEAR module
-	//ALREADY INCLUDED IN SOME VERSIONS OF PEAR @#$%^&%$#@#$%$!?
-//require_once "Net/SMTP.php";
 
-//
-// DEFAULT ACTIONS:
-//
+/*
+ * val()
+ *
+ * Data validation, with ridiculously overly immense power. Examples:
+ *
+ * val('i0+',$n,$m) returns true if both $n and $m are nonnegative integers.
+ * val('*s',$_POST) returns true if $_POST is an array of strings (and nothing else). (which $_POST should always be)
+ * val(array('abc','i'),array($a,$b))
+    or val(array('abc','i'),$a,$b)
+	or val('abc,i',array($a,$b))
+	or val('abc,i',$a,$b)
+    will verify that $a is an alphabetic string and $b an int.
+ * val('**abc',$board)
+    or val('*2abc',$board)
+    returns true if $board is a 2D array of alphabetic strings (note: does not check row length alignment)
+	Supports any nonnegative integer dimensions (zero is just a plain value, and 1 is just an array), even '*200abc'.
+ * val('@@@@abc',$matrix)
+    or val('@4abc',$matrix)
+    returns true if $matrix is a 4D array of alphabetic strings, with row lengths properly aligned to form a rectangular hyperprism.
+    Note that needing this is a sign of bad coding, and probably also indicates a chronic need to get a life, like me.
+    Like *N, supports any nonnegative integer dimensions.
+ * val('@10*4@3i',$matrix)
+    Theoretically, you could do this if you wanted to verify a ten-dimensional aligned array of 
+	four-dimensional arrays of three-dimensional aligned arrays of integers. What *are* you doing?
+ */
+function val($type /*,$x1,$x2,...*/){
+	$args=func_get_args();
+	array_shift($args);
+	if(!count($args)){
+		trigger_error('val(): Nothing to validate.',E_USER_ERROR);
+		return false;
+	}
+	
+	if(is_string($type)&&strpos($type,',')!==false)$type=explode(',',$type);
+	
+	if(is_array($type)){//MULTIPLE TYPES, MULTIPLE VALIDATEES
+		while(count($type)>1 && count($args)==1 && is_array($args[0]))$args = $args[0];//While, because what if you nest empty arrays for no reason whatsoever?
+		if(count($type)!=count($args)){trigger_error('val(): #types != #validatees',E_USER_ERROR);return false;}
+		foreach($args as $arg)
+			if(!val(array_shift($type),$arg))
+				return false;
+		return true;
+	}
+	elseif(is_string($type)&&count($args)>1){//SINGLE TYPE, MULTIPLE VALIDATEES
+		foreach($args as $arg)
+			if(!val($type,$arg))
+				return false;
+		return true;
+	}
+	elseif(!is_string($type)){trigger_error('val(): $type neither string nor array',E_USER_ERROR);return false;}//Invalid $type.
+	
+	/*********SINGLE VALIDATEE*********/
+	
+	$x=$args[0];//Already confirmed that it's only one validatee, so let's go do just this one arg.
+	
+	$firstchar = substr($type,0,1);
+	$type_tmp = $type;
+	
+	//*: N-D ARRAY TYPE
+	//@: N-D ALIGNED ARRAY TYPE
+	if($firstchar=='*' || $firstchar == '@'){//does it work for '*0abc' and '@0abc'? Does it work for '***'? '@@@'? '*@*'?
+		$str_shift = function(&$str){
+			if(strlen($str)==0)trigger_error('str_shift(): empty string');
+			$chr = substr($str,0,1);
+			$str = substr($str,1);
+			return $chr;
+		};
+		$dim=0;
+		while(1){//Get how many dimensions are requested in the validatino string
+			$chr=$str_shift($morechars);
+			while($chr==$firstchar){$dim++;$chr=$str_shift($morechars);}//Increments the dimension as long as there's more of that char.
+			
+			$tmpnum='0';
+			while(val('d',$chr)){$tmpnum.=$chr;$chr=$str_shift($morechars);}//Appends digits to the end of the number as long as there's more digits,
+			$dim+=intval($tmpnum);//and then adds them to the dimension number.
+			
+			if($chr!=$firstchar)break;//If there's no more useful chars (no digits, no */@) then exit.
+		}
+		$morechars = $chr.$morechars;//Add the detected one back
+		
+		$dimensions=array();
+		if($firstchar == '@'){//Dimensions checking, for @: grab it first into $dimensions
+			$tmpx=$x;
+			for($i=0;$i<$dim;$i++){//Grab the actual dimensions
+				if(!is_array($tmpx))return false;
+				array_unshift($dimensions,count($tmpx));//So the deepest will be at the beginning.
+				$tmpx=$tmpx[0];
+			}
+		}
+		
+		//ok got everything, now recursively check all counts (if @), and at the bottom check the values.
+		$rec_check = function($matrix,$n) use ($dimensions,$morechars,&$rec_check){//then use $n to determine where in $dimensions you are.
+			if($n==0)return val($morechars,$matrix);
+			if($firstchar=='@' && count($matrix)!=$dimensions[$n-1])return false;
+			foreach($matrix as $submatrix)
+				if(!rec_check($submatrix,$n-1))return false;
+			return true;
+		};
+		return $rec_check($x,$dim);
+	}
+	
+	//SINGLE SIMPLE TYPE
+	switch(strtolower($type)){//All of these must begin with an alphabetic character.
+		case 's':case 'string':		return is_string($x);	//String
+		
+		case 'd':case 'digit':		return is_int($x)		//Digit
+										&& $x>=0
+										&& $x<10;
+		
+		case 'i-':	return is_int($x) && $x < 0;			//Negative int
+		case 'i0-':	return is_int($x) && $x <= 0;			//Nonpositive int
+		case 'i':	return is_int($x);						//Int
+		case 'i0+':	return is_int($x) && $x >= 0;			//Nonnegative int
+		case 'i+':	return is_int($x) && $x > 0;			//Positive int
+		
+		case 'num':	return is_numeric($x);					//Number (including floats)
+		
+		case 'aln':	return is_string($x) && ctype_alnum($x);//Alphanumeric
+		case 'abc':	return is_string($x) && ctype_alpha($x);//Alphabetic
+		
+		case 'e':case 'email':		return is_string($x)	//Email
+										&& filter_var($x,FILTER_VALIDATE_EMAIL)!==false;
+								// !!preg_match('/^([\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+\.)*[\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]'
+								// .'+@((((([a-z0-9]{1}[a-z0-9\-]{0,62}[a-z0-9]{1})|[a-z])\.)+[a-z]{2,6})|(\d{1,3}\.){3}\d{1,3}(\:\d{1,5})?)$/i'
+								// , $email);
+		
+		case 'f':case 'file':		return is_string($x)	//Filename
+										&& preg_match('/^[A-Za-z0-9]([A-Za-z0-9\_\-\.]+[A-Za-z0-9])?$/i',$x)
+										&& !strpos($x,'..');
+		
+		default:					trigger_error('val(): Invalid validation type.',E_USER_ERROR);return false;
+	}
+}
+
+
 
 /*
  * custom_errors($errno, $errstr, $errfile, $errline)
@@ -104,11 +230,6 @@ if ($CATCH_ERRORS) {
 function c(){global $a;if(!$a)$a=array();$a[]=debug_backtrace();}set_error_handler('a',E_ALL&!E_NOTICE);
 register_shutdown_function('b');}*/ //Debug backtracing; put c() wherever to output; will also output on program end
 
-
-
-require_once $path_to_root . 'lib/class.DB.php'; //Better, OO'd database management, plus MySQLi. Being phased out.
-$database=new cDB($DB_SERVER,$DB_USERNAME,$DB_PASSWORD,$DB_DATABASE);
-
 require_once $path_to_root . 'lib/meekrodb.2.3.class.php'; //Even better version of class.DB.php, with OO'd database management.
 DB::$host = $DB_SERVER; //defaults to localhost if omitted
 DB::$user = $DB_USERNAME;
@@ -131,7 +252,6 @@ if (in_array(strtolower($_SERVER['REMOTE_ADDR']), $BANNED_IPS)) {
 	
 	$_SESSION['permissions'] = 'B';
 	require_once $path_to_root . 'Account/Banned.php';
-	
 }
 
 // hide .PHP extension (/Home.php -> /Home - this works because of a URL Rewrite in the .htaccess file)
@@ -149,7 +269,7 @@ session_start();
 
 
 // all sessions have an XSRF-protection token that should be
-// submitted with all forms via invisble field.
+// submitted with all forms via invisible field.
 //
 // Hypothetical scenario: User logs into our site, and sometime later
 // accesses EvilSite.com, which loads a form much like
@@ -177,10 +297,6 @@ if ($_SESSION['ip_address'] != $_SERVER['REMOTE_ADDR']) {
 }
 
 
-// connect to database
-connect_to_database();
-
-
 // refresh cached data (name, permissions) 15 sec. for people who are pending email verification or account approval
 // and 1 min. for everyone else
 if (isSet($_SESSION['user_id'])) {
@@ -199,23 +315,6 @@ if (isSet($_SESSION['user_id']) && time() >= $_SESSION['login_time'] + 28800) {
 	session_destroy();
 	session_name('Session');
 	session_start();
-}
-
-
-
-
-
-/*
- * connect_to_database()
- * Connects to the database and sets the timezone for the connection
- */
-function connect_to_database() {
-	global $DB_SERVER, $DB_USERNAME, $DB_PASSWORD, $DB_DATABASE, $TIMEZONE;
-	mysql_connect($DB_SERVER, $DB_USERNAME, $DB_PASSWORD, true) or trigger_error(mysql_error(), E_USER_ERROR);
-	mysql_select_db($DB_DATABASE) or trigger_error(mysql_error(), E_USER_ERROR);
-	
-	$query = 'SET time_zone = "' . mysql_real_escape_string($TIMEZONE) . '"';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
 }
 
 
@@ -267,7 +366,7 @@ function restrict_access($levels) {
 			die();
 		}
 		else if ($user_level == 'B') {
-			// Redirecto to the 'You Are Banned' page
+			// Redirect to the 'You Are Banned' page
 			header('Location: ' . $path_to_root . 'Account/Banned');
 			die();
 		}
@@ -304,8 +403,7 @@ function set_login_data($id) {
 		session_regenerate_id(true);  // change session id to prevent hijacking
 	}
 	
-	global $database;
-	$row=$database->query_assoc('SELECT id, name, permissions, email, approved, password_reset_code, email_verification FROM users WHERE id=%0% LIMIT 1',array($id));
+	$row = DB::queryFirstRow('SELECT id, name, permissions, email, approved, password_reset_code, email_verification FROM users WHERE id=%i LIMIT 1',$id);
 	
 	if(!$row){
 		session_destroy();
@@ -333,11 +431,10 @@ function set_login_data($id) {
 	if ($_SESSION['permissions'] == 'A')
 		$_SESSION['user_name'] .= '*';
 	
-	// If a password reset has been requrested, cancel it -
+	// If a password reset has been requested, cancel it -
 	// apparently, they remembered their password
-	if ($row['password_reset_code'] != '0') {
-		$database->query('UPDATE users SET password_reset_code="0" WHERE id=%0% LIMIT 1',array($row['id']));
-	}
+	if ($row['password_reset_code'] != '0')
+		DB::update('users',array('password_reset_code'=>0),'id=%i',$row['id']);
 	
 	// REFRESH TIME
 	$_SESSION['last_refresh'] = time();
@@ -361,16 +458,16 @@ function set_login_data($id) {
  * If a user attempts to log in, this is recorded in the database
  */
 function log_attempt($email, $success) {
-	if ($email == '')
-		return;
+	if ($email == '')return;
 	
-	if ($success)
-		$success = '1';
-	else
-		$success = '0';
+	if ($success)$success = '1';
+	else $success = '0';
 	
-	global $database;
-	$database->query('INSERT INTO login_attempts (email, remote_ip, successful) VALUES (%0%,%1%,%2%)',array(strtolower($email),strtolower($_SERVER['REMOTE_ADDR']),$success));
+	DB::insert('login_attempts',array(
+		'email'=>strtolower($email),
+		'remote_ip'=>strtolower($_SERVER['REMOTE_ADDR']),
+		'successful'=>$success
+	));
 }
 
 
@@ -649,14 +746,10 @@ function send_email($to, $subject, $body, $reply_to=NULL, $prefix=NULL, $footer=
  * Gets the list of mailings-enabled people from the database, as an array. Caches.
  */
 function get_bcc_list(){
-	static $list=0;
-	if($list === 0){
-		$list = array();
-		$database->query('SELECT id, name, email FROM users WHERE mailings="1" AND permissions!="T" AND email_verification="1"');//Doesn't have to be approved.
-		while ($row = $result->fetch_assoc())
-			//if ($row['id'] != $_SESSION['user_id'])	// don't send it to yourself
-				$list[] = $row['email'];
-	}
+	static $list=0;//Caching, for efficiency.
+	if($list === 0)
+		$list = DB::queryFirstColumn('SELECT email FROM users WHERE mailings="1" AND permissions!="T" AND email_verification="1"');
+		//Doesn't have to be approved. Includes you.
 	return $list;
 }
 
@@ -722,9 +815,9 @@ function BBCode ($string, $strip_tags = false) {
 		$string = preg_replace($search, $strip_tags_replace, $string);
 	}else{
 		$string = preg_replace($search, $replace, $string);
-		$string = str_replace("</li><br />", "</li>", $string);
-		$string = str_replace("<br />\r\n<ul><br />", "<ul>", $string);
-		$string = str_replace("</ul><br />", "</ul>", $string);
+		// $string = str_replace("</li><br />", "</li>", $string);
+		// $string = str_replace("<br />\r\n<ul><br />", "<ul>", $string);
+		// $string = str_replace("</ul><br />", "</ul>", $string);
 		$string = nl2br($string);
 	}
 	

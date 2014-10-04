@@ -40,8 +40,8 @@ function show_add_page($err, $selected_field) {
 	global $body_onload, $team_name, $members;
 	$body_onload = 'document.forms[\'lmtRegAddTeam\'].' . $selected_field . '.focus();';
 	
-	$row = lmt_query('SELECT COUNT(*) FROM teams WHERE school="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_SESSION['LMT_user_id']) . '"', true);
-	if ($row['COUNT(*)'] != 0)
+	$c = DB::queryFirstField('SELECT COUNT(*) FROM teams WHERE school=%i', $_SESSION['LMT_user_id']);
+	if ($c != 0)
 		$cancel_link = "\n              &nbsp;<a href=\"Home\">Cancel</a>";
 	
 	if ($err != '')
@@ -216,31 +216,18 @@ function do_add() {
 	if ($member_grade_msg !== true)
 		show_add_page($member_grade_msg, $member_grade_msg_field);
 	
-	$row = lmt_query(	'SELECT COUNT(*) FROM teams WHERE name="'
-						. mysqli_real_escape_string($GLOBALS['LMT_DB'],$team_name)
-						. '" AND school="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_SESSION['LMT_user_id']) . '"', true);
-	if ($row['COUNT(*)'] > 0)
+	$c = DB::queryFirstField('SELECT COUNT(*) FROM teams WHERE name=%s AND school=%i', $team_name,$_SESSION['LMT_user_id']);
+	if ($c > 0)
 		show_add_page('You already have a team with that name', 'team_name');
 	
 	// ** All information has been validated at this point **
 	
-	lmt_query(	'INSERT INTO teams (name, school) VALUES("'
-				. mysqli_real_escape_string($GLOBALS['LMT_DB'],$team_name)
-				. '", "' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_SESSION['LMT_user_id']) . '")');
+	DB::insert('teams',array('name'=>$team_name,'school'=>$_SESSION['LMT_user_id']));
+	$team_id = DB::insertId();
 	
-	$row = lmt_query(	'SELECT team_id FROM teams WHERE name="'
-						. mysqli_real_escape_string($GLOBALS['LMT_DB'],$team_name)
-						. '" AND school="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_SESSION['LMT_user_id']) . '"', true);
-	$team_id = $row['team_id'];
-	
-	for ($i = 1; $i <= 6; $i++) {
-		if ($members[$i]['exists']) {
-			lmt_query(	'INSERT INTO individuals (name, grade, team) VALUES("'
-						. mysqli_real_escape_string($GLOBALS['LMT_DB'],$members[$i]['name'])
-						. '", "' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$members[$i]['grade'])
-						. '", "' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$team_id) . '")');
-		}
-	}
+	for ($i = 1; $i <= 6; $i++)
+		if ($members[$i]['exists'])
+			DB::insert('individuals',array('name'=>$members[$i]['name'],'grade'=>$members[$i]['grade'],'team'=>$team_id));
 	
 	header('Location: Home');
 }
@@ -260,10 +247,7 @@ function show_edit_page($err, $selected_field) {
 	$school_name = htmlentities($_SESSION['LMT_school_name']);
 	
 	$team_id = htmlentities($_GET['Edit']);
-	$row = lmt_query(	'SELECT name FROM teams WHERE team_id="'
-						. mysqli_real_escape_string($GLOBALS['LMT_DB'],$team_id)
-						. '" AND school="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_SESSION['LMT_user_id']) . '"', true);
-	$team_name = htmlentities($row['name']);
+	$team_name = DB::queryFirstField('SELECT name FROM teams WHERE team_id=%i AND school=%i',$team_id,$_SESSION['LMT_user_id']);
 	
 	$members = lmt_db_table(	'SELECT id, name, grade FROM individuals WHERE team="'
 								. mysqli_real_escape_string($GLOBALS['LMT_DB'],$team_id) . '" ORDER BY name',
@@ -273,9 +257,7 @@ function show_edit_page($err, $selected_field) {
 									'<img src="../../res/icons/delete.png" alt="Delete" />' => 'Team?DeleteMember={id}&amp;xsrf_token=' . $_SESSION['xsrf_token']),
 							'None',
 							'contrasting');
-							
-	$row = lmt_query('SELECT COUNT(*) FROM individuals WHERE team="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$team_id) . '"', true);
-	$num_members = (int)$row['COUNT(*)'];
+	$num_members = (int)DB::queryFirstField('SELECT COUNT(*) FROM individuals WHERE team=%i',$team_id);
 	
 	if ($num_members < 4)
 		$warning = "\n      <div class=\"alert\">There are less than 4 members on this team!</div><br />\n";
@@ -353,25 +335,17 @@ function do_edit_name() {
 	if ($name_msg !== true)
 		show_edit_page($name_msg, "document.forms['lmtRegEditTeam'].team_name.focus();");
 	
-	$row = lmt_query(	'SELECT name FROM teams WHERE team_id="'
-				. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['Edit'])
-				. '" AND school="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_SESSION['LMT_user_id']) . '"', true);
-				
-	if ($row['name'] == $team_name) {
+	$name = DB::queryFirstField('SELECT name FROM teams WHERE team_id=%i AND school=%i',$_GET['Edit'],$_SESSION['LMT_user_id']);
+	if ($name == $team_name) {
 		header('Location: Team?Edit=' . $_GET['Edit']);
 		die;
 	}
 	
-	$row = lmt_query(	'SELECT COUNT(*) FROM teams WHERE name="'
-						. mysqli_real_escape_string($GLOBALS['LMT_DB'],$team_name)
-						. '" AND school="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_SESSION['LMT_user_id']) . '"', true);
-	if ($row['COUNT(*)'] > 0)
+	$c = DB::queryFirstField('SELECT COUNT(*) FROM teams WHERE name=%s AND school=%i',$team_name,$_SESSION['LMT_user_id']);
+	if ($c > 0)
 		show_edit_page('You already have a team with that name', 'team_name');
 	
-	lmt_query(	'UPDATE teams SET name="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$team_name)
-				. '" WHERE team_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['Edit'])
-				. '" AND school="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_SESSION['LMT_user_id'])
-				. '" LIMIT 1');
+	DB::update('teams',array('name'=>$team_name),'team_id=%i AND school=%i',$_GET['Edit'],$_SESSION['LMT_user_id']);
 	
 	add_alert('regChangeName', 'The team name has been changed');
 	header('Location: Team?Edit=' . $_GET['Edit']);
@@ -398,16 +372,14 @@ function do_add_member() {
 		show_edit_page($grade_msg, "document.forms['lmtRegAddMember'].member_grade.focus();");
 	
 	// Ensure that the team exists and belongs to this user's school
-	$row = lmt_query(	'SELECT * FROM teams WHERE team_id="'
-				. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['Edit'])
-				. '" AND school="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_SESSION['LMT_user_id']) . '"', true);
+	
+	if(DB::queryFirstField('SELECT COUNT(*) FROM teams WHERE team_id=%i AND school=%i',$_GET['Edit'],$_SESSION['LMT_user_id'])==0)
+		show_edit_page('Invalid team.');
 	
 	// ** All information has been validated at this point **
 	
-	lmt_query(	'INSERT INTO individuals (name, grade, team) VALUES("'
-				. mysqli_real_escape_string($GLOBALS['LMT_DB'],$member_name)
-				. '", "' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$member_grade)
-				. '", "' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['Edit']) . '")');
+	DB::insert('individuals',array('name'=>$member_name,'grade'=>$member_grade,'team'=>$_GET['Edit']));
+	
 	header('Location: Team?Edit=' . $_GET['Edit']);
 }
 
@@ -420,8 +392,8 @@ function show_edit_member_page($err) {
 	
 	$school_name = htmlentities($_SESSION['LMT_school_name']);
 	
-	$row = lmt_query('SELECT name, grade, team FROM individuals WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['EditMember']) . '"', true);
-	$row2 = lmt_query('SELECT name, school FROM teams WHERE team_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$row['team']) . '"', true);
+	$row = DB::queryFirstRow('SELECT name, grade, team FROM individuals WHERE id=%i',$_GET['EditMember']);
+	$row2 = DB::queryFirstRow('SELECT name, school FROM teams WHERE team_id=%i',$row['team']);
 	if ($row2['school'] != $_SESSION['LMT_user_id'])
 		trigger_error('Edit Member: Member does not attend this school', E_USER_ERROR);
 	
@@ -505,19 +477,14 @@ function do_edit_member() {
 	if ($grade_msg !== true)
 		show_edit_member_page($grade_msg);
 	
-	$row = lmt_query('SELECT team FROM individuals WHERE id="'. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['EditMember']) . '"', true);
-	$team = $row['team'];
-	$row = lmt_query('SELECT school FROM teams WHERE team_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$team) . '"', true);
-	if ($row['school'] != $_SESSION['LMT_user_id'])
+	$team = DB::queryFirstField('SELECT team FROM individuals WHERE id=%i',$_GET['EditMember']);
+	$school = DB::queryFirstField('SELECT school FROM teams WHERE team_id=%i',$team);
+	if ($school != $_SESSION['LMT_user_id'])
 		trigger_error('Edit Member: Member does not attend this school', E_USER_ERROR);
 	
 	// ** All information has been validated at this point **
 	
-	lmt_query(	'UPDATE individuals SET name="'
-				. mysqli_real_escape_string($GLOBALS['LMT_DB'],$name)
-				. '", grade="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$grade)
-				. '" WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['EditMember'])
-				. '" LIMIT 1');
+	DB::update('individuals',array('name'=>$name,'grade'=>$grade),'id=%i',$_GET['EditMember']);
 	
 	header('Location: Team?Edit=' . $team);
 }
@@ -532,15 +499,14 @@ function do_delete_member() {
 	
 	$id = $_GET['DeleteMember'];
 	
-	$row = lmt_query('SELECT team FROM individuals WHERE id="'. mysqli_real_escape_string($GLOBALS['LMT_DB'],$id) . '"', true);
-	$team = $row['team'];
-	$row = lmt_query('SELECT school FROM teams WHERE team_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$team) . '"', true);
-	if ($row['school'] != $_SESSION['LMT_user_id'])
+	$team = DB::queryFirstField('SELECT team FROM individuals WHERE id=%i',$id);
+	$school = DB::queryFirstField('SELECT school FROM teams WHERE team_id=%i',$team);
+	if ($school != $_SESSION['LMT_user_id'])
 		trigger_error('Delete Member: Member does not attend this school', E_USER_ERROR);
 		
 	// ** All information has been validated at this point **
 	
-	lmt_query('DELETE FROM individuals WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$id) . '" LIMIT 1');
+	DB::delete('individuals','id=%i',$id);
 	
 	header('Location: Team?Edit=' . $team);
 }
@@ -552,11 +518,8 @@ function do_delete_member() {
 function show_delete_page() {
 	lmt_page_header('Remove Team');
 	
+	$team_name = htmlentities(DB::queryFirstField('SELECT name FROM teams WHERE team_id=%i AND school=%i',$_GET['Delete'],$_SESSION['LMT_user_id']));
 	$school_name = htmlentities($_SESSION['LMT_school_name']);
-	$row = lmt_query(	'SELECT * FROM teams WHERE team_id="'
-						. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['Delete'])
-						. '" AND school="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_SESSION['LMT_user_id']) . '"', true);
-	$team_name = htmlentities($row['name']);
 	$members = lmt_db_table(	'SELECT name, grade FROM individuals WHERE team="'
 								. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['Delete']) . '" ORDER BY name',
 							null,
@@ -605,12 +568,11 @@ function do_delete() {
 		trigger_error('XSRF code incorrect', E_USER_ERROR);
 	
 	// Ensure that the team exists and belongs to this user's school
-	$row = lmt_query(	'SELECT * FROM teams WHERE team_id="'
-				. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['Delete'])
-				. '" AND school="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_SESSION['LMT_user_id']) . '"', true);
+	if(DB::queryFirstField('SELECT COUNT(*) FROM teams WHERE team_id=%i AND school=%i',$_GET['Delete'],$_SESSION['LMT_user_id'])==0)
+		show_edit_page('Invalid team.');
 	
-	lmt_query('DELETE FROM teams WHERE team_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['Delete']) . '" LIMIT 1');
-	lmt_query('DELETE FROM individuals WHERE team="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['Delete']) . '" LIMIT 6');
+	DB::delete('teams','team_id=%i',$_GET['Delete']);
+	DB::delete('teams','individuals=%i',$_GET['Delete']);
 	
 	header('Location: Home');
 }

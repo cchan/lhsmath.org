@@ -30,7 +30,7 @@ function show_page() {
 
 HEREDOC;
 	
-	$result = lmt_query('SELECT name, guts_ans_a, (SELECT name FROM schools WHERE schools.school_id=teams.school) AS school_name, '
+	$result = DB::queryRaw('SELECT name, guts_ans_a, (SELECT name FROM schools WHERE schools.school_id=teams.school) AS school_name, '
 		. '(SELECT MAX(problem_set) FROM guts WHERE team=team_id) AS current_problem, score_guts FROM teams WHERE deleted="0" ORDER BY score_guts DESC');
 	
 	$n = 1;

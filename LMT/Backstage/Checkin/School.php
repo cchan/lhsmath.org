@@ -21,14 +21,14 @@ else
 
 function show_page() {
 	$id = htmlentities($_GET['ID']);
-	$row = lmt_query('SELECT name, coach_email, teams_paid FROM schools WHERE school_id="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$id) . '" AND deleted="0"', true);
+	$row = DB::queryFirstRow('SELECT name, coach_email, teams_paid FROM schools WHERE school_id="'
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$id) . '" AND deleted="0"');
 	$name = htmlentities($row['name']);
 	$email = htmlentities($row['coach_email']);
 	$grade = htmlentities($row['grade']);
 	$paid = htmlentities($row['teams_paid']);
 	
-	$result = lmt_query('SELECT team_id, name FROM teams WHERE school="'
+	$result = DB::queryRaw('SELECT team_id, name FROM teams WHERE school="'
 		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$id) . '" AND deleted="0" ORDER BY name');
 	$num_teams = htmlentities(mysqli_num_rows($result));
 	$add_teams_paid = $num_teams - $paid;
@@ -58,7 +58,7 @@ HEREDOC;
 
 HEREDOC;
 		
-		$result2 = lmt_query('SELECT id, name, attendance, grade FROM individuals WHERE team="'
+		$result2 = DB::queryRaw('SELECT id, name, attendance, grade FROM individuals WHERE team="'
 			. mysqli_real_escape_string($GLOBALS['LMT_DB'],$row['team_id']) . '" AND deleted="0" ORDER BY name');
 		$row2 = mysqli_fetch_assoc($result2);
 		while ($row2) {
@@ -138,11 +138,11 @@ function process_form() {
 	$paid = ($_POST['paid'] == 'Yes') ? '1' : '0';
 	$attendance = ($_POST['attendance'] == 'Yes') ? '1' : '0';
 	
-	$row = lmt_query('SELECT name FROM schools WHERE school_id="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"', true);
+	$row = DB::queryFirstRow('SELECT name FROM schools WHERE school_id="'
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"');
 	$name = htmlentities($row['name']);
 	
-	lmt_query('UPDATE schools SET teams_paid = teams_paid + "'
+	DB::queryRaw('UPDATE schools SET teams_paid = teams_paid + "'
 		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['add_teams_paid']) . '" LIMIT 1');
 	
 	$present = array();
@@ -155,7 +155,7 @@ function process_form() {
 		}
 	}
 	
-	lmt_query('UPDATE individuals SET attendance="0" WHERE'
+	DB::queryRaw('UPDATE individuals SET attendance="0" WHERE'
 		. ' team = ANY (SELECT team_id FROM teams WHERE school = "'
 		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '")');
 	
@@ -169,7 +169,7 @@ function process_form() {
 			$first = false;
 		}
 		$query .= ') LIMIT ' . mysqli_real_escape_string($GLOBALS['LMT_DB'],count($present));
-		lmt_query($query);
+		DB::queryRaw($query);
 	}
 	
 	add_alert('checkinSchool', $name . ' has been updated. (<a href="School?ID='

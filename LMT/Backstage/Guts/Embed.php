@@ -90,7 +90,7 @@ function make_teams_dropdown() {
 	$return = $sp . '<select name="ID">' . "\n"
 		. $sp . '  <option value="-1"></option>' . "\n";
 	
-	$result = lmt_query('SELECT teams.team_id, teams.name, schools.name AS school_name FROM teams'
+	$result = DB::queryRaw('SELECT teams.team_id, teams.name, schools.name AS school_name FROM teams'
 		. ' LEFT JOIN schools ON teams.school=schools.school_id WHERE '. /*'team_id <> "'
 		. $except . '" AND'.*/ ' teams.deleted="0" ORDER BY name');
 	$row = mysqli_fetch_assoc($result);
@@ -118,25 +118,25 @@ function show_scoring_page() {
 	$color = htmlentities($_GET['Color']);
 	$id = htmlentities($_GET['ID']);
 	
-	$row = lmt_query('SELECT name FROM teams WHERE team_id="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" AND deleted = "0"', true);
+	$row = DB::queryFirstRow('SELECT name FROM teams WHERE team_id="'
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" AND deleted = "0"');
 	$team = htmlentities($row['name']);
 	
-	$row = lmt_query('SELECT MAX(problem_set) FROM guts WHERE team="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"', true);
+	$row = DB::queryFirstRow('SELECT MAX(problem_set) FROM guts WHERE team="'
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"');
 	$set = (int) htmlentities($row['MAX(problem_set)']) + 1;
 	$problems = (3 * $set - 2) . ', ' . (3 * $set -  1) . ', ' . ' and ' . (3 * $set);
 	
 	if ($set > 1) {
-		$row = lmt_query('SELECT score FROM guts WHERE problem_set="'
+		$row = DB::queryFirstRow('SELECT score FROM guts WHERE problem_set="'
 			. mysqli_real_escape_string($GLOBALS['LMT_DB'],$set - 1) . '" AND team="'
-			. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"', true);
+			. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"');
 		$prev_right_val = (int) htmlentities($row['score']);
 		
 		if ($set == 12) {
 			// Check for answers to round 13 in the other table
-			$row  = lmt_query('SELECT guts_ans_a, guts_ans_b, guts_ans_c FROM teams WHERE team_id="'
-				. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"', true);
+			$row  = DB::queryFirstRow('SELECT guts_ans_a, guts_ans_b, guts_ans_c FROM teams WHERE team_id="'
+				. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"');
 			if (!is_null($row['guts_ans_a']) || !is_null($row['guts_ans_b']) || !is_null($row['guts_ans_c']))
 				show_completed_page(htmlentities($team),
 					array(1 => $row['guts_ans_a'], 2 => $row['guts_ans_b'], 3 => $row['guts_ans_c']));	// so, set is actually 13
@@ -330,13 +330,13 @@ function process_form() {
 	if ($set < 1 || $set > 11)
 		trigger_error('Invalid set?!', E_USER_ERROR);
 	
-	$row  = lmt_query('SELECT COUNT(*) FROM guts WHERE team="'
+	$row  = DB::queryFirstRow('SELECT COUNT(*) FROM guts WHERE team="'
 		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" AND problem_set="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$set) . '"', true);
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$set) . '"');
 	if ($row['COUNT(*)'] != 0)
 		show_duplicate_scores_warning();
 	
-	lmt_query('INSERT INTO guts (team, problem_set, score) VALUES ("'
+	DB::queryRaw('INSERT INTO guts (team, problem_set, score) VALUES ("'
 		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '", "'
 		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$set) . '", "'
 		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$score) . '")');
@@ -401,8 +401,8 @@ function score_special() {
 	if ($_POST['set'] != 12)
 		trigger_error('Invalid set?!', E_USER_ERROR);
 	
-	$row  = lmt_query('SELECT guts_ans_a, guts_ans_b, guts_ans_c FROM teams WHERE team_id="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"', true);
+	$row  = DB::queryFirstRow('SELECT guts_ans_a, guts_ans_b, guts_ans_c FROM teams WHERE team_id="'
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"');
 	if (!is_null($row['guts_ans_a']) || !is_null($row['guts_ans_b']) || !is_null($row['guts_ans_c']))
 		show_duplicate_scores_warning();
 	
@@ -430,7 +430,7 @@ function score_special() {
 	else
 		$ans_36 = '"' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$ans_36) . '"';
 	
-	lmt_query('UPDATE teams SET guts_ans_a='
+	DB::queryRaw('UPDATE teams SET guts_ans_a='
 		. $ans_34 . ', guts_ans_b='
 		. $ans_35 . ', guts_ans_c='
 		. $ans_36 . ' WHERE team_id="'
@@ -454,10 +454,10 @@ function cancel_score() {
 	
 	if ($set == 12) {
 		// Scores are as text entered into TEAMS table
-		lmt_query('UPDATE teams SET guts_ans_a=NULL, guts_ans_b=NULL, guts_ans_c=NULL WHERE team_id="'
+		DB::queryRaw('UPDATE teams SET guts_ans_a=NULL, guts_ans_b=NULL, guts_ans_c=NULL WHERE team_id="'
 			. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" LIMIT 1');
 	} else {
-		lmt_query('DELETE FROM guts WHERE team="'
+		DB::queryRaw('DELETE FROM guts WHERE team="'
 			. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" AND problem_set="'
 			. mysqli_real_escape_string($GLOBALS['LMT_DB'],$set) . '" LIMIT 3');
 	}

@@ -18,9 +18,7 @@ function process_login() {
 	$school_id = htmlentities($_GET['ID']);
 	// Validate credentials
 	
-	global $lmt_database;
-	
-	if (!($result = $lmt_database->query_assoc('SELECT school_id FROM schools WHERE school_id=%0% AND access_code=%1% LIMIT 1',array($school_id,$_GET['Code']))))
+	if (!($result = DB::queryFirstRow('SELECT school_id FROM schools WHERE school_id=%0% AND access_code=%1% LIMIT 1',array($school_id,$_GET['Code']))))
 		trigger_error('Incorrect login data', E_USER_ERROR);
 	
 	// ** CREDENTIALS ARE VALIDATED AT THIS POINT ** //

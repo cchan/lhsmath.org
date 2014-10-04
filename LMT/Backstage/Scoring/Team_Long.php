@@ -92,7 +92,7 @@ function do_enter_team_score() {
 	if ($score_msg !== true)
 		show_page($score_msg, '');
 	
-	$result = lmt_query('SELECT team_id, name, score_team_long FROM teams WHERE name="'
+	$result = DB::queryRaw('SELECT team_id, name, score_team_long FROM teams WHERE name="'
 		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['name']) . '" AND deleted="0"');
 	
 	if (mysqli_num_rows($result) == 0)
@@ -111,7 +111,7 @@ function do_enter_team_score() {
 		show_page($msg, '');
 	}
 	
-	lmt_query('UPDATE teams SET score_team_long="'
+	DB::queryRaw('UPDATE teams SET score_team_long="'
 		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['score']) . '" WHERE team_id="'
 		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$row['team_id']) . '" LIMIT 1');
 
@@ -136,7 +136,7 @@ function show_multiple_results_page() {
 	
 	$name = htmlentities($_POST['name']);
 	
-	$result = lmt_query('SELECT team_id, teams.name AS name, schools.name AS school_name '
+	$result = DB::queryRaw('SELECT team_id, teams.name AS name, schools.name AS school_name '
 		. 'FROM teams LEFT JOIN schools ON teams.school=schools.school_id WHERE teams.name="'
 		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['name']) . '" WHERE teams.deleted="0"');
 	
@@ -190,8 +190,8 @@ function do_enter_clarified_score() {
 	if (!validate_team_long_score($_GET['Score']))
 		trigger_error('Score isn\'t valid this time?!', E_USER_ERROR);
 	
-	$row = lmt_query('SELECT name, score_team_long FROM teams WHERE team_id="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"', true);
+	$row = DB::queryFirstRow('SELECT name, score_team_long FROM teams WHERE team_id="'
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"');
 	
 	if (!is_null($row['score_team_long']) && !isSet($_GET['Overwrite'])) {
 		if (isSet($_GET['xsrf_token'])) {
@@ -213,7 +213,7 @@ function do_enter_clarified_score() {
 	if ($_GET['xsrf_token'] != $_SESSION['xsrf_token'])
 		trigger_error('XSRF code incorrect', E_USER_ERROR);
 	
-	lmt_query('UPDATE teams SET score_team_long="'
+	DB::queryRaw('UPDATE teams SET score_team_long="'
 		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['Score']) . '" WHERE team_id="'
 		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" LIMIT 1');
 	$msg = 'A score of ' . htmlentities($_GET['Score']) . ' was entered for '

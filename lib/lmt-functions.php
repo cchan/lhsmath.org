@@ -9,16 +9,12 @@ if (!isSet($path_to_root))
 
 require_once $path_to_root . 'lib/CONFIG.php';
 
-// connect to database - we do this first so that the regular database is used without a link identifier
-connect_to_lmt_database();
-
-
 
 // include regular functions
 require_once $path_to_root . 'lib/functions.php';
 require_once $path_to_root . 'lib/lmt-scoring.php';
 
-$lmt_database=new DB($DB_SERVER,$DB_USERNAME,$DB_PASSWORD,'lmt');
+DB::useDB('lmt');
 
 //
 // DEFAULT ACTIONS:
@@ -103,61 +99,23 @@ if (isSet($_SESSION['LMT_user_id']) && isSet($_SESSION['LMT_login_time']) && tim
 
 
 
-
-
-/*
- * connect_to_lmt_database()
- * Connects to the LMT database and stores the connection in $LMT_DB
- */
-function connect_to_lmt_database() {
-	global $DB_SERVER, $DB_USERNAME, $DB_PASSWORD, $LMT_DB_DATABASE, $TIMEZONE, $LMT_DB;
-	$LMT_DB = mysqli_connect($DB_SERVER, $DB_USERNAME, $DB_PASSWORD) or trigger_error(mysqli_error($GLOBALS['LMT_DB']), E_USER_ERROR);
-	mysqli_select_db($GLOBALS['LMT_DB'], $LMT_DB_DATABASE) or trigger_error(mysqli_error($GLOBALS['LMT_DB']), E_USER_ERROR);
-	
-	$query = 'SET time_zone = "' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$TIMEZONE) . '"';
-	mysqli_query($GLOBALS['LMT_DB'],$query) or trigger_error(mysqli_error($GLOBALS['LMT_DB']), E_USER_ERROR);
-}
-
-
-
-
-
-/*
- * lmt_query($query, $get_row=false)
- * Executes the specified query and returns the result. If $get_row is set to true,
- * a row will be returned; if there is not exactly one row, an error will be thrown.
- */
-function lmt_query($query, $get_row=false) {
-	global $lmt_database;
-	
-	//global $CATCH_ERRORS;if(!$CATCH_ERRORS)echo "Used lmt_query.<textarea>".var_export(debug_backtrace(),true)."</textarea>";
-	
-	if($e=$lmt_database->error)trigger_error($e,E_USER_ERROR);
-	
-	if($get_row)return $lmt_database->query_assoc($query);
-	else return $lmt_database->query($query);
-}
-
-
-
-
-
 /*
  * map_value($key)
  * Returns the value associated with the given key
  * in the LMT map, or null if it does not exist.
+ *
+ * Map, as in a "mapping" in math. Makes life easier
+ * if there's some data to be played with.
  */
 $map_values=NULL;
 $map_values_changed=false;
 function map_value($key) {
 	global $map_values;
 	if($map_values===NULL){//Caching
-		global $lmt_database;
-		$result=$lmt_database->query('SELECT map_key, map_value FROM map');
-		$tmp=$result->fetch_all(MYSQLI_ASSOC);
+		$result=DB::query('SELECT map_key, map_value FROM map');
 		$map_values=array();
-		foreach($tmp as $val)
-			$map_values[$val['map_key']]=$val['map_value'];
+		foreach($result as $pair)
+			$map_values[$pair['map_key']]=$pair['map_value'];
 	}
 	
 	if(array_key_exists(strtolower($key),$map_values))
@@ -183,25 +141,17 @@ function map_set($key, $value) {//This takes TWO db queries each and every time.
  * May cause race condition problems if multiple people are editing at once,
  * but there aren't that many admins.
  *
- * Note:Make sure that map_key is a primary key.
+ * Note:Make sure that the field map_key is a primary key.
  */
 function map_commit(){
 	global $map_values,$map_values_changed;
+	if($map_values===NULL||!$map_values_changed)return;//If we haven't loaded anything, or we haven't changed anything, nothing happens.
 	
-	if($map_values===NULL||!$map_values_changed)return;
+	$insertions=array();
+	foreach($map_values as $key=>$value)
+		$insertions[]=array('map_key'=>$key,'map_value'=>$value);
 	
-	$query='INSERT INTO map (map_key,map_value) VALUES ';
-	$array=array();
-	$i=0;
-	foreach($map_values as $key=>$value){
-		$query.='(%'.intval($i).'%,%'.intval($i+1).'%),';
-		$i+=2;
-		$array[]=$key;
-		$array[]=$value;
-	}
-	$query=substr($query,0,-1).' ON DUPLICATE KEY UPDATE map_value=VALUES(map_value)';
-	global $lmt_database;
-	$lmt_database->query($query,$array);
+	DB::insertUpdate('map',$insertions);
 	
 	$map_values_changed=false;
 }
@@ -354,11 +304,9 @@ function validate_email($email) {
 		, $email))
 		return 'That\'s not a valid email address';
 	
-	global $lmt_database;
-	$row = $lmt_database->query_assoc('SELECT COUNT(*) AS c FROM individuals WHERE LOWER(email)=%0%',array(strtolower($email)));
-	if ($row['c'] != 0)
-		return 'An account with that email address already exists';
-			
+	$c = DB::queryFirstField('SELECT COUNT(*) AS c FROM individuals WHERE LOWER(email)=%s',strtolower($email));
+	if ($c) return 'An account with that email address already exists';
+	
 	return true;
 }
 
@@ -374,10 +322,8 @@ function validate_email($email) {
 function validate_coach_email($email) {
 	if(filter_var($email,FILTER_VALIDATE_EMAIL)===false)return 'That\'s not a valid email address';
 	
-	global $lmt_database;
-	$row = $lmt_database->query_assoc('SELECT COUNT(*) AS c FROM schools WHERE LOWER(coach_email)=%0%',array(strtolower($email)));
-	if ($row['c'] != 0)
-		return 'An account with that email address already exists';
+	$c = DB::queryFirstField('SELECT COUNT(*) AS c FROM schools WHERE LOWER(coach_email)=%s',strtolower($email));
+	if ($c) return 'An account with that email address already exists';
 			
 	return true;
 }
@@ -638,8 +584,7 @@ function lmt_set_login_data($id) {
 	$_SESSION['LMT_last_refresh'] = time();
 	
 	if (!isSet($_SESSION['LMT_user_id'])) {
-		global $lmt_database;
-		$row = $lmt_database->query_assoc('SELECT name, school_id FROM schools WHERE school_id=%0% LIMIT 1', array($id));
+		$row = DB::queryFirstRow('SELECT name, school_id FROM schools WHERE school_id=%i LIMIT 1', $id);
 		if(!$row)trigger_error('Invalid login.',E_USER_ERROR);
 		
 		$_SESSION['LMT_school_name'] = $row['name'];
@@ -670,7 +615,7 @@ function lmt_set_login_data($id) {
  */
 function lmt_db_table($query, $headers=null, $links=null, $empty_message="None", $css="contrasting", $ordering=null) {
 	global $LMT_DB;
-	$result = lmt_query($query);//this is evil
+	$result = DB::queryRaw($query);//--todo--this is evil
 	
 	$return = <<<HEREDOC
       <table class="$css">
@@ -861,8 +806,7 @@ function lmt_page_footer($page_name) {
 		$pages[] = '';
 	}
 	
-	global $lmt_database;
-	$result = $lmt_database->query('SELECT page_id, name FROM pages ORDER BY order_num');//Don't bother caching, this will only be called once
+	$result = DB::queryRaw('SELECT page_id, name FROM pages ORDER BY order_num');
 	
 	while ($row = $result->fetch_assoc()) {
 		if ($row['page_id'] == '-1') {

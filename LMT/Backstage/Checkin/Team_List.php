@@ -33,7 +33,7 @@ function show_page() {
 
 HEREDOC;
 	
-	$result = lmt_query('SELECT team_id, teams.name AS team_name, schools.name AS school_name FROM teams '
+	$result = DB::queryRaw('SELECT team_id, teams.name AS team_name, schools.name AS school_name FROM teams '
 		. 'LEFT JOIN schools ON teams.school=schools.school_id WHERE teams.deleted="0" ORDER BY team_id');
 	$row = mysqli_fetch_assoc($result);
 	while ($row) {
@@ -67,7 +67,7 @@ function download_csv() {
 	// Get Data
 	$file = "Team ID,Team Name,School\n";
 	
-	$result = lmt_query('SELECT team_id, teams.name AS team_name, schools.name AS school_name FROM teams '
+	$result = DB::queryRaw('SELECT team_id, teams.name AS team_name, schools.name AS school_name FROM teams '
 		. 'LEFT JOIN schools ON teams.school=schools.school_id WHERE teams.deleted="0" ORDER BY team_id');
 	$row = mysqli_fetch_assoc($result);
 	while ($row) {

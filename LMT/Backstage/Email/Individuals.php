@@ -94,7 +94,7 @@ function preview_message() {
 	
 	// Get info for the byline
 	$query = 'SELECT name, email FROM users WHERE id="' . $_SESSION['user_id'] . '"';
-	$result = lmt_query($query);
+	$result = DB::queryRaw($query);
 	$row = mysqli_fetch_assoc($result);
 	$disp_subject = '[LMT ' . htmlentities(map_value('year')) . '] ' . $subject;
 	
@@ -191,7 +191,7 @@ function post_message() {
 	$html_body = $bb_body;
 	
 	// send individual emails
-	$result = lmt_query('SELECT name, email FROM individuals WHERE email != "" AND deleted="0"');
+	$result = DB::queryRaw('SELECT name, email FROM individuals WHERE email != "" AND deleted="0"');
 	
 	$row = mysqli_fetch_assoc($result);
 	$count = 0;

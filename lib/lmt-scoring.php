@@ -159,7 +159,7 @@ function prescreen_guts($problem, $value) {
  * RULE: sum individual and theme round scores
  */
 function individual_composite($fields, $where) {
-	return "SELECT $fields IFNULL(score_individual, 0) * 3 + IFNULL(score_theme, 0) * 4 AS score_composite FROM individuals $where";
+	return "SELECT $fields IFNULL(score_individual, 0)*3 + IFNULL(score_theme, 0)*4 AS score_composite FROM individuals $where";
 }
 
 
@@ -172,10 +172,13 @@ function individual_composite($fields, $where) {
  * Returns a query string to calculate team compsite scores. Allows
  * fields (ends in a comma if necessary) and a where clause. See example above.
  *
- * RULE: sum top 4 individual round score and top 4 theme round scores, multiply by 1.25
+ * RULE: top 4 composite scores, multiply by 1.25
  * 			add: team round score * 1.5, guts round score
  */
 function team_composite($fields, $where) {
+	//$indiv_sum = 'IFNULL((SELECT SUM(score_individual) FROM individuals WHERE team=teams.team_id ORDER BY score_individual DESC LIMIT 4), 0)';
+	//$theme_sum = 'IFNULL((SELECT SUM(score_theme) FROM individuals WHERE team=teams.team_id ORDER BY score_theme DESC LIMIT 4), 0)';
+	
 	$indiv[1] = 'IFNULL((SELECT score_individual FROM individuals WHERE team=teams.team_id ORDER BY score_individual DESC LIMIT 0,1), 0)';
 	$indiv[2] = 'IFNULL((SELECT score_individual FROM individuals WHERE team=teams.team_id ORDER BY score_individual DESC LIMIT 1,1), 0)';
 	$indiv[3] = 'IFNULL((SELECT score_individual FROM individuals WHERE team=teams.team_id ORDER BY score_individual DESC LIMIT 2,1), 0)';
@@ -249,7 +252,7 @@ function score_guts() {
 	
 	// Problem 36:
 	//$c_sub = "SELECT (SELECT AVG(guts_ans_c) FROM teams WHERE deleted=\"0\") as avg";
-	//$row = lmt_query($c_sub, true);
+	//$row = DB::queryFirstRow($c_sub);
 	//$avg = $row['avg'];
 	//if ($avg == '' || is_null($avg))
 	//	$avg = '0';
@@ -260,7 +263,7 @@ function score_guts() {
 	
 	$query = "$main + IFNULL($a, 0) + IFNULL($b, 0) + IFNULL($c, 0)";
 	$query = "UPDATE teams SET score_guts=($query)";
-	lmt_query($query);
+	DB::queryRaw($query);
 }
 
 ?>

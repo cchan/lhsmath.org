@@ -17,14 +17,10 @@ show_page();
 
 
 function show_page() {
-	// If the Registration page does not exists, add it
-	global $lmt_database;
-	$result = $lmt_database->query('SELECT page_id FROM pages WHERE page_id="-1"');
-	if ($lmt_database->num_rows == 0) {
-		$row = $lmt_database->query_assoc('SELECT MAX(order_num + 1) AS new_order FROM pages');
-		$new_order = $row['new_order'];
-		
-		$lmt_database->query('INSERT INTO pages (page_id, name, content, order_num) VALUES ("-1", "Registration", "", %0%)',array($new_order));
+	// If the Registration page does not exist, add it
+	if (DB::queryFirstField('SELECT COUNT(*) FROM pages WHERE page_id="-1"') == 0) {
+		$new_order_num = DB::queryFirstField('SELECT (MAX(order_num) + 1) AS new_order FROM pages');
+		DB::insert('pages',array('page_id'=>'-1','name'=>'Registration','content'=>'','order_num'=>$new_order_num));
 	}
 	
 	

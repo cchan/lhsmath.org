@@ -54,16 +54,16 @@ function do_download() {
 	
 	echo 'CREATE DATABASE `lmt-bak` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;' . "\n" .  'USE `lmt-bak`;' . "\n\n\n";
 	$tables = array();
-	$result = lmt_query('SHOW TABLES');
+	$result = DB::queryRaw('SHOW TABLES');
 	while($row = mysqli_fetch_row($result))
 		$tables[] = $row[0];
 	
 	foreach($tables as $table) {
-		$result = lmt_query('SELECT * FROM '.$table);
+		$result = DB::queryRaw('SELECT * FROM '.$table);
 		$num_fields = mysqli_field_count($result);
 		
 		echo 'DROP TABLE IF EXISTS '.$table.';';
-		$row2 = mysqli_fetch_row(lmt_query('SHOW CREATE TABLE '.$table));
+		$row2 = mysqli_fetch_row(DB::queryRaw('SHOW CREATE TABLE '.$table));
 		echo "\n\n".$row2[1].";\n\n";
 		
 		for ($i = 0; $i < $num_fields; $i++)

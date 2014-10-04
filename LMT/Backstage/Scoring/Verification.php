@@ -47,7 +47,7 @@ HEREDOC;
 	$sum_indiv = '(SELECT SUM(score_individual) FROM individuals WHERE team=teams.team_id AND deleted="0") AS sum_indiv';
 	$sum_theme = '(SELECT SUM(score_theme) FROM individuals WHERE team=teams.team_id AND deleted="0") AS sum_theme';
 	$query = "SELECT team_id, name, $sum_indiv, $sum_theme, score_team_short, score_team_long FROM teams WHERE deleted=\"0\" ORDER BY team_id";
-	$result = lmt_query($query);
+	$result = DB::queryRaw($query);
 	
 	$row = mysqli_fetch_assoc($result);
 	while ($row) {

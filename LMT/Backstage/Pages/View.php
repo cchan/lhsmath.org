@@ -17,8 +17,8 @@ show_page();
 
 
 function show_page() {
-	$row = lmt_query('SELECT * FROM pages WHERE page_id="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"', true);
+	$row = DB::queryFirstRow('SELECT * FROM pages WHERE page_id="'
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"');
 	
 	$name = htmlentities($row['name']);
 	$content = "      " . str_replace("\n", "\n      ", $row['content']);

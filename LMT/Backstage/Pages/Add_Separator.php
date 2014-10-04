@@ -22,10 +22,10 @@ function do_add_separator() {
 	if ($_GET['xsrf_token'] != $_SESSION['xsrf_token'])
 		trigger_error('XSRF code incorrect', E_USER_ERROR);
 	
-	$row = lmt_query('SELECT MAX(order_num + 1) AS new_order FROM pages', true);
+	$row = DB::queryFirstRow('SELECT MAX(order_num + 1) AS new_order FROM pages');
 	$new_order = $row['new_order'];
 	
-	lmt_query('INSERT INTO pages (name, content, order_num) VALUES ("", "", "'
+	DB::queryRaw('INSERT INTO pages (name, content, order_num) VALUES ("", "", "'
 		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$new_order) . '")');
 	
 	header('Location: List');

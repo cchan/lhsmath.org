@@ -187,11 +187,11 @@ function post_message() {
 	if (!validate_message())
 		return;
 	
-	global $subject, $html_body, $body, $email, $use_rel_external_script, $database;
+	global $subject, $html_body, $body, $email, $use_rel_external_script;
 	
 	// Insert into database
-	$database->query('INSERT INTO messages (author, subject, body) VALUES (%0%,%1%,%2%)',array($_SESSION['user_id'],$subject,$html_body));
-	$_SESSION['MESSAGE_sent_id']= $database->insert_id;
+	DB::insert('messages',array('author'=>$_SESSION['user_id'], 'subject'=>$subject, 'body'=>$html_body));
+	$_SESSION['MESSAGE_sent_id']= DB::insertId();
 	
 	// Send email
 	if ($email != 'no') {

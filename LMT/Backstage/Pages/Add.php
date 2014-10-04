@@ -82,16 +82,16 @@ function do_add_page() {
 	
 	// ** VALIDATION COMPLETE ** \\
 	
-	$row = lmt_query('SELECT MAX(order_num + 1) AS new_order FROM pages', true);
+	$row = DB::queryFirstRow('SELECT MAX(order_num + 1) AS new_order FROM pages');
 	$new_order = $row['new_order'];
 	
-	lmt_query('INSERT INTO pages (name, content, order_num) VALUES ("'
+	DB::queryRaw('INSERT INTO pages (name, content, order_num) VALUES ("'
 		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$name)
 		. '", "' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$content)
 		. '", "' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$new_order) . '")');
 	
-	$row = lmt_query('SELECT page_id FROM pages WHERE order_num="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$new_order) . '"', true);
+	$row = DB::queryFirstRow('SELECT page_id FROM pages WHERE order_num="'
+		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$new_order) . '"');
 	
 	header('Location: View?ID=' . $row['page_id']);
 }

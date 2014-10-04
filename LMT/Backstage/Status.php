@@ -40,7 +40,7 @@ else
 
 
 function show_page($err) {
-	global $javascript, $lmt_database;
+	global $javascript;
 	$javascript = <<<HEREDOC
       function processKey(e, id) {
         if (null == e)
@@ -93,15 +93,9 @@ HEREDOC;
 	$team_cost = htmlentities(map_value('team_cost'));
 	$backstage_message = htmlentities(map_value('backstage_message'));
 	
-	global $lmt_database;
-	$row = $lmt_database->query_assoc('SELECT COUNT(*) AS c FROM schools WHERE deleted="0"');
-	$num_coaches = $row['c'];
-	
-	$row = $lmt_database->query_assoc('SELECT COUNT(*) AS c FROM teams WHERE deleted="0"');
-	$num_teams = $row['c'];
-	
-	$row = $lmt_database->query_assoc('SELECT COUNT(*) AS c FROM individuals WHERE email <> "" AND deleted="0"');
-	$num_individuals = $row['c'];
+	$num_coaches = DB::queryFirstField('SELECT COUNT(*) AS c FROM schools WHERE deleted="0"');
+	$num_teams = DB::queryFirstField('SELECT COUNT(*) AS c FROM teams WHERE deleted="0"');
+	$num_individuals = DB::queryFirstField('SELECT COUNT(*) AS c FROM individuals WHERE email <> "" AND deleted="0"');
 	
 	if ($err != '')
 		$err = "\n        <div class=\"error\">$err</div><br />\n";

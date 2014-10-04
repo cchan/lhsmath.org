@@ -33,8 +33,8 @@ function show_form($err) {
 	
 	// Fetch data if this is the first time the form has been shown
 	if ($name == '' || $content == '') {
-		$row = lmt_query('SELECT name, content FROM pages WHERE page_id="'
-			. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"', true);
+		$row = DB::queryFirstRow('SELECT name, content FROM pages WHERE page_id="'
+			. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"');
 		
 		if ($name == '')
 			$name = htmlentities($row['name']);
@@ -99,7 +99,7 @@ function do_edit_page() {
 	
 	// ** VALIDATION COMPLETE ** \\
 	
-	lmt_query('UPDATE pages SET name="'
+	DB::queryRaw('UPDATE pages SET name="'
 		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$name)
 		. '", content="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$content)
 		. '" WHERE page_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" LIMIT 1');

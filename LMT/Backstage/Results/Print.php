@@ -40,7 +40,7 @@ function show_page() {
 
 HEREDOC;
 	
-	$result = lmt_query('SELECT team_id, IFNULL(score_team_short, 0) + IFNULL(score_team_long, 0) AS score_team, score_guts, teams.name AS team_name, teams.school AS school_id,'
+	$result = DB::queryRaw('SELECT team_id, IFNULL(score_team_short, 0) + IFNULL(score_team_long, 0) AS score_team, score_guts, teams.name AS team_name, teams.school AS school_id,'
 		. ' schools.name AS school_name FROM teams LEFT JOIN schools'
 		. ' ON teams.school=schools.school_id WHERE teams.deleted="0" ORDER BY school_name, team_name');
 	$row = mysqli_fetch_assoc($result);
@@ -65,7 +65,7 @@ HEREDOC;
         <br /><br /><br />
 HEREDOC;
 		
-		$result2 = lmt_query('SELECT name, score_individual, score_theme FROM individuals WHERE team="'
+		$result2 = DB::queryRaw('SELECT name, score_individual, score_theme FROM individuals WHERE team="'
 			. mysqli_real_escape_string($GLOBALS['LMT_DB'],$team_id) . '" AND deleted="0" ORDER BY name');
 		$row2 = mysqli_fetch_assoc($result2);
 		if (!$row2)
