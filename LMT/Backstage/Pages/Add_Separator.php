@@ -26,7 +26,7 @@ function do_add_separator() {
 	$new_order = $row['new_order'];
 	
 	DB::queryRaw('INSERT INTO pages (name, content, order_num) VALUES ("", "", "'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$new_order) . '")');
+		. mysqli_real_escape_string(DB::get(),$new_order) . '")');
 	
 	header('Location: List');
 }

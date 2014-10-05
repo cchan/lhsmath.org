@@ -92,7 +92,7 @@ function do_enter_theme_score() {
 		show_page($score_msg, '');
 	
 	$result = DB::queryRaw('SELECT id, name, attendance, score_theme FROM individuals WHERE name="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['name']) . '" AND deleted="0"');
+		. mysqli_real_escape_string(DB::get(),$_POST['name']) . '" AND deleted="0"');
 	
 	if (mysqli_num_rows($result) == 0)
 		show_page('An individual named "' . htmlentities($_POST['name']) .'" not found', '');
@@ -115,8 +115,8 @@ function do_enter_theme_score() {
 	}
 	
 	DB::queryRaw('UPDATE individuals SET score_theme="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['score']) . '" WHERE id="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$row['id']) . '" LIMIT 1');
+		. mysqli_real_escape_string(DB::get(),$_POST['score']) . '" WHERE id="'
+		. mysqli_real_escape_string(DB::get(),$row['id']) . '" LIMIT 1');
 
 	$msg = 'A score of ' . htmlentities($_POST['score']) . ' was entered for '
 		. htmlentities($row['name']);
@@ -142,7 +142,7 @@ function show_multiple_results_page() {
 	$result = DB::queryRaw('SELECT id, individuals.name AS name, grade, teams.name AS team_name, '
 		. '(SELECT name FROM schools WHERE schools.school_id=teams.school) AS school_name '
 		. 'FROM individuals LEFT JOIN teams ON individuals.team=teams.team_id WHERE individuals.name="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['name']) . '" AND teams.deleted="0"');
+		. mysqli_real_escape_string(DB::get(),$_POST['name']) . '" AND teams.deleted="0"');
 	
 	echo <<<HEREDOC
       <h1>Theme Round Score Entry</h1>
@@ -201,7 +201,7 @@ function do_enter_clarified_score() {
 		trigger_error('Score isn\'t valid this time?!', E_USER_ERROR);
 	
 	$row = DB::queryFirstRow('SELECT name, score_theme FROM individuals WHERE id="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"');
+		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"');
 	
 	if (!is_null($row['score_theme']) && !isSet($_GET['Overwrite'])) {
 		if (isSet($_GET['xsrf_token'])) {
@@ -224,8 +224,8 @@ function do_enter_clarified_score() {
 		trigger_error('XSRF code incorrect', E_USER_ERROR);
 	
 	DB::queryRaw('UPDATE individuals SET score_theme="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['Score']) . '" WHERE id="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" LIMIT 1');
+		. mysqli_real_escape_string(DB::get(),$_GET['Score']) . '" WHERE id="'
+		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1');
 	$msg = 'A score of ' . htmlentities($_GET['Score']) . ' was entered for '
 		. htmlentities($row['name']);
 	

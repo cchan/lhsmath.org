@@ -133,29 +133,18 @@ function process_form() {
 	}
 	
 	// Check that test exists
-	$query = 'SELECT test_id, total_points FROM tests WHERE test_id="'
-		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
-	$result = DB::queryRaw($query);
+	$row = DB::queryFirstRow('SELECT test_id, total_points FROM tests WHERE test_id=%s LIMIT 1',$_GET['ID']);
 	
-	if (mysqli_num_rows($result) != 1)
+	if (!$row)
 		trigger_error('Process_Form: Invalid Test ID', E_USER_ERROR);
 	
-	$row = mysqli_fetch_assoc($result);
-	$test_id = (int)$row['test_id'];
-	$total_points = (int)$row['total_points'];
+	$test_id = intval($row['test_id']);
+	$total_points = intval($row['total_points']);
 	
 	// Verify score
-	$score = (int)$_POST['score'];
-	if (!preg_match('/^(\d)*$/', $_POST['score'])) {
-		show_page('Score is not a valid integer', '');
-		return;
-	}
-	if ($score > $total_points) {
-		show_page('Score is too large', '');
-		return;
-	}
-	if ($score < 0) {
-		show_page('Score cannot be negative', '');
+	$score = intval($_POST['score']);
+	if(!val('i0+',$_POST['score']) || $score > $total_points){
+		show_page('Score must be a nonnegative integer not more than the total points.');
 		return;
 	}
 	

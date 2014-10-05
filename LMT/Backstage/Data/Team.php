@@ -35,7 +35,7 @@ function display_team($err, $selected_field) {
 	score_guts();
 	
 	$row = DB::queryFirstRow('SELECT teams.*, schools.name AS school_name, schools.coach_email FROM teams LEFT JOIN schools ON teams.school=schools.school_id'
-		. ' WHERE team_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"');
+		. ' WHERE team_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"');
 	$team_name = htmlentities($row['name']);
 	$school_name = htmlentities($row['school_name']);
 	$school_id = htmlentities($row['school']);
@@ -53,7 +53,7 @@ function display_team($err, $selected_field) {
 	$teamround_long_checked = is_null($row['score_team_long']) ? '' : ' checked="checked"';
 	$teamround_long_score = htmlentities($row['score_team_long']);
 	
-	$row2 = DB::queryFirstRow(team_composite('', 'WHERE team_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"'));
+	$row2 = DB::queryFirstRow(team_composite('', 'WHERE team_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"'));
 	$composite_score = $row2['team_composite'];
 	if (is_null($composite_score))
 		$composite_score = 'None';
@@ -232,8 +232,8 @@ function do_change_name() {
 		display_team($name_msg, 'document.forms[\'lmtDataTeamName\'].team_name.focus();');
 	
 	$result = DB::queryRaw('SELECT team_id FROM teams WHERE name="'
-					. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['team_name'])
-					. '" AND school = (SELECT school FROM teams WHERE team_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID'])
+					. mysqli_real_escape_string(DB::get(),$_POST['team_name'])
+					. '" AND school = (SELECT school FROM teams WHERE team_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID'])
 					. '" AND deleted="0") AND deleted="0"');
 	$row = mysqli_fetch_assoc($result);
 	if ($row['team_id'] == $_GET['ID']) {
@@ -243,8 +243,8 @@ function do_change_name() {
 	else if ($row)
 		display_team('The school already has a team with that name', 'document.forms[\'lmtDataTeamName\'].team_name.focus();');
 	
-	DB::queryRaw('UPDATE teams SET name="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['team_name'])
-		. '" WHERE team_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']). '" LIMIT 1');
+	DB::queryRaw('UPDATE teams SET name="' . mysqli_real_escape_string(DB::get(),$_POST['team_name'])
+		. '" WHERE team_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']). '" LIMIT 1');
 	
 	add_alert('lmt_data_team_update_name', 'Name was changed');
 	header('Location: Team?ID=' . $_GET['ID']);
@@ -267,18 +267,18 @@ function do_change_school() {
 	if ($_POST['school'] == -1)
 		$school_name = 'Individuals';
 	else {
-		$row = DB::queryFirstRow('SELECT name FROM schools WHERE school_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['school']) . '" AND deleted="0"');
+		$row = DB::queryFirstRow('SELECT name FROM schools WHERE school_id="' . mysqli_real_escape_string(DB::get(),$_POST['school']) . '" AND deleted="0"');
 		$school_name = $row['name'];
 	}
 	
-	$row = DB::queryRaw('SELECT COUNT(*) FROM teams WHERE school="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['school'])
-		. '" AND name = (SELECT name FROM teams WHERE team_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID'])
+	$row = DB::queryRaw('SELECT COUNT(*) FROM teams WHERE school="' . mysqli_real_escape_string(DB::get(),$_POST['school'])
+		. '" AND name = (SELECT name FROM teams WHERE team_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID'])
 		. '" AND deleted="0") AND deleted="0"');
 	if ($row['COUNT(*)'] > 0)
 		display_team('That school already has a team with the same name', 'document.forms[\'lmtDataTeamName\'].team_name.focus();');
 	
-	DB::queryRaw('UPDATE teams SET school="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['school'])
-		. '" WHERE team_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']). '" LIMIT 1');
+	DB::queryRaw('UPDATE teams SET school="' . mysqli_real_escape_string(DB::get(),$_POST['school'])
+		. '" WHERE team_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']). '" LIMIT 1');
 	
 	add_alert('lmt_data_team_update_school', 'School was changed');
 	header('Location: Team?ID=' . $_GET['ID']);
@@ -303,12 +303,12 @@ function do_set_team_round_short() {
 		if ($score_msg !== true)
 			display_team($score_msg, 'document.forms[\'lmtDataTeamRoundShortScore\'].teamRoundShortScore.focus();');
 		
-		DB::queryRaw('UPDATE teams SET score_team_short="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$score)
-			. '" WHERE team_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID'])
-			. '" AND (score_team_short <> "' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$score) . '" OR score_team_short IS NULL) LIMIT 1');
+		DB::queryRaw('UPDATE teams SET score_team_short="' . mysqli_real_escape_string(DB::get(),$score)
+			. '" WHERE team_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID'])
+			. '" AND (score_team_short <> "' . mysqli_real_escape_string(DB::get(),$score) . '" OR score_team_short IS NULL) LIMIT 1');
 	}
 	else
-		DB::queryRaw('UPDATE teams SET score_team_short=NULL WHERE team_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID'])
+		DB::queryRaw('UPDATE teams SET score_team_short=NULL WHERE team_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID'])
 			. '" AND score_team_short IS NOT NULL LIMIT 1');
 	
 	global $LMT_DB;
@@ -336,12 +336,12 @@ function do_set_team_round_long() {
 		if ($score_msg !== true)
 			display_team($score_msg, 'document.forms[\'lmtDataTeamRoundLongScore\'].teamRoundLongScore.focus();');
 		
-		DB::queryRaw('UPDATE teams SET score_team_long="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$score)
-			. '" WHERE team_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID'])
-			. '" AND (score_team_long <> "' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$score) . '" OR score_team_long IS NULL) LIMIT 1');
+		DB::queryRaw('UPDATE teams SET score_team_long="' . mysqli_real_escape_string(DB::get(),$score)
+			. '" WHERE team_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID'])
+			. '" AND (score_team_long <> "' . mysqli_real_escape_string(DB::get(),$score) . '" OR score_team_long IS NULL) LIMIT 1');
 	}
 	else
-		DB::queryRaw('UPDATE teams SET score_team_long=NULL WHERE team_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID'])
+		DB::queryRaw('UPDATE teams SET score_team_long=NULL WHERE team_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID'])
 			. '" AND score_team_long IS NOT NULL LIMIT 1');
 	
 	global $LMT_DB;
@@ -358,7 +358,7 @@ function do_confirm_delete() {
 	$id = htmlentities($_GET['ID']);
 	
 	$row = DB::queryFirstRow('SELECT teams.name, schools.name AS school_name FROM teams'
-		. ' LEFT JOIN schools ON teams.school=schools.school_id WHERE team_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"');
+		. ' LEFT JOIN schools ON teams.school=schools.school_id WHERE team_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"');
 	$team_name = htmlentities($row['name']);
 	$school = htmlentities($row['school_name']);
 	
@@ -388,8 +388,8 @@ function do_delete() {
 	if ($_POST['xsrf_token'] != $_SESSION['xsrf_token'])
 		trigger_error('XSRF code incorrect', E_USER_ERROR);
 	
-	DB::queryRaw('UPDATE individuals SET deleted="1" WHERE team="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" LIMIT 6');
-	DB::queryRaw('UPDATE teams SET deleted="1" WHERE team_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" LIMIT 1');
+	DB::queryRaw('UPDATE individuals SET deleted="1" WHERE team="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 6');
+	DB::queryRaw('UPDATE teams SET deleted="1" WHERE team_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1');
 	
 	header('Location: Home');
 }

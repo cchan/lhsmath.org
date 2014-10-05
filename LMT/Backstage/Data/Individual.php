@@ -40,7 +40,7 @@ else
 function display_individual($err, $selected_field) {
 	$row = DB::queryFirstRow('SELECT individuals.*, teams.name AS team_name, (SELECT name AS school_name FROM schools WHERE schools.school_id=teams.school) AS school_name'
 		. ' FROM individuals LEFT JOIN teams ON individuals.team=teams.team_id'
-		. ' WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"');
+		. ' WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"');
 	$name = htmlentities($row['name']);
 	$school = htmlentities($row['school_name']);
 	if ($row['grade'] == '6')
@@ -67,7 +67,7 @@ function display_individual($err, $selected_field) {
 	$themeround_checked = is_null($row['score_theme']) ? '' : ' checked="checked"';
 	$themeround_score = htmlentities($row['score_theme']);
 	
-	$row2 = DB::queryFirstRow(individual_composite('', 'WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"'));
+	$row2 = DB::queryFirstRow(individual_composite('', 'WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"'));
 	$composite_score = $row2['score_composite'];
 	
 	if (is_null($composite_score))
@@ -256,8 +256,8 @@ function do_change_name() {
 		display_individual($name_msg, 'document.forms[\'lmtDataIndividualName\'].name.focus();');
 	
 	$result = DB::queryRaw('SELECT id FROM individuals WHERE name="'
-					. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['name'])
-					. '" AND team = (SELECT team FROM individuals WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID'])
+					. mysqli_real_escape_string(DB::get(),$_POST['name'])
+					. '" AND team = (SELECT team FROM individuals WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['ID'])
 					. '") AND team <> "-1" AND deleted="0"');
 	$row = mysqli_fetch_assoc($result);
 	if ($row['id'] == $_GET['ID']) {
@@ -265,8 +265,8 @@ function do_change_name() {
 		die;
 	}
 	
-	DB::queryRaw('UPDATE individuals SET name="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['name'])
-		. '" WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']). '" LIMIT 1');
+	DB::queryRaw('UPDATE individuals SET name="' . mysqli_real_escape_string(DB::get(),$_POST['name'])
+		. '" WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']). '" LIMIT 1');
 	
 	if ($row)
 		add_alert('lmt_data_individual_update_name', 'Name was changed. WARNING: Another individual on the same team has that name.');
@@ -293,8 +293,8 @@ function do_change_grade() {
 		die;
 	}
 	
-	DB::queryRaw('UPDATE individuals SET grade="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['grade'])
-		. '" WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']). '" LIMIT 1');
+	DB::queryRaw('UPDATE individuals SET grade="' . mysqli_real_escape_string(DB::get(),$_POST['grade'])
+		. '" WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']). '" LIMIT 1');
 	
 	add_alert('lmt_data_individual_update_grade', 'Grade was changed');
 	header('Location: Individual?ID=' . $_GET['ID']);
@@ -320,8 +320,8 @@ function do_change_email() {
 		die;
 	}
 	
-	DB::queryRaw('UPDATE individuals SET email="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['email'])
-		. '" WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']). '" LIMIT 1');
+	DB::queryRaw('UPDATE individuals SET email="' . mysqli_real_escape_string(DB::get(),$_POST['email'])
+		. '" WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']). '" LIMIT 1');
 	
 	add_alert('lmt_data_individual_update_email', 'Email was changed');
 	header('Location: Individual?ID=' . $_GET['ID']);
@@ -342,8 +342,8 @@ function do_change_attendance() {
 	else
 		trigger_error('Invalid value of attendance', E_USER_ERROR);
 	
-	DB::queryRaw('UPDATE individuals SET attendance="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$attendance)
-		. '" WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']). '" LIMIT 1');
+	DB::queryRaw('UPDATE individuals SET attendance="' . mysqli_real_escape_string(DB::get(),$attendance)
+		. '" WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']). '" LIMIT 1');
 	
 	add_alert('lmt_data_individual_update_attendance', 'Attendance was changed');
 	header('Location: Individual?ID=' . $_GET['ID']);
@@ -402,12 +402,12 @@ function do_change_individual_round() {
 		if ($score_msg !== true)
 			display_individual($score_msg, 'document.forms[\'lmtDataIndividualRoundScore\'].score.focus();');
 		
-		DB::queryRaw('UPDATE individuals SET score_individual="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$score)
-			. '" WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID'])
-			. '" AND (score_individual <> "' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$score) . '" OR score_individual IS NULL) LIMIT 1');
+		DB::queryRaw('UPDATE individuals SET score_individual="' . mysqli_real_escape_string(DB::get(),$score)
+			. '" WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['ID'])
+			. '" AND (score_individual <> "' . mysqli_real_escape_string(DB::get(),$score) . '" OR score_individual IS NULL) LIMIT 1');
 	}
 	else
-		DB::queryRaw('UPDATE individuals SET score_individual=NULL WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID'])
+		DB::queryRaw('UPDATE individuals SET score_individual=NULL WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['ID'])
 			. '" AND score_individual IS NOT NULL LIMIT 1');
 	
 	global $LMT_DB;
@@ -437,12 +437,12 @@ function do_change_theme_round() {
 		if ($score_msg !== true)
 			display_individual($score_msg, 'document.forms[\'lmtDataThemeRoundScore\'].score.focus();');
 		
-		DB::queryRaw('UPDATE individuals SET score_theme="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$score)
-			. '" WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID'])
-			. '" AND (score_theme <> "' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$score) . '" OR score_theme IS NULL) LIMIT 1');
+		DB::queryRaw('UPDATE individuals SET score_theme="' . mysqli_real_escape_string(DB::get(),$score)
+			. '" WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['ID'])
+			. '" AND (score_theme <> "' . mysqli_real_escape_string(DB::get(),$score) . '" OR score_theme IS NULL) LIMIT 1');
 	}
 	else
-		DB::queryRaw('UPDATE individuals SET score_theme=NULL WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID'])
+		DB::queryRaw('UPDATE individuals SET score_theme=NULL WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['ID'])
 			. '" AND score_theme IS NOT NULL LIMIT 1');
 	
 	global $LMT_DB;
@@ -460,7 +460,7 @@ function do_confirm_delete() {
 	
 	$row = DB::queryFirstRow('SELECT individuals.name, teams.name AS team_name,'
 		. ' (SELECT name FROM schools WHERE schools.school_id=teams.school) AS school_name FROM individuals'
-		. ' LEFT JOIN teams ON individuals.team=teams.team_id WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"');
+		. ' LEFT JOIN teams ON individuals.team=teams.team_id WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"');
 	$name = htmlentities($row['name']);
 	$team = htmlentities($row['team_name']);
 	$school = htmlentities($row['school_name']);
@@ -496,7 +496,7 @@ function do_delete() {
 	if ($_POST['xsrf_token'] != $_SESSION['xsrf_token'])
 		trigger_error('XSRF code incorrect', E_USER_ERROR);
 	
-	DB::queryRaw('UPDATE individuals SET deleted="1" WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" LIMIT 1');
+	DB::queryRaw('UPDATE individuals SET deleted="1" WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1');
 	
 	header('Location: Home');
 }

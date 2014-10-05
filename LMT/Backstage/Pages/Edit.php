@@ -28,13 +28,13 @@ function show_form($err) {
 	if ($err != '')
 		$err = "\n        <div class=\"error\">$err</div><br />\n";
 	
-	$name = htmlentities($_POST['name']);
-	$content = htmlentities($_POST['content']);
+	@$name = htmlentities($_POST['name']);
+	@$content = htmlentities($_POST['content']);
 	
 	// Fetch data if this is the first time the form has been shown
 	if ($name == '' || $content == '') {
 		$row = DB::queryFirstRow('SELECT name, content FROM pages WHERE page_id="'
-			. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"');
+			. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"');
 		
 		if ($name == '')
 			$name = htmlentities($row['name']);
@@ -100,9 +100,9 @@ function do_edit_page() {
 	// ** VALIDATION COMPLETE ** \\
 	
 	DB::queryRaw('UPDATE pages SET name="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$name)
-		. '", content="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$content)
-		. '" WHERE page_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" LIMIT 1');
+		. mysqli_real_escape_string(DB::get(),$name)
+		. '", content="' . mysqli_real_escape_string(DB::get(),$content)
+		. '" WHERE page_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1');
 	
 	header('Location: View?ID=' . $_GET['ID']);
 }

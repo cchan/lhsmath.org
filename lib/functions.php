@@ -234,6 +234,14 @@ DB::$host = $DB_SERVER; //defaults to localhost if omitted
 DB::$user = $DB_USERNAME;
 DB::$password = $DB_PASSWORD;
 DB::$dbName = $DB_DATABASE;
+DB::$error_handler = 'db_error_handler';
+function db_error_handler($params){
+	$out = 'DB ERROR: ';
+	if (isset($params['query'])) $out .= "QUERY: " . $params['query'] . '<br />';
+	if (isset($params['error'])) $out .= "ERROR: " . $params['error'] . '<br />';
+	trigger_error($out,E_USER_ERROR);
+	die;
+}
 
 
 // add extra include path
@@ -1119,7 +1127,8 @@ HEREDOC;
 	
 	ob_flush();
 	flush();
-	die();//--todo--For some reason it just keeps on "Waiting for localhost..." even though the script is done...
+	//die();//DO NOT. Will cause other shutdown functions to not work.
+	//--todo--For some reason it just keeps on "Waiting for localhost..." even though the script is done...
 }
 register_shutdown_function('templateify');
 

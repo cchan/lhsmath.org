@@ -67,7 +67,7 @@ HEREDOC;
 
 
 function do_individual() {
-	DB::queryRaw('UPDATE individuals SET deleted="0" WHERE id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['Individual']) . '" LIMIT 1');
+	DB::queryRaw('UPDATE individuals SET deleted="0" WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['Individual']) . '" LIMIT 1');
 	
 	global $LMT_DB;
 	if (mysqli_affected_rows($LMT_DB) != 1)
@@ -81,7 +81,7 @@ function do_individual() {
 
 
 function do_team() {
-	DB::queryRaw('UPDATE teams SET deleted="0" WHERE team_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['Team']) . '" LIMIT 1');
+	DB::queryRaw('UPDATE teams SET deleted="0" WHERE team_id="' . mysqli_real_escape_string(DB::get(),$_GET['Team']) . '" LIMIT 1');
 	
 	global $LMT_DB;
 	if (mysqli_affected_rows($LMT_DB) != 1)
@@ -95,7 +95,7 @@ function do_team() {
 
 
 function do_school() {
-	DB::queryRaw('UPDATE schools SET deleted="0" WHERE school_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['School']) . '" LIMIT 1');
+	DB::queryRaw('UPDATE schools SET deleted="0" WHERE school_id="' . mysqli_real_escape_string(DB::get(),$_GET['School']) . '" LIMIT 1');
 	
 	global $LMT_DB;
 	if (mysqli_affected_rows($LMT_DB) != 1)

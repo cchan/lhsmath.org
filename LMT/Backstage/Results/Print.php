@@ -66,7 +66,7 @@ HEREDOC;
 HEREDOC;
 		
 		$result2 = DB::queryRaw('SELECT name, score_individual, score_theme FROM individuals WHERE team="'
-			. mysqli_real_escape_string($GLOBALS['LMT_DB'],$team_id) . '" AND deleted="0" ORDER BY name');
+			. mysqli_real_escape_string(DB::get(),$team_id) . '" AND deleted="0" ORDER BY name');
 		$row2 = mysqli_fetch_assoc($result2);
 		if (!$row2)
 			echo "\n" . '        <h3 class="text-centered">No Members</span>' . "\n\n";

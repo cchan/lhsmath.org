@@ -20,7 +20,7 @@ else
 
 function show_page() {
 	$row = DB::queryFirstRow('SELECT * FROM pages WHERE page_id="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"');
+		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"');
 	
 	$name = htmlentities($row['name']);
 	$content = "      " . str_replace("\n", "\n      ", $row['content']);
@@ -59,11 +59,11 @@ function do_delete_page() {
 		trigger_error('XSRF code incorrect', E_USER_ERROR);
 	
 	$row = DB::queryFirstRow('SELECT name FROM pages WHERE page_id="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"');
+		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"');
 	$page_name = htmlentities($row['name']);
 	
 	DB::queryRaw('DELETE FROM pages WHERE page_id="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" LIMIT 1');
+		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1');
 	
 	add_alert('deletePage', 'The page &quot;' . $page_name . '&quot; has been deleted');
 	header('Location: List');

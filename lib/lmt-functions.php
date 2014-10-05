@@ -111,12 +111,8 @@ $map_values=NULL;
 $map_values_changed=false;
 function map_value($key) {
 	global $map_values;
-	if($map_values===NULL){//Caching
-		$result=DB::query('SELECT map_key, map_value FROM map');
-		$map_values=array();
-		foreach($result as $pair)
-			$map_values[$pair['map_key']]=$pair['map_value'];
-	}
+	if($map_values===NULL)//Caching
+		$map_values=DBHelper::verticalSlice(DB::query('SELECT map_key, map_value FROM map'),'map_value','map_key');
 	
 	if(array_key_exists(strtolower($key),$map_values))
 		return $map_values[strtolower($key)];
@@ -128,7 +124,7 @@ function map_value($key) {
  * Sets the value for a given key, creating the pair
  * if it does not already exist
  */
-function map_set($key, $value) {//This takes TWO db queries each and every time.
+function map_set($key, $value) {
 	global $map_values,$map_values_changed;
 	if($map_values===NULL)map_value(0);//Load stuff into $map_values
 	$map_values_changed=true;
@@ -138,7 +134,7 @@ function map_set($key, $value) {//This takes TWO db queries each and every time.
  * map_commit()
  * Shutdown function that should not be used normally, but can be.
  * Commits all the changes to the database, since PHP globals are faster than DB storage.
- * May cause race condition problems if multiple people are editing at once,
+ * May cause race condition problems (e.g. if it runs too long and a cached version is not up to date)
  * but there aren't that many admins.
  *
  * Note: The field map_key must be a primary key.
@@ -151,7 +147,7 @@ function map_commit(){
 	foreach($map_values as $key=>$value)
 		$insertions[]=array('map_key'=>$key,'map_value'=>$value);
 	
-	DB::insertUpdate('map',$insertions);
+	DB::insertUpdate('map',$insertions,'map_value=VALUES(map_value)');
 	
 	$map_values_changed=false;
 }

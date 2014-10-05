@@ -37,7 +37,7 @@ function do_move() {
 	else
 		trigger_error('Neither Up nor Down specified', E_USER_ERROR);
 	
-	$row = DB::queryFirstRow('SELECT order_num FROM pages WHERE page_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"');
+	$row = DB::queryFirstRow('SELECT order_num FROM pages WHERE page_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"');
 	$order = $row['order_num'];
 	
 	$row = DB::queryFirstRow('SELECT page_id, order_num FROM pages WHERE order_num' . $operator
@@ -45,10 +45,10 @@ function do_move() {
 	$other_id = $row['page_id'];
 	$new_order = (int)$order + $modifier;
 	
-	DB::queryRaw('UPDATE pages SET order_num="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$new_order) . '" WHERE page_id="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" LIMIT 1');
-	DB::queryRaw('UPDATE pages SET order_num="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$order) . '" WHERE page_id="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$other_id) . '" LIMIT 1');
+	DB::queryRaw('UPDATE pages SET order_num="' . mysqli_real_escape_string(DB::get(),$new_order) . '" WHERE page_id="'
+		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1');
+	DB::queryRaw('UPDATE pages SET order_num="' . mysqli_real_escape_string(DB::get(),$order) . '" WHERE page_id="'
+		. mysqli_real_escape_string(DB::get(),$other_id) . '" LIMIT 1');
 	
 	header('Location: List');
 }

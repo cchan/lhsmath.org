@@ -93,7 +93,7 @@ function do_enter_team_score() {
 		show_page($score_msg, '');
 	
 	$result = DB::queryRaw('SELECT team_id, name, score_team_short FROM teams WHERE name="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['name']) . '" AND deleted="0"');
+		. mysqli_real_escape_string(DB::get(),$_POST['name']) . '" AND deleted="0"');
 	
 	if (mysqli_num_rows($result) == 0)
 		show_page('An team named "' . htmlentities($_POST['name']) .'" not found', '');
@@ -112,8 +112,8 @@ function do_enter_team_score() {
 	}
 	
 	DB::queryRaw('UPDATE teams SET score_team_short="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['score']) . '" WHERE team_id="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$row['team_id']) . '" LIMIT 1');
+		. mysqli_real_escape_string(DB::get(),$_POST['score']) . '" WHERE team_id="'
+		. mysqli_real_escape_string(DB::get(),$row['team_id']) . '" LIMIT 1');
 
 	$msg = 'A score of ' . htmlentities($_POST['score']) . ' was entered for '
 		. htmlentities($row['name']);
@@ -138,7 +138,7 @@ function show_multiple_results_page() {
 	
 	$result = DB::queryRaw('SELECT team_id, teams.name AS name, schools.name AS school_name '
 		. 'FROM teams LEFT JOIN schools ON teams.school=schools.school_id WHERE teams.name="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['name']) . '" WHERE teams.deleted="0"');
+		. mysqli_real_escape_string(DB::get(),$_POST['name']) . '" WHERE teams.deleted="0"');
 	
 	echo <<<HEREDOC
       <h1>Team Round (Short) Score Entry</h1>
@@ -191,7 +191,7 @@ function do_enter_clarified_score() {
 		trigger_error('Score isn\'t valid this time?!', E_USER_ERROR);
 	
 	$row = DB::queryFirstRow('SELECT name, score_team_short FROM teams WHERE team_id="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"');
+		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"');
 	
 	if (!is_null($row['score_team_short']) && !isSet($_GET['Overwrite'])) {
 		if (isSet($_GET['xsrf_token'])) {
@@ -214,8 +214,8 @@ function do_enter_clarified_score() {
 		trigger_error('XSRF code incorrect', E_USER_ERROR);
 	
 	DB::queryRaw('UPDATE teams SET score_team_short="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['Score']) . '" WHERE team_id="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" LIMIT 1');
+		. mysqli_real_escape_string(DB::get(),$_GET['Score']) . '" WHERE team_id="'
+		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1');
 	$msg = 'A score of ' . htmlentities($_GET['Score']) . ' was entered for '
 		. htmlentities($row['name']);
 	

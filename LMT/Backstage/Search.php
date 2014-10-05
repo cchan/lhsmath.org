@@ -49,7 +49,7 @@ function do_search() {
 	$scope = ' ' . $_GET['Scope'];
 	$return = $_GET['Return'];
 	
-	$query = mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['Query']);
+	$query = mysqli_real_escape_string(DB::get(),$_GET['Query']);
 	$query = str_replace(" ", "%", $query);
 	
 	if (strpos($scope, 'Individual') !== false) {

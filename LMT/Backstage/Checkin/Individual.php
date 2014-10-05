@@ -21,7 +21,7 @@ else
 
 function show_page() {
 	$row = DB::queryFirstRow('SELECT id, name, email, grade, paid, attendance FROM individuals WHERE id="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" AND deleted="0"');
+		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" AND deleted="0"');
 	$id = htmlentities($row['id']);
 	$name = htmlentities($row['name']);
 	$email = htmlentities($row['email']);
@@ -89,7 +89,7 @@ function process_form() {
 	$attendance = ($_POST['attendance'] == 'Yes') ? '1' : '0';
 	
 	$row = DB::queryFirstRow('SELECT name FROM individuals WHERE id="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"');
+		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"');
 	$name = htmlentities($row['name']);
 	
 	DB::update('individuals',array('paid'=>$paid,'attendance'=>$attendance),'id=%i',$_GET['ID']);

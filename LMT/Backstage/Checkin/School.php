@@ -22,14 +22,14 @@ else
 function show_page() {
 	$id = htmlentities($_GET['ID']);
 	$row = DB::queryFirstRow('SELECT name, coach_email, teams_paid FROM schools WHERE school_id="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$id) . '" AND deleted="0"');
+		. mysqli_real_escape_string(DB::get(),$id) . '" AND deleted="0"');
 	$name = htmlentities($row['name']);
 	$email = htmlentities($row['coach_email']);
 	$grade = htmlentities($row['grade']);
 	$paid = htmlentities($row['teams_paid']);
 	
 	$result = DB::queryRaw('SELECT team_id, name FROM teams WHERE school="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$id) . '" AND deleted="0" ORDER BY name');
+		. mysqli_real_escape_string(DB::get(),$id) . '" AND deleted="0" ORDER BY name');
 	$num_teams = htmlentities(mysqli_num_rows($result));
 	$add_teams_paid = $num_teams - $paid;
 	if ($add_teams_paid < 0) {
@@ -59,7 +59,7 @@ HEREDOC;
 HEREDOC;
 		
 		$result2 = DB::queryRaw('SELECT id, name, attendance, grade FROM individuals WHERE team="'
-			. mysqli_real_escape_string($GLOBALS['LMT_DB'],$row['team_id']) . '" AND deleted="0" ORDER BY name');
+			. mysqli_real_escape_string(DB::get(),$row['team_id']) . '" AND deleted="0" ORDER BY name');
 		$row2 = mysqli_fetch_assoc($result2);
 		while ($row2) {
 			$indiv_id = htmlentities($row2['id']);
@@ -139,11 +139,11 @@ function process_form() {
 	$attendance = ($_POST['attendance'] == 'Yes') ? '1' : '0';
 	
 	$row = DB::queryFirstRow('SELECT name FROM schools WHERE school_id="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"');
+		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"');
 	$name = htmlentities($row['name']);
 	
 	DB::queryRaw('UPDATE schools SET teams_paid = teams_paid + "'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['add_teams_paid']) . '" LIMIT 1');
+		. mysqli_real_escape_string(DB::get(),$_POST['add_teams_paid']) . '" LIMIT 1');
 	
 	$present = array();
 	$pid = 0;
@@ -151,13 +151,13 @@ function process_form() {
 	if (count($_POST['indiv']) > 0) {
 		foreach ($_POST['indiv'] as $indiv_id => $attendance) {
 			if ($attendance == 'Yes')
-				$present[$pid++] = mysqli_real_escape_string($GLOBALS['LMT_DB'],$indiv_id);
+				$present[$pid++] = mysqli_real_escape_string(DB::get(),$indiv_id);
 		}
 	}
 	
 	DB::queryRaw('UPDATE individuals SET attendance="0" WHERE'
 		. ' team = ANY (SELECT team_id FROM teams WHERE school = "'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '")');
+		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '")');
 	
 	if (count($present) > 0) {
 		$query = 'UPDATE individuals SET attendance="1" WHERE (';
@@ -168,7 +168,7 @@ function process_form() {
 			$query .= 'id="' . $indiv_id . '"';
 			$first = false;
 		}
-		$query .= ') LIMIT ' . mysqli_real_escape_string($GLOBALS['LMT_DB'],count($present));
+		$query .= ') LIMIT ' . mysqli_real_escape_string(DB::get(),count($present));
 		DB::queryRaw($query);
 	}
 	

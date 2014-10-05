@@ -250,7 +250,7 @@ function show_edit_page($err, $selected_field) {
 	$team_name = DB::queryFirstField('SELECT name FROM teams WHERE team_id=%i AND school=%i',$team_id,$_SESSION['LMT_user_id']);
 	
 	$members = lmt_db_table(	'SELECT id, name, grade FROM individuals WHERE team="'
-								. mysqli_real_escape_string($GLOBALS['LMT_DB'],$team_id) . '" ORDER BY name',
+								. mysqli_real_escape_string(DB::get(),$team_id) . '" ORDER BY name',
 							array(	'name' => '',
 									'grade' => ''),
 							array(	'<img src="../../res/icons/edit.png" alt="Edit" />' => 'Team?EditMember={id}',
@@ -521,7 +521,7 @@ function show_delete_page() {
 	$team_name = htmlentities(DB::queryFirstField('SELECT name FROM teams WHERE team_id=%i AND school=%i',$_GET['Delete'],$_SESSION['LMT_user_id']));
 	$school_name = htmlentities($_SESSION['LMT_school_name']);
 	$members = lmt_db_table(	'SELECT name, grade FROM individuals WHERE team="'
-								. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['Delete']) . '" ORDER BY name',
+								. mysqli_real_escape_string(DB::get(),$_GET['Delete']) . '" ORDER BY name',
 							null,
 							null,
 							'None',

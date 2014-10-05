@@ -32,7 +32,7 @@ function generate_results() {
 	if ($_GET['term'] == '')
 		die();
 		
-	$query = mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['term']);
+	$query = mysqli_real_escape_string(DB::get(),$_GET['term']);
 	$query = str_replace(" ", "%", $query);
 	
 	$comma = "";

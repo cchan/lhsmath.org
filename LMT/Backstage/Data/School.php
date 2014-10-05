@@ -32,7 +32,7 @@ else
 
 
 function display_school($err, $selected_field) {
-	$row = DB::queryFirstRow('SELECT * FROM schools WHERE school_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"');
+	$row = DB::queryFirstRow('SELECT * FROM schools WHERE school_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"');
 	$school_name = htmlentities($row['name']);
 	$coach_email = htmlentities($row['coach_email']);
 	$team_list = make_teams_list();
@@ -147,14 +147,14 @@ function do_change_name() {
 	if ($name_msg !== true)
 		display_school($name_msg, 'document.forms[\'lmtDataSchoolName\'].school_name.focus();');
 	
-	DB::queryRaw('UPDATE schools SET name="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$name)
-		. '" WHERE school_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID'])
-		. '" AND name <> "' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$name) . '" LIMIT 1');
+	DB::queryRaw('UPDATE schools SET name="' . mysqli_real_escape_string(DB::get(),$name)
+		. '" WHERE school_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID'])
+		. '" AND name <> "' . mysqli_real_escape_string(DB::get(),$name) . '" LIMIT 1');
 	
 	global $LMT_DB;
 	if (mysqli_affected_rows($LMT_DB) == 1) {
-		$row = DB::queryFirstRow('SELECT COUNT(*) FROM schools WHERE name="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$name)
-			. '" AND school_id <> "' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" AND deleted="0"');
+		$row = DB::queryFirstRow('SELECT COUNT(*) FROM schools WHERE name="' . mysqli_real_escape_string(DB::get(),$name)
+			. '" AND school_id <> "' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" AND deleted="0"');
 		if ($row['COUNT(*)'] > 0)
 			add_alert('lmt_data_school_update_name', 'School name was changed. WARNING: Another school has the same name.');
 		else
@@ -173,7 +173,7 @@ function do_change_email() {
 	
 	$email = $_POST['coach_email'];
 	
-	$row = DB::queryFirstRow('SELECT coach_email FROM schools WHERE school_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"');
+	$row = DB::queryFirstRow('SELECT coach_email FROM schools WHERE school_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"');
 	if ($email == $row['coach_email']) {
 		header('Location: School?ID=' . $_GET['ID']);
 		die;
@@ -183,8 +183,8 @@ function do_change_email() {
 	if ($email_msg !== true)
 		display_school($email_msg, 'document.forms[\'lmtDataSchoolEmail\'].coach_email.focus();');
 	
-	DB::queryRaw('UPDATE schools SET coach_email="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$email)
-		. '" WHERE school_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" LIMIT 1');
+	DB::queryRaw('UPDATE schools SET coach_email="' . mysqli_real_escape_string(DB::get(),$email)
+		. '" WHERE school_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1');
 	
 	add_alert('lmt_data_school_update_email', 'Coach email was changed');
 	header('Location: School?ID=' . $_GET['ID']);
@@ -246,7 +246,7 @@ function do_change_paid() {
 function do_confirm_delete() {
 	$id = htmlentities($_GET['ID']);
 	
-	$row = DB::queryFirstRow('SELECT name FROM schools WHERE school_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"');
+	$row = DB::queryFirstRow('SELECT name FROM schools WHERE school_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"');
 	$school_name = htmlentities($row['name']);
 	
 	lmt_page_header('Delete School');
@@ -275,9 +275,9 @@ function do_delete() {
 	if ($_POST['xsrf_token'] != $_SESSION['xsrf_token'])
 		trigger_error('XSRF code incorrect', E_USER_ERROR);
 	
-	DB::queryRaw('UPDATE individuals SET deleted="1" WHERE team = ANY (SELECT team_id FROM teams WHERE school="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '")');
-	DB::queryRaw('UPDATE teams SET deleted="1" WHERE school="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"');
-	DB::queryRaw('UPDATE schools SET deleted="1" WHERE school_id="' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" LIMIT 1');
+	DB::queryRaw('UPDATE individuals SET deleted="1" WHERE team = ANY (SELECT team_id FROM teams WHERE school="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '")');
+	DB::queryRaw('UPDATE teams SET deleted="1" WHERE school="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"');
+	DB::queryRaw('UPDATE schools SET deleted="1" WHERE school_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1');
 	
 	header('Location: Home');
 }

@@ -70,7 +70,7 @@ HEREDOC;
 	//selecting individuals' name, school, individual score, from individuals left-joined with teams
 	
 	// TEAM ROUND
-	$code .= '<h4>Top Teams in Team Round</h4><table class="contrasting"><tr><th>Place</th><th>Team</th><th>School</th><th>Score</th></tr>'
+	$code .= '<h4>Top Teams in Team Round</h4><table class="contrasting"><tr><th>Place</th><th>Team</th><th>School</th><th>Score</th></tr>';
 	
 	$query = 'SELECT name, IFNULL(score_team_short, 0) + IFNULL(score_team_long, 0) AS score_team, (SELECT name FROM schools WHERE schools.school_id=teams.school) AS school_name, RAND() AS rand FROM teams WHERE deleted="0" ORDER BY score_team DESC, rand';
 	$result = DB::queryRaw($query);

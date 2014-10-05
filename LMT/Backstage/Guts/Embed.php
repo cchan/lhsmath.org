@@ -119,24 +119,24 @@ function show_scoring_page() {
 	$id = htmlentities($_GET['ID']);
 	
 	$row = DB::queryFirstRow('SELECT name FROM teams WHERE team_id="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" AND deleted = "0"');
+		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" AND deleted = "0"');
 	$team = htmlentities($row['name']);
 	
 	$row = DB::queryFirstRow('SELECT MAX(problem_set) FROM guts WHERE team="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"');
+		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"');
 	$set = (int) htmlentities($row['MAX(problem_set)']) + 1;
 	$problems = (3 * $set - 2) . ', ' . (3 * $set -  1) . ', ' . ' and ' . (3 * $set);
 	
 	if ($set > 1) {
 		$row = DB::queryFirstRow('SELECT score FROM guts WHERE problem_set="'
-			. mysqli_real_escape_string($GLOBALS['LMT_DB'],$set - 1) . '" AND team="'
-			. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"');
+			. mysqli_real_escape_string(DB::get(),$set - 1) . '" AND team="'
+			. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"');
 		$prev_right_val = (int) htmlentities($row['score']);
 		
 		if ($set == 12) {
 			// Check for answers to round 13 in the other table
 			$row  = DB::queryFirstRow('SELECT guts_ans_a, guts_ans_b, guts_ans_c FROM teams WHERE team_id="'
-				. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"');
+				. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"');
 			if (!is_null($row['guts_ans_a']) || !is_null($row['guts_ans_b']) || !is_null($row['guts_ans_c']))
 				show_completed_page(htmlentities($team),
 					array(1 => $row['guts_ans_a'], 2 => $row['guts_ans_b'], 3 => $row['guts_ans_c']));	// so, set is actually 13
@@ -331,15 +331,15 @@ function process_form() {
 		trigger_error('Invalid set?!', E_USER_ERROR);
 	
 	$row  = DB::queryFirstRow('SELECT COUNT(*) FROM guts WHERE team="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" AND problem_set="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$set) . '"');
+		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" AND problem_set="'
+		. mysqli_real_escape_string(DB::get(),$set) . '"');
 	if ($row['COUNT(*)'] != 0)
 		show_duplicate_scores_warning();
 	
 	DB::queryRaw('INSERT INTO guts (team, problem_set, score) VALUES ("'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '", "'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$set) . '", "'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$score) . '")');
+		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '", "'
+		. mysqli_real_escape_string(DB::get(),$set) . '", "'
+		. mysqli_real_escape_string(DB::get(),$score) . '")');
 	
 	show_scoring_page();
 }
@@ -402,7 +402,7 @@ function score_special() {
 		trigger_error('Invalid set?!', E_USER_ERROR);
 	
 	$row  = DB::queryFirstRow('SELECT guts_ans_a, guts_ans_b, guts_ans_c FROM teams WHERE team_id="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '"');
+		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"');
 	if (!is_null($row['guts_ans_a']) || !is_null($row['guts_ans_b']) || !is_null($row['guts_ans_c']))
 		show_duplicate_scores_warning();
 	
@@ -420,21 +420,21 @@ function score_special() {
 	if (is_null($ans_34))
 		$ans_34 = 'NULL';
 	else
-		$ans_34 = '"' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$ans_34) . '"';
+		$ans_34 = '"' . mysqli_real_escape_string(DB::get(),$ans_34) . '"';
 	if (is_null($ans_35))
 		$ans_35 = 'NULL';
 	else
-		$ans_35 = '"' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$ans_35) . '"';
+		$ans_35 = '"' . mysqli_real_escape_string(DB::get(),$ans_35) . '"';
 	if (is_null($ans_36))
 		$ans_36 = 'NULL';
 	else
-		$ans_36 = '"' . mysqli_real_escape_string($GLOBALS['LMT_DB'],$ans_36) . '"';
+		$ans_36 = '"' . mysqli_real_escape_string(DB::get(),$ans_36) . '"';
 	
 	DB::queryRaw('UPDATE teams SET guts_ans_a='
 		. $ans_34 . ', guts_ans_b='
 		. $ans_35 . ', guts_ans_c='
 		. $ans_36 . ' WHERE team_id="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" LIMIT 1');
+		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1');
 	
 	show_scoring_page();
 }
@@ -455,11 +455,11 @@ function cancel_score() {
 	if ($set == 12) {
 		// Scores are as text entered into TEAMS table
 		DB::queryRaw('UPDATE teams SET guts_ans_a=NULL, guts_ans_b=NULL, guts_ans_c=NULL WHERE team_id="'
-			. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" LIMIT 1');
+			. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1');
 	} else {
 		DB::queryRaw('DELETE FROM guts WHERE team="'
-			. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_GET['ID']) . '" AND problem_set="'
-			. mysqli_real_escape_string($GLOBALS['LMT_DB'],$set) . '" LIMIT 3');
+			. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" AND problem_set="'
+			. mysqli_real_escape_string(DB::get(),$set) . '" LIMIT 3');
 	}
 	
 	show_scoring_page();

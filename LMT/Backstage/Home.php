@@ -14,7 +14,7 @@ global $use_rel_external_script;
 $use_rel_external_script = true;
 
 lmt_page_header('Backstage');
-$message = '<h1>Backstage</h1>' . map_value('backstage_message');
+echo '<h1>Backstage</h1>' . map_value('backstage_message');
 lmt_backstage_footer('Backstage Home');
 
 ?>

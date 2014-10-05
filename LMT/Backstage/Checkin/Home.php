@@ -95,7 +95,7 @@ HEREDOC;
 
 function find_school() {
 	$result = DB::queryRaw('SELECT school FROM teams WHERE team_id="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['id']) . '" AND deleted="0"');
+		. mysqli_real_escape_string(DB::get(),$_POST['id']) . '" AND deleted="0"');
 	if (mysqli_num_rows($result) != 1)
 		show_page('School not found');
 	
@@ -110,7 +110,7 @@ function find_school() {
 
 function find_individual() {
 	$row = DB::queryFirstRow('SELECT COUNT(*), email FROM individuals WHERE id="'
-		. mysqli_real_escape_string($GLOBALS['LMT_DB'],$_POST['id']) . '" AND deleted="0"');
+		. mysqli_real_escape_string(DB::get(),$_POST['id']) . '" AND deleted="0"');
 	if ($row['COUNT(*)'] != 1)
 		show_page('Individual not found');
 	if ($row['email'] == "")
