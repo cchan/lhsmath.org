@@ -50,8 +50,8 @@ function show_page($err) {
 	
 	// Get info for the byline
 	$query = 'SELECT name, email FROM users WHERE id="' . $_SESSION['user_id'] . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	$by_line = $row['name'] . ' &lt;' . $row['email'] . '&gt;';
 	
 	// Previously-filled data?

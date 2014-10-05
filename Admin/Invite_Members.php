@@ -72,10 +72,10 @@ function process_form() {
 		}
 		
 		// Check that account does not already exist
-		$sql_email = mysql_real_escape_string($email);
+		$sql_email = mysqli_real_escape_string(DB::get(),$email);
 		$query = 'SELECT COUNT(*) FROM users WHERE LOWER(email)="' . $sql_email . '"';
-		$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-		$row = mysql_fetch_assoc($result);
+		$result = DB::queryRaw($query);
+		$row = mysqli_fetch_assoc($result);
 		if ($row['COUNT(*)'] != 0) {
 			$valid = false;
 		}

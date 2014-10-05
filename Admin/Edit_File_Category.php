@@ -75,8 +75,8 @@ function do_add() {
 	}
 	
 	$name = htmlentities($name);
-	$query = 'INSERT INTO file_categories (name) VALUES ("' . mysql_real_escape_string($name) . '")';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'INSERT INTO file_categories (name) VALUES ("' . mysqli_real_escape_string(DB::get(),$name) . '")';
+	DB::queryRaw($query);
 	
 	$_SESSION['FILE_category_added'] = 'The category &quot;' . $name . '&quot; has been added';
 	header('Location: Files');
@@ -87,11 +87,11 @@ function do_add() {
 
 
 function show_edit_page($err) {
-	$query = 'SELECT name FROM file_categories WHERE category_id="' . mysql_real_escape_string($_GET['ID']) . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	if (mysql_num_rows($result) != 1)
+	$query = 'SELECT name FROM file_categories WHERE category_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"';
+	$result = DB::queryRaw($query);
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Edit: Incorrect number of categories match ID', E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	
 	global $body_onload;
 	$body_onload = 'document.forms[\'editFileCategory\'].name.focus()';
@@ -145,9 +145,9 @@ function do_edit() {
 		return;
 	}
 	
-	$query = 'UPDATE file_categories SET name="' . mysql_real_escape_string($name)
-		. '" WHERE category_id="' . mysql_real_escape_string($_GET['ID']) . '" LIMIT 1';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'UPDATE file_categories SET name="' . mysqli_real_escape_string(DB::get(),$name)
+		. '" WHERE category_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
+	DB::queryRaw($query);
 	
 	$_SESSION['FILE_category_edited'] = 'The category &quot;' . $name . '&quot; has been edited';
 	header('Location: Files');
@@ -161,18 +161,18 @@ function do_delete() {
 	if ($_GET['xsrf_token'] != $_SESSION['xsrf_token'])
 		trigger_error('XSRF code incorrect', E_USER_ERROR);
 	
-	$query = 'SELECT name FROM file_categories WHERE category_id="' . mysql_real_escape_string($_GET['ID']) . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	if (mysql_num_rows($result) != 1)
+	$query = 'SELECT name FROM file_categories WHERE category_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"';
+	$result = DB::queryRaw($query);
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Delete: Incorrect number of categories match ID', E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$name = $row['name'];
 	
-	$query = 'UPDATE files SET category="0" WHERE category="' . mysql_real_escape_string($_GET['ID']) . '"';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'UPDATE files SET category="0" WHERE category="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"';
+	DB::queryRaw($query);
 	
-	$query = 'DELETE FROM file_categories WHERE category_id="' . mysql_real_escape_string($_GET['ID']) . '" LIMIT 1';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'DELETE FROM file_categories WHERE category_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
+	DB::queryRaw($query);
 	
 	$_SESSION['FILE_category_deleted'] = 'The category &quot;' . $name . '&quot; has been deleted';
 	header('Location: Files');

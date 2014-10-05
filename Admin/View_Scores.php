@@ -48,19 +48,19 @@ HEREDOC;
 	$query = 'SELECT test_id, name, total_points FROM tests WHERE';
 	$or = '';
 	foreach ($_GET['Test'] as $test_id) {
-		$query .= $or . ' test_id="' . mysql_real_escape_string($test_id) . '"';
+		$query .= $or . ' test_id="' . mysqli_real_escape_string(DB::get(),$test_id) . '"';
 		$or = ' OR';
 	}
 	$query .= ' ORDER BY date DESC';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$result = DB::queryRaw($query);
 	
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$i = 0;
 	$test_ids = array();
 	while ($row) {
 		$test_ids[$i++] = $row['test_id'];
 		echo "\n          <th class=\"min-width\">" . htmlentities($row['name']) . ' [' . $row['total_points'] . ']</th>';
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	echo "\n        </tr>";
 	
@@ -75,15 +75,15 @@ HEREDOC;
 		$or = ' OR';
 	}
 	$query .= ' GROUP BY user_id ORDER BY SUM(score) DESC, name';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	
 	while ($row) {
 		echo "\n        <tr>\n          <td><a href=\"View_User?ID=" . $row['id'] . '">' . $row['name'] . "</a></td>\n          <td>" . $row['SUM(score)'] . "</td>";
 		foreach ($test_ids as $test_id)
 			echo "\n          <td>" . $row['test_' . $test_id] . '</td>';
 		echo "\n        </tr>";
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	echo "\n      </table>";
 	

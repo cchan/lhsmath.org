@@ -22,8 +22,8 @@ show_page();
 
 function show_page() {
 	$query = 'SELECT * FROM users WHERE id="' . $_SESSION['user_id'] . '" LIMIT 1';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	
 	$cell = format_phone_number($row['cell']);
 	if ($cell == '')

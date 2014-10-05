@@ -14,7 +14,7 @@ $PUBLIC_EMAIL =			'contact@lhsmath.org';	// public
 $CAPTAIN_EMAIL =		'captains@lhsmath.org';	// address for all captains; shown to members only
 $LMT_EMAIL =			'lmt@lhsmath.org';
 $TIMEZONE =				'America/New_York';	// See [http://www.php.net/manual/en/timezones.php]
-
+$ADVISOR_NAME =			'Wendy Cordero';
 
 
 // DATABASE INFORMATION:
@@ -101,6 +101,9 @@ $BANNED_IPS =	array(
 $CATCH_ERRORS = false;			// For website debugging. Should normally be set to TRUE,
 								// which means it will just say "Whoops, something went wrong"
 								// rather than talk about the error.
+								
+$LOCAL_BORDER_COLOR = 'transparent';//For local development versions to set to something else in CONFIG.local.php.
+								
 								
 @include 'CONFIG.local.php';	// DEVELOPERS: to override certain values in your
 								// testing environment, put them in 'CONFIG.local.php'

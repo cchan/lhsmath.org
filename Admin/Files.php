@@ -72,8 +72,8 @@ HEREDOC;
 		. ' RIGHT JOIN file_categories ON files.category=file_categories.category_id '
 		. ' WHERE ( files.category <> 2 && files.category <> 5 && files.category <> 8 && files.category <> 9 ) '//temporary
 		. ' ORDER BY category_name, category_id, order_num';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	
 	$current_category = -1;
 	$has_files = false;
@@ -137,7 +137,7 @@ HEREDOC;
 			$file_id = $row['file_id'];
 			$name = $row['name'];
 			
-			$row = mysql_fetch_assoc($result);
+			$row = mysqli_fetch_assoc($result);
 			if ($row['category'] != $current_category)
 				$down = "<td></td>";
 			
@@ -151,7 +151,7 @@ HEREDOC;
 
 HEREDOC;
 		} else
-			$row = mysql_fetch_assoc($result);
+			$row = mysqli_fetch_assoc($result);
 	}
 	
 	if ($current_category != '') {
@@ -162,10 +162,10 @@ HEREDOC;
 	}
 	
 	$query = 'SELECT * FROM files WHERE category="0" ORDER BY order_num';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	
-	if (mysql_num_rows($result) > 0) {
+	if (mysqli_num_rows($result) > 0) {
 		$first = true;
 		echo <<<HEREDOC
       <br /><br />
@@ -209,7 +209,7 @@ HEREDOC;
 			else
 				$visibility = 'Admin';
 			
-			$row = mysql_fetch_assoc($result);
+			$row = mysqli_fetch_assoc($result);
 			if (!$row)
 				$down = "<td></td>";
 			echo <<<HEREDOC

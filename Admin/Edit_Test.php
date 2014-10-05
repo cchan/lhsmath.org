@@ -65,16 +65,16 @@ function do_archive() {
 		trigger_error('Archive: XSRF token invalid', E_USER_ERROR);
 	
 	// Check that the Test ID is valid
-	$query = 'SELECT test_id FROM tests WHERE test_id="' . mysql_escape_string($_GET['ID']) . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'SELECT test_id FROM tests WHERE test_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"';
+	$result = DB::queryRaw($query);
 	
 	// If Test ID isn't valid, show an error page
-	if (mysql_num_rows($result) != 1)
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Archive: Nonexistent Test ID', E_USER_ERROR);
 	
 	// Otherwise, archive the test
-	$query = 'UPDATE tests SET archived="1" WHERE test_id="' . mysql_escape_string($_GET['ID']) . '" LIMIT 1';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'UPDATE tests SET archived="1" WHERE test_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
+	DB::queryRaw($query);
 	
 	redirect();
 }
@@ -95,16 +95,16 @@ function do_unarchive() {
 		trigger_error('Unarchive: XSRF token invalid', E_USER_ERROR);
 	
 	// Check that the Test ID is valid
-	$query = 'SELECT test_id FROM tests WHERE test_id="' . mysql_escape_string($_GET['ID']) . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'SELECT test_id FROM tests WHERE test_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"';
+	$result = DB::queryRaw($query);
 	
 	// If Test ID isn't valid, show an error page
-	if (mysql_num_rows($result) != 1)
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Unarchive: Nonexistent Test ID', E_USER_ERROR);
 	
 	// Otherwise, archive the test
-	$query = 'UPDATE tests SET archived="0" WHERE test_id="' . mysql_escape_string($_GET['ID']) . '" LIMIT 1';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'UPDATE tests SET archived="0" WHERE test_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
+	DB::queryRaw($query);
 	
 	redirect();
 }
@@ -124,19 +124,19 @@ function do_perform_delete() {
 		trigger_error('Delete: XSRF token invalid', E_USER_ERROR);
 	
 	// Check that the Test ID is valid
-	$query = 'SELECT name FROM tests WHERE test_id="' . mysql_escape_string($_GET['ID']) . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'SELECT name FROM tests WHERE test_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"';
+	$result = DB::queryRaw($query);
 	
 	// If Test ID isn't valid, show an error page
-	if (mysql_num_rows($result) != 1)
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Delete: Nonexistent Test ID', E_USER_ERROR);
 		
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$test_name = $row['name'];
 	
 	// Otherwise, delete the test
-	$query = 'DELETE FROM tests WHERE test_id="' . mysql_escape_string($_GET['ID']) . '" LIMIT 1';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'DELETE FROM tests WHERE test_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
+	DB::queryRaw($query);
 	
 
 	$_SESSION['TEST_deleted'] = 'The test "' . $test_name . '" has been deleted';
@@ -158,13 +158,13 @@ function do_perform_delete() {
  */
 function confirm_delete() {
 	// Get info
-	$query = 'SELECT name FROM tests WHERE test_id="' . mysql_escape_string($_GET['ID']) . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'SELECT name FROM tests WHERE test_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"';
+	$result = DB::queryRaw($query);
 	
 	// If Test ID isn't valid, show an error page
-	if (mysql_num_rows($result) != 1)
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Delete: Nonexistent Test ID', E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	
 	// Confirm...
 	$request_uri = htmlentities($_SERVER['REQUEST_URI']);
@@ -197,15 +197,15 @@ HEREDOC;
  */
 function show_edit_form($err) {
 	// Check that the Test ID is valid
-	$query = 'SELECT *, DATE_FORMAT(date, "%m/%d/%Y") AS formatted_date FROM tests WHERE test_id="' . mysql_escape_string($_GET['ID']) . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'SELECT *, DATE_FORMAT(date, "%m/%d/%Y") AS formatted_date FROM tests WHERE test_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"';
+	$result = DB::queryRaw($query);
 	
 	// If Test ID isn't valid, show an error page
-	if (mysql_num_rows($result) != 1)
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Show_Edit: Invalid Test ID', E_USER_ERROR);
 	
 	// Show the form
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	
 	$archived = 'Yes';
 	$action = 'UnArchive';
@@ -293,11 +293,11 @@ function do_perform_edit() {
 		trigger_error('Do_Edit: XSRF token invalid', E_USER_ERROR);
 	
 	// Check if ID is valid
-	$query = 'SELECT name FROM tests WHERE test_id="' . mysql_real_escape_string($_GET['ID']) . '" LIMIT 1';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'SELECT name FROM tests WHERE test_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
+	$result = DB::queryRaw($query);
 	
 	// If User ID isn't valid, show an error page
-	if (mysql_num_rows($result) != 1)
+	if (mysqli_num_rows($result) != 1)
 		show_test_not_found_page();	// at the end, this function die()s.
 		
 	
@@ -305,7 +305,7 @@ function do_perform_edit() {
 	//
 	
 	// Check name length
-	$name = mysql_real_escape_string(htmlentities($_POST['name']));
+	$name = mysqli_real_escape_string(DB::get(),htmlentities($_POST['name']));
 	if (strlen($_POST['name']) > 20) {
 		show_edit_form('Name is too long');
 		return;
@@ -333,9 +333,9 @@ function do_perform_edit() {
 	
 	$query = 'UPDATE tests SET name="' . $name . '", date="' . date('Y-m-d', $date)
 		. '", total_points="' . $total_points . '" WHERE test_id="'
-		. mysql_real_escape_string($_GET['ID']) . '" LIMIT 1';
+		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
 	
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	DB::queryRaw($query);
 	
 	redirect();
 }
@@ -425,7 +425,7 @@ function do_add_test() {
 	//
 	
 	// Check name length
-	$name = mysql_real_escape_string(htmlentities($_POST['name']));
+	$name = mysqli_real_escape_string(DB::get(),htmlentities($_POST['name']));
 	if (strlen($_POST['name']) > 20) {
 		show_add_form('Name is too long');
 		return;
@@ -454,7 +454,7 @@ function do_add_test() {
 	$query = 'INSERT INTO tests (name, date, total_points) VALUES("'
 		. $name . '", "' . date('Y-m-d', $date) . '", "' . $total_points
 		. '")';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	DB::queryRaw($query);
 	
 	$_SESSION['TEST_added'] = 'The test "' . $name . '" has been added';
 	

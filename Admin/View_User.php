@@ -22,15 +22,15 @@ show_page();
 
 function show_page() {
 	// Get data about user
-	$query = 'SELECT *, DATE_FORMAT(creation_date, "%M %e, %Y") AS formatted_creation FROM users WHERE id="' . mysql_real_escape_string($_GET['ID']) . '" LIMIT 1';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);	// have MySQL format the date for us
+	$query = 'SELECT *, DATE_FORMAT(creation_date, "%M %e, %Y") AS formatted_creation FROM users WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
+	$result = DB::queryRaw($query);	// have MySQL format the date for us
 	
-	if (mysql_num_rows($result) != 1)
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('User not found', E_USER_ERROR);
 	
 	// ** User Found, info valid at this point **
 	
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	
 	
 	// Page header
@@ -146,11 +146,11 @@ HEREDOC;
 	$query = 'SELECT test_scores.score AS score, tests.name AS name, tests.total_points AS total, DATE_FORMAT(tests.date, "%M %e, %Y") AS formatted_date, test_scores.score_id AS score_id'
 			. ' FROM test_scores'
 			. ' INNER JOIN tests ON tests.test_id=test_scores.test_id'
-			. ' WHERE test_scores.user_id="' . mysql_real_escape_string($_GET['ID']) . '" AND archived="0"'
+			. ' WHERE test_scores.user_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" AND archived="0"'
 			. ' ORDER BY tests.date DESC';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$result = DB::queryRaw($query);
 	
-	if (mysql_num_rows($result) > 0) {
+	if (mysqli_num_rows($result) > 0) {
 		echo <<<HEREDOC
 
       
@@ -167,7 +167,7 @@ HEREDOC;
 
 HEREDOC;
 		
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 		while ($row) {
 			echo <<<HEREDOC
         <tr>
@@ -179,7 +179,7 @@ HEREDOC;
         </tr>
 
 HEREDOC;
-			$row = mysql_fetch_assoc($result);
+			$row = mysqli_fetch_assoc($result);
 		}
 		
 		echo <<<HEREDOC
@@ -190,11 +190,11 @@ HEREDOC;
 	$query = 'SELECT test_scores.score AS score, tests.name AS name, tests.total_points AS total, DATE_FORMAT(tests.date, "%M %e, %Y") AS formatted_date, test_scores.score_id AS score_id'
 			. ' FROM test_scores'
 			. ' INNER JOIN tests ON tests.test_id=test_scores.test_id'
-			. ' WHERE test_scores.user_id="' . mysql_real_escape_string($_GET['ID']) . '" AND archived="1"'
+			. ' WHERE test_scores.user_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" AND archived="1"'
 			. ' ORDER BY tests.date DESC';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$result = DB::queryRaw($query);
 	
-	if (mysql_num_rows($result) > 0) {
+	if (mysqli_num_rows($result) > 0) {
 		echo <<<HEREDOC
 
       
@@ -211,7 +211,7 @@ HEREDOC;
 
 HEREDOC;
 		
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 		while ($row) {
 			echo <<<HEREDOC
         <tr>
@@ -223,7 +223,7 @@ HEREDOC;
         </tr>
 
 HEREDOC;
-			$row = mysql_fetch_assoc($result);
+			$row = mysqli_fetch_assoc($result);
 		}
 		
 		echo <<<HEREDOC

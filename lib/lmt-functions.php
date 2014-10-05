@@ -141,7 +141,7 @@ function map_set($key, $value) {//This takes TWO db queries each and every time.
  * May cause race condition problems if multiple people are editing at once,
  * but there aren't that many admins.
  *
- * Note:Make sure that the field map_key is a primary key.
+ * Note: The field map_key must be a primary key.
  */
 function map_commit(){
 	global $map_values,$map_values_changed;
@@ -156,6 +156,10 @@ function map_commit(){
 	$map_values_changed=false;
 }
 register_shutdown_function('map_commit');
+
+
+
+
 
 /*
  * backstage_is_open()
@@ -234,7 +238,6 @@ function scoring_access() {
  * Also requires registration to be open
  */
 function lmt_reg_restrict_access($level) {
-	// Restrict access
 	global $path_to_lmt_root;
 	
 	// Registration must be open
@@ -299,9 +302,7 @@ function fetch_alert($name) {
  * Should be performed after a reCaptcha check, if necessary.
  */
 function validate_email($email) {
-	if (!preg_match('/^([\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+\.)*[\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]'
-		.'+@((((([a-z0-9]{1}[a-z0-9\-]{0,62}[a-z0-9]{1})|[a-z])\.)+[a-z]{2,6})|(\d{1,3}\.){3}\d{1,3}(\:\d{1,5})?)$/i'
-		, $email))
+	if (!val('e',$email))
 		return 'That\'s not a valid email address';
 	
 	$c = DB::queryFirstField('SELECT COUNT(*) AS c FROM individuals WHERE LOWER(email)=%s',strtolower($email));
@@ -320,7 +321,7 @@ function validate_email($email) {
  * Should be performed after a reCaptcha check, if necessary.
  */
 function validate_coach_email($email) {
-	if(filter_var($email,FILTER_VALIDATE_EMAIL)===false)return 'That\'s not a valid email address';
+	if(!val('e',$email))return 'That\'s not a valid email address';
 	
 	$c = DB::queryFirstField('SELECT COUNT(*) AS c FROM schools WHERE LOWER(coach_email)=%s',strtolower($email));
 	if ($c) return 'An account with that email address already exists';
@@ -406,7 +407,7 @@ function validate_member_name($name) {
 
 /*
  * validate_password($password, $verify)
- * Returns true if the grade is valid, else else an error.
+ * Returns true if the passwords match and are long enough, else an error.
  */
 function validate_password($password, $verify) {
 	if ($password != $verify)
@@ -442,7 +443,7 @@ function validate_recaptcha() {
 
 /*
  * validate_grade($grade)
- * Returns true if the passwords are valid, else else an error.
+ * Returns true if the grade is valid, else else an error.
  */
 function validate_grade($grade) {
 	if ($grade != '6' && $grade != '7' && $grade != '8')
@@ -483,85 +484,43 @@ function lmt_hash_pass($email, $pass) {
  *  - $subject: the subject line; '[LMT {YEAR}]'  is automatically prefixed
  *  - $body: the body of the message
  */
-function lmt_send_email($to, $subject, $body){
+function lmt_send_email($to, $subject, $body, $reply_to = NULL){
 	global $LMT_EMAIL;
-	send_email($to,$subject,$body,array($LMT_EMAIL=>'LMT Contact'),'[LMT '.intval(map_value('year')).']',"Lexington Math Tournament\n".get_site_url().'/LMT');
+	if($reply_to === NULL)$reply_to = $LMT_EMAIL;
+	send_email($to,$subject,$body,$reply_to,'[LMT '.intval(map_value('year')).']',"Lexington Math Tournament\n".get_site_url().'/LMT');
 }
 
 
 
 
 
-/*
- * Used in email lists
- */
-function lmt_send_multipart_list_email($bcc_list, $subject, $txt_body, $html_body, $reply_to, $list_id) {
-	global $EMAIL_ADDRESS, $EMAIL_USERNAME, $EMAIL_PASSWORD,
-		$SMTP_SERVER, $SMTP_SERVER_PORT;
-	require_once('Mail.php');
-	require_once('Mail/mime.php');
-	
-	$from = 'LMT Mailbot <'.$EMAIL_ADDRESS.'>';
-	$to = 'LMT Mailbot <' . $EMAIL_ADDRESS . '>';
-	$subject = '[LMT ' . htmlentities(map_value('year')) . '] ' . $subject;
-	
-	$site_url = get_site_url() . '/LMT';
-	$txt_body .= <<<HEREDOC
 
-
----
-Lexington Mathematics Tournament
-$site_url
-
-You received this email because you registered for the LMT. To unsubscribe, please contact lmt@lhsmath.org
-HEREDOC;
-
-	$html_body =  <<<HEREDOC
-<!DOCTYPE html
-     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-  <head>
-  </head>
-  <body>
-$html_body
-    <br />
-    <br />
-    ---<br />
-    Lexington Mathematics Tournament<br />
-    $site_url<br />
-    <br />
-    You received this email because you are registered for the LMT. To unsubscribe, please
-    contact <a href="mailto:lmt@lhsmath.org">lmt@lhsmath.org</a>.
-  </body>
-HEREDOC;
-	
-	$headers = array('From' => $from,
-		'To' => $to,
-		'Reply-To' => $reply_to,
-		'Subject' => $subject,
-		'Precedence' => 'bulk',
-		'List-Id' => $list_id,
-		'List-Unsubscribe' => '<' . $reply_to . '>');
-	
-	$mime = new Mail_mime();
-	$mime->setTXTBody($txt_body);
-	$mime->setHTMLBody($html_body);
-	$body = $mime->get();
-	$headers = $mime->headers($headers);
-	
-	$smtp = Mail::factory('smtp',
-		array('host' => $SMTP_SERVER,
-			'port' => $SMTP_SERVER_PORT,
-			'auth' => true,
-			'username' => $EMAIL_USERNAME,
-			'password' => $EMAIL_PASSWORD));
-	$mail = $smtp->send($bcc_list, $headers, $body);
-	
-	if (PEAR::isError($mail))
-		trigger_error('Error sending email: ' . $mail->getMessage(), E_USER_ERROR);
+function lmt_send_list_email($bcc_list, $subject, $body, $list_id){
+	global $LMT_EMAIL;
+	$site_url = str_replace(array('http://www.','http://'), '', get_site_url());
+	return send_email($bcc_list, $subject, $body,
+		array($LMT_EMAIL=>'LMT Contact'),
+		'[LMT '.intval(map_value('year')).'] ',
+		"\n\n\n---\nLexington Mathematics Tournament\n[url]".get_site_url()."/LMT[/url]\n\nYou received this email because you registered for the LMT. To unsubscribe, please contact [email]lmt@lhsmath.org.[/email]",
+		array(
+			'Precedence' => 'bulk',
+			'List-Id' => $list_id,
+			'List-Unsubscribe' => '<' . $list_id . '.lmt.'.$site_url.'>'
+		)
+	);
 }
-
+function lmt_send_individuals_email($subject,$body){
+	$result = DB::query('SELECT name, email FROM individuals WHERE email != "" AND deleted="0"');
+	$list = DBHelper::verticalSlice($result,'email','name');
+	
+	return lmt_send_list_email($list,$subject,$body,'individuals');
+}
+function lmt_send_coaches_email($subject,$body){
+	$result = DB::query('SELECT name, email FROM coaches WHERE email != "" AND deleted="0"');
+	$list = DBHelper::verticalSlice($result,'email','name');
+	
+	return lmt_send_list_email($list,$subject,$body,'coaches');
+}
 
 
 
@@ -704,84 +663,32 @@ HEREDOC;
  *  - $title: the title of the page, which is shown in the browser's
  *      titlebar. The string ' | LMT' is appended to the end.
  *
- *  Echoes the top half of the page template (that comes before the content).
+ *  Sets some stuff which is passed to the templateify() shutdown function.
  */
 function lmt_page_header($title) {
-	global $path_to_root, $body_onload, $use_rel_external_script, $jquery_function, $javascript, $LOCAL_BORDER_COLOR, $header_noprint, $meta_refresh;
-
-	$logged_in_header = '';
-	if (isSet($_SESSION['user_id']))
-		$logged_in_header = <<<HEREDOC
-
-      <div id="user"><span id="username">{$_SESSION['user_name']}</span><span id="bar"> | </span><a href="{$path_to_root}Account/Signout">Sign Out</a></div>
-HEREDOC;
-	elseif(isSet($_SESSION['LMT_user_id']))
+	global $path_to_root;
+	
+	global $page_title;
+	$page_title = $title;
+	
+	global $header_title;
+	$header_title = 'Lexington Math Tournament';
+	
+	global $logged_in_header;
+	if(isSet($_SESSION['LMT_user_id']))
 		$logged_in_header = <<<HEREDOC
 		<div id="user"><span id="username">School: {$_SESSION['LMT_school_name']}</span><span id="bar"> | </span><a href="{$path_to_root}LMT/Registration/Signout">Log Out</a></div>
 HEREDOC;
-
-	$rel_external_script = '';
-	if ($use_rel_external_script)
-		$rel_external_script = <<<HEREDOC
-
-    <script type="text/javascript" src="{$path_to_root}res/rel_external.js"></script>
-HEREDOC;
 	
-	if ($body_onload != '')
-		$body_onload = ' onload="' . $body_onload . '"';
+	global $more_head_stuff;
+	$more_head_stuff.='<link rel="stylesheet" href="'.$path_to_root.'res/lmt.css" type="text/css" media="all" />';
 	
-	$jquery_code = '';
-	if ($jquery_function != '') {
+	global $jquery_function, $javascript;
+	$jquery_function .= $javascript;
 	
-	$jquery_code = <<<HEREDOC
-
-    <link rel="stylesheet" href="{$path_to_root}res/jquery/css/smoothness/jquery-ui-1.8.5.custom.css" type="text/css" media="all" />
-    <script type="text/javascript" src="{$path_to_root}res/jquery/js/jquery-1.4.2.min.js"></script>
-    <script type="text/javascript" src="{$path_to_root}res/jquery/js/jquery-ui-1.8.5.custom.min.js"></script>
-    <script type="text/javascript">
-$jquery_function
-    </script>
-    <style type="text/css">
-      .ui-datepicker, .ui-autocomplete {
-        font-size: 12px;
-      }
-    </style>
-HEREDOC;
-	}
-	
-	if (isSet($meta_refresh))
-		$meta_refresh = '<meta http-equiv="refresh" content="' . $meta_refresh . '" />';
-	
-	if (isSet($LOCAL_BORDER_COLOR))
-		$local_border_code = ' style="border-bottom: 4px solid ' . $LOCAL_BORDER_COLOR . '"';
-	
-	if ($javascript != '')
-		$javascript = "\n" . '    <script type="text/javascript">' . "\n" . $javascript . "\n" . '</script>';
-	
+	global $header_noprint, $header_class;
 	if (isSet($header_noprint))
-		$header_noprint = ' class="noPrint"';
-	
-	echo <<<HEREDOC
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html
-     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-  <head>
-    <title>$title | LMT</title>
-    <link rel="icon" href="{$path_to_root}favicon.ico" />
-    <link rel="stylesheet" href="{$path_to_root}res/default.css" type="text/css" media="all" />
-    <link rel="stylesheet" href="{$path_to_root}res/lmt.css" type="text/css" media="all" />
-    <link rel="stylesheet" href="{$path_to_root}res/print.css" type="text/css" media="print" />$rel_external_script$jquery_code$javascript$meta_refresh
-  </head>
-  <body$body_onload>
-    <div id="header"$local_border_code$header_noprint>
-      <a href="{$path_to_root}LMT/About" id="title">Lexington Math Tournament</a>$logged_in_header
-    </div>
-    
-    <div id="content">
-
-HEREDOC;
+		$header_class = 'noPrint';
 }
 
 
@@ -797,8 +704,8 @@ function lmt_page_footer($page_name) {
 		$pages[] = 'Home';
 		
 		global $BACKSTAGE_OPEN;
-		if (array_key_exists('permissions',$_SESSION) && ($_SESSION['permissions'] == 'A' ||
-			(($_SESSION['permissions'] == 'R' || $_SESSION['permissions'] == 'L') && backstage_is_open())))  {
+		if (array_key_exists('permissions',$_SESSION) && (user_access('A') || 
+			(user_access('RL') && backstage_is_open()))) {
 			$names[] = 'Backstage';
 			$pages[] = 'LMT/Backstage/Home';
 		}
@@ -846,7 +753,7 @@ function lmt_backstage_footer($page_name) {
 		'LMT/Backstage/Guts/Home','LMT/Backstage/Results/Full','','LMT/Backstage/Data/Home',
 		'LMT/Backstage/Database/Verify','LMT/Backstage/Database/Backup');
 	
-	if ($_SESSION['permissions'] == 'A') {
+	if (user_access('A')) {
 		array_splice($names,2,0,array('','Status','Website','Email','Export'));
 		array_splice($pages,2,0,array('','LMT/Backstage/Status','LMT/Backstage/Pages/List','LMT/Backstage/Email/Home','LMT/Backstage/Export'));
 	}

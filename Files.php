@@ -25,7 +25,7 @@ HEREDOC;
 	
 	
 	$admin_sql = '';
-	if ($_SESSION['permissions'] == 'A')
+	if (user_access('A'))
 		$admin_sql = ' OR files.permissions="A"';
 	if (isSet($_SESSION['is_captain']))
 		$admin_sql .= ' OR files.permissions="C"';
@@ -35,8 +35,8 @@ HEREDOC;
 		. ' WHERE ( files.permissions="P" OR files.permissions="M"' . $admin_sql . ' ) '
 		. ' AND ( files.category <> 2 && files.category <> 5 && files.category <> 8 && files.category <> 9 ) '//temporary
 		. ' ORDER BY category_name, category_id, order_num';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	
 	$current_category = -1;
 	while ($row) {
@@ -58,7 +58,7 @@ HEREDOC;
 		echo '        <tr><td' . $admin_only_styling . '><a href="Download?ID=' . $row['file_id'] . '">'
 			. $row['name'] . '</a></td></tr>' . "\n";
 		
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	// Last footer
@@ -69,20 +69,20 @@ HEREDOC;
 	$query = 'SELECT * FROM files WHERE category="0"'
 		. ' AND (files.permissions="P" OR files.permissions="M"' . $admin_sql
 		. ') ORDER BY order_num';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$result = DB::queryRaw($query);
 	
-	if (mysql_num_rows($result) > 0) {
+	if (mysqli_num_rows($result) > 0) {
 		echo <<<HEREDOC
       <h4 class="smbottom">Miscellaneous</h4>
       <table class="contrasting files">
 
 HEREDOC;
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 		while ($row) {
 			$admin_only_styling = ($row['permissions'] == 'A') ? ' class="i"' : '';
 			echo '        <tr><td' . $admin_only_styling . '><a href="Download?ID=' . $row['file_id'] . '">'
 				. $row['name'] . '</a></td></tr>' . "\n";
-			$row = mysql_fetch_assoc($result);
+			$row = mysqli_fetch_assoc($result);
 		}
 		echo '      </table>' . "\n";
 	}

@@ -71,8 +71,8 @@ HEREDOC;
 
 
 function print_message_table($query) {
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	
 	echo <<<HEREDOC
       <table class="indented contrasting">
@@ -93,7 +93,7 @@ HEREDOC;
           <td>{$row['formatted_post_date']}</td>
         </tr>
 HEREDOC;
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	echo '      </table>' . "\n";
@@ -108,14 +108,14 @@ function view_message() {
 	
 	$query = 'SELECT messages.subject, DATE_FORMAT(messages.post_date, "%W, %M %e, %Y at %l:%i %p") AS formatted_post_date,'
 		. ' messages.body, users.name FROM messages RIGHT JOIN users ON users.id=messages.author WHERE message_id="'
-		. mysql_real_escape_string($_GET['View']) . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	if (mysql_num_rows($result) != 1)
+		. mysqli_real_escape_string(DB::get(),$_GET['View']) . '"';
+	$result = DB::queryRaw($query);
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Incorrect number of matches for message', E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	
 	$delete_link = '';
-	if ($_SESSION['permissions'] == 'A')
+	if (user_access('A'))
 		$delete_link = "\n        &nbsp;|&nbsp;&nbsp;<a href=\"Messages?Delete={$_GET['View']}\">DELETE</a>";
 	
 	echo <<<HEREDOC
@@ -164,15 +164,15 @@ function do_delete() {
 	if ($_POST['xsrf_token'] != $_SESSION['xsrf_token'])
 		trigger_error('XSRF code incorrect', E_USER_ERROR);
 	
-	$query = 'SELECT subject FROM messages WHERE message_id="' . mysql_real_escape_string($_GET['Delete']) . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	if (mysql_num_rows($result) != 1)
+	$query = 'SELECT subject FROM messages WHERE message_id="' . mysqli_real_escape_string(DB::get(),$_GET['Delete']) . '"';
+	$result = DB::queryRaw($query);
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Delete: Wrong number of results for ID', E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$subject = $row['subject'];
 	
-	$query = 'DELETE FROM messages WHERE message_id="' . mysql_real_escape_string($_GET['Delete']) . '" LIMIT 1';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'DELETE FROM messages WHERE message_id="' . mysqli_real_escape_string(DB::get(),$_GET['Delete']) . '" LIMIT 1';
+	DB::queryRaw($query);
 	
 	$_SESSION['MESSAGE_deleted'] = 'The message &quot;' . htmlentities($subject) . '&quot; has been deleted';
 	

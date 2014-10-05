@@ -49,7 +49,7 @@ function show_page() {
 	
 	// Get Data
 	$query = 'SELECT *,  DATE_FORMAT(date, "%a %b %e, %Y") AS formatted_date FROM tests' . $limiting_condition . ' ORDER BY archived ASC, date DESC';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$result = DB::queryRaw($query);
 	
 	// Current List
 	$test_list = <<<HEREDOC
@@ -66,7 +66,7 @@ function show_page() {
         </tr>
 
 HEREDOC;
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$test_list_empty = true;
 	while ($row) {
 		if ($row['archived'] == '1')
@@ -86,7 +86,7 @@ HEREDOC;
           <td><a href="Edit_Test?Edit&amp;ID=$test_id&amp;Return=$archive_return">Edit</a></td>
         </tr>
 HEREDOC;
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	if ($test_list_empty)
 		$test_list = 'No Current Tests<br />';
@@ -126,7 +126,7 @@ HEREDOC;
         </tr>
 
 HEREDOC;
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	if ($archived_list_empty)
 		$archived_list = 'No Archived Tests<br />';

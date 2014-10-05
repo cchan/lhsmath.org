@@ -108,12 +108,12 @@ function process_request_page() {
 	
 	
 	// Check that an account with that email address exists.
-	$email = mysql_real_escape_string(strtolower($_POST['email']));
+	$email = mysqli_real_escape_string(DB::get(),strtolower($_POST['email']));
 	
 	$query = 'SELECT id, name, email, password_reset_code FROM users WHERE LOWER(email)="' . $email . '" LIMIT 1';
-	$result = mysql_query($query) or trigger_error(mysql_error, E_USER_ERROR);
+	$result = DB::queryRaw($query);
 	
-	if (mysql_num_rows($result) != 1) {
+	if (mysqli_num_rows($result) != 1) {
 		show_request_page('An account with that email address does not exist.', 'email');
 		return;
 	}
@@ -121,7 +121,7 @@ function process_request_page() {
 	
 	// ** INFORMATION VERIFIED AT THIS POINT **
 	
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$id = $row['id'];
 	
 	// See if a password reset code has already been generated; if not, do so
@@ -129,7 +129,7 @@ function process_request_page() {
 	if ($reset_code == '0') {
 		$reset_code = generate_code(20);
 		$query = 'UPDATE users SET password_reset_code="' . $reset_code . '" WHERE id="' . $id . '" LIMIT 1';
-		mysql_query($query) or trigger_error(mysql_error, E_USER_ERROR);
+		DB::queryRaw($query);
 	}
 	
 	// Generate the reset link
@@ -201,16 +201,16 @@ HEREDOC;
  * The confirmation link points to here; shows the reset form
  */
 function verify_code() {
-	$query = 'SELECT id, name, password_reset_code FROM users WHERE id="' . mysql_real_escape_string($_GET['id']) . '" LIMIT 1';
-	$result = mysql_query($query) or trigger_error(mysql_error, E_USER_ERROR);
+	$query = 'SELECT id, name, password_reset_code FROM users WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['id']) . '" LIMIT 1';
+	$result = DB::queryRaw($query);
 	
 	// User not found
-	if (mysql_num_rows($result) != 1)
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('User not found', E_USER_ERROR);
 	
 	// Incorrect code
-	$row = mysql_fetch_assoc($result);
-	if ($row['password_reset_code'] != mysql_real_escape_string($_GET['code']))
+	$row = mysqli_fetch_assoc($result);
+	if ($row['password_reset_code'] != mysqli_real_escape_string(DB::get(),$_GET['code']))
 		trigger_error('Incorrect code', E_USER_ERROR);
 	
 	// Code = "1"
@@ -317,16 +317,16 @@ function process_change_page() {
 	session_unregister('ACCOUNT_passreset_name');
 	
 	$query = 'SELECT email FROM users WHERE id="' . $id . '" LIMIT 1';
-	$result = mysql_query($query) or trigger_error(mysql_error, E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	
 	// Change password
-	$email = mysql_real_escape_string(strtolower($row['email']));
+	$email = mysqli_real_escape_string(DB::get(),strtolower($row['email']));
 	$passhash = hash_pass($email, $pass);
 	
-	$query = 'UPDATE users SET passhash="' . mysql_real_escape_string($passhash)
+	$query = 'UPDATE users SET passhash="' . mysqli_real_escape_string(DB::get(),$passhash)
 		. '", password_reset_code="0" WHERE id="' . $id . '" LIMIT 1';
-	mysql_query($query) or trigger_error(mysql_error, E_USER_ERROR);
+	DB::queryRaw($query);
 	
 	// LOG IN
 	set_login_data($id);

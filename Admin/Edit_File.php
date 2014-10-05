@@ -36,12 +36,12 @@ function show_add_page($err) {
 	
 	$category_list = '';
 	$query = 'SELECT * FROM file_categories ORDER BY name';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$selected = '';
 		$category_list .= "\n              <option value=\"{$row['category_id']}\"$selected>{$row['name']}</option>";
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	page_header('Upload File');
@@ -113,9 +113,9 @@ function do_add() {
 	
 	$category_id = htmlentities($_POST['category']);
 	if ($category_id != '0') {
-		$query = 'SELECT * FROM file_categories WHERE category_id="' . mysql_real_escape_string($category_id) . '"';
-		$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-		if (mysql_num_rows($result) != 1)
+		$query = 'SELECT * FROM file_categories WHERE category_id="' . mysqli_real_escape_string(DB::get(),$category_id) . '"';
+		$result = DB::queryRaw($query);
+		if (mysqli_num_rows($result) != 1)
 			trigger_error('Add: Incorrect number of files match submitted ID', E_USER_ERROR);
 	}
 	
@@ -149,18 +149,18 @@ function do_add() {
 	
 	// VALIDATION COMPLETE
 	
-	$query = 'SELECT MAX(order_num) FROM files WHERE category="' . mysql_real_escape_string($category_id) . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$query = 'SELECT MAX(order_num) FROM files WHERE category="' . mysqli_real_escape_string(DB::get(),$category_id) . '"';
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	$order = $row['MAX(order_num)'] + 1;
 	
 	$query = 'INSERT INTO files (name, filename, permissions, category, order_num) VALUES ("'
-		. mysql_real_escape_string($display_name)
-		. '", "' . mysql_real_escape_string($filename)
-		. '", "' . mysql_real_escape_string($visibility)
-		. '", "' . mysql_real_escape_string($category_id)
-		. '", "' . mysql_real_escape_string($order) . '")';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+		. mysqli_real_escape_string(DB::get(),$display_name)
+		. '", "' . mysqli_real_escape_string(DB::get(),$filename)
+		. '", "' . mysqli_real_escape_string(DB::get(),$visibility)
+		. '", "' . mysqli_real_escape_string(DB::get(),$category_id)
+		. '", "' . mysqli_real_escape_string(DB::get(),$order) . '")';
+	DB::queryRaw($query);
 	
 	$_SESSION['FILE_added'] = 'The file &quot;' . $display_name . '&quot; has been added';
 	if ($did_rename_file)
@@ -173,11 +173,11 @@ function do_add() {
 
 
 function show_edit_page($err) {
-	$query = 'SELECT * FROM files WHERE file_id="' . mysql_real_escape_string($_GET['ID']) . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	if (mysql_num_rows($result) != 1)
+	$query = 'SELECT * FROM files WHERE file_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"';
+	$result = DB::queryRaw($query);
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Edit: Incorrect number of categories match ID', E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	
 	global $body_onload;
 	$body_onload = 'document.forms[\'editFile\'].name.focus()';
@@ -207,14 +207,14 @@ function show_edit_page($err) {
 	
 	$category_list = '';
 	$query = 'SELECT * FROM file_categories ORDER BY name';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$selected = '';
 		if ($row['category_id'] == $category_selected)
 			$selected = ' selected="selected"';
 		$category_list .= "\n              <option value=\"{$row['category_id']}\"$selected>{$row['name']}</option>";
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	$misc_selected = '';
 	if ($category_selected == '0')
@@ -290,35 +290,35 @@ function do_edit() {
 	
 	$category_id = htmlentities($_POST['category']);
 	if ($category_id != '0') {
-		$query = 'SELECT * FROM file_categories WHERE category_id="' . mysql_real_escape_string($category_id) . '"';
-		$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-		if (mysql_num_rows($result) != 1)
+		$query = 'SELECT * FROM file_categories WHERE category_id="' . mysqli_real_escape_string(DB::get(),$category_id) . '"';
+		$result = DB::queryRaw($query);
+		if (mysqli_num_rows($result) != 1)
 			trigger_error('Edit: Incorrect number of categories match submitted ID', E_USER_ERROR);
 	}
 	
-	$query = 'SELECT category, order_num FROM files WHERE file_id="' . mysql_real_escape_string($_GET['ID']) . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$query = 'SELECT category, order_num FROM files WHERE file_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"';
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	if (!$row)
 		trigger_error('Edit: file not found', E_USER_ERROR);
 	
 	$old_category = $row['category'];
 	$order = $row['order_num'];
 	if ($old_category != $category_id) {
-		$query = 'SELECT MAX(order_num) FROM files WHERE category="' . mysql_real_escape_string($category_id) . '"';
-		$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-		$row = mysql_fetch_assoc($result);
+		$query = 'SELECT MAX(order_num) FROM files WHERE category="' . mysqli_real_escape_string(DB::get(),$category_id) . '"';
+		$result = DB::queryRaw($query);
+		$row = mysqli_fetch_assoc($result);
 		$order = $row['MAX(order_num)'] + 1;
 	}
 	
 	// VALIDATION COMPLETE
 	
-	$query = 'UPDATE files SET name="' . mysql_real_escape_string($display_name)
-		. '", permissions="' . mysql_real_escape_string($visibility)
-		. '", category="' . mysql_real_escape_string($category_id)
-		. '", order_num="' . mysql_real_escape_string($order)
-		. '" WHERE file_id="' . mysql_real_escape_string($_GET['ID']) . '" LIMIT 1';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'UPDATE files SET name="' . mysqli_real_escape_string(DB::get(),$display_name)
+		. '", permissions="' . mysqli_real_escape_string(DB::get(),$visibility)
+		. '", category="' . mysqli_real_escape_string(DB::get(),$category_id)
+		. '", order_num="' . mysqli_real_escape_string(DB::get(),$order)
+		. '" WHERE file_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
+	DB::queryRaw($query);
 	
 	$_SESSION['FILE_edited'] = 'The file &quot;' . $display_name . '&quot; has been edited';
 	header('Location: Files');
@@ -332,15 +332,15 @@ function do_delete() {
 	if ($_GET['xsrf_token'] != $_SESSION['xsrf_token'])
 		trigger_error('XSRF code incorrect', E_USER_ERROR);
 	
-	$query = 'SELECT name, filename FROM files WHERE file_id="' . mysql_real_escape_string($_GET['ID']) . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	if (mysql_num_rows($result) != 1)
+	$query = 'SELECT name, filename FROM files WHERE file_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"';
+	$result = DB::queryRaw($query);
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Delete: Incorrect number of files match ID', E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$name = $row['name'];
 	
-	$query = 'DELETE FROM files WHERE file_id="' . mysql_real_escape_string($_GET['ID']) . '" LIMIT 1';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'DELETE FROM files WHERE file_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
+	DB::queryRaw($query);
 	
 	unlink('../.content/uploads/' . $row['filename']);
 	
@@ -356,18 +356,18 @@ function do_up() {
 	if ($_GET['xsrf_token'] != $_SESSION['xsrf_token'])
 		trigger_error('XSRF code incorrect', E_USER_ERROR);
 	
-	$query = 'SELECT name, category, order_num FROM files WHERE file_id="' . mysql_real_escape_string($_GET['ID']) . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	if (mysql_num_rows($result) != 1)
+	$query = 'SELECT name, category, order_num FROM files WHERE file_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"';
+	$result = DB::queryRaw($query);
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Up: Incorrect number of files match ID', E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$category = $row['category'];
 	$order = $row['order_num'];
 	
 	$query = 'SELECT file_id, order_num FROM files WHERE category="'
 		. $category . '" AND order_num < ' . $order . ' ORDER BY order_num DESC LIMIT 1';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	
 	if (!$row) {	// no files above this one
 		header('Location: Files');
@@ -377,11 +377,11 @@ function do_up() {
 	$other_id = $row['file_id'];
 	$new_order = (int)$order - 1;
 	$query = 'UPDATE files SET order_num="' . $new_order . '" WHERE file_id="'
-		. mysql_real_escape_string($_GET['ID']) . '" LIMIT 1';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
+	DB::queryRaw($query);
 	$query = 'UPDATE files SET order_num="' . $order . '" WHERE file_id="'
 		. $other_id . '" LIMIT 1';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	DB::queryRaw($query);
 	
 	header('Location: Files');
 }
@@ -394,18 +394,18 @@ function do_down() {
 	if ($_GET['xsrf_token'] != $_SESSION['xsrf_token'])
 		trigger_error('XSRF code incorrect', E_USER_ERROR);
 	
-	$query = 'SELECT name, category, order_num FROM files WHERE file_id="' . mysql_real_escape_string($_GET['ID']) . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	if (mysql_num_rows($result) != 1)
+	$query = 'SELECT name, category, order_num FROM files WHERE file_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"';
+	$result = DB::queryRaw($query);
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Down: Incorrect number of files match ID', E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$category = $row['category'];
 	$order = $row['order_num'];
 	
 	$query = 'SELECT file_id, order_num FROM files WHERE category="'
 		. $category . '" AND order_num > ' . $order . ' ORDER BY order_num ASC LIMIT 1';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	
 	if (!$row) {	// no files above this one
 		header('Location: Files');
@@ -415,11 +415,11 @@ function do_down() {
 	$other_id = $row['file_id'];
 	$new_order = (int)$order + 1;
 	$query = 'UPDATE files SET order_num="' . $new_order . '" WHERE file_id="'
-		. mysql_real_escape_string($_GET['ID']) . '" LIMIT 1';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
+	DB::queryRaw($query);
 	$query = 'UPDATE files SET order_num="' . $order . '" WHERE file_id="'
 		. $other_id . '" LIMIT 1';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	DB::queryRaw($query);
 	
 	header('Location: Files');
 }

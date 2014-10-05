@@ -51,8 +51,8 @@ function show_list() {
 HEREDOC;
 	
 	$query = 'SELECT * FROM users WHERE permissions="T"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	
 	if (!$row)
 		echo <<<HEREDOC
@@ -73,7 +73,7 @@ HEREDOC;
           <td><a href="Temporary_Users?Delete&amp;ID={$row['id']}">Delete</a></td>
         </tr>
 HEREDOC;
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	echo <<<HEREDOC
@@ -95,13 +95,13 @@ HEREDOC;
  */
 function show_combine_page($err) {
 	$id = $_GET['ID'];
-	$query = 'SELECT name FROM users WHERE id="' . mysql_real_escape_string($id) . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'SELECT name FROM users WHERE id="' . mysqli_real_escape_string(DB::get(),$id) . '"';
+	$result = DB::queryRaw($query);
 	
-	if (mysql_num_rows($result) != 1)
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Show_Combine: Invalid User ID', E_USER_ERROR);
 	
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$name = $row['name'];
 	
 	// Add some javascript for the jQuery Autocomplete
@@ -194,10 +194,10 @@ function do_combine() {
 	
 	// Check user ID
 	$id = $_GET['ID'];
-	$query = 'SELECT name FROM users WHERE id="' . mysql_real_escape_string($id) . '" AND permissions="T"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'SELECT name FROM users WHERE id="' . mysqli_real_escape_string(DB::get(),$id) . '" AND permissions="T"';
+	$result = DB::queryRaw($query);
 	
-	if (mysql_num_rows($result) != 1)
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Do_Combine: Invalid User ID', E_USER_ERROR);
 	
 	// Locate entered user
@@ -221,16 +221,16 @@ function do_combine() {
 	
 	
 	// Check for duplicate values
-	$query = 'SELECT COUNT(*) AS num_tests FROM test_scores WHERE user_id="' . mysql_real_escape_string($id)
-		. '" OR user_id="' . mysql_real_escape_string($combine_with) . '" GROUP BY test_id';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'SELECT COUNT(*) AS num_tests FROM test_scores WHERE user_id="' . mysqli_real_escape_string(DB::get(),$id)
+		. '" OR user_id="' . mysqli_real_escape_string(DB::get(),$combine_with) . '" GROUP BY test_id';
+	$result = DB::queryRaw($query);
 	
 	$no_duplicates = true;
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		if ($row['num_tests'] > 1)
 			$no_duplicates = false;
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	if (!$no_duplicates) {
 		global $duplicate_with_id;
@@ -241,12 +241,12 @@ function do_combine() {
 	
 	// INFORMATION VALIDATED
 	
-	$query = 'UPDATE test_scores SET user_id="' . mysql_real_escape_string($combine_with) . '"'
-		. ' WHERE user_id="' . mysql_real_escape_string($id) . '"';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'UPDATE test_scores SET user_id="' . mysqli_real_escape_string(DB::get(),$combine_with) . '"'
+		. ' WHERE user_id="' . mysqli_real_escape_string(DB::get(),$id) . '"';
+	DB::queryRaw($query);
 	
-	$query = 'DELETE FROM users WHERE id="' . mysql_real_escape_string($id) . '" LIMIT 1';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'DELETE FROM users WHERE id="' . mysqli_real_escape_string(DB::get(),$id) . '" LIMIT 1';
+	DB::queryRaw($query);
 	
 	header('Location: Temporary_Users');
 }
@@ -273,18 +273,18 @@ function do_combine_duplicate() {
 	
 	// Check user ID
 	$id = $_GET['ID'];
-	$query = 'SELECT name FROM users WHERE id="' . mysql_real_escape_string($id) . '" AND permissions="T"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'SELECT name FROM users WHERE id="' . mysqli_real_escape_string(DB::get(),$id) . '" AND permissions="T"';
+	$result = DB::queryRaw($query);
 	
-	if (mysql_num_rows($result) != 1)
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Do_Combine_Duplicate: Invalid User ID', E_USER_ERROR);
 	
 	// Check combine-with user ID
 	$combine_with = $_POST['combine_with_id'];
-	$query = 'SELECT name FROM users WHERE id="' . mysql_real_escape_string($combine_with) . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'SELECT name FROM users WHERE id="' . mysqli_real_escape_string(DB::get(),$combine_with) . '"';
+	$result = DB::queryRaw($query);
 	
-	if (mysql_num_rows($result) != 1)
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Do_Combine_Duplicate: Invalid combine-with User ID', E_USER_ERROR);
 	
 	if ($combine_with == $id) {
@@ -294,29 +294,29 @@ function do_combine_duplicate() {
 	
 	// INFORMATION VALIDATED
 	
-	$query = 'SELECT test_id FROM test_scores WHERE user_id="' . mysql_real_escape_string($combine_with) . '"';
-	$old_tests_result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$old_tests_row = mysql_fetch_assoc($old_tests_result);
+	$query = 'SELECT test_id FROM test_scores WHERE user_id="' . mysqli_real_escape_string(DB::get(),$combine_with) . '"';
+	$old_tests_result = DB::queryRaw($query);
+	$old_tests_row = mysqli_fetch_assoc($old_tests_result);
 	
 	while ($old_tests_row) {
-		$query = 'SELECT score FROM test_scores WHERE test_id="' . mysql_real_escape_string($old_tests_row['test_id'])
-			. '" AND user_id="' . mysql_real_escape_string($id) . '" LIMIT 1';
-		$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+		$query = 'SELECT score FROM test_scores WHERE test_id="' . mysqli_real_escape_string(DB::get(),$old_tests_row['test_id'])
+			. '" AND user_id="' . mysqli_real_escape_string(DB::get(),$id) . '" LIMIT 1';
+		$result = DB::queryRaw($query);
 		
-		if (mysql_num_rows($result) == 0) {	// not a duplicate; okay to change
-			$row = mysql_fetch_assoc($result);
-			$query = 'UPDATE test_scores SET user_id="' . mysql_real_escape_string($id)
-				. '" WHERE user_id="' . mysql_real_escape_string($combine_with) . '"';
+		if (mysqli_num_rows($result) == 0) {	// not a duplicate; okay to change
+			$row = mysqli_fetch_assoc($result);
+			$query = 'UPDATE test_scores SET user_id="' . mysqli_real_escape_string(DB::get(),$id)
+				. '" WHERE user_id="' . mysqli_real_escape_string(DB::get(),$combine_with) . '"';
 		}
-		$old_tests_row = mysql_fetch_assoc($old_tests_result);
+		$old_tests_row = mysqli_fetch_assoc($old_tests_result);
 	}
 	
 	// remove duplicates
-	$query = 'DELETE FROM test_scores WHERE user_id="' . mysql_real_escape_string($id) . '"';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'DELETE FROM test_scores WHERE user_id="' . mysqli_real_escape_string(DB::get(),$id) . '"';
+	DB::queryRaw($query);
 	
-	$query = 'DELETE FROM users WHERE id="' . mysql_real_escape_string($id) . '" LIMIT 1';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'DELETE FROM users WHERE id="' . mysqli_real_escape_string(DB::get(),$id) . '" LIMIT 1';
+	DB::queryRaw($query);
 	
 	header('Location: Temporary_Users');
 }
@@ -332,13 +332,13 @@ function do_combine_duplicate() {
  */
 function show_delete_page($err) {
 	$id = $_GET['ID'];
-	$query = 'SELECT name FROM users WHERE id="' . mysql_real_escape_string($id) . '" AND permissions="T"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'SELECT name FROM users WHERE id="' . mysqli_real_escape_string(DB::get(),$id) . '" AND permissions="T"';
+	$result = DB::queryRaw($query);
 	
-	if (mysql_num_rows($result) != 1)
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Show_Delete: Invalid User ID', E_USER_ERROR);
 	
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$name = $row['name'];
 	
 	page_header('Temporary Users');
@@ -389,18 +389,18 @@ function do_delete() {
 	
 	// Check user ID
 	$id = $_GET['ID'];
-	$query = 'SELECT name FROM users WHERE id="' . mysql_real_escape_string($id) . '" AND permissions="T"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'SELECT name FROM users WHERE id="' . mysqli_real_escape_string(DB::get(),$id) . '" AND permissions="T"';
+	$result = DB::queryRaw($query);
 	
-	if (mysql_num_rows($result) != 1)
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Do_Delete: Invalid User ID', E_USER_ERROR);
 	
 	// Do delete
-	$query = 'DELETE FROM users WHERE id="' . mysql_real_escape_string($id) . '" LIMIT 1';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'DELETE FROM users WHERE id="' . mysqli_real_escape_string(DB::get(),$id) . '" LIMIT 1';
+	DB::queryRaw($query);
 	
-	$query = 'DELETE FROM test_scores WHERE user_id="' . mysql_real_escape_string($id) . '"';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'DELETE FROM test_scores WHERE user_id="' . mysqli_real_escape_string(DB::get(),$id) . '"';
+	DB::queryRaw($query);
 	
 	header('Location: Temporary_Users');
 }
@@ -418,9 +418,9 @@ function create_score_table($id) {
 	$query = 'SELECT test_scores.score AS score, tests.name AS name, tests.total_points AS total'
 			. ' FROM test_scores'
 			. ' INNER JOIN tests ON tests.test_id=test_scores.test_id'
-			. ' WHERE test_scores.user_id="' . mysql_real_escape_string($id) . '"'
+			. ' WHERE test_scores.user_id="' . mysqli_real_escape_string(DB::get(),$id) . '"'
 			. ' ORDER BY tests.test_id';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$result = DB::queryRaw($query);
 	
 	$table = <<<HEREDOC
       <table class="contrasting">
@@ -432,7 +432,7 @@ function create_score_table($id) {
 
 HEREDOC;
 	
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$table .= <<<HEREDOC
         <tr>
@@ -442,7 +442,7 @@ HEREDOC;
         </tr>
 
 HEREDOC;
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	$table .= <<<HEREDOC

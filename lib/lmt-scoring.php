@@ -242,7 +242,8 @@ function score_guts() {
 	$ans_a = 3090;
 	
 	// Code to add up values for rounds 1 to 11
-	$main = "( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=1), 0) * {$points[1]})\n";
+	//$main = "(SELECT (SUM(IFNULL(score,0))*($points)[problem_set]) WHERE team=teams.team_id AND problem_set>=1 AND problem_set<=11
+	$main = "( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set), 0) * {$points[1]})\n";
 	for ($n = 2; $n <= 11; $n++)
 		$main .= " + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=$n), 0) * {$points[$n]})\n";
 	
@@ -260,9 +261,7 @@ function score_guts() {
 	//$c = "IF(  guts_ans_c > $avg,  0,  guts_ans_c)";
     $c = "guts_ans_c";
 	
-	
-	$query = "$main + IFNULL($a, 0) + IFNULL($b, 0) + IFNULL($c, 0)";
-	$query = "UPDATE teams SET score_guts=($query)";
+	$query = "UPDATE teams SET score_guts=($main + IFNULL($a, 0) + IFNULL($b, 0) + IFNULL($c, 0))";
 	DB::queryRaw($query);
 }
 

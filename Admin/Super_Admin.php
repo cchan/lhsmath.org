@@ -64,14 +64,14 @@ function process_form() {
 		return;
 	}
 	
-	$query = 'SELECT id, name FROM users WHERE id="' . mysql_real_escape_string($_POST['account_id']) . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'SELECT id, name FROM users WHERE id="' . mysqli_real_escape_string(DB::get(),$_POST['account_id']) . '"';
+	$result = DB::queryRaw($query);
 	
-	if (mysql_num_rows($result) != 1) {
+	if (mysqli_num_rows($result) != 1) {
 		show_page('Nonexistent ID');
 		return;
 	}
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$id = $row['id'];
 	$name = $row['name'];
 	
@@ -79,7 +79,7 @@ function process_form() {
 	
 	// perform elevation
 	$query = 'UPDATE users SET permissions="A", approved="1" WHERE id="' . $id . '" LIMIT 1';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	DB::queryRaw($query);
 	
 	// show confirmation page
 	page_header('Super-Admin');

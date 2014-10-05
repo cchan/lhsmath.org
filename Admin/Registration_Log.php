@@ -43,9 +43,9 @@ HEREDOC;
 		. 'FROM users '
 		. 'GROUP BY registration_ip ORDER BY banned_percent DESC, total DESC';
 		// ^-- biglong SQL to get the highest percent-banned IPs
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$result = DB::queryRaw($query);
 	
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		if ($row['banned_percent'] == 0)
 			break;
@@ -57,7 +57,7 @@ HEREDOC;
         </tr>
 
 HEREDOC;
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	echo "      </table>\n";
 	admin_page_footer('Registration Log');
@@ -90,10 +90,10 @@ function show_detail_page() {
 HEREDOC;
 	
 	$query = 'SELECT name, email, yog, creation_date, DATE_FORMAT(creation_date, "%M %e, %Y") AS formatted_creation, approved FROM users WHERE registration_ip="'
-		. mysql_real_escape_string($_GET['IP']) . '" ORDER BY creation_date DESC';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+		. mysqli_real_escape_string(DB::get(),$_GET['IP']) . '" ORDER BY creation_date DESC';
+	$result = DB::queryRaw($query);
 	
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$color = '#a00';
 		$status = 'Banned';
@@ -118,7 +118,7 @@ HEREDOC;
         </tr>
 
 HEREDOC;
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	echo "      </table>\n";
 	

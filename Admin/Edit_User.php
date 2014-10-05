@@ -64,16 +64,16 @@ function do_ban() {
 		trigger_error('Ban: Invalid XSRF token', E_USER_ERROR);
 	
 	// Check that the user id is valid
-	$query = 'SELECT id FROM users WHERE id="' . mysql_escape_string($_GET['ID']) . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'SELECT id FROM users WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"';
+	$result = DB::queryRaw($query);
 	
 	// If User ID isn't valid, show an error page
-	if (mysql_num_rows($result) != 1)
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Invalid user ID', E_USER_ERROR);
 	
 	// Otherwise, perform the ban
-	$query = 'UPDATE users SET approved="-1" WHERE id="' . mysql_escape_string($_GET['ID']) . '" LIMIT 1';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'UPDATE users SET approved="-1" WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
+	DB::queryRaw($query);
 	
 	redirect();	// Go back to the previous page
 }
@@ -94,16 +94,16 @@ function do_approve() {
 		trigger_error('Approve: Invalid XSRF token', E_USER_ERROR);
 	
 	// Check that the user id is valid
-	$query = 'SELECT id FROM users WHERE id="' . mysql_escape_string($_GET['ID']) . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'SELECT id FROM users WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"';
+	$result = DB::queryRaw($query);
 	
 	// If User ID isn't valid, show an error page
-	if (mysql_num_rows($result) != 1)
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Invalid user ID', E_USER_ERROR);
 	
 	// Otherwise, approve the user
-	$query = 'UPDATE users SET approved="1" WHERE id="' . mysql_escape_string($_GET['ID']) . '" LIMIT 1';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'UPDATE users SET approved="1" WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
+	DB::queryRaw($query);
 	
 	redirect();	// Go back to the previous page
 }
@@ -125,16 +125,16 @@ function do_unapprove() {
 		trigger_error('Unapprove: Invalid XSRF token', E_USER_ERROR);
 	
 	// Check that the user id is valid
-	$query = 'SELECT id FROM users WHERE id="' . mysql_escape_string($_GET['ID']) . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'SELECT id FROM users WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"';
+	$result = DB::queryRaw($query);
 	
 	// If User ID isn't valid, show an error page
-	if (mysql_num_rows($result) != 1)
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Invalid user ID', E_USER_ERROR);
 	
 	// Otherwise, approve the user
-	$query = 'UPDATE users SET approved="0" WHERE id="' . mysql_escape_string($_GET['ID']) . '" LIMIT 1';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'UPDATE users SET approved="0" WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
+	DB::queryRaw($query);
 	
 	redirect();	// Go back to the previous page
 }
@@ -151,15 +151,15 @@ function do_unapprove() {
  */
 function show_change_name_page($err) {
 	// Check that the user id is valid and get user's info
-	$query = 'SELECT name FROM users WHERE id="' . mysql_escape_string($_GET['ID']) . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'SELECT name FROM users WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"';
+	$result = DB::queryRaw($query);
 	
 	// If User ID isn't valid, show an error page
-	if (mysql_num_rows($result) != 1)
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Invalid user ID', E_USER_ERROR);
 	
 	// Otherwise, get info
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$old_name = $row['name'];
 	
 	
@@ -215,14 +215,14 @@ function do_change_name() {
 		trigger_error('Do_Change_Name: Invalid XSRF token', E_USER_ERROR);
 	
 	// Check if ID is valid
-	$query = 'SELECT name, yog FROM users WHERE id="' . mysql_real_escape_string($_GET['ID']) . '" LIMIT 1';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'SELECT name, yog FROM users WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
+	$result = DB::queryRaw($query);
 	
 	// If User ID isn't valid, show an error page
-	if (mysql_num_rows($result) != 1)
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Invalid user ID', E_USER_ERROR);
 	
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$yog = $row['yog'];
 	$old_name = $row['name'];
 	
@@ -252,11 +252,11 @@ function do_change_name() {
 	}
 	
 	// Check that a current member (or pending member) does not share that name
-	$sql_name = mysql_real_escape_string(strtolower($name));
+	$sql_name = mysqli_real_escape_string(DB::get(),strtolower($name));
 	$query = 'SELECT COUNT(*) FROM users WHERE LOWER(name)="' . $sql_name . '" AND yog="'
-		. mysql_real_escape_string($yog) . '" AND permissions!="L" AND approved!="-1"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+		. mysqli_real_escape_string(DB::get(),$yog) . '" AND permissions!="L" AND approved!="-1"';
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	
 	$count = 0;
 	if (strtolower($name) == strtolower($old_name))	// you can change the case of a name
@@ -271,8 +271,8 @@ function do_change_name() {
 	// ** INFORMATION VALIDATED AT THIS POINT **
 	
 	// Change name
-	$query = 'UPDATE users SET name="' . $name . '" WHERE id="' . mysql_real_escape_string($_GET['ID']) .'" LIMIT 1';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'UPDATE users SET name="' . $name . '" WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) .'" LIMIT 1';
+	DB::queryRaw($query);
 	
 	redirect();
 }
@@ -289,15 +289,15 @@ function do_change_name() {
  */
 function show_change_yog_page($err) {
 	// Check that the user id is valid and get user's info
-	$query = 'SELECT name, yog FROM users WHERE id="' . mysql_escape_string($_GET['ID']) . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'SELECT name, yog FROM users WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"';
+	$result = DB::queryRaw($query);
 	
 	// If User ID isn't valid, show an error page
-	if (mysql_num_rows($result) != 1)
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Invalid user ID', E_USER_ERROR);
 	
 	// Otherwise, get info
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$name = $row['name'];
 	$old_yog = $row['yog'];
 	
@@ -357,11 +357,11 @@ function do_change_yog() {
 		trigger_error('Do_Change_YOG: Invalid XSRF token', E_USER_ERROR);
 	
 	// Check if ID is valid
-	$query = 'SELECT name FROM users WHERE id="' . mysql_real_escape_string($_GET['ID']) . '" LIMIT 1';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'SELECT name FROM users WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
+	$result = DB::queryRaw($query);
 	
 	// If User ID isn't valid, show an error page
-	if (mysql_num_rows($result) != 1)
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Invalid user ID', E_USER_ERROR);
 		
 	
@@ -381,8 +381,8 @@ function do_change_yog() {
 	// ** INFORMATION VALIDATED AT THIS POINT **
 	
 	// Change yog
-	$query = 'UPDATE users SET yog="' . $yog . '" WHERE id="' . mysql_real_escape_string($_GET['ID']) .'" LIMIT 1';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'UPDATE users SET yog="' . $yog . '" WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) .'" LIMIT 1';
+	DB::queryRaw($query);
 	
 	redirect();
 }
@@ -399,15 +399,15 @@ function do_change_yog() {
  */
 function show_change_permissions_page($err) {
 	// Check that the user id is valid and get user's info
-	$query = 'SELECT name, permissions FROM users WHERE id="' . mysql_escape_string($_GET['ID']) . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'SELECT name, permissions FROM users WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"';
+	$result = DB::queryRaw($query);
 	
 	// If User ID isn't valid, show an error page
-	if (mysql_num_rows($result) != 1)
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Invalid user ID', E_USER_ERROR);
 	
 	// Otherwise, get info
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$name = $row['name'];
 	$old_permissions = $row['permissions'];
 	
@@ -487,11 +487,11 @@ function do_change_permissions() {
 		trigger_error('Do_Change_Permissions: Invalid XSRF token', E_USER_ERROR);
 	
 	// Check if ID is valid
-	$query = 'SELECT name FROM users WHERE id="' . mysql_real_escape_string($_GET['ID']) . '" LIMIT 1';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'SELECT name FROM users WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
+	$result = DB::queryRaw($query);
 	
 	// If User ID isn't valid, show an error page
-	if (mysql_num_rows($result) != 1)
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Invalid user ID', E_USER_ERROR);
 		
 	
@@ -511,8 +511,8 @@ function do_change_permissions() {
 	// ** INFORMATION VALIDATED AT THIS POINT **
 	
 	// Change permissions
-	$query = 'UPDATE users SET permissions="' . $permissions . '" WHERE id="' . mysql_real_escape_string($_GET['ID']) .'" LIMIT 1';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'UPDATE users SET permissions="' . $permissions . '" WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) .'" LIMIT 1';
+	DB::queryRaw($query);
 	
 	redirect();
 }

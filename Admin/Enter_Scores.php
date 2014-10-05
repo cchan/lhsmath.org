@@ -41,12 +41,12 @@ function show_page($err, $msg) {
 	
 	if (!isSet($_POST['test_name']) || !isSet($_POST['total_points'])) {
 		$query = 'SELECT name, total_points FROM tests WHERE test_id="'
-			. mysql_real_escape_string($_GET['ID']) . '" LIMIT 1';
-		$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-		if (mysql_num_rows($result) != 1)
+			. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
+		$result = DB::queryRaw($query);
+		if (mysqli_num_rows($result) != 1)
 			trigger_error('Show_Page: Invalid Test ID', E_USER_ERROR);
 		
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 		$test_name = $row['name'];
 		$total_points = $row['total_points'];
 	}
@@ -134,13 +134,13 @@ function process_form() {
 	
 	// Check that test exists
 	$query = 'SELECT test_id, total_points FROM tests WHERE test_id="'
-		. mysql_real_escape_string($_GET['ID']) . '" LIMIT 1';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
+	$result = DB::queryRaw($query);
 	
-	if (mysql_num_rows($result) != 1)
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Process_Form: Invalid Test ID', E_USER_ERROR);
 	
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$test_id = (int)$row['test_id'];
 	$total_points = (int)$row['total_points'];
 	
@@ -213,8 +213,8 @@ function process_form() {
 	// Check for previously-entered scores
 	$query = 'SELECT score FROM test_scores WHERE test_id="' . $test_id
 		. '" AND user_id="' . $user_id . '" LIMIT 1';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	
 	if ($row) {
 		if ($row['score'] == $_POST['score'])
@@ -232,10 +232,10 @@ function process_form() {
 	// INFORMATION VALIDATED
 	
 	$query = 'INSERT INTO test_scores (test_id, user_id, score) VALUES ("'
-		. mysql_real_escape_string($test_id) . '", "'
-		. mysql_real_escape_string($user_id) . '", "'
-		. mysql_real_escape_string($score) . '")';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+		. mysqli_real_escape_string(DB::get(),$test_id) . '", "'
+		. mysqli_real_escape_string(DB::get(),$user_id) . '", "'
+		. mysqli_real_escape_string(DB::get(),$score) . '")';
+	DB::queryRaw($query);
 	show_page('', 'Entered a score of ' . htmlentities($score) . ' for ' . htmlentities($name));
 }
 
@@ -255,27 +255,27 @@ function do_override() {
 	
 	// Check that test exists
 	$query = 'SELECT test_id, total_points FROM tests WHERE test_id="'
-		. mysql_real_escape_string($_GET['ID']) . '" LIMIT 1';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
+	$result = DB::queryRaw($query);
 	
-	if (mysql_num_rows($result) != 1)
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Override: Invalid Test ID', E_USER_ERROR);
 	
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$test_id = (int)$row['test_id'];
 	$total_points = (int)$row['total_points'];
 	
 	// Locate user
-	$user_id = mysql_real_escape_string($_GET['User']);
+	$user_id = mysqli_real_escape_string(DB::get(),$_GET['User']);
 	$query = 'SELECT id, name FROM users WHERE id="' . $user_id . '" LIMIT 2';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$result = DB::queryRaw($query);
 	
-	if (mysql_num_rows($result) > 1)
+	if (mysqli_num_rows($result) > 1)
 		trigger_error('Override: Multiple users match ID', E_USER_ERROR);
-	if (mysql_num_rows($result) != 1)
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Override: No usres match ID', E_USER_ERROR);
 	
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$user_id = (int)$row['id'];
 	$name = htmlentities($row['name']);
 	
@@ -290,10 +290,10 @@ function do_override() {
 	
 	// INFORMATION VALIDATED
 	
-	$query = 'UPDATE test_scores SET score="' . mysql_real_escape_string($score)
-		. '" WHERE user_id="' . mysql_real_escape_string($user_id)
-		. '" AND test_id="' . mysql_real_escape_string($test_id) . '" LIMIT 1';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'UPDATE test_scores SET score="' . mysqli_real_escape_string(DB::get(),$score)
+		. '" WHERE user_id="' . mysqli_real_escape_string(DB::get(),$user_id)
+		. '" AND test_id="' . mysqli_real_escape_string(DB::get(),$test_id) . '" LIMIT 1';
+	DB::queryRaw($query);
 	header('Location: Enter_Scores?Overridden&ID=' . $_GET['ID'] . '&Score=' . $score . '&Name=' . $name);
 	die();
 }
@@ -326,24 +326,24 @@ function do_create_temporary_user() {
 	
 	// Check that test exists
 	$query = 'SELECT test_id, total_points FROM tests WHERE test_id="'
-		. mysql_real_escape_string($_GET['ID']) . '" LIMIT 1';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
+	$result = DB::queryRaw($query);
 	
-	if (mysql_num_rows($result) != 1)
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Temporary_User: Invalid Test ID', E_USER_ERROR);
 	
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$test_id = (int)$row['test_id'];
 	$total_points = (int)$row['total_points'];
 	
 	// Check that user does not exist
-	$name = mysql_real_escape_string($_GET['User']);
+	$name = mysqli_real_escape_string(DB::get(),$_GET['User']);
 	$name = preg_replace("/\\040\\050.*\\051/", "", $name);	// remove stuff in parentheses
 	$name = str_replace(" ", "%", $name);
 	$query = 'SELECT id, name FROM users WHERE name="' . $name . '" AND (permissions="R" OR permissions="A" OR permissions="C" OR permissions="T") AND approved="1" LIMIT 2';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$result = DB::queryRaw($query);
 	
-	if (mysql_num_rows($result) > 0)
+	if (mysqli_num_rows($result) > 0)
 		trigger_error('Temporary_User: User already exists', E_USER_ERROR);
 	
 	// Verify score
@@ -357,20 +357,20 @@ function do_create_temporary_user() {
 	
 	// INFORMATION VALIDATED
 	
-	$name = mysql_real_escape_string(htmlentities($_GET['User']));
+	$name = mysqli_real_escape_string(DB::get(),htmlentities($_GET['User']));
 	$query = 'INSERT INTO users (name, permissions, approved) VALUES ("' . $name . '", "T", 1)';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	DB::queryRaw($query);
 	
 	$query = 'SELECT id FROM users WHERE name="' . $name . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	$user_id = $row['id'];
 	
 	$query = 'INSERT INTO test_scores (test_id, user_id, score) VALUES ("'
-		. mysql_real_escape_string($test_id) . '", "'
-		. mysql_real_escape_string($user_id) . '", "'
-		. mysql_real_escape_string($score) . '")';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+		. mysqli_real_escape_string(DB::get(),$test_id) . '", "'
+		. mysqli_real_escape_string(DB::get(),$user_id) . '", "'
+		. mysqli_real_escape_string(DB::get(),$score) . '")';
+	DB::queryRaw($query);
 	header('Location: Enter_Scores?Overridden&ID=' . $_GET['ID'] . '&Score=' . $score . '&Name=' . $name);
 	die();
 }

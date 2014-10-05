@@ -7,7 +7,7 @@
  * Loading this file will also perform the following default actions:
  *  - hide the '.php' extension in the URL
  *  - start a session
- *  - connect to the database
+ *  - connect to the (Meekro-style DB::)database
  *  - attach custom_errors as custom error handler if $CATCH_ERRORS is true.
  *  - Initialize a bunch of config variables
  *
@@ -23,12 +23,11 @@
  register_shutdown_function()
  set_error_handler()
  Google, PHP.net, StackOverflow, past webmasters
- Looking for cautionary comments [e.g. mail config $#%^$%#]
- 
+ Looking for cautionary comments [e.g. "I hate mail config $#%^$%#"]
  */
  
  /*
- Table of Contents and Descriptions (in progress!)
+ Table of Contents and Descriptions (IN PROGRESS!)
  Use your IDE's 'find' function to get to these.
  
  custom_errors($errno,$errstr,$errfile,$errline)	Custom error handler that logs error and displays opaque error page
@@ -61,7 +60,7 @@ require_once $path_to_root . 'lib/CONFIG.php';	// configuration information
 /*
  * val()
  *
- * Data validation, with ridiculously overly immense power. Examples:
+ * Data validation, with ludicrously overly immense power. Examples:
  *
  * val('i0+',$n,$m) returns true if both $n and $m are nonnegative integers.
  * val('*s',$_POST) returns true if $_POST is an array of strings (and nothing else). (which $_POST should always be)
@@ -114,7 +113,7 @@ function val($type /*,$x1,$x2,...*/){
 	$x=$args[0];//Already confirmed that it's only one validatee, so let's go do just this one arg.
 	
 	$firstchar = substr($type,0,1);
-	$type_tmp = $type;
+	$morechars = $type;
 	
 	//*: N-D ARRAY TYPE
 	//@: N-D ALIGNED ARRAY TYPE
@@ -153,7 +152,7 @@ function val($type /*,$x1,$x2,...*/){
 			if($n==0)return val($morechars,$matrix);
 			if($firstchar=='@' && count($matrix)!=$dimensions[$n-1])return false;
 			foreach($matrix as $submatrix)
-				if(!rec_check($submatrix,$n-1))return false;
+				if(!$rec_check($submatrix,$n-1))return false;
 			return true;
 		};
 		return $rec_check($x,$dim);
@@ -300,7 +299,7 @@ if ($_SESSION['ip_address'] != $_SERVER['REMOTE_ADDR']) {
 // refresh cached data (name, permissions) 15 sec. for people who are pending email verification or account approval
 // and 1 min. for everyone else
 if (isSet($_SESSION['user_id'])) {
-	if ($_SESSION['permissions'] == 'E' || $_SESSION['permissions'] == 'P') {
+	if (user_access('EP')) {
 		if (time() >= $_SESSION['last_refresh'] + 15)
 			set_login_data($_SESSION['user_id']);
 	} else if (time() >= $_SESSION['last_refresh'] + 60)
@@ -338,11 +337,11 @@ function restrict_access($levels) {
 	
 	
 	if (!array_key_exists('permissions',$_SESSION))
-		$user_level = 'X';
+		$user_level = $_SESSION['permissions'] = 'X';
 	else
 		$user_level = $_SESSION['permissions'];
 	
-	if (strpos($levels, $user_level) === false) {
+	if (stripos($levels, $user_level) === false) {
 		// Access forbidden
 		if ($user_level == 'X') {
 			// Maybe they have permissions, they're just not logged in
@@ -377,6 +376,13 @@ function restrict_access($levels) {
 		}
 	}
 }
+function user_access($levels){
+	if (!array_key_exists('permissions',$_SESSION))
+		$user_level = $_SESSION['permissions'] = 'X';
+	else
+		$user_level = $_SESSION['permissions'];
+	return (stripos($levels, $user_level) !== false);
+}
 
 
 
@@ -384,7 +390,7 @@ function restrict_access($levels) {
 
 /*
  * set_login_data($id)
- *  - $row: the result of mysql_fetch_assoc() on the query 'SELECT * FROM users WHERE id="..."'
+ *  - $row: the result of mysqli_fetch_assoc() on the query 'SELECT * FROM users WHERE id="..."'
  *
  * Sets the SESSION variables that contain a logged-in user's information
  * 
@@ -392,7 +398,7 @@ function restrict_access($levels) {
  * I actually accidentally hijacked it, since DB query wasn't working, but it still logged in. O_o
  */
 function set_login_data($id) {
-	if ($_SESSION['permissions'] == '+')	// if you're already logged in as the Super-Admin, this would mess things up cuz it's not in the database
+	if (user_access('+'))	// if you're already logged in as the Super-Admin, this would mess things up cuz it's not in the database
 		return;
 	
 	if (!isSet($_SESSION['user_id'])) {
@@ -415,7 +421,7 @@ function set_login_data($id) {
 	$_SESSION['email'] = $row['email'];
 	
 	// SPECIAL PERMISSIONS
-	if ($_SESSION['permissions'] == 'C') {	// Captain is a type of Administrator
+	if (user_access('C')) {	// Captain is a type of Administrator
 		$_SESSION['permissions'] = 'A';
 		$_SESSION['is_captain'] = true;
 	}
@@ -428,7 +434,7 @@ function set_login_data($id) {
 		$_SESSION['permissions'] = 'P';
 	
 	// Admins have an asterisk appended to their name
-	if ($_SESSION['permissions'] == 'A')
+	if (user_access('A'))
 		$_SESSION['user_name'] .= '*';
 	
 	// If a password reset has been requested, cancel it -
@@ -486,7 +492,7 @@ function log_attempt($email, $success) {
  *  email/password pair, hash them and then compare it to the stored
  *  passhash for that user.
  */
-function hash_pass($email, $pass) {
+function hash_pass($email, $pass) {//--todo--Should implement key stretching, although that would entail a lot of painfulness.
 	global $SECRET_SALT;
 	$hash = hash('sha512', 'lhsmath $4S5KoOyu\'B5FRrg(*#%@22aM,jBxQjZIRwnY./\\[X2d$MDLGeUD)}:"mlAt9kekTiaET!mcmVQYTJlk;TdYZJS1aqo' . $email);
 	$hash = hash('sha512', $hash . ' lhsmath 2BATHJ0G61o23#%zEHEw];.246893QW0SmXA@$#)bcjtPQI%&#RjjANLpyz' . $pass);
@@ -601,13 +607,13 @@ function form_autocomplete_query($input) {//Restrict to admins, and then move it
 				$name = str_replace(" ", "%", $name);
 				$yog = $senior_year + 12 - $grade;
 				
-				$query = 'SELECT * FROM users WHERE name LIKE "%' . mysql_real_escape_string($name)//NO WHY ARE YOU DOING THIS AGHHHH it hurts me
-					. '%" AND yog="' . mysql_real_escape_string($yog) . '" AND permissions!="T"';
+				$query = 'SELECT * FROM users WHERE name LIKE "%' . mysqli_real_escape_string(DB::get(),$name)//NO WHY ARE YOU DOING THIS AGHHHH it hurts me
+					. '%" AND yog="' . mysqli_real_escape_string(DB::get(),$yog) . '" AND permissions!="T"';
 			}
 		}
 		else if ($grade == 'T') {
 			$name = str_replace(" ", "%", $name);
-			$query = 'SELECT * FROM users WHERE name LIKE "%' . mysql_real_escape_string($name)
+			$query = 'SELECT * FROM users WHERE name LIKE "%' . mysqli_real_escape_string(DB::get(),$name)
 					. '%" AND permissions="T"';
 		}
 	}
@@ -618,15 +624,15 @@ function form_autocomplete_query($input) {//Restrict to admins, and then move it
 	$input = str_replace(" ", "%", $input);
 	if ($query == '')
 		$query = 'SELECT id, name, yog FROM users WHERE (name LIKE "%'
-			. mysql_real_escape_string($input) . '%" OR id="'
-			. mysql_real_escape_string($input) . '") AND permissions!="T"';
+			. mysqli_real_escape_string(DB::get(),$input) . '%" OR id="'
+			. mysqli_real_escape_string(DB::get(),$input) . '") AND permissions!="T"';
 	
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	if (mysql_num_rows($result) == 0)
+	$result = DB::queryRaw($query);
+	if (mysqli_num_rows($result) == 0)
 		return array("type" => "none");
 		
-	$row = mysql_fetch_assoc($result);
-	if (mysql_num_rows($result) == 1)
+	$row = mysqli_fetch_assoc($result);
+	if (mysqli_num_rows($result) == 1)
 		return array("type" => "single", "row" => $row);
 	
 	$found_row = null;
@@ -643,10 +649,10 @@ function form_autocomplete_query($input) {//Restrict to admins, and then move it
 			else
 				$multiple = true;
 		}
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
-	mysql_data_seek($result, 0);
+	mysqli_data_seek($result, 0);
 	
 	if ($multiple)
 		return array("type" => "multiple", "result" => $result, "exact" => true);
@@ -675,6 +681,17 @@ function send_list_email($subject, $body, $reply_to){
 	);
 }
 
+function val_email_msg($subject,$body){
+	if (strlen($subject) == 0)
+		return 'Please enter a subject.';
+	if (strlen($subject) > 75)
+		return 'Your subject is too long...';
+	if (strlen($body) == 0)
+		return 'Please enter a message.';
+	if (strlen($body) > 5000)
+		return 'Please limit your message to 5000 characters.';
+	return true;
+}
 
 /*
  * send_email($to, $subject, $body, $reply_to)
@@ -685,27 +702,26 @@ function send_list_email($subject, $body, $reply_to){
  *
  *  NOTE: THIS FUNCTION REQUIRES THE SWIFT MAIL PACKAGE
  */
-function send_email($to, $subject, $body, $reply_to=NULL, $prefix=NULL, $footer=NULL, $headers=NULL) {
+function send_email($bcc_list, $subject, $body, $reply_to=NULL, $prefix=NULL, $footer=NULL, $headers=NULL) {
 	global $EMAIL_ADDRESS, $EMAIL_USERNAME, $EMAIL_PASSWORD,
 		$SMTP_SERVER, $SMTP_SERVER_PORT, $SMTP_SERVER_PROTOCOL, $LMT_EMAIL, $path_to_lmt_root;
 		
 	//Instead of using parameter default values, so we can pass NULL. And it's more readable.
-	if(count($to)==0)return;
+	if(count($bcc_list)==0)return true;
 	//--todo-- reply-to filtering doesn't work, and instead breaks when the empty string reaches SwiftMail.
 	if(is_null($reply_to) || !filter_var($reply_to, FILTER_VALIDATE_EMAIL))$reply_to=array($EMAIL_ADDRESS=>'LHS Math Club Mailbot');
 	if(is_null($prefix))$prefix='[LHS Math Club]';
-	if(is_null($footer))$footer="LHS Math Club\n".get_site_url()."\nTo stop receiving LHSMATH emails, contact [email]webmaster@lhsmath.org[/email].";
+	if(is_null($footer))$footer="LHS Math Club\n[url]".get_site_url()."[/url]\nTo stop receiving LHSMATH emails, contact [email]webmaster@lhsmath.org[/email].";
 	if(is_null($headers))$headers=array();
+	
+	if(!is_array($bcc_list)||!is_string($subject)||!is_string($body)||(!is_array($reply_to)&&!is_string($reply_to))||!is_string($prefix)||!is_string($footer)||!is_array($headers))
+		return 'Invalid email parameters.';
+	if(($error_msg = val_email_msg($subject,$body))!==true)
+		return $error_msg;
 	
 	$body .= "\n\n\n---\n$footer\n"; //Attach footer.
 	$html = BBCode($body); //BBCode it.
-	
 	$subject = htmlentities($prefix.' '.$subject);
-	
-	if(!is_array($to)||!is_string($subject)||!is_string($body)||(!is_array($reply_to)&&!is_string($reply_to))||!is_string($prefix)||!is_string($footer)||!is_array($headers)){
-		//alert("Invalid parameters.");
-		return false;
-	}
 	
 	//Ok everything seems to be working, let's go ahead
 	require_once __DIR__."/swiftmailer/swift_required.php";
@@ -723,7 +739,7 @@ function send_email($to, $subject, $body, $reply_to=NULL, $prefix=NULL, $footer=
 		//Mush all info into the Mailer
 		$message = Swift_Message::newInstance($subject)
 			->setFrom(array($EMAIL_ADDRESS=>'LHS Math Club Mailbot'))
-			->setBcc($to)
+			->setBcc($bcc_list)
 			->setContentType("text/html")
 			->setBody($html)
 			->setReplyTo($reply_to);
@@ -737,19 +753,22 @@ function send_email($to, $subject, $body, $reply_to=NULL, $prefix=NULL, $footer=
 	catch(Exception $e){
 		trigger_error('Email exception: '.$e->getMessage(),E_USER_ERROR);
 	}
+	return true;
 }
 
 
 /*
  * get_bcc_list()
  *
- * Gets the list of mailings-enabled people from the database, as an array. Caches.
+ * Gets the list of mailings-enabled people from the database, as an associative array $email=>$name for SwiftMail. Caches.
  */
 function get_bcc_list(){
 	static $list=0;//Caching, for efficiency.
-	if($list === 0)
-		$list = DB::queryFirstColumn('SELECT email FROM users WHERE mailings="1" AND permissions!="T" AND email_verification="1"');
+	if($list === 0){
+		$result = DB::queryFirstColumn('SELECT name, email FROM users WHERE mailings="1" AND permissions!="T" AND email_verification="1"');
 		//Doesn't have to be approved. Includes you.
+		$list = DBHelper::verticalSlice($result,'email','name');
+	}
 	return $list;
 }
 
@@ -1025,7 +1044,125 @@ function email_obfuscate($address, $link_text=null, $pre_text='', $post_text='')
 }
 
 
+//Upon shutdown, templateify() will run, emptying the output buffer into a page template and then sending *that* instead.
+ob_start();//Collect EVERYTHING that's outputted.
+$TIME_START=microtime(true);//For page load time measurement. --todo-- log this?
+function templateify(){
+	global $CANCEL_TEMPLATEIFY;//In case, for example, you want to send an attachment.
+	if(@$CANCEL_TEMPLATEIFY)return;
+	
+	global $header_title, $header_class, $path_to_root, $body_onload, $jquery_function, $LOCAL_BORDER_COLOR, $footer_html, $popup_code, $page_title, $more_head_stuff;
+	if(!isSet($header_title))$header_title = 'LHS Math Club';
+	
+	global $logged_in_header;
+	if (isSet($_SESSION['user_id']))
+		$logged_in_header = <<<HEREDOC
+      <div id="user"><span id="username">{$_SESSION['user_name']}</span><span id="bar"> | </span><a href="{$path_to_root}Account/Signout">Sign Out</a></div>
+HEREDOC;
+	
+	if (isSet($meta_refresh))
+		$more_head_stuff .= '<meta http-equiv="refresh" content="' . $meta_refresh . '" />';
+	
+	$alerts_html = fetch_alerts_html();
+	
+	$content = ob_get_clean();
+	
+	//Very hacky solution to inserting alerts, but it works.
+	if(strpos($content,'</h1>')!==false)
+		$content = substr_replace($content,$alerts_html,strpos("\n".$content,'</h1>')+strlen('</h1>'),0);
+	else
+		$content = $alerts_html . $content;
+	
+	echo <<<HEREDOC
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <title>{$page_title} | {$header_title}</title>
+	
+	<link rel="icon" href="{$path_to_root}favicon.ico" />
+    <link rel="stylesheet" href="{$path_to_root}res/default.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="{$path_to_root}res/print.css" type="text/css" media="print" />
+	
+	<script type="text/javascript" src="{$path_to_root}res/rel_external.js"></script>
+	
+	<script type="text/javascript" src="{$path_to_root}res/popup.js"></script>
+	
+    <link rel="stylesheet" href="{$path_to_root}res/jquery/css/smoothness/jquery-ui-1.8.5.custom.css" type="text/css" media="all"/>
+    <script type="text/javascript" src="{$path_to_root}res/jquery/js/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="{$path_to_root}res/jquery/js/jquery-ui-1.8.5.custom.min.js"></script>
+    <script type="text/javascript">
+		{$jquery_function}
+    </script>
+	
+    <style type="text/css">
+      .ui-datepicker, .ui-autocomplete {
+        font-size: 12px;
+      }
+    </style>
+	
+	{$popup_code}
+	{$more_head_stuff}
+  </head>
+  <body onload="{$body_onload}">
+    <div id="header" class="{$header_class}" style="border-bottom: 4px solid {$LOCAL_BORDER_COLOR}">
+      <a href="{$path_to_root}Home" id="title">{$header_title}</a>{$logged_in_header}
+    </div>
+    
+    <div id="content">
+		{$content}
+	</div>
+	{$footer_html}
+HEREDOC;
+	
+	ob_flush();
+	flush();
+	die();//--todo--For some reason it just keeps on "Waiting for localhost..." even though the script is done...
+}
+register_shutdown_function('templateify');
 
+$CANCEL_TEMPLATEIFY=false;
+function cancel_templateify(){
+	global $CANCEL_TEMPLATEIFY;
+	$CANCEL_TEMPLATEIFY=true;
+}
+
+
+/*******************ALERTS*********************/
+//Also assumes that templateify() will add it in via fetch_alerts_html()
+//Call this to add an alert to be displayed at the top.
+//Text: the alert text
+//Disposition: negative means bad (red), positive means good (green), zero means neutral (black)
+function alert($text,$disposition=0,$page_name=NULL){
+	//Check that it's a valid page.
+	
+	if(is_null($page_name))
+		$page_name='';//basename($_SERVER['REQUEST_URI']);
+	$sp='alerts_'.$page_name;
+	
+	if(@!$_SESSION[$sp])$_SESSION[$sp]=array();
+	$_SESSION[$sp][]=array($text,$disposition);
+}
+function fetch_alerts_html(){
+	$page_name='';//basename($_SERVER['REQUEST_URI']);
+	$sp='alerts_'.$page_name;
+	
+	$html='';
+	
+	if(@$_SESSION[$sp]){
+		foreach($_SESSION[$sp] as $alert){
+			if($alert[1]>0)$disposition='pos';
+			else if($alert[1]<0)$disposition='neg';
+			else $disposition='neut';
+			$html.="<div class='alert {$disposition}'>{$alert[0]}</div>";
+		}
+		unset($_SESSION[$sp]);
+	}
+	
+	return $html;
+}
 
 
 /*
@@ -1036,71 +1173,12 @@ function email_obfuscate($address, $link_text=null, $pre_text='', $post_text='')
  *  Echoes the top half of the page template (that comes before the content).
  */
 function page_header($title) {
-	global $path_to_root, $body_onload, $use_rel_external_script, $jquery_function, $popup_javascript, $LOCAL_BORDER_COLOR;
-	
-	$logged_in_header = '';
-	if (isSet($_SESSION['user_id']))
-		$logged_in_header = <<<HEREDOC
-
-      <div id="user"><span id="username">{$_SESSION['user_name']}</span><span id="bar"> | </span><a href="{$path_to_root}Account/Signout">Sign Out</a></div>
-HEREDOC;
-	
-	$rel_external_script = '';
-	if ($use_rel_external_script)
-		$rel_external_script = <<<HEREDOC
-
-    <script type="text/javascript" src="{$path_to_root}res/rel_external.js"></script>
-HEREDOC;
-	
-	if ($body_onload != '')
-		$body_onload = ' onload="' . $body_onload . '"';
-	
-	$jquery_code = '';
-	if ($jquery_function != '') {
-	
-	$jquery_code = <<<HEREDOC
-
-    <link rel="stylesheet" href="{$path_to_root}res/jquery/css/smoothness/jquery-ui-1.8.5.custom.css" type="text/css" media="all"/>
-    <script type="text/javascript" src="{$path_to_root}res/jquery/js/jquery-1.4.2.min.js"></script>
-    <script type="text/javascript" src="{$path_to_root}res/jquery/js/jquery-ui-1.8.5.custom.min.js"></script>
-    <script type="text/javascript">
-$jquery_function
-    </script>
-    <style type="text/css">
-      .ui-datepicker, .ui-autocomplete {
-        font-size: 12px;
-      }
-    </style>
-HEREDOC;
-	}
-	
-	if (isSet($LOCAL_BORDER_COLOR))
-		$local_border_code = ' style="border-bottom: 4px solid ' . $LOCAL_BORDER_COLOR . '"';
-	
-	$popup_code = '';
-	if ($popup_javascript)
-		$popup_code = "\n" . '    <script type="text/javascript" src="' . $path_to_root . 'res/popup.js"></script>';
-	
-	echo <<<HEREDOC
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html
-     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-  <head>
-    <title>$title | LHS Math Club</title>
-    <link rel="icon" href="{$path_to_root}favicon.ico" />
-    <link rel="stylesheet" href="{$path_to_root}res/default.css" type="text/css" media="all" />
-    <link rel="stylesheet" href="{$path_to_root}res/print.css" type="text/css" media="print" />$rel_external_script$jquery_code$popup_code
-  </head>
-  <body$body_onload>
-    <div id="header"$local_border_code>
-      <a href="{$path_to_root}Home" id="title">LHS Math Club</a>$logged_in_header
-    </div>
-    
-    <div id="content">
-
-HEREDOC;
+	page_title($title);
+	//Deprecated.
+}
+function page_title($title){
+	global $page_title;
+	$page_title = $title;
 }
 
 
@@ -1117,12 +1195,11 @@ HEREDOC;
  * links on the side.
  */
 function page_footer($names, $pages) {
-	global $path_to_root;
+	global $path_to_root, $footer_html;
 	
-	echo <<<HEREDOC
-
-    </div>
-    
+	$footer_html = '';
+	
+	$footer_html .= <<<HEREDOC
     <div id="linkbar"><br />
       <div class="linkgroup">
 
@@ -1130,15 +1207,15 @@ HEREDOC;
 
 	for ($i = 0; $i < count($names); $i++) {
 		if ($names[$i] == '')
-			echo "      </div>\n      <div class=\"linkgroup\">\n";
+			$footer_html .= "      </div>\n      <div class=\"linkgroup\">\n";
 		else if ($pages[$i] == '')
-			echo "        <span class=\"selected\">{$names[$i]}</span><br />\n";
+			$footer_html .= "        <span class=\"selected\">{$names[$i]}</span><br />\n";
 		else
-			echo "        <a href=\"{$path_to_root}{$pages[$i]}\">{$names[$i]}</a><br />\n";
+			$footer_html .= "        <a href=\"{$path_to_root}{$pages[$i]}\">{$names[$i]}</a><br />\n";
 	}
 	
 
-	echo <<<HEREDOC
+	$footer_html .= <<<HEREDOC
       </div>
     </div>
   </body>
@@ -1261,7 +1338,7 @@ function default_page_footer($page_name) {
 		
 		
 		// Link to Admin Control Panel
-		if ($_SESSION['permissions'] == 'A') {
+		if (user_access('A')) {
 			$names[] = '';
 			$pages[] = '';
 			

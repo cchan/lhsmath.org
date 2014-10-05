@@ -29,7 +29,7 @@ function generate_results() {
 	if ($_GET['term'] == '')
 		die();
 		
-	$name = mysql_real_escape_string($_GET['term']);
+	$name = mysqli_real_escape_string(DB::get(),$_GET['term']);
 	$name = str_replace(" ", "%", $name);
 	
 	$query = 'SELECT name, permissions, yog FROM users WHERE name LIKE "%' . $name . '%" AND (permissions="R" OR permissions="A" OR permissions="C") AND approved="1" LIMIT 10';
@@ -40,10 +40,10 @@ function generate_results() {
 	if (isSet($_GET['T']))
 		$query = 'SELECT name, permissions, yog FROM users WHERE name LIKE "%' . $name . '%" AND approved="1"';
 	
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$result = DB::queryRaw($query);
 	
 	echo "[";
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$comma = "";
 	while ($row) {
 		$seniorsYOG = (int)date('Y');
@@ -58,7 +58,7 @@ function generate_results() {
 		else
 			echo $comma . "\n { \"value\" : \"" . $row['name'] . "\" }";
 		$comma = ",";
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	echo "\n]";
 }

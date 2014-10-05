@@ -27,7 +27,7 @@ HEREDOC;
 	$text = file_get_contents('.content/Contests.txt');
 	echo BBCode($text);
 	
-	if ($_SESSION['permissions'] == 'A')
+	if (user_access('A'))
 		echo <<<HEREDOC
 
       <div class="sidetab"><a href="Admin/Edit_Page?Contests">(edit this page)</a></div>

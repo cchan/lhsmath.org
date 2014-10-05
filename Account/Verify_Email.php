@@ -37,8 +37,8 @@ function show_page() {
 	
 	// Fetch email
 	$query = 'SELECT email FROM users WHERE id="' . $_SESSION['user_id'] . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	$email = $row['email'];
 	
 	// the message that's shown after you click the button
@@ -78,8 +78,8 @@ function send_verification_email() {
 	
 	// Fetch email and code
 	$query = 'SELECT name, email, email_verification FROM users WHERE id="' . $_SESSION['user_id'] . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	$name = $row['name'];
 	$email = $row['email'];
 	$verification_code = $row['email_verification'];
@@ -121,22 +121,22 @@ HEREDOC;
 
 
 function verify_code() {
-	$id = mysql_real_escape_string($_GET['id']);
+	$id = mysqli_real_escape_string(DB::get(),$_GET['id']);
 	$query = 'SELECT id, name, permissions, email_verification FROM users WHERE id="' . $id . '" LIMIT 1';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$result = DB::queryRaw($query);
 	
-	if (mysql_num_rows($result) != 1)
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('ID not found', E_USER_ERROR);
 	
-	$row = mysql_fetch_assoc($result);
-	if ($row['email_verification'] != mysql_real_escape_string($_GET['code']))
+	$row = mysqli_fetch_assoc($result);
+	if ($row['email_verification'] != mysqli_real_escape_string(DB::get(),$_GET['code']))
 		trigger_error('Code does not match', E_USER_ERROR);
 	
 	// ** LINK VALIDATED AT THIS POINT **
 	
 	// mark the email address as validated
 	$query = 'UPDATE users SET email_verification="1" WHERE id="' . $id . '" LIMIT 1';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	DB::queryRaw($query);
 	
 	set_login_data($id);	// LOG THEM IN
 	

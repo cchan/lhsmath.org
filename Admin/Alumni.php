@@ -63,7 +63,7 @@ function process_form() {
 	$yog++;	// because 'less than'
 	
 	$query = 'UPDATE users SET permissions="L", mailings="0" WHERE permissions="R" AND yog=' . $yog;
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	DB::queryRaw($query);
 	
 	$_SESSION['ALUMNI_set'] = true;
 	header('Location: Alumni');

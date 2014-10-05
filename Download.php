@@ -29,11 +29,11 @@ function do_download() {
 	}
 	else {
 		$query = 'SELECT filename, permissions FROM files WHERE file_id="'
-			. mysql_real_escape_string($_GET['ID']) . '"';
-		$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-		if (mysql_num_rows($result) != 1)
+			. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"';
+		$result = DB::queryRaw($query);
+		if (mysqli_num_rows($result) != 1)
 			trigger_error('Incorrect number of categories match ID', E_USER_ERROR);
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 		
 		if ($row['permissions'] == 'P')
 			restrict_access('XLRA');
@@ -71,8 +71,8 @@ HEREDOC;
 		header('Pragma: public');
 		header('Content-Length: ' . filesize($file));
 		ob_clean();
-		flush();
 		readfile($file);
+		flush();
 	}
 	else
 		trigger_error('File does not exist', E_USER_ERROR);

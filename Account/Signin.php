@@ -18,35 +18,34 @@ if (!isSet($path_to_root)) {
 require_once $path_to_root . 'lib/functions.php';
 restrict_access('X');
 
+page_title('Log In');
+
 if (isSet($_POST['do_login']))
 	process_login_form();
 else
-	show_login_form('','');
+	show_login_form('');
 
-
+DB::useDB($DB_DATABASE);//Because it can be included from lmt pages, which uses db $LMT_DATABASE.
 
 
 
 /*
- * show_login_form($err,$email)
+ * show_login_form($email)
  *
- * Shows the login page with an error message, if specified, and keeping the email from the previous login attempt, if specified.
+ * Shows the login page, keeping the email from the previous login attempt if specified.
  */
-function show_login_form($err,$email) {
+function show_login_form($email) {
 	// A little javascript to put the cursor in the first field when the form loads;
 	// page_header() looks at the $body_onload variable and inserts it into the code.
 	global $body_onload;
 	$body_onload = 'document.forms[\'login\'].email.focus()';
 	
-	// If an error message is given, put it inside this div
 	if ($err != '')
-		$err = "\n        <div class=\"error\">$err</div><br />\n";
+		alert($err,-1);
 	
 	// Assemble the page, and send.
-	page_header('Log In');
 	echo <<<HEREDOC
       <h1>Log In</h1>
-      $err
       <form id="login" method="post" action="{$_SERVER['REQUEST_URI']}">
         <table>
           <tr>
@@ -66,7 +65,7 @@ function show_login_form($err,$email) {
       </form>
       
       <br /><br /><br />
-      <div class="alert regalert">Don't have an account? <a href="Register">Register here</a>.</div>
+      <div class="alert neut">Don't have an account? <a href="Register">Register here</a>.</div>
 HEREDOC;
 	default_page_footer('Member Login');
 }
@@ -81,35 +80,17 @@ HEREDOC;
  * Processes the login form and, if the credentials are correct, logs the user in.
  */
 function process_login_form() {
-	$email = mysql_real_escape_string(strtolower($_POST['email']));
-	$passhash = mysql_real_escape_string(hash_pass($email, $_POST['pass']));
+	$email = strtolower($_POST['email']);
+	$passhash = hash_pass($email, $_POST['pass']);
 	
 	// Check to see if the user/ip is temporarily banned:
-	//   a certain IP is banned from attempting to log in to
-	//   a specific account for 10 minutes after 10 login failures;
-	//   the counter is reset after a successful login.
-	// --todo-- this creates unnecessary db queries; log to file instead.
-	$query = 'SELECT COUNT(*) AS attempts FROM login_attempts WHERE successful = 0'
-		. ' AND remote_ip="' . $_SERVER['REMOTE_ADDR']
-		. '" AND request_time > (NOW() - INTERVAL 10 MINUTE)';// ORDER BY request_time';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	
-	/* //Used to be up to "10 since last successful within timespan" now it's just up to "10 within timespan", far more efficient
-	$attempts = 0;
-	$row = mysql_fetch_assoc($result);
-	while ($row) {
-		if ($row['successful'] == '1')
-			$attempts = 0;
-		else
-			$attempts++;
-		$row = mysql_fetch_assoc($result);
-	}
-	if ($attempts >= 10) {
-	*/
-	
-	$row = mysql_fetch_assoc($result);
-	if($row["attempts"]>10){
-		show_login_form('You have been temporarily locked out. Please wait 10 minutes before attempting to sign in again.','');
+	//   An IP is banned when 10 unsuccessful attempts are made to log in from a single IP within 10 minutes, 
+	//   regardless of whether any successful attempts were made.
+	$attempts = DB::queryFirstField('SELECT COUNT(*) FROM login_attempts WHERE successful=0 AND (remote_ip=%s OR email=%s) AND request_time>(NOW()-INTERVAL 10 MINUTE)',$_SERVER['REMOTE_ADDR'],$email);// ORDER BY request_time';
+	if($attempts>10){
+		log_attempt($email, false);
+		alert('You have been temporarily locked out. Please wait 10 minutes before attempting to sign in again.',-1);
+		show_login_form('');
 		return;
 	}
 	
@@ -136,39 +117,27 @@ function process_login_form() {
 			die();
 		}
 	}
-		
+	
 	
 	// Validate credentials
-	$result = DB::queryFirstField('SELECT COUNT(*) FROM users WHERE LOWER(email)=%s AND passhash=%s LIMIT 1',$email,$passhash);
+	$id = DB::queryFirstField('SELECT id FROM users WHERE LOWER(email)=%s AND passhash=%s LIMIT 1',$email,$passhash);
 	
-	if ($result == 0) {
+	if (is_null($id)) {
 		log_attempt($email, false);
-		show_login_form('Incorrect email address or password',$email);
+		show_login_form(,$email);
+		alert('Incorrect email address or password',-1);
 		return;
 	}
 	
 	
 	// ** CREDENTIALS ARE VALIDATED AT THIS POINT ** //
 	log_attempt($email, true);
-	$row = $result->fetch_assoc();
-	set_login_data($row['id']);
+	set_login_data($id);
 	
-	login_redirect();
-}
-
-
-
-
-
-/*
- * login_redirect()
- *
- * After a user is logged in, this function redirects them to the page
- * that they were trying to visit.
- */
-function login_redirect() {
+	alert('Logged in!',1);
+	
+	//If this page was being included, redirect back.
 	global $being_included;
-	
 	if ($being_included)
 		header('Location: ' . $_SERVER['REQUEST_URI']);
 	else

@@ -41,7 +41,7 @@ HEREDOC;
 	$text = file_get_contents('.content/Home.txt');
 	echo BBCode($text);
 	
-	if (@$_SESSION['permissions'] == 'A')
+	if (@user_access('A'))
 		echo <<<HEREDOC
 
       <div class="sidetab"><a href="Admin/Edit_Page?Home">(edit this page)</a></div>

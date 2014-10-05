@@ -15,25 +15,25 @@ require_once 'lib/functions.php';
 restrict_access('XRLA');
 
 if (isSet($_GET['Popup'])) {
-	if (isSet($_POST['do_edit_event']) && $_SESSION['permissions'] == 'A')
+	if (isSet($_POST['do_edit_event']) && user_access('A'))
 		do_popup_edit();
-	else if (isSet($_POST['do_delete_event']) && $_SESSION['permissions'] == 'A')
+	else if (isSet($_POST['do_delete_event']) && user_access('A'))
 		do_popup_delete();
-	else if (isSet($_GET['Edit']) && $_SESSION['permissions'] == 'A')
+	else if (isSet($_GET['Edit']) && user_access('A'))
 		show_popup_edit_page('');
-	else if (isSet($_GET['Delete']) && $_SESSION['permissions'] == 'A')
+	else if (isSet($_GET['Delete']) && user_access('A'))
 		show_popup_delete_page();
 	else
 		show_popup_page();
 }
 else {
-	if (isSet($_POST['do_edit_event']) && $_SESSION['permissions'] == 'A')
+	if (isSet($_POST['do_edit_event']) && user_access('A'))
 		do_full_edit();
-	else if (isSet($_POST['do_delete_event']) && $_SESSION['permissions'] == 'A')
+	else if (isSet($_POST['do_delete_event']) && user_access('A'))
 		do_full_delete();
-	else if (isSet($_GET['Edit']) && $_SESSION['permissions'] == 'A')
+	else if (isSet($_GET['Edit']) && user_access('A'))
 		show_full_edit_page('');
-	else if (isSet($_GET['Delete']) && $_SESSION['permissions'] == 'A')
+	else if (isSet($_GET['Delete']) && user_access('A'))
 		show_full_delete_page();
 	else
 		show_full_page();
@@ -46,19 +46,19 @@ else {
 function show_full_page() {
 	$query = 'SELECT title, DATE_FORMAT(date, "%M %e, %Y") AS formatted_date, DATE_FORMAT(date, "%Y") AS year, '
 		. 'DATE_FORMAT(date, "%m") AS month, description FROM events WHERE event_id="'
-		. mysql_real_escape_string($_GET['ID']) . '" LIMIT 1';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
+	$result = DB::queryRaw($query);
 	
-	if (mysql_num_rows($result) == 0)
+	if (mysqli_num_rows($result) == 0)
 		trigger_error('Event not found', E_USER_ERROR);
 	
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$title = htmlentities($row['title']);
 	$date = htmlentities($row['formatted_date']);
 	$desc = nl2br(htmlentities($row['description']));
 	
 	$admin_footer = '';
-	if ($_SESSION['permissions'] == 'A') {
+	if (user_access('A')) {
 		$admin_footer = <<<HEREDOC
 
     <div class="right">
@@ -93,13 +93,13 @@ function show_full_edit_page($err) {
 	if (!isSet($_POST['title'])) {
 		$query = 'SELECT title, DATE_FORMAT(date, "%m/%e/%y") AS formatted_date, DATE_FORMAT(date, "%Y") AS year, '
 			. 'DATE_FORMAT(date, "%m") AS month, description FROM events WHERE event_id="'
-			. mysql_real_escape_string($_GET['ID']) . '" LIMIT 1';
-		$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+			. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
+		$result = DB::queryRaw($query);
 		
-		if (mysql_num_rows($result) == 0)
+		if (mysqli_num_rows($result) == 0)
 			trigger_error('Event not found', E_USER_ERROR);
 		
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 		$title = htmlentities($row['title']);
 		$date = htmlentities($row['formatted_date']);
 		$desc = htmlentities($row['description']);
@@ -187,11 +187,11 @@ function do_full_edit() {
 	}
 	
 	$query = 'UPDATE events SET title="'
-		. mysql_real_escape_string($title) . '", date="'
-		. mysql_real_escape_string($date) . '", description="'
-		. mysql_real_escape_string($desc) . '" WHERE event_id="'
-		. mysql_real_escape_string($_GET['ID']) . '" LIMIT 1';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+		. mysqli_real_escape_string(DB::get(),$title) . '", date="'
+		. mysqli_real_escape_string(DB::get(),$date) . '", description="'
+		. mysqli_real_escape_string(DB::get(),$desc) . '" WHERE event_id="'
+		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
+	DB::queryRaw($query);
 	
 	$_SESSION['CALENDAR_edited_event'] = true;
 	
@@ -227,15 +227,15 @@ function do_full_delete() {
 	if ($_POST['xsrf_token'] != $_SESSION['xsrf_token'])
 		trigger_error('XSRF code incorrect', E_USER_ERROR);
 	
-	$query = 'SELECT title FROM events WHERE event_id="' . mysql_real_escape_string($_GET['ID']) . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	if (mysql_num_rows($result) != 1)
+	$query = 'SELECT title FROM events WHERE event_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"';
+	$result = DB::queryRaw($query);
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Delete: Wrong number of results for ID', E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$title = $row['title'];
 	
-	$query = 'DELETE FROM events WHERE event_id="' . mysql_real_escape_string($_GET['ID']) . '" LIMIT 1';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'DELETE FROM events WHERE event_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
+	DB::queryRaw($query);
 	
 	$_SESSION['CALENDAR_deleted_event'] = 'The event &quot;' . htmlentities($title) . '&quot; has been deleted';
 	
@@ -249,20 +249,20 @@ function do_full_delete() {
 function show_popup_page() {
 	$query = 'SELECT title, DATE_FORMAT(date, "%M %e, %Y") AS formatted_date, DATE_FORMAT(date, "%Y") AS year, '
 		. 'DATE_FORMAT(date, "%m") AS month, description FROM events WHERE event_id="'
-		. mysql_real_escape_string($_GET['ID']) . '" LIMIT 1';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
+	$result = DB::queryRaw($query);
 	
-	if (mysql_num_rows($result) == 0)
+	if (mysqli_num_rows($result) == 0)
 		trigger_error('Event not found', E_USER_ERROR);
 	
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$title = htmlentities($row['title']);
 	$date = htmlentities($row['formatted_date']);
 	$desc = nl2br(htmlentities($row['description']));
 	
 	
 	$adminfooter = '';
-	if ($_SESSION['permissions'] == 'A') {
+	if (user_access('A')) {
 		// Special Admin Edit functions
 		$request_uri = htmlentities($_SERVER['REQUEST_URI']);
 		$adminfooter = <<<HEREDOC
@@ -380,13 +380,13 @@ function show_popup_edit_page($err) {
 	if (!isSet($_POST['title'])) {
 		$query = 'SELECT title, DATE_FORMAT(date, "%m/%e/%y") AS formatted_date, DATE_FORMAT(date, "%Y") AS year, '
 			. 'DATE_FORMAT(date, "%m") AS month, description FROM events WHERE event_id="'
-			. mysql_real_escape_string($_GET['ID']) . '" LIMIT 1';
-		$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+			. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
+		$result = DB::queryRaw($query);
 		
-		if (mysql_num_rows($result) == 0)
+		if (mysqli_num_rows($result) == 0)
 			trigger_error('Event not found', E_USER_ERROR);
 		
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 		$title = htmlentities($row['title']);
 		$date = htmlentities($row['formatted_date']);
 		$desc = htmlentities($row['description']);
@@ -580,11 +580,11 @@ function do_popup_edit() {
 	}
 	
 	$query = 'UPDATE events SET title="'
-		. mysql_real_escape_string($title) . '", date="'
-		. mysql_real_escape_string($date) . '", description="'
-		. mysql_real_escape_string($desc) . '" WHERE event_id="'
-		. mysql_real_escape_string($_GET['ID']) . '" LIMIT 1';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+		. mysqli_real_escape_string(DB::get(),$title) . '", date="'
+		. mysqli_real_escape_string(DB::get(),$date) . '", description="'
+		. mysqli_real_escape_string(DB::get(),$desc) . '" WHERE event_id="'
+		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
+	DB::queryRaw($query);
 	
 	$_SESSION['CALENDAR_edited_event'] = true;
 	
@@ -698,15 +698,15 @@ function do_popup_delete() {
 	if ($_POST['xsrf_token'] != $_SESSION['xsrf_token'])
 		trigger_error('XSRF code incorrect', E_USER_ERROR);
 	
-	$query = 'SELECT title FROM events WHERE event_id="' . mysql_real_escape_string($_GET['ID']) . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	if (mysql_num_rows($result) != 1)
+	$query = 'SELECT title FROM events WHERE event_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"';
+	$result = DB::queryRaw($query);
+	if (mysqli_num_rows($result) != 1)
 		trigger_error('Delete: Wrong number of results for ID', E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$title = $row['title'];
 	
-	$query = 'DELETE FROM events WHERE event_id="' . mysql_real_escape_string($_GET['ID']) . '" LIMIT 1';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'DELETE FROM events WHERE event_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
+	DB::queryRaw($query);
 	
 	$_SESSION['CALENDAR_deleted_event'] = 'The event &quot;' . htmlentities($title) . '&quot; has been deleted';
 	

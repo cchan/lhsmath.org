@@ -23,75 +23,75 @@ function show_page() {
 	
 	// Fetch Data
 	$query = 'SELECT COUNT(*) FROM users WHERE approved="1"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	$num_members = $row['COUNT(*)'];
 	
 	$query = 'SELECT COUNT(*) FROM users WHERE permissions="C"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	$num_captains = $row['COUNT(*)'];
 	
 	$query = 'SELECT COUNT(*) FROM users WHERE permissions="A"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	$num_assistants = $row['COUNT(*)'];
 	
 	$query = 'SELECT COUNT(*) FROM users WHERE permissions="L"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	$num_alumni = $row['COUNT(*)'];
 	
 
 	$query = 'SELECT COUNT(*) FROM users WHERE approved="0"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	$num_pending_approval  = $row['COUNT(*)'];
 	
 	$query = 'SELECT COUNT(*) FROM users WHERE approved="-1"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	$num_banned = $row['COUNT(*)'];
 	
 	$query = 'SELECT COUNT(*) FROM tests WHERE archived="0"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	$num_tests = $row['COUNT(*)'];
 	
 	$query = 'SELECT COUNT(*) FROM tests WHERE archived="1"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	$num_old_tests = $row['COUNT(*)'];
 	
 	$query = 'SELECT COUNT(*) FROM events WHERE date >= "' . date('Y') . '-' . date('m')
 		. '-1" AND date <= "' . date('Y') . '-' . date('m') . date('t') . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	$num_current_events = $row['COUNT(*)'];
 	
 	$query = 'SELECT COUNT(*) FROM events WHERE date < "' . date('Y') . '-' . date('m') . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	$num_past_events = $row['COUNT(*)'];
 	
 	$query = 'SELECT COUNT(*) FROM events WHERE date > "' . date('Y') . '-' . date('m') . date('t') . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	$num_future_events = $row['COUNT(*)'];
 	
 	$query = 'SELECT COUNT(*) FROM files WHERE permissions="M"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	$num_member_files = $row['COUNT(*)'];
 	
 	$query = 'SELECT COUNT(*) FROM files WHERE permissions="P"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	$num_public_files = $row['COUNT(*)'];
 	
 	$query = 'SELECT COUNT(*) FROM files WHERE permissions="A"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	$num_admin_files = $row['COUNT(*)'];
 	
 	echo <<<HEREDOC

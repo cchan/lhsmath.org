@@ -40,8 +40,8 @@ function show_info_page() {
 	
 	// Get Data
 	$query = 'SELECT * FROM users WHERE id="' . $_SESSION['user_id'] . '" LIMIT 1';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	
 	// format cell #
 	$cell = format_phone_number($row['cell']);
@@ -130,8 +130,8 @@ function show_change_email_page($err, $selected_field) {
 	
 	// Get data
 	$query = 'SELECT email FROM users WHERE id="' . $_SESSION['user_id'] . '" LIMIT 1';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	$old_email = $row['email'];
 	
 	// If an error message is given, put it inside this div and echo, later
@@ -190,8 +190,8 @@ function change_email() {
 	
 	// Get Data
 	$query = 'SELECT name, email, passhash FROM users WHERE id="' . $_SESSION['user_id'] . '" LIMIT 1';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	
 	$name = $row['name'];
 	$old_email = strtolower($row['email']);
@@ -215,24 +215,24 @@ function change_email() {
 	}
 	
 	// Check that an account with that email address doesn't already exist
-	$sql_email = mysql_real_escape_string(strtolower($email));
+	$sql_email = mysqli_real_escape_string(DB::get(),strtolower($email));
 	$query = 'SELECT COUNT(*) FROM users WHERE LOWER(email)="' . $sql_email . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	if ($row['COUNT(*)'] != 0) {
 		show_change_email_page('An account with that email address already exists', 'email');
 		return;
 	}
 	
 	// Change email address, re-hash password
-	$passhash = hash_pass(mysql_real_escape_string(strtolower($email)), $_POST['pass']);
+	$passhash = hash_pass(mysqli_real_escape_string(DB::get(),strtolower($email)), $_POST['pass']);
 	$verification_code = generate_code(20);  // for verifying ownership of the email address
-	$query = 'UPDATE users SET email="' . mysql_real_escape_string($email)
-		. '", passhash="' . mysql_real_escape_string($passhash)
-		. '", email_verification="' . mysql_real_escape_string($verification_code)
+	$query = 'UPDATE users SET email="' . mysqli_real_escape_string(DB::get(),$email)
+		. '", passhash="' . mysqli_real_escape_string(DB::get(),$passhash)
+		. '", email_verification="' . mysqli_real_escape_string(DB::get(),$verification_code)
 		. '" WHERE id="' . $_SESSION['user_id'] . '" LIMIT 1';
 	
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	DB::queryRaw($query);
 	
 	
 	// Send an email to the old address saying that someone changed the email
@@ -268,8 +268,8 @@ function show_change_cell_page($err, $selected_field) {
 	
 	// Get data
 	$query = 'SELECT cell FROM users WHERE id="' . $_SESSION['user_id'] . '" LIMIT 1';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	$old_cell = format_phone_number($row['cell']);
 	
 	// If an error message is given, put it inside this div and echo, later
@@ -327,8 +327,8 @@ function change_cell() {
 	
 	// Get Data
 	$query = 'SELECT name, email, cell, passhash FROM users WHERE id="' . $_SESSION['user_id'] . '" LIMIT 1';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	
 	$name = $row['name'];
 	$email = $row['email'];
@@ -355,9 +355,9 @@ function change_cell() {
 	}
 	
 	// Change cell phone number
-	$query = 'UPDATE users SET cell="' . mysql_real_escape_string($cell)
+	$query = 'UPDATE users SET cell="' . mysqli_real_escape_string(DB::get(),$cell)
 		. '" WHERE id="' . $_SESSION['user_id'] . '" LIMIT 1';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	DB::queryRaw($query);
 		
 	// Go to Profile Page
 	$_SESSION['ACCOUNT_profile_change_message'] = 'Your cell phone number has been changed';
@@ -428,10 +428,10 @@ function change_password() {
 	
 	// Get Data
 	$query = 'SELECT email, passhash FROM users WHERE id="' . $_SESSION['user_id'] . '" LIMIT 1';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw($query);
+	$row = mysqli_fetch_assoc($result);
 	
-	$email = mysql_real_escape_string(strtolower($row['email']));
+	$email = mysqli_real_escape_string(DB::get(),strtolower($row['email']));
 	$old_passhash = $row['passhash'];
 	
 	// CHECK PASSWORD
@@ -452,8 +452,8 @@ function change_password() {
 	
 	// Change password
 	$passhash = hash_pass($email, $pass);
-	$query = 'UPDATE users SET passhash="' . mysql_real_escape_string($passhash) . '" WHERE id="' . $_SESSION['user_id'] . '" LIMIT 1';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'UPDATE users SET passhash="' . mysqli_real_escape_string(DB::get(),$passhash) . '" WHERE id="' . $_SESSION['user_id'] . '" LIMIT 1';
+	DB::queryRaw($query);
 		
 	// Go to Profile Page
 	$_SESSION['ACCOUNT_profile_change_message'] = 'Your password has been changed';
@@ -470,8 +470,8 @@ function do_toggle_mailings() {
 		trigger_error('XSRF code incorrect', E_USER_ERROR);
 	
 	// Get previous value
-	$query = 'UPDATE users SET mailings = mailings XOR 1 WHERE id="' . mysql_real_escape_string($_SESSION['user_id']) . '"';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'UPDATE users SET mailings = mailings XOR 1 WHERE id="' . mysqli_real_escape_string(DB::get(),$_SESSION['user_id']) . '"';
+	DB::queryRaw($query);
 	
 	header('Location: My_Profile');
 }

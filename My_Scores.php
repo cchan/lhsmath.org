@@ -28,11 +28,11 @@ HEREDOC;
 	$query = 'SELECT test_scores.score AS score, tests.name AS name, tests.total_points AS total, DATE_FORMAT(tests.date, "%M %e, %Y") AS formatted_date'
 			. ' FROM test_scores'
 			. ' INNER JOIN tests ON tests.test_id=test_scores.test_id'
-			. ' WHERE test_scores.user_id="' . mysql_real_escape_string($_SESSION['user_id']) . '" AND archived="0"'
+			. ' WHERE test_scores.user_id="' . mysqli_real_escape_string(DB::get(),$_SESSION['user_id']) . '" AND archived="0"'
 			. ' ORDER BY tests.date DESC';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$result = DB::queryRaw($query);
 	
-	if (mysql_num_rows($result) > 0) {
+	if (mysqli_num_rows($result) > 0) {
 		echo <<<HEREDOC
       <h4>Recent Tests</h4>
       <table class="contrasting">
@@ -44,7 +44,7 @@ HEREDOC;
 
 HEREDOC;
 		
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 		while ($row) {
 			$score_display = $row['score'] . ' <span class="scorepart">/ ' . $row['total'] . '</span>';
 			if ($row['total'] == 1)
@@ -58,7 +58,7 @@ HEREDOC;
         </tr>
 
 HEREDOC;
-			$row = mysql_fetch_assoc($result);
+			$row = mysqli_fetch_assoc($result);
 		}
 		echo <<<HEREDOC
       </table>
@@ -80,11 +80,11 @@ HEREDOC;
 	$query = 'SELECT test_scores.score AS score, tests.name AS name, tests.total_points AS total, DATE_FORMAT(tests.date, "%M %e, %Y") AS formatted_date'
 			. ' FROM test_scores'
 			. ' INNER JOIN tests ON tests.test_id=test_scores.test_id'
-			. ' WHERE test_scores.user_id="' . mysql_real_escape_string($_SESSION['user_id']) . '" AND archived="1"'
+			. ' WHERE test_scores.user_id="' . mysqli_real_escape_string(DB::get(),$_SESSION['user_id']) . '" AND archived="1"'
 			. ' ORDER BY tests.date DESC';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$result = DB::queryRaw($query);
 	
-	if (mysql_num_rows($result) > 0) {
+	if (mysqli_num_rows($result) > 0) {
 		echo <<<HEREDOC
       <h4 class="smbottom">Old Tests</h4><div class="halfbreak"></div>
       <table class="contrasting">
@@ -96,7 +96,7 @@ HEREDOC;
 
 HEREDOC;
 		
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 		while ($row) {
 			$score_display = $row['score'] . ' <span class="scorepart">/ ' . $row['total'] . '</span>';
 			if ($row['total'] == 1)
@@ -110,7 +110,7 @@ HEREDOC;
         </tr>
 
 HEREDOC;
-			$row = mysql_fetch_assoc($result);
+			$row = mysqli_fetch_assoc($result);
 		}
 		
 		echo <<<HEREDOC

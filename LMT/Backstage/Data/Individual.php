@@ -363,8 +363,13 @@ function do_change_team() {
 		die;
 	}
 	
-	if ($_POST['team'] != '-1')
-		DB::queryFirstRow('SELECT team_id FROM teams WHERE team_id=%i',$_POST['team']);//--todo-- this row isn't being used
+	if ($_POST['team'] != '-1'){//If it's not not-assigned
+		if(!DB::queryFirstField('SELECT team_id FROM teams WHERE team_id=%i',$_POST['team'])){
+			add_alert('lmt_data_individual_update_team', 'Team does not exist')
+			header('Location: Individual?ID=' . $_GET['ID']);
+			die();
+		}
+	}
 	
 	$result = DB::queryRaw('SELECT id FROM individuals WHERE team=%i AND name = (SELECT name FROM individuals WHERE id=%i'
 		. '") AND team <> "-1" AND deleted="0"',$_POST['team'],$_GET['ID']);

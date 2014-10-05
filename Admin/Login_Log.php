@@ -23,7 +23,7 @@ function show_page() {
 		
 	// Trim the log - delete everything more than a week old
 	$query = 'DELETE FROM login_attempts WHERE request_time < (NOW() - INTERVAL 7 DAY)';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	DB::queryRaw($query);
 	
 	
 	// Login Failures by Email
@@ -53,9 +53,9 @@ HEREDOC;
 		. ' WHERE email IN (SELECT email FROM users) OR email="lhsmath"'
 		. ' GROUP BY email HAVING COUNT(*) >= 5 ORDER BY percent_success ASC, COUNT(*) DESC LIMIT 10';
 		// ^-- biglong SQL to get the highest percent-login-failures, but only for accounts that exist (not when you type the email wrong)
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$result = DB::queryRaw($query);
 	
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		echo <<<HEREDOC
         <tr>
@@ -65,7 +65,7 @@ HEREDOC;
         </tr>
 
 HEREDOC;
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	
@@ -90,9 +90,9 @@ HEREDOC;
 		. ' FROM login_attempts'
 		. ' GROUP BY remote_ip HAVING COUNT(*) >= 10 ORDER BY percent_success ASC, COUNT(*) DESC LIMIT 10';
 		// ^-- SQL to get the highest percent-login-failures for ALL accounts, by IP address
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$result = DB::queryRaw($query);
 	
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		echo <<<HEREDOC
         <tr>
@@ -102,7 +102,7 @@ HEREDOC;
         </tr>
 
 HEREDOC;
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	
@@ -131,9 +131,9 @@ HEREDOC;
 		. ' email IN (SELECT email FROM users) OR email="lhsmath" AS email_exists'
 		. ' FROM login_attempts ORDER BY request_time DESC';
 		// ^-- SQL to get the full list of login attempts AND to figure out if the email address attempted actually exists
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$result = DB::queryRaw($query);
 		
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$color = $row['successful'] ? '#0a0' : '#a00';	// color row green if successful, red if unsuccessful
 		$italicize_email = $row['email_exists'] ? '' : ' class="i"';	// italicize email address if doesn't exist
@@ -147,7 +147,7 @@ HEREDOC;
         </tr>
 
 HEREDOC;
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	echo "      </table>\n";

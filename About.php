@@ -31,6 +31,8 @@ function show_page() {
       Written in <a href="http://www.php.net/" rel="external">PHP</a><br />
       by $benjamin_tidor<br />
       with design assistance from <a href="http://teddomain.zzl.org/" rel="external">Ted Zhu</a><br />
+	  heavily revised and updated by <a href="clivechan.com">Clive Chan</a><br />
+	  and maintained by all LHSMATH webmasters.<br />
       
       <br />
       All pages consist of <a href="http://validator.w3.org/check?uri=referer" rel="external">valid XHTML 1.0</a>
@@ -49,6 +51,9 @@ function show_page() {
       &nbsp;&nbsp;<a href="http://raamdev.com/adding-cc-recipients-with-pear-mail" rel="external">Raam Dev</a><br />
       &nbsp;&nbsp;<a href="http://www.google.com/recaptcha" rel="external">reCAPTCHA</a><br />
       &nbsp;&nbsp;<a href="http://articles.sitepoint.com/article/code-html-email-newsletters" rel="external">Tim Slavin</a><br />
+      &nbsp;&nbsp;<a href="http://stackoverflow.com/" rel="external">StackOverflow</a><br />
+      &nbsp;&nbsp;<a href="http://meekro.com/" rel="external">MeekroDB</a><br />
+      &nbsp;&nbsp;<a href="http://swiftmailer.org/" rel="external">Swift Mailer</a><br />
       &nbsp;&nbsp;and others...<br />
 HEREDOC;
 	

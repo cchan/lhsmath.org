@@ -211,7 +211,7 @@ HEREDOC;
         </tr>
 HEREDOC;
 	
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		echo <<<HEREDOC
         <tr>
@@ -219,7 +219,7 @@ HEREDOC;
           <td>{$row['yog']}</td>
         </tr>
 HEREDOC;
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	echo <<<HEREDOC

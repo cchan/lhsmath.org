@@ -11,7 +11,7 @@ $path_to_root = '';
 require_once 'lib/functions.php';
 
 
-if ($_SESSION['permissions'] == 'R' || $_SESSION['permissions'] == 'L' || $_SESSION['permissions'] == 'A')
+if (user_access('RLA'))
 	show_page_for_members();
 else
 	show_public_page();
@@ -27,7 +27,7 @@ function show_public_page() {
 	
 	page_header('Contact');
 	
-	global $PUBLIC_EMAIL, $WEBMASTER_EMAIL;
+	global $PUBLIC_EMAIL, $WEBMASTER_EMAIL, $ADVISOR_NAME;
 	$public_captain_email = email_obfuscate($PUBLIC_EMAIL, null, 'at ');
 	$email_the_webmaster = email_obfuscate($WEBMASTER_EMAIL, 'email the Webmaster', 'If you experience difficulty using this site, please ');
 	
@@ -44,9 +44,9 @@ function show_public_page() {
         <li>
           <span class="b">via snail mail, at:</span><br />
           Math Club<br />
-          c/o Albert Roos<br />
+          c/o {$ADVISOR_NAME}<br />
           <a href="http://lhs.lexingtonma.org/" rel="external">Lexington High School</a><br />
-          251 Waltham Street, Lexington MA<br />
+          251 Waltham Street, Lexington, MA 02421<br />
           <br />
         </li>
         <li>
@@ -85,9 +85,9 @@ HEREDOC;
 	
 	// Fetch Data
 	$query = 'SELECT name, email, cell FROM users WHERE permissions="C"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$result = DB::queryRaw($query);
 	
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		echo  "        <li>\n"
 			. "          <span class=\"b\">{$row['name']}</span><br />\n"
@@ -100,7 +100,7 @@ HEREDOC;
 		echo  "          <br />\n"
 			. "        </li>\n";
 		
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 	}
 	
 	echo <<<HEREDOC

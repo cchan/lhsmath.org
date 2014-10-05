@@ -82,15 +82,15 @@ function process_form() {
 	if ($_SESSION['xsrf_token'] != $_POST['xsrf_token'])
 		trigger_error('XSRF token invalid', E_USER_ERROR);
 	
-	$query = 'SELECT name, email, mailings, approved, email_verification FROM users WHERE id="' . mysql_real_escape_string($_POST['id']) . '"';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'SELECT name, email, mailings, approved, email_verification FROM users WHERE id="' . mysqli_real_escape_string(DB::get(),$_POST['id']) . '"';
+	$result = DB::queryRaw($query);
 	
-	if (mysql_num_rows($result)!= 1) {
+	if (mysqli_num_rows($result)!= 1) {
 		show_page('User not found.', '');
 		return;
 	}
 	
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	
 	if ($row['approved'] == '1') {
 		show_page('User already approved.', '');
@@ -109,8 +109,8 @@ function process_form() {
 	
 	$user_string = $row['name'] . ' (#' . htmlentities($_POST['id']) . ') &lt;' . $row['email'] . '&gt;';
 	
-	$query = 'UPDATE users SET approved="1" WHERE id="' . mysql_real_escape_string($_POST['id']) . '" LIMIT 1';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$query = 'UPDATE users SET approved="1" WHERE id="' . mysqli_real_escape_string(DB::get(),$_POST['id']) . '" LIMIT 1';
+	DB::queryRaw($query);
 	
 	if (!isSet($_SESSION['approved_list'])) {
 		$_SESSION['approved_list_size'] = 1;

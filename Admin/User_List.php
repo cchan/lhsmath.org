@@ -31,7 +31,7 @@ function show_page() {
 	$alumni_table = generate_user_table('SELECT id, name, email, yog FROM users WHERE permissions="L" ORDER BY yog DESC, name');
 	$banned_users_table = generate_user_table('SELECT id, name, email, yog, creation_date, DATE_FORMAT(creation_date, "%M %e, %Y") AS formatted_creation FROM users WHERE approved="-1" ORDER BY creation_date DESC');
 
-	if (mysql_num_rows($special_table) == 0)
+	if (mysqli_num_rows($special_table) == 0)
 		$special_table .= "        <tr><td colspan=\"5\" class=\"text-centered\">None</td></tr>\n";	
 
 	// The Pending Approval Table is different
@@ -48,11 +48,11 @@ function show_page() {
 HEREDOC;
 	
 	$query = 'SELECT id, name, email, yog, TIMESTAMPDIFF(DAY, creation_date, CURRENT_TIMESTAMP) AS created_ago FROM users WHERE approved="0" ORDER BY created_ago DESC, name';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$result = DB::queryRaw($query);
 	
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	
-	if (mysql_num_rows($result) == 0)
+	if (mysqli_num_rows($result) == 0)
 		$pending_approval_table .= "        <tr><td colspan=\"5\" class=\"text-centered\">None</td></tr>\n";	// if no results returned
 	else {
 		while ($row) {
@@ -70,7 +70,7 @@ HEREDOC;
 	        </tr>
 	
 HEREDOC;
-			$row = mysql_fetch_assoc($result);
+			$row = mysqli_fetch_assoc($result);
 		}
 	}
 	
@@ -150,16 +150,16 @@ function generate_user_table($query) {
 
 HEREDOC;
 	
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+	$result = DB::queryRaw($query);
 		
-	if (mysql_num_rows($result) == 0) {
+	if (mysqli_num_rows($result) == 0) {
 		if ($add_creation_date)
 			$html_table .= "        <tr><td colspan=\"4\" class=\"text-centered\">None</td></tr>\n";	// if no results returned
 		else
 			$html_table .= "        <tr><td colspan=\"3\" class=\"text-centered\">None</td></tr>\n";	// if no results returned
 	}
 	else {
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 		while ($row) {
 			$creation_date_td = '';
 			$trimmed_email = trim_email($row['email']);
@@ -173,7 +173,7 @@ HEREDOC;
 	        </tr>
 	
 HEREDOC;
-			$row = mysql_fetch_assoc($result);
+			$row = mysqli_fetch_assoc($result);
 		}
 	}
 	

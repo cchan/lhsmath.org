@@ -12,7 +12,7 @@ $path_to_root = '';
 require_once 'lib/functions.php';
 restrict_access('XRLA');
 
-if (isSet($_POST['do_add_event']) && $_SESSION['permissions'] == 'A')
+if (isSet($_POST['do_add_event']) && user_access('A'))
 	process_add_event();
 else
 	show_page('');
@@ -22,7 +22,7 @@ else
 
 
 function show_page($add_err) {
-	if ($_SESSION['permissions'] == 'A') {
+	if (user_access('A')) {
 		// For Admins: Add some javascript for the jQuery Date Selector
 		global $jquery_function;
 		$jquery_function = <<<HEREDOC
@@ -107,7 +107,7 @@ HEREDOC;
       </div>
 HEREDOC;
 	
-	if ($_SESSION['permissions'] == 'A') {
+	if (user_access('A')) {
 		// Special Admin Edit functions
 		if ($add_err != '')
 			$add_err = "\n        <div class=\"error\">$add_err</div><br />\n";
@@ -179,10 +179,10 @@ function process_add_event() {
 	}
 	
 	$query = 'INSERT INTO events (title, date, description) VALUES ("'
-		. mysql_real_escape_string($title) . '", "'
-		. mysql_real_escape_string($date) . '", "'
-		. mysql_real_escape_string($desc) . '")';
-	mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
+		. mysqli_real_escape_string(DB::get(),$title) . '", "'
+		. mysqli_real_escape_string(DB::get(),$date) . '", "'
+		. mysqli_real_escape_string(DB::get(),$desc) . '")';
+	DB::queryRaw($query);
 	
 	$_SESSION['CALENDAR_added_event'] = 'The event &quot;' . htmlentities($title) . '&quot; has been added';
 	header('Location: ' . $_SERVER['REQUEST_URI']);
@@ -223,10 +223,8 @@ function draw_calendar($month, $year) {
 	
 	
 	// Query Database
-	$query = 'SELECT event_id, title, DAYOFMONTH(date) AS day FROM events WHERE date BETWEEN "' . $year . '-' . $month . '-1" AND "'
-		. $year . '-' . $month . '-' . $days_in_month . '" ORDER BY day ASC';
-	$result = mysql_query($query) or trigger_error(mysql_error(), E_USER_ERROR);
-	$row = mysql_fetch_assoc($result);
+	$result = DB::queryRaw('SELECT event_id, title, DAYOFMONTH(date) AS day FROM events WHERE date BETWEEN "%i-%i-%i" AND "%i-%i-%i" ORDER BY day ASC',$year,$month,1,$year,$month,$days_in_month);
+	$row = mysqli_fetch_assoc($result);
 	
 	
 
@@ -259,7 +257,7 @@ function draw_calendar($month, $year) {
 			while ($row && $row['day'] == $list_day) {
 				$title = htmlentities($row['title']);
 				$calendar .= "<a href=\"View_Event?ID={$row['event_id']}\" style='display:block;width:100%;height:100%;' onclick=\"popup_id('{$row['event_id']}'); return false;\">$title</a><br /><br />";
-				$row = mysql_fetch_assoc($result);
+				$row = mysqli_fetch_assoc($result);
 			}
 			
 			

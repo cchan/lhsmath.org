@@ -159,19 +159,7 @@ td {
   font-size:0.9em;
 }
 
-.error {
-  width: 100%;
-  padding: 10px;
-  
-  background-color: #ffb2b2;
-  
-  color: #000;
-  text-align: center;
-  font-size: 12px;
-  font-weight: bold;
-}
-
-.alert {
+.error, .alert, .alert.neut{
   width: 100%;
   padding: 10px;
   
@@ -181,6 +169,16 @@ td {
   text-align: center;
   font-size: 12px;
   font-weight: bold;
+}
+
+.error, .alert.neg{
+  background-color: #ffb2b2;
+  color: #000;
+}
+
+.alert.pos{
+  background-color: #ffb2b2;
+  color: #000;
 }
 
 .instruction {
