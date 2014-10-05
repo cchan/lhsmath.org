@@ -41,7 +41,7 @@ a {
   color: #693700;
 }
 
-.alert {
+.alert, .alert.neut {
   background-color: #fd0;
   color: #009;
 }
