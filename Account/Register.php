@@ -263,22 +263,16 @@ function process_form() {
 	// CHECK THAT AN ACCOUNT WITH THAT EMAIL DOES NOT ALREADY EXIST
 	// this is done *after* checking the reCaptcha to prevent bots from harvesting our email
 	// addresses via a brute-force attack.
-	$sql_email = mysqli_real_escape_string(DB::get(),strtolower($email));
-	$query = 'SELECT COUNT(*) FROM users WHERE LOWER(email)="' . $sql_email . '"';
-	$result = DB::queryRaw($query);
-	$row = mysqli_fetch_assoc($result);
-	if ($row['COUNT(*)'] != 0) {
+	$c = DB::queryFirstField'SELECT COUNT(*) FROM users WHERE LOWER(email)=%s',strtolower($email));
+	if ($c != 0) {
 		show_form('An account with that email address already exists', 'email');
 		return;
 	}
 	
-	// CHECK THAT AN ACCOUNT WITH THE SAME NAME IN THE SAME GRADE DOES NOT EXISTS
-	$sql_name = mysqli_real_escape_string(DB::get(),strtolower($name));
-	$query = 'SELECT COUNT(*) FROM users WHERE LOWER(name)="' . $sql_name . '" AND yog="'
-		. mysqli_real_escape_string(DB::get(),$yog) . '" AND approved!="-1"';
-	$result = DB::queryRaw($query);
-	$row = mysqli_fetch_assoc($result);
-	if ($row['COUNT(*)'] != 0) {
+	// CHECK THAT AN ACCOUNT WITH THE SAME NAME IN THE SAME GRADE DOES NOT EXIST
+		// - with the exception that if it's permissions = 'E', they probably mistyped their email and are redoing.
+	$c = DB::queryFirstField('SELECT COUNT(*) FROM users WHERE LOWER(name)=%s AND yog=%i AND permissions!="E"',strtolower($name),$yog);
+	if ($c != 0) {
 		show_form('An account in your grade with that name already exists', 'name');
 		return;
 	}
@@ -286,7 +280,7 @@ function process_form() {
 	
 	// ** All information has been validated at this point **
 	
-	$verification_code = generate_code(20);  // for verifying ownership of the email address
+	$verification_code = generate_code(5);  // for verifying ownership of the email address
 	
 	// Check if email address has been pre-approved
 	if (isSet($_SESSION['PREAPPROVED']) && $email === $_SESSION['PREAPPROVED']) {

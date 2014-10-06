@@ -353,7 +353,7 @@ function do_verify() {
 	
 	// All users have a valid email verification status
 	$new_output = '';
-	$query = 'SELECT name FROM users WHERE email_verification NOT REGEXP "^[0-9a-fA-F]{20}$" AND email_verification!="1" AND permissions!="T"';
+	$query = 'SELECT name FROM users WHERE email_verification NOT REGEXP "^[0-9a-fA-F]{5}$" AND email_verification!="1" AND permissions!="T"';
 	$result = DB::queryRaw($query);
 	$row = mysqli_fetch_assoc($result);
 	while ($row) {
@@ -367,7 +367,7 @@ function do_verify() {
 	
 	// All users have a valid password reset status
 	$new_output = '';
-	$query = 'SELECT name FROM users WHERE password_reset_code NOT REGEXP "^[0-9a-fA-F]{20}$" AND password_reset_code!="0"';
+	$query = 'SELECT name FROM users WHERE password_reset_code NOT REGEXP "^[0-9a-fA-F]{5}$" AND password_reset_code!="0"';
 	$result = DB::queryRaw($query);
 	$row = mysqli_fetch_assoc($result);
 	while ($row) {

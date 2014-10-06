@@ -127,7 +127,7 @@ function process_request_page() {
 	// See if a password reset code has already been generated; if not, do so
 	$reset_code = $row['password_reset_code'];
 	if ($reset_code == '0') {
-		$reset_code = generate_code(20);
+		$reset_code = generate_code(5);
 		$query = 'UPDATE users SET password_reset_code="' . $reset_code . '" WHERE id="' . $id . '" LIMIT 1';
 		DB::queryRaw($query);
 	}
@@ -214,7 +214,7 @@ function verify_code() {
 		trigger_error('Incorrect code', E_USER_ERROR);
 	
 	// Code = "1"
-	if (strlen($_GET['code']) != 20)
+	if (strlen($_GET['code']) != 5)
 		trigger_error('No password reset requested', E_USER_ERROR);
 	
 	// ** LINK VERIFIED AT THIS POINT **

@@ -1054,7 +1054,6 @@ function email_obfuscate($address, $link_text=null, $pre_text='', $post_text='')
 
 //Upon shutdown, templateify() will run, emptying the output buffer into a page template and then sending *that* instead.
 ob_start();//Collect EVERYTHING that's outputted.
-$TIME_START=microtime(true);//For page load time measurement. --todo-- log this?
 function templateify(){
 	global $CANCEL_TEMPLATEIFY;//In case, for example, you want to send an attachment.
 	if(@$CANCEL_TEMPLATEIFY)return;

@@ -226,7 +226,7 @@ function change_email() {
 	
 	// Change email address, re-hash password
 	$passhash = hash_pass(mysqli_real_escape_string(DB::get(),strtolower($email)), $_POST['pass']);
-	$verification_code = generate_code(20);  // for verifying ownership of the email address
+	$verification_code = generate_code(5);  // for verifying ownership of the email address
 	$query = 'UPDATE users SET email="' . mysqli_real_escape_string(DB::get(),$email)
 		. '", passhash="' . mysqli_real_escape_string(DB::get(),$passhash)
 		. '", email_verification="' . mysqli_real_escape_string(DB::get(),$verification_code)
