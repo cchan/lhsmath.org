@@ -45,7 +45,7 @@ function show_page() {
 	$resent_text = '';
 	if (isSet($_SESSION['ACCOUNT_resent_confirmation_email'])) {
 		$resent_text = "\n        <div class=\"alert\">The verification email has just been re-sent</div><br /><br />\n        \n        ";
-		session_unregister('ACCOUNT_resent_confirmation_email');
+		unset($_SESSION['ACCOUNT_resent_confirmation_email']);
 	}
 	
 	page_header('Verify Email');
@@ -85,7 +85,7 @@ function send_verification_email() {
 	$verification_code = $row['email_verification'];
 	
 	// Generate the verification link
-	$protocol = $_SERVER['HTTPS'] == 'on' ? 'https' : 'http';
+	$protocol = (@$_SERVER['HTTPS'] == 'on') ? 'https' : 'http';
 	$url_pieces = parse_url($_SERVER['REQUEST_URI']);
 	$link = $protocol . '://' . $_SERVER['HTTP_HOST'] . dirname($url_pieces['path']) .
 	'/Verify_Email?id=' . $_SESSION['user_id'] . '&code=' . $verification_code;
@@ -110,7 +110,7 @@ HEREDOC;
 	send_email(array($to), $subject, $body, array($WEBMASTER_EMAIL));
 	
 	if (isSet($_SESSION['ACCOUNT_do_send_verification_email']))
-		session_unregister('ACCOUNT_do_send_verification_email'); // only send it once
+		unset($_SESSION['ACCOUNT_do_send_verification_email']); // only send it once
 	else
 		$_SESSION['ACCOUNT_resent_confirmation_email'] = true; // so that the page says 'Email has been re-sent'
 	header('Location: Verify_Email'); // reload the page so Refreshing won't resend

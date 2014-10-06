@@ -64,7 +64,7 @@ function show_info_page() {
 	// Show the "Your cell phone number/password has been updated" message
 	if (isSet($_SESSION['ACCOUNT_profile_change_message'])) {
 		$msg = "\n      <div class=\"alert\">{$_SESSION['ACCOUNT_profile_change_message']}</div><br /><br />\n      ";
-		session_unregister('ACCOUNT_profile_change_message');
+		unset($_SESSION['ACCOUNT_profile_change_message']);
 	}
 	
 	

@@ -80,9 +80,6 @@ function show_page_for_members() {
 
 HEREDOC;
 	
-	
-	$url_for_validation = htmlspecialchars(get_site_url());
-	
 	// Fetch Data
 	$query = 'SELECT name, email, cell FROM users WHERE permissions="C"';
 	$result = DB::queryRaw($query);

@@ -11,7 +11,9 @@ $path_to_root = '../';
 require_once '../lib/functions.php';
 restrict_access('X'); // only for logged-out users
 
-expire_pre_approved_email();
+//Expire any pre-approved-email invitation if it's past the expiration (15 min).
+if (isSet($_SESSION['PREAPPROVED_expiry']) && $_SESSION['PREAPPROVED_expiry'] < time())
+	header('Location: Signout');
 
 if (isSet($_POST['do_register']))
 	process_form();
@@ -173,12 +175,12 @@ function process_form() {
 	
 	
 	// CHECK THAT THE NAME IS VALID
-	if (strlen($name) > 25)
-		$name = substr($name, 0, 25); 	// you should not be able to enter a name > 25 chars.
+	if (strlen($name) > 30)
+		$name = substr($name, 0, 30); 	// you should not be able to enter a name > 30 chars.
 										// If so, you're probably hacking around. Names are trimmed.
 	
-	if (strlen($name) < 6) {		// minimum length: 6 chars
-		show_form('Your name must be at least 6 characters long', 'name');
+	if (strlen($name) < 3) {		// minimum length: 3 chars
+		show_form('Your name must be at least 3 characters long', 'name');
 		return;
 	}
 	
@@ -341,15 +343,6 @@ HEREDOC;
 	$_SESSION['ACCOUNT_do_send_verification_email'] = true;
 	
 	header('Location: Verify_Email');
-}
-
-
-
-
-
-function expire_pre_approved_email() {
-	if (isSet($_SESSION['PREAPPROVED_expiry']) && $_SESSION['PREAPPROVED_expiry'] < time())
-		header('Location: Signout');
 }
 
 ?>

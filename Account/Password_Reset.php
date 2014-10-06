@@ -173,9 +173,9 @@ function show_email_sent_page() {
 	restrict_access('X');
 	
 	if (time() >= $_SESSION['ACCOUNT_password_reset_time'] + 300) {	// that page stops being displayed after 5 minutes.
-		session_unregister('ACCOUNT_sent_password_reset');			// On a public computer, you wouldn't want your email address
-		session_unregister('ACCOUNT_password_reset_time');			// hanging around indefinately.
-		session_unregister('ACCOUNT_password_reset_email');
+		unset($_SESSION['ACCOUNT_sent_password_reset']);			// On a public computer, you wouldn't want your email address
+		unset($_SESSION['ACCOUNT_password_reset_time']);			// hanging around indefinitely.
+		unset($_SESSION['ACCOUNT_password_reset_email']);
 		
 		show_request_page('', 'email');
 		return;
@@ -313,8 +313,8 @@ function process_change_page() {
 	// Prevent from resubmitting this form
 	$id = $_SESSION['ACCOUNT_passreset_id'];
 	
-	session_unregister('ACCOUNT_passreset_id');
-	session_unregister('ACCOUNT_passreset_name');
+	unset($_SESSION['ACCOUNT_passreset_id']);
+	unset($_SESSION['ACCOUNT_passreset_name']);
 	
 	$query = 'SELECT email FROM users WHERE id="' . $id . '" LIMIT 1';
 	$result = DB::queryRaw($query);

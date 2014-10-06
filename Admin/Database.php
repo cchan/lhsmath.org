@@ -92,7 +92,7 @@ function do_backup() {
 				for($j=0; $j<$num_fields; $j++)
 				{
 					$row[$j] = addslashes($row[$j]);
-					$row[$j] = ereg_replace("\n","\\n",$row[$j]);
+					$row[$j] = preg_replace("\n","\\n",$row[$j]);
 					if (isset($row[$j])) { $return.= '"'.$row[$j].'"' ; } else { $return.= '""'; }
 					if ($j<($num_fields-1)) { $return.= ','; }
 				}
@@ -128,7 +128,7 @@ function do_backup() {
 				for($j=0; $j<$num_fields; $j++)
 				{
 					$row[$j] = addslashes($row[$j]);
-					$row[$j] = ereg_replace("\n","\\n",$row[$j]);
+					$row[$j] = preg_replace("\n","\\n",$row[$j]);
 					if (isset($row[$j])) { $return.= '"'.$row[$j].'"' ; } else { $return.= '""'; }
 					if ($j<($num_fields-1)) { $return.= ','; }
 				}
