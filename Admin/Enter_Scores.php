@@ -40,13 +40,8 @@ function show_page($err, $msg) {
 	$total_points = htmlentities($_POST['total_points']);
 	
 	if (!isSet($_POST['test_name']) || !isSet($_POST['total_points'])) {
-		$query = 'SELECT name, total_points FROM tests WHERE test_id="'
-			. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
-		$result = DB::queryRaw($query);
-		if (mysqli_num_rows($result) != 1)
-			trigger_error('Show_Page: Invalid Test ID', E_USER_ERROR);
-		
-		$row = mysqli_fetch_assoc($result);
+		$row = DB::queryFirstRow('SELECT name, total_points FROM tests WHERE test_id=%i LIMIT 1',$_GET['ID']);
+		if (!$row) trigger_error('Show_Page: Invalid Test ID', E_USER_ERROR);
 		$test_name = $row['name'];
 		$total_points = $row['total_points'];
 	}
@@ -143,8 +138,8 @@ function process_form() {
 	
 	// Verify score
 	$score = intval($_POST['score']);
-	if(!val('i0+',$_POST['score']) || $score > $total_points){
-		show_page('Score must be a nonnegative integer not more than the total points.');
+	if(!val('i0+',$score) || $score > $total_points){
+		show_page('Score must be a nonnegative integer not more than the total points.','');
 		return;
 	}
 	

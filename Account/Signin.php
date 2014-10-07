@@ -124,7 +124,7 @@ function process_login_form() {
 	
 	if (is_null($id)) {
 		log_attempt($email, false);
-		show_login_form(,$email);
+		show_login_form($email);
 		alert('Incorrect email address or password',-1);
 		return;
 	}
