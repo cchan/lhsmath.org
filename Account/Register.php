@@ -263,7 +263,7 @@ function process_form() {
 	// CHECK THAT AN ACCOUNT WITH THAT EMAIL DOES NOT ALREADY EXIST
 	// this is done *after* checking the reCaptcha to prevent bots from harvesting our email
 	// addresses via a brute-force attack.
-	$c = DB::queryFirstField'SELECT COUNT(*) FROM users WHERE LOWER(email)=%s',strtolower($email));
+	$c = DB::queryFirstField('SELECT COUNT(*) FROM users WHERE LOWER(email)=%s',strtolower($email));
 	if ($c != 0) {
 		show_form('An account with that email address already exists', 'email');
 		return;
