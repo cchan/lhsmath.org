@@ -741,7 +741,7 @@ function send_email($bcc_list, $subject, $body, $reply_to=NULL, $prefix=NULL, $f
 	
 	//Make a Mailer that will send through that transport (limiting to 50/send)
 	$mailer = Swift_Mailer::newInstance($transport);
-	$mailer->registerPlugin(new Swift_Plugins_AntiFloodPlugin(50));//Max 50 emails per send
+	$mailer->registerPlugin(new Swift_Plugins_AntiFloodPlugin(50, 1));//Max 50 emails per send, 1 sec delay between sends
 	
 	try{
 		//Mush all info into the Mailer
@@ -753,7 +753,7 @@ function send_email($bcc_list, $subject, $body, $reply_to=NULL, $prefix=NULL, $f
 			->setReplyTo($reply_to);
 		
 		foreach($headers as $field => $value)//Add custom headers, such as listserv stuff.
-			$message->addTextHeader($field,$value);
+			$message->getHeaders()->addTextHeader($field,$value);
 		
 		//Send the message
 		if(!$mailer->send($message))trigger_error('Error sending email', E_USER_ERROR);
@@ -773,9 +773,9 @@ function send_email($bcc_list, $subject, $body, $reply_to=NULL, $prefix=NULL, $f
 function get_bcc_list(){
 	static $list=0;//Caching, for efficiency.
 	if($list === 0){
-		$result = DB::queryFirstColumn('SELECT name, email FROM users WHERE mailings="1" AND permissions!="T" AND email_verification="1"');
+		$result = DB::query('SELECT name, email FROM users WHERE mailings="1" AND permissions!="T" AND email_verification="1"');
 		//Doesn't have to be approved. Includes you.
-		$list = DBHelper::verticalSlice($result,'email','name');
+		$list = DBHelper::verticalSlice($result,'name','email');
 	}
 	return $list;
 }
