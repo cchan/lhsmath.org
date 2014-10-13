@@ -25,6 +25,7 @@ if (isSet($_POST['do_login']))
 else
 	show_login_form('');
 
+global $DB_DATABASE;//I don't know why we need this when in the global scope, but we do
 DB::useDB($DB_DATABASE);//Because it can be included from lmt pages, which uses db $LMT_DATABASE.
 
 

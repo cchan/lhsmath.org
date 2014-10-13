@@ -11,99 +11,74 @@ $path_to_root = '../';
 require_once $path_to_root.'lib/functions.php';
 restrict_access('A');
 
+if ((isSet($_POST["do_preview_message"]) || isSet($_POST["do_post_message"]) || isSet($_POST["do_reedit_message"])) && validate_message()){//POSTed.
+	//Stuff was posted, AND it's validated & loaded into globals.
+	if (isSet($_POST['do_preview_message']))
+		preview_message();
+	elseif (isSet($_POST['do_post_message']))
+		post_message();
+	else
+		edit_message();//Re-edit!
+}
+else{
+	edit_message();
+	//nothing was POSTed (just got here and starting to post a msg), or error occurred in validation.
+}
 
-if (isSet($_POST['do_preview_message']))
-	preview_message();
-else if (isSet($_POST['do_post_message']))
-	post_message();
-else if (isSet($_POST['do_reedit_message']))
-	reedit_message();
-else
-	show_page('');
 
 
 
-
-
-/*
- * show_page($err)
- *
- * Shows the window where Admins compose the message
- */
-function show_page($err) {
-	// Put the cursor in the first field
-	global $body_onload, $use_rel_external_script;
-	$body_onload = 'document.forms[\'composeMessage\'].subject.focus();externalLinks();';
-	$use_rel_external_script = true;
-	
+function edit_message() {
 	page_header('Post Message');
 	
-	$message_sent_msg="";
-	if (isSet($_SESSION['MESSAGE_sent_id'])) {
-		$message_sent_msg = "\n        <div class=\"alert\">Your message has been posted. <a href='../Messages?View=".intval($_SESSION['MESSAGE_sent_id'])."'>View</a></div><br />\n";
-		unset($_SESSION['MESSAGE_sent_id']);
-	}
-	
-	// If an error message is given, put it inside this div
-	if ($err != '')
-		$err = "\n        <div class=\"error\">$err</div><br />\n";
-	
 	// Get info for the byline
-	$query = 'SELECT name, email FROM users WHERE id="' . $_SESSION['user_id'] . '"';
-	$result = DB::queryRaw($query);
-	$row = mysqli_fetch_assoc($result);
+	$row = DB::queryFirstRow('SELECT name, email FROM users WHERE id=%i',$_SESSION['user_id']);
 	$by_line = $row['name'] . ' &lt;' . $row['email'] . '&gt;';
 	
 	// Previously-filled data?
-	global $subject, $body, $post_through, $email;
+	global $subject, $bb_body, $post_through, $email;
 	
-	
-	$email_checked=array('','','');
-	if($email=='yes-captains')
-		$email_checked[0] = ' checked="checked"';
-	elseif($email=='no')
-		$email_checked[2] = ' checked="checked"';
-	else//if($email=='yes-you')//default
-		$email_checked[1] = ' checked="checked"';
+	$email_checked = array('yes-captains'=>'', 'yes-you'=>'', 'no'=>'');
+	if(@$email_checked[$email] !== '')$email = 'yes-you';
+	$email_checked[$email] = 'checked="checked"';
 	
 	// Assemble Page
-	echo <<<HEREDOC
+?>
 <h1>Post a Message</h1>
-$err$message_sent_msg
-<form id="composeMessage" method="post" action="{$_SERVER['REQUEST_URI']}">
+<form id="composeMessage" method="post">
 <table class="spacious">
   <tr>
 	<td>By:</td>
 	<td>
-	  <span class="b">$by_line</span><br />
+	  <span class="b"><?=$by_line?></span><br />
 	</td>
   </tr><tr>
 	<td>Subject:</td>
-	<td><input type="text" name="subject" value="$subject" size="45" maxlength="75"/></td>
+	<td><input type="text" name="subject" value="<?=$subject?>" size="45" maxlength="75" class="focus"/></td>
   </tr><tr>
 	<td>Body:</td>
 	<td>
-	  <textarea name="body" rows="25" cols="80">$body</textarea>
+	  <textarea name="body" rows="10" cols="80"><?=$bb_body?></textarea>
 	  <div class="small">LHSMATH features <a href="Captains#BBCode" target="_blank">bbCode-like syntax</a>.</div>
 	  <br /><br />
 	</td>
   </tr><tr>
 	<td>Mailing:&nbsp;</td>
 	<td>
-	  <input type="radio" name="email" value="yes-captains"{$email_checked[0]}/> Send to the mailing list, reply-to all captains, and post online<br />
-	  <input type="radio" name="email" value="yes-you"{$email_checked[1]}/> Send to the mailing list, reply-to only you, and post online<br />
-	  <input type="radio" name="email" value="no"{$email_checked[2]}/> Post online only<br /><br />
+	  <input type="radio" name="email" value="yes-captains" <?=$email_checked['yes-captains']?>/> Send to the mailing list, reply-to all captains, and post online<br />
+	  <input type="radio" name="email" value="yes-you" <?=$email_checked['yes-you']?>/> Send to the mailing list, reply-to only you, and post online<br />
+	  <input type="radio" name="email" value="no" <?=$email_checked['no']?>/> Post online only<br /><br />
 	</td>
   </tr><tr>
 	<td></td>
 	<td>
-	  <input type="hidden" name="xsrf_token" value="{$_SESSION['xsrf_token']}"/>
+	  <input type="hidden" name="xsrf_token" value="<?=$_SESSION['xsrf_token']?>"/>
 	  <input type="submit" name="do_preview_message" value="Preview Message"/>
 	</td>
   </tr>
 </table>
 </form>
-HEREDOC;
+<?php
 	admin_page_footer('Post a Message');
 }
 
@@ -112,11 +87,7 @@ HEREDOC;
 
 
 function preview_message() {
-	if (!validate_message())
-		return;
-	
-	global $subject, $html_body, $body, $email, $use_rel_external_script;
-	$use_rel_external_script = true;
+	global $subject, $bb_body, $html_body, $email;
 	
 	// Get info for the byline
 	$by_line = $_SESSION['user_name'].' <'.$_SESSION['email'].'>';
@@ -131,30 +102,31 @@ function preview_message() {
 	
 	page_header('Post Message');
 	
-	echo <<<HEREDOC
+	$quot = function($t){return str_replace('"','\"',$t);}; //hax to make it able to put into {} in HEREDOC
+?>
 <h1>Post a Message</h1>
 
 <table class="spacious">
 <tr>
   <td>By:</td>
-  <td><span class="b">$by_line</span></td>
+  <td><span class="b"><?=$by_line?></span></td>
 </tr><tr>
   <td>Subject:</td>
-  <td><span class="b">[Math Club] $subject</span><br /><br /></td>
+  <td><span class="b">[LHS Math Club] <?=$subject?></span><br /><br /></td>
 </tr><tr>
   <td>Body:</td>
-  <td>$html_body<br /><br /></td>
+  <td><?=$html_body?><br /><br /></td>
 </tr><tr>
   <td>Mailing:&nbsp;</td>
-  <td><span class="b">$mailing_message</span><br /><br /></td>
+  <td><span class="b"><?=$mailing_message?></span><br /><br /></td>
 </tr><tr>
   <td></td>
   <td>
-	<form id="composeMessage" method="post" action="{$_SERVER['REQUEST_URI']}"><div>
-	  <input type="hidden" name="subject" value="$subject"/>
-	  <input type="hidden" name="body" value="$body"/>
-	  <input type="hidden" name="email" value="$email"/>
-	  <input type="hidden" name="xsrf_token" value="{$_SESSION['xsrf_token']}"/>
+	<form id="composeMessage" method="post"><div>
+	  <input type="hidden" name="subject" value="<?=$quot($subject)?>"/>
+	  <input type="hidden" name="body" value="<?=$quot($bb_body)?>"/>
+	  <input type="hidden" name="email" value="<?=$quot($email)?>"/>
+	  <input type="hidden" name="xsrf_token" value="<?=$_SESSION['xsrf_token']?>"/>
 	  <input type="submit" name="do_reedit_message" value="Back to Editing"/>
 	  <input type="submit" name="do_post_message" value="Post Message"/>
 	</div></form>
@@ -164,50 +136,36 @@ function preview_message() {
   <td><span class="small">Please do not click the &quot;Post Message&quot; button twice!</span></td>
 </tr>
 </table>
-HEREDOC;
-
+<?php
 	admin_page_footer('Post a Message');
 }
 
 
 
 
-
-function reedit_message() {
-	if (!validate_message())
-		return;
-	show_page('');
-}
-
-
-
-
-
 function post_message() {
-	if (!validate_message())
-		return;
-	
-	global $subject, $html_body, $body, $email, $use_rel_external_script;
+	global $subject, $html_body, $email;
 	
 	// Insert into database
 	DB::insert('messages',array('author'=>$_SESSION['user_id'], 'subject'=>$subject, 'body'=>$html_body));
-	$_SESSION['MESSAGE_sent_id']= DB::insertId();
 	
 	// Send email
 	if ($email != 'no') {
-		if($email == 'yes-captains')
-			$reply_to = 'captains@lhsmath.org';
-		else//if($email == 'yes-you') //default
+		if($email == 'yes-captains'){
+			$reply_to = array('captains@lhsmath.org'=>'LHS Math Club Captains');
+			$m = " and emailed to everyone (reply-to all captains)";
+		}
+		else{ //if($email == 'yes-you')
 			$reply_to = array($_SESSION['email']=>$_SESSION['user_name']);
+			$m = " and emailed to everyone (reply-to you)";
+		}
 		
-		$txt_body = htmlentities($body);
-		$txt_body = preg_replace($search, $replace, $txt_body);
-		
-		// send all emails
-		send_list_email($subject, $txt_body, $reply_to);
+		send_list_email($subject, $html_body, $reply_to);
 	}
+	else $m = ", but not emailed out";
 	
-	header('Location: Post_Message');
+	alert("Your message has been posted$m. <a href='../Messages?View=".DB::insertId()."'>View</a>",1);
+	location();
 }
 
 
@@ -225,130 +183,19 @@ function validate_message() {
 		trigger_error('XSRF code incorrect', E_USER_ERROR);
 	
 	// Get data
-	global $subject, $body, $email;
-	$subject = htmlentities($_POST['subject']);
-	
-	$html_body = BBCode($_POST['body']);
-	$body = BBCode($_POST['body'],true);
-	
-	$email = htmlentities($_POST['email']);
-	
-	// Validate Data
+	global $subject, $bb_body, $html_body, $email;
+	$subject = strip_tags($_POST['subject']);
+	$bb_body = strip_tags($_POST['body']);
+	$html_body = BBCode($bb_body);
+	$email = strip_tags($_POST['email']);
 	
 	// Maximum lengths on subject, body
-	if (strlen($subject) == 0) {
-		show_page('Please enter a subject.');
-		return false;
-	}
-	
-	if (strlen($subject) > 75) {
-		show_page('Your subject is too long!?');
-		return false;
-	}
-	
-	if (strlen($body) == 0) {
-		show_page('Please enter a message.');
-		return false;
-	}
-	
-	if (strlen($body) > 5000) {
-		show_page('Please limit your message to 5000 characters.');
+	if(($err=val_email_msg($subject,$bb_body))!==true){
+		alert($err,-1);
 		return false;
 	}
 	
 	return true;
 }
-
-
-
-
-/*
-function send_multipart_list_email($bcc_list, $subject, $txt_body, $html_body, $reply_to, $list_id) {
-	global $EMAIL_ADDRESS, $EMAIL_USERNAME, $EMAIL_PASSWORD,
-		$SMTP_SERVER, $SMTP_SERVER_PORT;
-	require_once('Mail.php');
-	require_once('Mail/mime.php');
-	
-	$from = 'LHS Math Club Mailbot <'.$EMAIL_ADDRESS.'>';
-	$to = 'LHS Math Club Mailbot <' . $EMAIL_ADDRESS . '>';
-	$subject = '[Math Club] ' . $subject;
-	
-	$site_url = get_site_url();
-	$txt_body .= <<<HEREDOC
-
-
----
-LHS Math Club
-To unsubscribe from this list, visit [$site_url/Account/My_Profile]
-HEREDOC;
-
-	$html_body =  <<<HEREDOC
-<!DOCTYPE html
-     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-  <head>
-  </head>
-  <body>
-$html_body
-    <br />
-    <br />
-    ---<br />
-    LHS Math Club<br />
-    To unsubscribe from this list, visit [$site_url/Account/My_Profile]
-  </body>
-HEREDOC;
-	
-	
-	
-	//It has been noted that PHP mail() is not a very efficient function for sending bulk mail,
-	//but since ~90 is not very "bulk" it doesn't really matter.
-	//This eliminates the complexity and overhead of PEAR::* stuff.
-	
-	// $headers ='MIME-Version: 1.0' . "\r\n";
-	// $headers.='Content-type: text/html; charset=iso-8859-1' . "\r\n";
-	// $headers.="From: $from"."\r\n";
-	// $headers.="To: $to"."\r\n";
-	// $headers.="Reply-To: $reply_to"."\r\n";
-	// $headers.="Subject: $subject"."\r\n";
-	// $headers.="Precedence: bulk"."\r\n";
-	// $headers.="List-Id: $list_id"."\r\n";
-	// $headers.="List-Unsubscribe: <$site_url/Account/My_Profile>"."\r\n";
-	// $headers.="Bcc: $bcc_list"."\r\n";
-	
-	// $txt_body=str_replace("\n.", "\n..", wordwrap($txt_body, 70, "\r\n"));//As recommended by php.net
-	
-	// if(!mail($to,$subject,$txt_body,$headers))trigger_error('Error sending email: ' . $subject, E_USER_ERROR);
-	
-	//Actually, the above didn't work, so we're back to PEAR::*. And probably NSFN will make us pay to use email, so using Gmail SMTP is probably better.
-	//Actually, cancel all of the above. SwiftMail works well.
-	
-	$headers = array('From' => $from,
-		'To' => $to,
-		'Reply-To' => $reply_to,
-		'Subject' => $subject,
-		'Precedence' => 'bulk',
-		'List-Id' => $list_id,
-		'List-Unsubscribe' => '<' . $site_url . '/Account/My_Profile>');
-	
-	$mime = new Mail_mime();
-	$mime->setTXTBody($txt_body);
-	$mime->setHTMLBody($html_body);
-	$body = $mime->get();
-	$headers = $mime->headers($headers);
-	
-	//Connect to our secret mailbot@lhsmath.org Gmail account.
-	$smtp = Mail::factory('smtp',
-		array('host' => 'ssl://'.$SMTP_SERVER,
-			'port' => $SMTP_SERVER_PORT,
-			'auth' => true,
-			'username' => $EMAIL_USERNAME,
-			'password' => $EMAIL_PASSWORD));
-	$mail = $smtp->send($bcc_list, $headers, $body);//feed it the mail
-	
-	if (PEAR::isError($mail))
-		trigger_error('Error sending email: ' . $mail->getMessage(), E_USER_ERROR);
-}
-*/
 
 ?>

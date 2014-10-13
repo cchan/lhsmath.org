@@ -352,6 +352,7 @@ function restrict_access($levels) {
 	if (stripos($levels, $user_level) === false) {
 		// Access forbidden
 		if ($user_level == 'X') {
+			alert('You need to log in to do that.',-1);
 			// Maybe they have permissions, they're just not logged in
 			// Show login page
 			require_once $path_to_root . 'Account/Signin.php';
@@ -378,7 +379,7 @@ function restrict_access($levels) {
 			die();
 		}
 		else {
-			// Go home
+			// Go home - e.g. if you're logged in and it's restrict_access('X') on Signin, it'll just bring you back home.
 			header('Location: ' . $path_to_root . 'Home');
 			die();
 		}
@@ -693,7 +694,7 @@ function val_email_msg($subject,$body){
 	if (strlen($subject) == 0)
 		return 'Please enter a subject.';
 	if (strlen($subject) > 75)
-		return 'Your subject is too long...';
+		return 'Your subject is too long!?';
 	if (strlen($body) == 0)
 		return 'Please enter a message.';
 	if (strlen($body) > 5000)
@@ -729,7 +730,8 @@ function send_email($bcc_list, $subject, $body, $reply_to=NULL, $prefix=NULL, $f
 	
 	$body .= "\n\n\n---\n$footer\n"; //Attach footer.
 	$html = BBCode($body); //BBCode it.
-	$subject = htmlentities($prefix.' '.$subject);
+	$subject = preg_replace("/[^\S ]/ui", '', strip_tags($prefix.' '.$subject));//"remove everything that's not [non-whitespace or space]"
+	//preg_replace("/[^[:alnum][:space]]/ui", '', $string);?
 	
 	//Ok everything seems to be working, let's go ahead
 	require_once __DIR__."/swiftmailer/swift_required.php";
@@ -848,7 +850,12 @@ function BBCode ($string, $strip_tags = false) {
 		$string = nl2br($string);
 	}
 	
+	//CHECK FOR EXTRA UNSEARCHED BBCODE - [] brackets with no spaces in them
+	
 	return $string;
+}
+function strip_BB_tags($s){
+	return BBCode($s,true);
 }
 
 
@@ -1103,6 +1110,11 @@ HEREDOC;
     <script type="text/javascript">
 		{$jquery_function}
     </script>
+	<script type="text/javascript">
+		$(function(){
+			$('.focus').focus();
+		});
+	</script>
 	
     <style type="text/css">
       .ui-datepicker, .ui-autocomplete {
@@ -1171,6 +1183,14 @@ function fetch_alerts_html(){
 	
 	return $html;
 }
+
+function location($relative = NULL){
+	if($relative === NULL)
+		$relative = basename($_SERVER['REQUEST_URI'],'.php'); //Reload
+	cancel_templateify();
+	header('Location: '.$relative);
+}
+
 
 
 /*
