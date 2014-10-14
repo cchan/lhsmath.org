@@ -36,11 +36,6 @@ DB::useDB($DB_DATABASE);//Because it can be included from lmt pages, which uses 
  * Shows the login page, keeping the email from the previous login attempt if specified.
  */
 function show_login_form($email) {
-	// A little javascript to put the cursor in the first field when the form loads;
-	// page_header() looks at the $body_onload variable and inserts it into the code.
-	global $body_onload;
-	$body_onload = 'document.forms[\'login\'].email.focus()';
-	
 	if ($err != '')
 		alert($err,-1);
 	
@@ -51,7 +46,7 @@ function show_login_form($email) {
         <table>
           <tr>
             <td>Email Address:&nbsp;</td>
-            <td><input type="text" name="email" size="25" value="$email"/></td>
+            <td><input type="text" name="email" size="25" value="$email" class="focus"/></td>
           </tr><tr>
             <td>Password:</td>
             <td>

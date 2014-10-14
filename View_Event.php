@@ -117,9 +117,6 @@ function show_full_edit_page($err) {
       });
 HEREDOC;
 	
-	global $body_onload;
-	$body_onload = 'document.forms[\'editEvent\'].form_title.focus()';
-	
 	if ($err != '')
 		$err = "\n        <div class=\"error\">$err</div><br />\n";
 	
@@ -134,7 +131,7 @@ HEREDOC;
         <table>
           <tr>
             <td>Title:</td>
-            <td><input type="text" id="form_title" name="title" value="$title" size="25" maxlength="25"/></td>
+            <td><input type="text" id="form_title" name="title" value="$title" size="25" maxlength="25" class="focus"/></td>
           </tr><tr>
             <td>Date:</td>
             <td><input id="edit_date" type="text" name="date" value="$date" size="15"/></td>

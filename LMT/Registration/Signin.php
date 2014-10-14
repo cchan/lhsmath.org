@@ -18,11 +18,11 @@ function process_login() {
 	$school_id = htmlentities($_GET['ID']);
 	// Validate credentials
 	
-	if (!($result = DB::queryFirstRow('SELECT school_id FROM schools WHERE school_id=%0% AND access_code=%1% LIMIT 1',array($school_id,$_GET['Code']))))
-		trigger_error('Incorrect login data', E_USER_ERROR);
+	$sid = DB::queryFirstField('SELECT school_id FROM schools WHERE school_id=%i AND access_code=%i LIMIT 1',$school_id,$_GET['Code'])
+	if (!$sid)trigger_error('Incorrect login data', E_USER_ERROR);
 	
 	// ** CREDENTIALS ARE VALIDATED AT THIS POINT ** //
-	lmt_set_login_data($result['school_id']);
+	lmt_set_login_data($sid);
 	
 	header('Location: Home');
 }

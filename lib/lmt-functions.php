@@ -234,24 +234,18 @@ function scoring_access() {
  * Also requires registration to be open
  */
 function lmt_reg_restrict_access($level) {
-	global $path_to_lmt_root;
-	
 	// Registration must be open
-	if (!registration_is_open()) {
-		header('Location: ' . $path_to_lmt_root);
-		die();
-	}
-	
+	if (!registration_is_open())
+		lmt_location('');
 	// Check permissions
-	if ($level == 'X' && isSet($_SESSION['LMT_user_id'])) {
-		header('Location: ' . $path_to_lmt_root . 'Registration');
-		die();
-	}
-	
-	if ($level == 'L' && !isSet($_SESSION['LMT_user_id'])) {
-		header('Location: ' . $path_to_lmt_root . 'Registration');
-		die();
-	}
+	if ($level == 'X' && isSet($_SESSION['LMT_user_id']))
+		lmt_location('Registration');
+	if ($level == 'L' && !isSet($_SESSION['LMT_user_id']))
+		lmt_location('Registration');
+}
+
+function lmt_location($s){
+	location('LMT/'.$s);
 }
 
 

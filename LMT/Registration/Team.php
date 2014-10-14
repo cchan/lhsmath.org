@@ -37,8 +37,7 @@ else
 
 
 function show_add_page($err, $selected_field) {
-	global $body_onload, $team_name, $members;
-	$body_onload = 'document.forms[\'lmtRegAddTeam\'].' . $selected_field . '.focus();';
+	global $team_name, $members;
 	
 	$c = DB::queryFirstField('SELECT COUNT(*) FROM teams WHERE school=%i', $_SESSION['LMT_user_id']);
 	if ($c != 0)
@@ -52,6 +51,7 @@ function show_add_page($err, $selected_field) {
 	
 	lmt_page_header('Add Team');
 	echo <<<HEREDOC
+	<script>document.forms['lmtRegAddTeam'].$selected_field.focus();</script>
       <h1>Add a Team</h1>
       
       <div class="instruction">
@@ -236,13 +236,9 @@ function do_add() {
 
 
 function show_edit_page($err, $selected_field) {
-	global $body_onload;
-	$body_onload = $selected_field;
-	
 	lmt_page_header('Modify Team');
 	
-	if ($err != '')
-		$err = "\n        <div class=\"error\">$err</div><br />\n";
+	if ($err != '')alert($err,-1);
 	
 	$school_name = htmlentities($_SESSION['LMT_school_name']);
 	
@@ -259,28 +255,22 @@ function show_edit_page($err, $selected_field) {
 							'contrasting');
 	$num_members = (int)DB::queryFirstField('SELECT COUNT(*) FROM individuals WHERE team=%i',$team_id);
 	
-	if ($num_members < 4)
-		$warning = "\n      <div class=\"alert\">There are less than 4 members on this team!</div><br />\n";
+	if ($num_members < 4)alert('Warning: There are less than 4 members on this team!',-1);
 	
 	global $member_name, $member_grade;
-	if ($member_grade == '6')
-		$member_6sel = ' selected="selected"';
-	else if ($member_grade == '7')
-		$member_7sel = ' selected="selected"';
-	else if ($member_grade == '8')
-		$member_8sel = ' selected="selected"';
 	
 	if ($num_members < 6)
 		$add_member = <<<HEREDOC
-<tr>
+		<script>document.forms['lmtRegAddMember'].$selected_field.focus();</script>
+		<tr>
           <td>Add Member:&nbsp;</td>
           <td>
             <form id="lmtRegAddMember" method="post" action="{$_SERVER['REQUEST_URI']}"><div>
               <input type="text" name="member_name" size="25" maxlength="25" value="$member_name" />
-              <select name="member_grade">
-                <option value="6"$member_6sel>Sixth</option>
-                <option value="7"$member_7sel>Seventh</option>
-                <option value="8"$member_8sel>Eighth</option>
+              <select name="member_grade" value="$member_grade">
+                <option value="6">Sixth</option>
+                <option value="7">Seventh</option>
+                <option value="8">Eighth</option>
               </select>
               <input type="hidden" name="xsrf_token" value="{$_SESSION['xsrf_token']}" />
               <input type="submit" name="lmt_do_reg_add_member" value="Add" />
@@ -347,7 +337,7 @@ function do_edit_name() {
 	
 	DB::update('teams',array('name'=>$team_name),'team_id=%i AND school=%i',$_GET['Edit'],$_SESSION['LMT_user_id']);
 	
-	add_alert('regChangeName', 'The team name has been changed');
+	alert('The team name has been changed',1);
 	header('Location: Team?Edit=' . $_GET['Edit']);
 }
 
@@ -404,17 +394,10 @@ function show_edit_member_page($err) {
 		$name = htmlentities($row['name']);
 		$grade = $row['grade'];
 	}
-	if ($grade == '6')
-		$sel6 = ' selected="selected"';
-	else if ($grade == '7')
-		$sel7 = ' selected="selected"';
-	else if ($grade == '8')
-		$sel8 = ' selected="selected"';
 	
 	$back_url = 'Team?Edit=' . htmlentities($row['team']);
 	
-	if ($err != '')
-		$err = "\n        <div class=\"error\">$err</div><br />\n";
+	if ($err != '')alert($err,-1);
 	
 	echo <<<HEREDOC
       <h1>Edit Member</h1>
@@ -437,10 +420,10 @@ function show_edit_member_page($err) {
           </tr><tr>
             <td>Grade:</td>
             <td>
-              <select name="grade">
-                <option value="6"$sel6>Sixth</option>
-                <option value="7"$sel7>Seventh</option>
-                <option value="8"$sel8>Eighth</option>
+              <select name="grade" value="$grade">
+                <option value="6">Sixth</option>
+                <option value="7">Seventh</option>
+                <option value="8">Eighth</option>
               </select>
             </td>
           </tr><tr>

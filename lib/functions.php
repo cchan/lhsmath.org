@@ -358,31 +358,21 @@ function restrict_access($levels) {
 			require_once $path_to_root . 'Account/Signin.php';
 			die();
 		}
-		else if ($user_level == 'E') {
+		else if ($user_level == 'E')
 			// Redirect to the 'Confirm your Email' page
-			header('Location: ' . $path_to_root . 'Account/Verify_Email');
-			die();
-		}
-		else if ($user_level == 'P') {
+			location('Account/Verify_Email');
+		else if ($user_level == 'P')
 			// Redirect to the 'Get your Account Approved' page
-			header('Location: ' . $path_to_root . 'Account/Approve');
-			die();
-		}
-		else if ($user_level == '+') {
+			location('Account/Approve');
+		else if ($user_level == '+')
 			// Redirect to the Super-Admin page
-			header('Location: ' . $path_to_root . 'Admin/Super_Admin');
-			die();
-		}
-		else if ($user_level == 'B') {
+			location('Admin/Super_Admin');
+		else if ($user_level == 'B')
 			// Redirect to the 'You Are Banned' page
-			header('Location: ' . $path_to_root . 'Account/Banned');
-			die();
-		}
-		else {
+			location('Account/Banned');
+		else
 			// Go home - e.g. if you're logged in and it's restrict_access('X') on Signin, it'll just bring you back home.
-			header('Location: ' . $path_to_root . 'Home');
-			die();
-		}
+			location('Home');
 	}
 }
 function user_access($levels){
@@ -478,6 +468,7 @@ function log_attempt($email, $success) {
 	if ($success)$success = '1';
 	else $success = '0';
 	
+
 	DB::insert('login_attempts',array(
 		'email'=>strtolower($email),
 		'remote_ip'=>strtolower($_SERVER['REMOTE_ADDR']),
@@ -669,7 +660,29 @@ function form_autocomplete_query($input) {//Restrict to admins, and then move it
 		return array("type" => "multiple", "result" => $result, "exact" => false);
 	return array("type" => "single", "row" => $found_row);
 }
-
+function get_autocomplete_script(){
+?>
+<script>
+$(function() {
+var data = [
+{ label: "anders", category: "" },
+{ label: "andreas", category: "" },
+{ label: "antal", category: "" },
+{ label: "annhhx10", category: "Products" },
+{ label: "annk K12", category: "Products" },
+{ label: "annttop C13", category: "Products" },
+{ label: "anders andersson", category: "People" },
+{ label: "andreas andersson", category: "People" },
+{ label: "andreas johnson", category: "People" }
+];
+$( "#search" ).catcomplete({
+delay: 0,
+source: data
+});
+});
+</script>
+<?php
+}HEREIAM
 
 
 
@@ -1065,8 +1078,11 @@ function templateify(){
 	global $CANCEL_TEMPLATEIFY;//In case, for example, you want to send an attachment.
 	if(@$CANCEL_TEMPLATEIFY)return;
 	
-	global $header_title, $header_class, $path_to_root, $body_onload, $jquery_function, $LOCAL_BORDER_COLOR, $footer_html, $popup_code, $page_title, $more_head_stuff;
-	if(!isSet($header_title))$header_title = 'LHS Math Club';
+	global $page_title, $header_title, $header_class, $path_to_root, $jquery_function, $LOCAL_BORDER_COLOR, $footer_html, $popup_code, $more_head_stuff;
+	
+	//Title bar: "Page_Name | LHS Math Club"
+	if(!isSet($header_title))$header_title = 'LHS Math Club'; //Also in main white-on-black header "LHS Math Club"
+	if(!isSet($page_title))$page_title = basename($_SERVER['REQUEST_URI'],'.php');
 	
 	global $logged_in_header;
 	if (isSet($_SESSION['user_id']))
@@ -1086,33 +1102,43 @@ HEREDOC;
 		$content = substr_replace($content,$alerts_html,strpos("\n".$content,'</h1>')+strlen('</h1>'),0);
 	else
 		$content = $alerts_html . $content;
-	
-	echo <<<HEREDOC
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html
-     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+?><?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
-    <title>{$page_title} | {$header_title}</title>
+    <title><?=$page_title?> | <?=$header_title?></title>
 	
-	<link rel="icon" href="{$path_to_root}favicon.ico" />
-    <link rel="stylesheet" href="{$path_to_root}res/default.css" type="text/css" media="all" />
-    <link rel="stylesheet" href="{$path_to_root}res/print.css" type="text/css" media="print" />
+	<link rel="icon" href="<?=$path_to_root?>favicon.ico" />
+    <link rel="stylesheet" href="<?=$path_to_root?>res/default.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="<?=$path_to_root?>res/print.css" type="text/css" media="print" />
 	
-	<script type="text/javascript" src="{$path_to_root}res/rel_external.js"></script>
+	<?php //Using Google's CDN, with fallback if that's unnecessary ?> 
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script>window.jQuery || document.write('<script src="<?=$path_to_root?>res/jquery/jquery-2.1.1.min.js"><\/script>')</script>
 	
-	<script type="text/javascript" src="{$path_to_root}res/popup.js"></script>
+	<?php //We serve it from our own version rather than Google CDN because all we need is Autocomplete.?>
+	<link rel="stylesheet" href="<?=$path_to_root?>res/jquery/jquery-ui-1.11.1.min.css" />
+	<script src="<?=$path_to_root?>res/jquery/jquery-ui-1.11.1.min.js"></script>
 	
-    <link rel="stylesheet" href="{$path_to_root}res/jquery/css/smoothness/jquery-ui-1.8.5.custom.css" type="text/css" media="all"/>
-    <script type="text/javascript" src="{$path_to_root}res/jquery/js/jquery-1.4.2.min.js"></script>
-    <script type="text/javascript" src="{$path_to_root}res/jquery/js/jquery-ui-1.8.5.custom.min.js"></script>
-    <script type="text/javascript">
-		{$jquery_function}
-    </script>
+	<?php //View_Event popups ?>
+	<script type="text/javascript" src="<?=$path_to_root?>res/popup.js"></script>
+    
+	<?php //Custom stuff ?>
+	<script type="text/javascript"><?=$jquery_function?></script>
+	
 	<script type="text/javascript">
 		$(function(){
+			//Focuses on the element with class "focus"
+			//If there's multiple ones it'll probably focus on the first one.
 			$('.focus').focus();
+			
+			//Makes rel='external' links open in a new window.
+			$('a[rel*="external"]').on({
+				click: function() {
+					window.open($(this).attr('href'));
+					return false;
+				}
+			});
 		});
 	</script>
 	
@@ -1122,19 +1148,18 @@ HEREDOC;
       }
     </style>
 	
-	{$popup_code}
-	{$more_head_stuff}
+	<?=$more_head_stuff?>
   </head>
-  <body onload="{$body_onload}">
-    <div id="header" class="{$header_class}" style="border-bottom: 4px solid {$LOCAL_BORDER_COLOR}">
-      <a href="{$path_to_root}Home" id="title">{$header_title}</a>{$logged_in_header}
+  <body>
+    <div id="header" class="<?=$header_class?>" style="border-bottom: 4px solid <?=$LOCAL_BORDER_COLOR?>">
+      <a href="<?=$path_to_root?>Home" id="title"><?=$header_title?></a><?=$logged_in_header?>
     </div>
     
     <div id="content">
-		{$content}
+		<?=$content?>
 	</div>
-	{$footer_html}
-HEREDOC;
+	<?=$footer_html?>
+<?php
 	
 	ob_flush();
 	flush();
@@ -1184,11 +1209,10 @@ function fetch_alerts_html(){
 	return $html;
 }
 
-function location($relative = NULL){
-	if($relative === NULL)
-		$relative = basename($_SERVER['REQUEST_URI'],'.php'); //Reload
+function location($path_from_root){
 	cancel_templateify();
-	header('Location: '.$relative);
+	header('Location: '.$path_to_root.$path_from_root);
+	die;
 }
 
 

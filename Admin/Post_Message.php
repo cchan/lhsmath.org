@@ -29,8 +29,6 @@ else{
 
 
 function edit_message() {
-	page_header('Post Message');
-	
 	// Get info for the byline
 	$row = DB::queryFirstRow('SELECT name, email FROM users WHERE id=%i',$_SESSION['user_id']);
 	$by_line = $row['name'] . ' &lt;' . $row['email'] . '&gt;';
@@ -43,6 +41,7 @@ function edit_message() {
 	$email_checked[$email] = 'checked="checked"';
 	
 	// Assemble Page
+	page_title('Post Message');
 ?>
 <h1>Post a Message</h1>
 <form id="composeMessage" method="post">
@@ -100,9 +99,9 @@ function preview_message() {
 	else//if($email=='yes-you')//default
 		$mailing_message = 'Send to the mailing list, reply-to only you, and post online';
 	
-	page_header('Post Message');
-	
 	$quot = function($t){return str_replace('"','\"',$t);}; //hax to make it able to put into {} in HEREDOC
+	
+	page_title('Post Message');
 ?>
 <h1>Post a Message</h1>
 
@@ -165,7 +164,7 @@ function post_message() {
 	else $m = ", but not emailed out";
 	
 	alert("Your message has been posted$m. <a href='../Messages?View=".DB::insertId()."'>View</a>",1);
-	location();
+	location('Admin/Post_Message');
 }
 
 
