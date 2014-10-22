@@ -1143,6 +1143,16 @@ function page_title($title){
 }
 
 
+//To-be replacement for page_footer.
+function navbar(){
+	//if we're in the main directory
+		//Make usual navbar
+		if($_SESSION['permissions']=='C'||$_SESSION['permissions']=='A');//Add special admins' options
+	//if we're in the Admin directory
+	//et cetera
+	
+	//Make navbar and return it (footer stuff should be in the main thing)
+}
 
 
 

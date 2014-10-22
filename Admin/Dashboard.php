@@ -13,7 +13,7 @@ restrict_access('A');
 if(isSet($_POST['do_download_errors'])) download($path_to_root.'.content/Errors.txt');
 
 page_title('Admin Dashboard');
-
+admin_page_footer('Admin Dashboard');
 
 //Fetch data
 
@@ -130,6 +130,3 @@ catch(Exception $e){$swift_version = '(ERROR)';}
 	<li>Look at the <a href="https://bitbucket.org/lhsmath/lhsmath/issues?status=new&status=open">Git repository's issue tracking</a>.</li>
 	<li>Test out random pages on the main website and in LMT. If you catch it before it breaks for someone else, huzzah.</li>
   </ul>
-<?php
-admin_page_footer('Admin Dashboard');
-?>
