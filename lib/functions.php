@@ -660,7 +660,7 @@ function form_autocomplete_query($input) {//Restrict to admins, and then move it
 		return array("type" => "multiple", "result" => $result, "exact" => false);
 	return array("type" => "single", "row" => $found_row);
 }
-function get_autocomplete_script(){
+function get_autocomplete_script(){ //-----todo-------
 ?>
 <script>
 $(function() {
@@ -682,7 +682,7 @@ source: data
 });
 </script>
 <?php
-}HEREIAM
+}
 
 
 
@@ -747,7 +747,7 @@ function send_email($bcc_list, $subject, $body, $reply_to=NULL, $prefix=NULL, $f
 	//preg_replace("/[^[:alnum][:space]]/ui", '', $string);?
 	
 	//Ok everything seems to be working, let's go ahead
-	require_once __DIR__."/swiftmailer/swift_required.php";
+	require_once $path_to_root."lib/swiftmailer/swift_required.php";
 	Swift_Preferences::getInstance()->setCacheType('array'); //Prevents a ton of warnings about SwiftMail's DiskKeyCache, thus actually speeding things up considerably.
 	
 	//Connect to the super-secret LHS Math Club Mailbot Gmail account
@@ -875,119 +875,25 @@ function strip_BB_tags($s){
 
 
 
-
-
-/*
- * dirsize($path)
- *
- * Calculate the size of a directory by iterating its contents
- *
- * @author      Aidan Lister <aidan@php.net>
- * @version     1.2.0
- * @link        http://aidanlister.com/2004/04/calculating-a-directories-size-in-php/
- * @param       string   $directory    Path to directory
- */
-function dirsize($path)
-{
-    // Init
-    $size = 0;
-
-    // Trailing slash
-    if (substr($path, -1, 1) !== DIRECTORY_SEPARATOR) {
-        $path .= DIRECTORY_SEPARATOR;
-    }
-
-    // Sanity check
-    if (is_file($path)) {
-        return filesize($path);
-    } elseif (!is_dir($path)) {
-        return false;
-    }
-
-    // Iterate queue
-    $queue = array($path);
-    for ($i = 0, $j = count($queue); $i < $j; ++$i)
-    {
-        // Open directory
-        $parent = $i;
-        if (is_dir($queue[$i]) && $dir = @dir($queue[$i])) {
-            $subdirs = array();
-            while (false !== ($entry = $dir->read())) {
-                // Skip pointers
-                if ($entry == '.' || $entry == '..') {
-                    continue;
-                }
-
-                // Get list of directories or filesizes
-                $path = $queue[$i] . $entry;
-                if (is_dir($path)) {
-                    $path .= DIRECTORY_SEPARATOR;
-                    $subdirs[] = $path;
-                } elseif (is_file($path)) {
-                    $size += filesize($path);
-                }
-            }
-
-            // Add subdirectories to start of queue
-            unset($queue[0]);
-            $queue = array_merge($subdirs, $queue);
-
-            // Recalculate stack size
-            $i = -1;
-            $j = count($queue);
-
-            // Clean up
-            $dir->close();
-            unset($dir);
-        }
-    }
-
-    return $size;
+function download($filepath){
+	sendfile(basename($filepath),file_get_contents($filepath));
 }
-
-
-
-
-
-/*
- * size_readable($size)
- *
- * Return human readable sizes
- *
- * @author      Aidan Lister <aidan@php.net>
- * @version     1.3.0
- * @link        http://aidanlister.com/2004/04/human-readable-file-sizes/
- * @param       int     $size        size in bytes
- * @param       string  $max         maximum unit
- * @param       string  $system      'si' for SI, 'bi' for binary prefixes
- * @param       string  $retstring   return string format
- */
-function size_readable($size, $max = null, $system = 'si', $retstring = '%01.2f %s')
-{
-    // Pick units
-    $systems['si']['prefix'] = array('B', 'K', 'MB', 'GB', 'TB', 'PB');
-    $systems['si']['size']   = 1000;
-    $systems['bi']['prefix'] = array('B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB');
-    $systems['bi']['size']   = 1024;
-    $sys = isset($systems[$system]) ? $systems[$system] : $systems['si'];
-
-    // Max unit to display
-    $depth = count($sys['prefix']) - 1;
-    if ($max && false !== $d = array_search($max, $sys['prefix'])) {
-        $depth = $d;
-    }
-
-    // Loop
-    $i = 0;
-    while ($size >= $sys['size'] && $i < $depth) {
-        $size /= $sys['size'];
-        $i++;
-    }
-
-    return sprintf($retstring, $size, $sys['prefix'][$i]);
+function sendfile($downloadname,$content){
+	header('Content-Description: File Transfer');
+	header('Content-Type: application/octet-stream');
+	header('Content-Disposition: attachment; filename="' . $downloadname . '"');
+	header('Content-Transfer-Encoding: binary');
+	header('Expires: 0');
+	header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+	header('Pragma: public');
+	header('Content-Length: ' . strlen($content));
+	
+	ob_clean();
+	echo $content;
+	
+	cancel_templateify();
+	die;
 }
-
-
 
 
 
@@ -1104,7 +1010,9 @@ HEREDOC;
 		$content = substr_replace($content,$alerts_html,strpos("\n".$content,'</h1>')+strlen('</h1>'),0);
 	else
 		$content = $alerts_html . $content;
-?><?xml version="1.0" encoding="UTF-8"?>
+	
+	echo '<?xml version="1.0" encoding="UTF-8"?>';//Uncooperative because it has the question mark tags.
+?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
   <head>
@@ -1114,9 +1022,9 @@ HEREDOC;
     <link rel="stylesheet" href="<?=$path_to_root?>res/default.css" type="text/css" media="all" />
     <link rel="stylesheet" href="<?=$path_to_root?>res/print.css" type="text/css" media="print" />
 	
-	<?php //Using Google's CDN, with fallback if that's unnecessary ?> 
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-	<script>window.jQuery || document.write('<script src="<?=$path_to_root?>res/jquery/jquery-2.1.1.min.js"><\/script>')</script>
+	<?php //Using Google's CDN, with fallback if it's unavailable ?>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+	<script>window.jQuery || document.write('<script src="<?=$path_to_root?>res/jquery/jquery-1.11.1.min.js"><\/script>')</script>
 	
 	<?php //We serve it from our own version rather than Google CDN because all we need is Autocomplete.?>
 	<link rel="stylesheet" href="<?=$path_to_root?>res/jquery/jquery-ui-1.11.1.min.css" />
@@ -1183,9 +1091,8 @@ function cancel_templateify(){
 //Text: the alert text
 //Disposition: negative means bad (red), positive means good (green), zero means neutral (black)
 function alert($text,$disposition=0,$page_name=NULL){
-	//Check that it's a valid page.
-	
-	if(is_null($page_name))
+	//Check that it's an actual page:
+	if(is_null($page_name) || !val('f',$page_name))
 		$page_name='';//basename($_SERVER['REQUEST_URI']);
 	$sp='alerts_'.$page_name;
 	
@@ -1213,7 +1120,7 @@ function fetch_alerts_html(){
 
 function location($path_from_root){
 	cancel_templateify();
-	header('Location: '.$path_to_root.$path_from_root);
+	header('Location: /'.$path_from_root);//--todo-- $path_to_root doesn't work for Post_Message, etc.
 	die;
 }
 

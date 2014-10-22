@@ -10,6 +10,8 @@ $path_to_root = '../';
 require_once '../lib/functions.php';
 restrict_access('A');
 
+page_title('Database');
+
 
 if (isSet($_POST['do_backup']))
 	do_backup();
@@ -30,21 +32,8 @@ function show_page($check_results) {
 	global $PHP_MY_ADMIN_LINK, $use_rel_external_script;
 	$use_rel_external_script = true;
 	
-	$backup_msg = '';
-	if (isSet($_SESSION['BACKUP_added'])) {
-		$backup_msg = "\n        <div class=\"alert\">{$_SESSION['BACKUP_added']}</div><br />\n";
-		unset($_SESSION['BACKUP_added']);
-	}
-	$optimize_msg = '';
-	if (isSet($_SESSION['DATABASE_optimized'])) {
-		$optimize_msg = "\n        <div class=\"alert\">{$_SESSION['DATABASE_optimized']}</div><br />\n";
-		unset($_SESSION['DATABASE_optimized']);
-	}
-	
-	page_header('Database');
 	echo <<<HEREDOC
       <h1>Database</h1>
-      $backup_msg$optimize_msg
       <form method="post" action="{$_SERVER['REQUEST_URI']}"><div>
         <input type="hidden" name="xsrf_token" value="{$_SESSION['xsrf_token']}"/>
         <input type="submit" name="do_optimize" value="Optimize Tables"/>
@@ -142,24 +131,14 @@ function do_backup() {
 	
 	//save file
 	$filename = 'db-backup-' . time() . '-' . generate_code(4) . '.sql';
-	$handle = fopen('../.content/uploads/' . $filename, 'w+');
-	fwrite($handle,$return);
-	fclose($handle);
+	file_put_contents($filename,$return);
 	
-	$query = 'SELECT MAX(order_num) FROM files WHERE category="' . mysqli_real_escape_string(DB::get(),$category_id) . '"';
-	$result = DB::queryRaw($query);
-	$row = mysqli_fetch_assoc($result);
-	$order = $row['MAX(order_num)'] + 1;
-	
+	$order = 1 + DB::queryFirstField('SELECT MAX(order_num) FROM files WHERE category=%i',$category_id);
 	$display_name = 'Database Backup: ' . date('Y-m-d');
 	
-	$query = 'INSERT INTO files (name, filename, permissions, category, order_num) VALUES ("'
-		. mysqli_real_escape_string(DB::get(),$display_name) . '", "'
-		. mysqli_real_escape_string(DB::get(),$filename) . '", "A", "0", "'
-		. mysqli_real_escape_string(DB::get(),$order) . '")';
-	DB::queryRaw($query);
+	DB::insert('files',array('name'=>$display_name,'filename'=>$filename,'permissions'=>'A','category'=>'0','order_num'=>$order));
 	
-	$_SESSION['BACKUP_added'] = 'The file &quot;' . $display_name . '&quot; has been added';
+	alert('The file &quot;' . $display_name . '&quot; has been added',1);
 	header('Location: Database');
 }
 
@@ -175,8 +154,8 @@ function do_optimize() {
  	while($table = mysqli_fetch_row($result))
 		DB::queryRaw('OPTIMIZE TABLE ' . $table[0]) or trigger_error('Cannot optimize ' . $table[0], E_USER_ERROR);
 	
-	$_SESSION['DATABASE_optimized'] = 'The database has been optimized';
-	header('Location: Database');
+	alert('The database has been optimized',1);
+	location('Database');
 }
 
 
@@ -189,25 +168,13 @@ function do_zip() {
 	
 	$zip = new ZipArchive();
 	
-	$filename = '../.content/tmp/Content-' . generate_code(20) . '.zip';
-	if ($zip->open($filename, ZIPARCHIVE::CREATE) !== TRUE)
+	$filepath = '../.content/tmp/Content-Backup-' . generate_code(10) . '-' . date('Y-m-d_His') . '.zip';
+	if ($zip->open($filepath, ZIPARCHIVE::CREATE) !== TRUE)
 		trigger_error('Cannot open Zip', E_USER_ERROR);
 	add_dir_to_zip($zip, '../.content/');
 	$zip->close();
 	
-	$download_filename = 'Content Backup ' . date('Y-m-d His') . '.zip';
-	
-	header('Content-Description: File Transfer');
-	header('Content-Type: application/octet-stream');
-	header('Content-Disposition: attachment; filename="' . $download_filename . '"');
-	header('Content-Transfer-Encoding: binary');
-	header('Expires: 0');
-	header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-	header('Pragma: public');
-	header('Content-Length: ' . filesize($filename));
-	ob_clean();
-	flush();
-	readfile($filename);
+	download($filepath);
 }
 
 

@@ -11,6 +11,9 @@ $path_to_root = '../';
 require_once $path_to_root.'lib/functions.php';
 restrict_access('A');
 
+page_title('Post Message');
+
+
 if ((isSet($_POST["do_preview_message"]) || isSet($_POST["do_post_message"]) || isSet($_POST["do_reedit_message"])) && validate_message()){//POSTed.
 	//Stuff was posted, AND it's validated & loaded into globals.
 	if (isSet($_POST['do_preview_message']))
@@ -30,20 +33,17 @@ else{
 
 function edit_message() {
 	// Get info for the byline
-	$row = DB::queryFirstRow('SELECT name, email FROM users WHERE id=%i',$_SESSION['user_id']);
-	$by_line = $row['name'] . ' &lt;' . $row['email'] . '&gt;';
+	$by_line = htmlentities($_SESSION['user_name'].' <'.$_SESSION['email'].'>');
 	
 	// Previously-filled data?
-	global $subject, $bb_body, $post_through, $email;
+	global $subject, $bb_body, $email; //$post_through??
 	
 	$email_checked = array('yes-captains'=>'', 'yes-you'=>'', 'no'=>'');
-	if(@$email_checked[$email] !== '')$email = 'yes-you';
-	$email_checked[$email] = 'checked="checked"';
+	$email_checked[empty($email) ? 'yes-you' : $email] = 'checked="checked"';
 	
 	// Assemble Page
-	page_title('Post Message');
 ?>
-<h1>Post a Message <small id="editing-message" style="color:red;"></small></h1>
+<h1><span id="editing-message" style="color:red;font-size:0.6em;"></span> Post a Message</h1>
 <form id="composeMessage" method="post">
 <table class="spacious">
   <tr>
@@ -79,18 +79,20 @@ function edit_message() {
 </form>
 <script>
 var formEdited = false;
+var submitted = false;
 $(function(){
-	$('#form').on('input',function(){
+	$('#composeMessage input, #composeMessage textarea').on('input',function(){
 		if(!formEdited){
 			formEdited=true;
-			$('editing-message').text('*unsaved');
+			$('#editing-message').text('(*unsaved)');
 		}
-	}).on('submit',function(){
-		window.onbeforeunload=function(){};
+	});
+	$('#composeMessage').on('submit',function(){
+		submitted = true;
 	});
 
 	window.onbeforeunload=function goodbye(e) {
-		if(!formEdited)return true;
+		if(!formEdited || submitted)return;
 		
 		if(!e) e = window.event;
 		//e.cancelBubble is supported by IE - this will kill the bubbling process.
@@ -103,7 +105,7 @@ $(function(){
 			e.preventDefault();
 		}
 		
-		return false;
+		return "Don't go! You still have unsaved changes.";
 	}
 });
 </script>
@@ -130,8 +132,6 @@ function preview_message() {
 		$mailing_message = 'Send to the mailing list, reply-to only you, and post online';
 	
 	$quot = function($t){return str_replace('"','\"',$t);}; //hax to make it able to put into {} in HEREDOC
-	
-	page_title('Post Message');
 ?>
 <h1>Post a Message</h1>
 
@@ -194,6 +194,7 @@ function post_message() {
 	else $m = ", but not emailed out";
 	
 	alert("Your message has been posted$m. <a href='../Messages?View=".DB::insertId()."'>View</a>",1);
+	var_dump($path_to_root.'Admin/Post_Message');
 	location('Admin/Post_Message');
 }
 
