@@ -43,7 +43,7 @@ function edit_message() {
 	// Assemble Page
 	page_title('Post Message');
 ?>
-<h1>Post a Message</h1>
+<h1>Post a Message <small id="editing-message" style="color:red;"></small></h1>
 <form id="composeMessage" method="post">
 <table class="spacious">
   <tr>
@@ -58,7 +58,7 @@ function edit_message() {
 	<td>Body:</td>
 	<td>
 	  <textarea name="body" rows="10" cols="80"><?=$bb_body?></textarea>
-	  <div class="small">LHSMATH features <a href="Captains#BBCode" target="_blank">bbCode-like syntax</a>.</div>
+	  <div class="small">LHSMATH features <a href="Captains#BBCode" rel="external">bbCode-like syntax</a>.</div>
 	  <br /><br />
 	</td>
   </tr><tr>
@@ -77,6 +77,36 @@ function edit_message() {
   </tr>
 </table>
 </form>
+<script>
+var formEdited = false;
+$(function(){
+	$('#form').on('input',function(){
+		if(!formEdited){
+			formEdited=true;
+			$('editing-message').text('*unsaved');
+		}
+	}).on('submit',function(){
+		window.onbeforeunload=function(){};
+	});
+
+	window.onbeforeunload=function goodbye(e) {
+		if(!formEdited)return true;
+		
+		if(!e) e = window.event;
+		//e.cancelBubble is supported by IE - this will kill the bubbling process.
+		e.cancelBubble = true;
+		e.returnValue = "Don't go! You still have unsaved changes."; //This is displayed on the dialog
+		
+		//e.stopPropagation works in Firefox.
+		if (e.stopPropagation) {
+			e.stopPropagation();
+			e.preventDefault();
+		}
+		
+		return false;
+	}
+});
+</script>
 <?php
 	admin_page_footer('Post a Message');
 }

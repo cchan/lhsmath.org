@@ -863,7 +863,9 @@ function BBCode ($string, $strip_tags = false) {
 		$string = nl2br($string);
 	}
 	
-	//CHECK FOR EXTRA UNSEARCHED BBCODE - [] brackets with no spaces in them
+	//CHECK FOR EXTRA UNPARSED BBCODE - [] brackets with no spaces in them
+	if(preg_match('@\[\S+\]@si',$string))
+		alert('You may have unmatched or unrecognized BBCode tags!',-1);
 	
 	return $string;
 }

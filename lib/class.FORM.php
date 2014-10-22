@@ -164,4 +164,18 @@
 			return false;
 		});//passes associative array of field name=>value to it
 	
+	/*
+	
+	Old one:
+	generateForm(array('action'=>'login.php','method'=>'POST','autocomplete'=>'off'),array(
+		'<h2>Sign Up</h2>',
+		array('prompt'=>'Email:','name'=>'s_email','value'=>isSet($signup_success)?'':POST('s_email'),'autofocus'=>'autofocus'),
+		array('prompt'=>'Password:','name'=>'s_pass','type'=>'password'),
+		array('prompt'=>'Again:','name'=>'s_confpass','type'=>'password'),
+		'Captcha:<br>'.getCaptcha(),
+		array('name'=>'signup','type'=>'submit','value'=>'Sign Up')
+	))
+	
+	*/
+	
 ?>
