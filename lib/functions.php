@@ -125,7 +125,7 @@ function val($type /*,$x1,$x2,...*/){
 			return $chr;
 		};
 		$dim=0;
-		while(1){//Get how many dimensions are requested in the validatino string
+		while(1){//Get how many dimensions are requested in the validation string
 			$chr=$str_shift($morechars);
 			while($chr==$firstchar){$dim++;$chr=$str_shift($morechars);}//Increments the dimension as long as there's more of that char.
 			
@@ -241,6 +241,58 @@ function db_error_handler($params){
 	if (isset($params['error'])) $out .= "ERROR: " . $params['error'] . '<br />';
 	trigger_error($out,E_USER_ERROR);
 	die;
+}
+class DBExt{//A few more features to add to MeekroDB.
+	public static function parseWhereClause($where){//Better whereclause creation, to be used in placeholding %l. (may not necessarily be a whereclause)
+		//Does not deal with replacement params.
+		if(is_object($where) && get_class($where)=='WhereClause'){//Well, it's already a WhereClause.
+			return $where;
+		}
+		if(empty($where)){//If it's an empty string or something, you've still got that "WHERE %l" hanging there.
+			return ' TRUE ';
+		}
+		elseif(is_array($where)){//Associative array of field-value pairs/array of actual wherestrings
+			$wc = new WhereClause('and');
+			foreach($where as $field=>$val){
+				if(is_int($field))$wc->add($val);//Just a string in the array
+				else $wc->add('%b=%s',$field,$val);//Actually associative
+			}
+			return $wc;
+		}
+		else{//Single actual wherestring
+			return $where;
+		}
+	}
+	public static function queryCount(){ //Counts the number of rows in a table, where something.
+		$table = array_shift($args);
+		$where = array_shift($args);
+		array_unshift($args,self::parseWhereClause($where));
+		array_unshift($args,$table);
+		array_unshift($args,'SELECT COUNT(*) FROM %b WHERE %l');
+		return intval(call_user_func_array('DB::queryFirstField',$args));
+	}
+	public static function timeRelativeToSQL($s){ //+5m becomes ( NOW() + INTERVAL 5 MINUTE ), etc...
+		$e = explode('',$s);
+		$unit = array_pop($e);
+		$sign = array_shift($e);
+		switch($unit){
+			case 's': $unit = 'SECOND'; break;
+			case 'm': $unit = 'MINUTE'; break;
+			case 'd': $unit = 'DAY'; break;
+			case 'M': $unit = 'MONTH'; break;
+			case 'y': $unit = 'YEAR'; break;
+			default: trigger_error('Invalid time specification.',E_USER_ERROR);
+		}
+		return ' ( NOW() '.$sign.' INTERVAL '.intval(implode('',$e)).' '.$unit.' ) ';
+	}
+	public static function timeInInterval($field,$start,$end){
+		$wc = new WhereClause();
+		if(!empty($start))//Assume goes off to neg infinity
+			$wc->add('%b > %l',$field,self::timeRelativeToSQL($start));
+		if(!empty($end))//Assume goes off to pos infinity
+			$wc->add('%b < %l',$field,self::timeRelativeToSQL($end));
+		return $wc;
+	}
 }
 
 

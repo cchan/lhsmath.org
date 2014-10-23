@@ -17,28 +17,29 @@ admin_page_footer('Admin Dashboard');
 
 //Fetch data
 
+
 //Accounts
-$num_members = DB::queryFirstField('SELECT COUNT(*) FROM users WHERE approved="1"');
-$num_captains = DB::queryFirstField('SELECT COUNT(*) FROM users WHERE permissions="C"');
-$num_other_admins = DB::queryFirstField('SELECT COUNT(*) FROM users WHERE permissions="A"');
-$num_alumni = DB::queryFirstField('SELECT COUNT(*) FROM users WHERE permissions="L"');
-$num_pending_approval  = DB::queryFirstField('SELECT COUNT(*) FROM users WHERE approved="0"');//aka permissions == 'E' or 'P'
-$num_banned = DB::queryFirstField('SELECT COUNT(*) FROM users WHERE approved="-1"');//aka permissions == 'B'
+$num_members = DBExt::queryCount('users','approved="1"');
+$num_captains = DBExt::queryCount('users','permissions="C"');
+$num_other_admins = DBExt::queryCount('users','permissions="A"');
+$num_alumni = DBExt::queryCount('users','permissions="L"');
+$num_pending_approval  = DBExt::queryCount('users','approved="0"');//aka permissions == 'E' or 'P'
+$num_banned = DBExt::queryCount('users','approved="-1"');//aka permissions == 'B'
 
 //Tests
-$num_tests = DB::queryFirstField('SELECT COUNT(*) FROM tests WHERE archived="0"');
-$num_old_tests = DB::queryFirstField('SELECT COUNT(*) FROM tests WHERE archived="1"');
+$num_tests = DBExt::queryCount('tests','archived="0"');
+$num_old_tests = DBExt::queryCount('tests','archived="1"');
 
 //Calendar
 //Anything from 3 days ago to 7 days ahead is considered "current".
-$num_current_events = DB::queryFirstField('SELECT COUNT(*) FROM events WHERE date >= DATE_SUB(CURDATE(),INTERVAL 3 DAY) AND date <= DATE_ADD(CURDATE(),INTERVAL 7 DAY)');
-$num_past_events = DB::queryFirstField('SELECT COUNT(*) FROM events WHERE date < DATE_SUB(CURDATE(),INTERVAL 3 DAY)');
-$num_future_events = DB::queryFirstField('SELECT COUNT(*) FROM events WHERE date > DATE_ADD(CURDATE(),INTERVAL 7 DAY)');
+$num_past_events = DBExt::queryCount('events',DBExt::timeInInterval('date','','-3d'));
+$num_future_events = DBExt::queryCount('events',DBExt::timeInInterval('date','+7d',''));
+$num_current_events = DBExt::queryCount('events',DBExt::timeInInterval('date','-3d','+7d'));
 
 //Files
-$num_member_files = DB::queryFirstField('SELECT COUNT(*) FROM files WHERE permissions="M"');
-$num_public_files = DB::queryFirstField('SELECT COUNT(*) FROM files WHERE permissions="P"');
-$num_admin_files = DB::queryFirstField('SELECT COUNT(*) FROM files WHERE permissions="A"');
+$num_member_files = DBExt::queryCount('files','permissions="M"');
+$num_public_files = DBExt::queryCount('files','permissions="P"');
+$num_admin_files = DBExt::queryCount('files','permissions="A"');
 
 
 //Version checking
@@ -83,6 +84,8 @@ catch(Exception $e){$swift_version = '(ERROR)';}
 		  
 		  <li><span class="b"><?=$num_pending_approval?></span> users pending approval</li>
 		  <li><span class="b"><?=$num_banned?></span> banned users</li>
+		  
+		  <li><span class="b"><?=count(get_bcc_list())?></span> users on mailing list [Gmail SMTP limit 500]</li>
 		</ul>
 	  </td>
 	  <td>

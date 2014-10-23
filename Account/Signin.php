@@ -80,10 +80,10 @@ function process_login_form() {
 	$passhash = hash_pass($email, $_POST['pass']);
 	
 	// Check to see if the user/ip is temporarily banned:
-	//   An IP is banned when 10 unsuccessful attempts are made to log in from a single IP within 10 minutes, 
+	//   An IP is banned when 10 unsuccessful attempts are made to log in from a single IP/email within 10 minutes, 
 	//   regardless of whether any successful attempts were made.
-	$attempts = DB::queryFirstField('SELECT COUNT(*) FROM login_attempts WHERE successful=0 AND (remote_ip=%s OR email=%s) AND request_time>(NOW()-INTERVAL 10 MINUTE)',$_SERVER['REMOTE_ADDR'],$email);// ORDER BY request_time';
-	if($attempts>10){
+	$attempts = DBExt::queryCount('login_attempts',array('successful=0','(remote_ip=%s OR email=%s)',DBExt::timeInInterval('request_time','-10m',''),$_SERVER['REMOTE_ADDR'],$email);
+	if($attempts > 10){
 		log_attempt($email, false);
 		alert('You have been temporarily locked out. Please wait 10 minutes before attempting to sign in again.',-1);
 		show_login_form('');
