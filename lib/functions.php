@@ -243,9 +243,12 @@ function db_error_handler($params){
 	die;
 }
 class DBExt{//A few more features to add to MeekroDB.
-	public static function parseWhereClause($where){//Better whereclause creation, to be used in placeholding %l. (may not necessarily be a whereclause)
+	public static function parseWhereClause($where, $args){//Better whereclause creation, to be used in placeholding %l. (may not necessarily be a whereclause)
 		//Does not deal with replacement params.
+		if(!is_array($args)) $args = array();
 		if(is_object($where) && get_class($where)=='WhereClause'){//Well, it's already a WhereClause.
+			array_unshift($args,'TRUE');
+			call_user_func_array(array($where,'add'),$args);
 			return $where;
 		}
 		if(empty($where)){//If it's an empty string or something, you've still got that "WHERE %l" hanging there.
@@ -253,6 +256,8 @@ class DBExt{//A few more features to add to MeekroDB.
 		}
 		elseif(is_array($where)){//Associative array of field-value pairs/array of actual wherestrings
 			$wc = new WhereClause('and');
+			array_unshift($args,'TRUE');
+			call_user_func_array(array($wc,'add'),$args);
 			foreach($where as $field=>$val){
 				if(is_int($field))$wc->add($val);//Just a string in the array
 				else $wc->add('%b=%s',$field,$val);//Actually associative
@@ -260,19 +265,21 @@ class DBExt{//A few more features to add to MeekroDB.
 			return $wc;
 		}
 		else{//Single actual wherestring
-			return $where;
+			$wc = new WhereClause('and');
+			array_unshift($args,$where);
+			call_user_func_array(array($wc,'add'),$args);
+			return $wc;
 		}
 	}
 	public static function queryCount(){ //Counts the number of rows in a table, where something.
+		$args = func_get_args();
 		$table = array_shift($args);
 		$where = array_shift($args);
-		array_unshift($args,self::parseWhereClause($where));
-		array_unshift($args,$table);
-		array_unshift($args,'SELECT COUNT(*) FROM %b WHERE %l');
-		return intval(call_user_func_array('DB::queryFirstField',$args));
+		$pass = array('SELECT COUNT(*) FROM %b WHERE %l',$table,self::parseWhereClause($where,$args));
+		return intval(call_user_func_array('DB::queryFirstField',$pass));
 	}
 	public static function timeRelativeToSQL($s){ //+5m becomes ( NOW() + INTERVAL 5 MINUTE ), etc...
-		$e = explode('',$s);
+		$e = str_split($s);
 		$unit = array_pop($e);
 		$sign = array_shift($e);
 		switch($unit){
@@ -286,7 +293,7 @@ class DBExt{//A few more features to add to MeekroDB.
 		return ' ( NOW() '.$sign.' INTERVAL '.intval(implode('',$e)).' '.$unit.' ) ';
 	}
 	public static function timeInInterval($field,$start,$end){
-		$wc = new WhereClause();
+		$wc = new WhereClause('and');
 		if(!empty($start))//Assume goes off to neg infinity
 			$wc->add('%b > %l',$field,self::timeRelativeToSQL($start));
 		if(!empty($end))//Assume goes off to pos infinity
@@ -944,7 +951,6 @@ function sendfile($downloadname,$content){
 	echo $content;
 	
 	cancel_templateify();
-	die;
 }
 
 

@@ -3,14 +3,22 @@
  * Admin/Dashboard.php
  * LHS Math Club Website
  *
- * The front page of the Admin control panel
+ * The front page of the Admin control panel - lots of administrative information.
  */
 
 $path_to_root = '../';
 require_once '../lib/functions.php';
 restrict_access('A');
 
-if(isSet($_POST['do_download_errors'])) download($path_to_root.'.content/Errors.txt');
+if(isSet($_REQUEST['do_download_errors'])){
+	download($path_to_root.'.content/Errors.txt');
+	die;
+}
+if(isSet($_REQUEST['do_clear_errors'])){
+	download($path_to_root.'.content/Errors.txt');
+	file_put_contents($path_to_root.'.content/Errors.txt','');
+	die;
+}
 
 page_title('Admin Dashboard');
 admin_page_footer('Admin Dashboard');
@@ -60,18 +68,19 @@ catch(Exception $e){$swift_version = '(ERROR)';}
 ?>
   <h1>Admin Dashboard</h1>
   
-  <h3 style="margin-bottom:0px;">Info</h3>
+  <style>#info-table td{width:33%;table-layout:fixed;word-wrap:break-word;}li{font-size:0.8em;}</style>
   
-  <style>#info-table td{width:33%;}</style>
   <table cellspacing="10px" id="info-table">
 	<tr>
 	  <td>
-		<h4>Library Versions</h4>
+		<h4>Library/Software Versions</h4>
 		<ul>
-			<li><a href="http://blog.swiftmailer.org/">SwiftMailer</a> <?=$swift_version?></li>
+			<li><a href="http://blog.swiftmailer.org/">SwiftMailer</a> <?=$swift_version?> (<a href="https://github.com/swiftmailer/swiftmailer">zip download</a>)</li>
 			<li><a href="http://www.meekro.com/updates.php">MeekroDB</a> <?=$meekro_version?></li>
 			<li><a href="https://jquery.com/download/">jQuery</a> <span onclick="this.innerHTML=jQuery.fn.jquery"><small><b>(click)</b></small></span></li>
-			<li><a href="http://php.net/">PHP</a> <?=phpversion()?> (this is updated on the <a href="https://members.nearlyfreespeech.net/lhsmath/sites">NFSN control panel</a>)</li>
+			<li><a href="http://php.net/">PHP</a> <?=phpversion()?> (in the <a href="https://members.nearlyfreespeech.net/lhsmath/sites">NFSN control panel</a> &gt; Server Type)</li>
+			<li><a href="https://httpd.apache.org/">Apache</a> [unknown] (also in NFSN Server Type)</li>
+			<li><b>Updates often break things. Update carefully.</b></li>
 		</ul>
 	  </td>
 	  <td>
@@ -83,7 +92,7 @@ catch(Exception $e){$swift_version = '(ERROR)';}
 		  <li><span class="b"><?=$num_alumni?></span> alumni<br /><br /></li>
 		  
 		  <li><span class="b"><?=$num_pending_approval?></span> users pending approval</li>
-		  <li><span class="b"><?=$num_banned?></span> banned users</li>
+		  <li><span class="b"><?=$num_banned?></span> banned users<br /><br /></li>
 		  
 		  <li><span class="b"><?=count(get_bcc_list())?></span> users on mailing list [Gmail SMTP limit 500]</li>
 		</ul>
@@ -114,9 +123,10 @@ catch(Exception $e){$swift_version = '(ERROR)';}
 		</ul>
 	  </td>		  
 	  <td>
-		<h4>Errors</h4>
+		<h4>Error Log</h4>
 		<ul>
-		  <li>Size of <span class="monospace">Errors.txt</span>: <?=filesize($path_to_root.".content/Errors.txt")?>. <a href="?do_download_errors=1">Download</a></li>
+		  <li>Size of <span class="monospace">/home/public/ .content/Errors.txt</span>: <?=filesize($path_to_root.".content/Errors.txt")?>. <a href="?do_download_errors">[Download]</a> <a href="?do_clear_errors" onclick="window.location.reload()">[Download & clear]</a></li>
+		  <li>Also check via FTP <span class="monospace">/home/logs/*</span>.</li>
 		</ul>
 	  </td>
 	</tr>
@@ -125,9 +135,7 @@ catch(Exception $e){$swift_version = '(ERROR)';}
   <br><br>
   <h3>Some things to do regularly:</h3>
   <ul>
-	<li>Update libraries (making sure that updating them doesn't break things).</li>
 	<li>DB: <a href="Database">Optimize tables, check integrity, generate a backup, or download <span class="monospace">.content</span>.</a> (~1x/month)</li>
-	<li>Download (via FTP), look at, and clear the error log (<span class="monospace">.content/Errors.txt</span>).</li>
 	<li>Clean out the <span class="monospace">.content/uploads</span> directory, uploading old files to Dropbox and getting rid of older DB backups.</li>
 	<li>Checkup on NFSN hosting - most especially the <a href="https://members.nearlyfreespeech.net/lhsmath/accounts">$ in the account</a> (it should also email you when it gets low).</li>
 	<li>Look at the <a href="https://bitbucket.org/lhsmath/lhsmath/issues?status=new&status=open">Git repository's issue tracking</a>.</li>

@@ -82,7 +82,7 @@ function process_login_form() {
 	// Check to see if the user/ip is temporarily banned:
 	//   An IP is banned when 10 unsuccessful attempts are made to log in from a single IP/email within 10 minutes, 
 	//   regardless of whether any successful attempts were made.
-	$attempts = DBExt::queryCount('login_attempts',array('successful=0','(remote_ip=%s OR email=%s)',DBExt::timeInInterval('request_time','-10m',''),$_SERVER['REMOTE_ADDR'],$email);
+	$attempts = DBExt::queryCount('login_attempts',array('successful=0','(remote_ip=%s OR email=%s)',DBExt::timeInInterval('request_time','-10m','')),$_SERVER['REMOTE_ADDR'],$email);
 	if($attempts > 10){
 		log_attempt($email, false);
 		alert('You have been temporarily locked out. Please wait 10 minutes before attempting to sign in again.',-1);

@@ -175,6 +175,7 @@ function do_zip() {
 	$zip->close();
 	
 	download($filepath);
+	die;
 }
 
 

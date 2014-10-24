@@ -26,6 +26,14 @@ $LMT_DB_DATABASE =		'lmt';	// the LMT database name, should always be `lmt`
 $PHP_MY_ADMIN_LINK =	'https://phpmyadmin.nearlyfreespeech.net/index.php';
 
 
+
+ini_set('upload_max_filesize','5M');
+ini_set('post_max_size','8M');
+ini_set('max_execution_time','30');
+ini_set('magic_quotes_gpc','0');
+
+
+
 // EMAIL ACCOUNT INFORMATION for the LHS Math Club Mailbot:
 // get this from your email provider.
 // SSL is used automatically.

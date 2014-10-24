@@ -4,8 +4,8 @@
 #
 
 
-# No funny business, all featues disabled;
-# Symlinks is necessary for URL Rewriting
+# No funny business, all features disabled;
+# Symlinks are necessary for URL Rewriting
 Options None +FollowSymLinks
 
 DirectoryIndex index.php
@@ -21,13 +21,13 @@ AddType application/x-java-jnlp-file .jnlp
 
 
 # Hide all files/directories starting with a dot
-#   for example, .htaccess
+#   for example, .htaccess, .content
 <FilesMatch "^\.(.*)$">
-  Deny from all
+  Require all denied
 </FilesMatch>
 
 
-# URL RERWITING SECTION
+# URL REWRITING SECTION
 RewriteEngine on
 
 # To show a "Down for Repairs" message, uncomment this line:
@@ -44,10 +44,3 @@ RewriteRule ^lmt(.*) LMT$1
 
 # Block all files and directories (and their contents) starting with a dot
 RewriteRule ^\.((.*)/(.*))*$ - [F]
-
-
-# PHP options
-php_value upload_max_filesize 5M
-php_value post_max_size 8M
-php_value max_execution_time 30
-php_value magic_quotes_gpc 0
