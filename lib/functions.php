@@ -52,6 +52,19 @@
  go_home_footer()									?
  go_home_admin_footer()								?
  */
+ 
+ /*
+ User Types
+ *    * 'A': Administrative (Captains, Advisor and Webmaster)
+ *    * 'R': Regular (approved users)
+ *    * 'P': Pending approval
+ *    * 'B': Banned
+ *    * 'E': Email verification pending
+ *    * '+': Super-Admin (LHSMATH account)
+ *    * 'L': Alumnus
+ *    * 'X': Logged-out user
+ *    * 'T': Temporary user (should not be able to log in)
+ */
 
 
 require_once $path_to_root . 'lib/CONFIG.php';	// configuration information
@@ -390,7 +403,8 @@ if (isSet($_SESSION['user_id']) && time() >= $_SESSION['login_time'] + 28800) {
 /*
  * restrict_access($levels, $forbidden_page)
  *  - $levels: what types of users can access this page:
- *    * 'A': Administrative (Captain and Assistant, and Webmaster)
+ *    * 'A': Administrative (Advisor and Webmaster)
+ *    * 'C': Captains
  *    * 'R': Regular (approved users)
  *    * 'P': Pending approval
  *    * 'B': Banned
@@ -398,6 +412,7 @@ if (isSet($_SESSION['user_id']) && time() >= $_SESSION['login_time'] + 28800) {
  *    * '+': Super-Admin (LHSMATH account)
  *    * 'L': Alumnus
  *    * 'X': Logged-out user
+ *    * 'T': Temporary user (should not be able to log in)
  */
 function restrict_access($levels) {
 	global $path_to_root;
@@ -719,28 +734,123 @@ function form_autocomplete_query($input) {//Restrict to admins, and then move it
 		return array("type" => "multiple", "result" => $result, "exact" => false);
 	return array("type" => "single", "row" => $found_row);
 }
-function get_autocomplete_script(){ //-----todo-------
-?>
+
+
+function getGradeFromYOG($yog){
+	//$yog = 2016 means they're graduating in ~~June of 2016. Let's have the switchover happen in July/August, since that's safer.
+	if($yog != intval($yog)) return 'error';
+	$yog = intval($yog);
+	
+	$currentyear = intval(date('Y'));
+	$currentmonth = intval(date('n'));
+	$grade = ($currentyear - $yog) + 12;
+	if($currentmonth > 7) $grade++;
+	if($grade <= 12 && $grade >= 9) return 'Grade '.strval($grade);
+	elseif($grade > 12) return 'Alumni';
+	else return 'Middle School';
+}
+
+//--todo--: nicknames? e.g. Eula vs Lingrui
+//--todo--: reduce all these "approved" and "email_verification" fields to the "permissions" field?
+function autocomplete_users(){
+	restrict_access('A');//Because that's a lot of names you're dumping to the browser.
+	$search = call_user_func_array('user_data',func_get_args());
+	$result = array();
+	foreach($search as $user)
+		$result[] = array('label'=>$user['name'].' ('.$user['id'].')', 'category'=>$user['category']);
+	return $result;
+}
+
+//Returns a (rather large) array of all users, with all associative-array data things. Where-enabled.
+function user_data($where=NULL){
+	if(isSet($where)){//Allows replacement-parameters too.
+		$args=func_get_args();
+		$args[0]='SELECT * FROM users WHERE '.$where;
+		$users = call_user_func_array("DB::query",$args);
+	}
+	else
+		$users = DB::query('SELECT * FROM users');
+	$results = array();
+	foreach($users as $user){
+		switch($user['permissions']){
+			case 'B': case 'P': case 'E':
+				continue 2; //Banned, pending approval, email verification pending aren't include (continues the foreach loop)
+			case 'T':
+				$categ = 'Temporary';
+				$user["yog"] = 'Temporary';
+				$order[] = 1;//Temporary users go first
+				break;
+			case 'R': case 'L':
+				$categ = getGradeFromYOG($user["yog"]);
+				$order[] = 30000 - intval($user["yog"]);//Reverse order of yog
+				break;
+			case 'A': case 'C':
+				$categ = 'Captain';
+				$order[] = 30000;//Captains after all the stuff
+					//Assumes we're using this between 1 and 30000AD.
+				break;
+			default:
+				$categ = '???error???';
+				$order[] = 0;//Questionmark ones go very first, but they shouldn't happen.
+				break;
+		}
+		$user['category'] = $categ;
+		$results[] = $user;
+	}
+	//Order: Temporary, YOG (largest to smallest), ???, Captain
+	uksort($results,function($ind1,$ind2)use($results,$order){//Sorts with respect to order specified in $order
+		if($order[$ind1]==$order[$ind2])//Sorts alphabetically within a category
+			return strcasecmp($results[$ind1]["label"],$results[$ind2]["label"]);
+		else //Uses the given ordering numbers to sort categories
+			return ($order[$ind1] > $order[$ind2]) ? 1 : -1;
+	});
+	return array_values($results);//Reassigns keys, since uksort will maintain disordered numerical keys.
+}
+
+function autocomplete_script($jqselector,$data){
+	global $path_to_root;
+	
+	$json = json_encode($data);
+	
+	//We serve jQuery UI from our own version rather than Google CDN because all we need is Autocomplete.
+	return <<<HEREDOC
+<link rel="stylesheet" href="{$path_to_root}res/jquery/jquery-ui-1.11.1.min.css" />
+<script src="{$path_to_root}res/jquery/jquery-ui-1.11.1.min.js"></script>
+<style>
+.ui-autocomplete{font-size:10pt;}
+.ui-autocomplete-category{font-weight:bold;margin-top:1em;}
+</style>
 <script>
-$(function() {
-var data = [
-{ label: "anders", category: "" },
-{ label: "andreas", category: "" },
-{ label: "antal", category: "" },
-{ label: "annhhx10", category: "Products" },
-{ label: "annk K12", category: "Products" },
-{ label: "annttop C13", category: "Products" },
-{ label: "anders andersson", category: "People" },
-{ label: "andreas andersson", category: "People" },
-{ label: "andreas johnson", category: "People" }
-];
-$( "#search" ).catcomplete({
-delay: 0,
-source: data
+$.widget( "custom.catcomplete", $.ui.autocomplete, {
+    _create: function() {
+      this._super();
+      this.widget().menu( "option", "items", "> :not(.ui-autocomplete-category)" );
+    },
+    _renderMenu: function( ul, items ) {
+      var that = this,
+        currentCategory = "";
+      $.each( items, function( index, item ) {
+        var li;
+        if ( item.category != currentCategory ) {
+          ul.append( "<li class='ui-autocomplete-category'>" + item.category + "</li>" );
+          currentCategory = item.category;
+        }
+        li = that._renderItemData( ul, item );
+        if ( item.category ) {
+          li.attr( "aria-label", item.category + " : " + item.label );
+        }
+      });
+    }
 });
+$(function() {
+	var data = $json;
+	$( "$jqselector" ).catcomplete({
+		delay: 0,
+		source: data
+	});
 });
 </script>
-<?php
+HEREDOC;
 }
 
 
@@ -806,7 +916,7 @@ function send_email($bcc_list, $subject, $body, $reply_to=NULL, $prefix=NULL, $f
 	//preg_replace("/[^[:alnum][:space]]/ui", '', $string);?
 	
 	//Ok everything seems to be working, let's go ahead
-	require_once $path_to_root."lib/swiftmailer/swift_required.php";
+	require_once __DIR__ . "/swiftmailer/swift_required.php";
 	Swift_Preferences::getInstance()->setCacheType('array'); //Prevents a ton of warnings about SwiftMail's DiskKeyCache, thus actually speeding things up considerably.
 	
 	//Connect to the super-secret LHS Math Club Mailbot Gmail account
@@ -1083,10 +1193,6 @@ HEREDOC;
 	<?php //Using Google's CDN, with fallback if it's unavailable ?>
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 	<script>window.jQuery || document.write('<script src="<?=$path_to_root?>res/jquery/jquery-1.11.1.min.js"><\/script>')</script>
-	
-	<?php //We serve it from our own version rather than Google CDN because all we need is Autocomplete.?>
-	<link rel="stylesheet" href="<?=$path_to_root?>res/jquery/jquery-ui-1.11.1.min.css" />
-	<script src="<?=$path_to_root?>res/jquery/jquery-ui-1.11.1.min.js"></script>
 	
 	<?php //View_Event popups ?>
 	<script type="text/javascript" src="<?=$path_to_root?>res/popup.js"></script>
@@ -1518,7 +1624,7 @@ function go_home_footer() {
 /*
  * go_home_admin_footer()
  *
- * The links bar only shows 'Admin Dashbaord'
+ * The links bar only shows 'Admin Dashboard'
  */
 function go_home_admin_footer() {
 	$names[0] = 'Admin Dashboard';

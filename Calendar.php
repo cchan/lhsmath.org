@@ -196,41 +196,42 @@ function process_add_event() {
  * function draw_calendar($month, $year)
  *
  * Returns code for a calendar.
- * Credit to David Walsh [http://davidwalsh.name/php-calendar]
+ * Vaguely inspired by David Walsh's terrible code [http://davidwalsh.name/php-calendar]
  */
 function draw_calendar($month, $year) {
+	$thismonth = strototime('this month');
+	$currmonth = $currdate = strtotime($year.'-'.$month);
+	$nextmonth = strtotime($year.'-'.$month.' + 1 month');
 	
-	$calendar = '';
+	$pastnowfuture = function($timestamp){
+		$now = strtotime('now');
+		if($timestamp > $now) return 'future';
+		if($timestamp == $now) return 'now';
+		if($timestamp < $now) return 'past';
+	}
 	
-	$calendar .= '<style>.cal-now{background-color:#99f}.cal-before{background-color:#ccc}.cal-after{background-color:#fff}</style>';
+	//while(date('dayofweek',$curr) != 0){ $calendar += "<td class='blank'></td>" $curr++; }
+	while($currdate < $nextmonth){
+		//date('d',$currdate);
+		$calendar .= "<td class='day {$pastnowfuture($currdate)}>";
+		
+		//if() $calendar += "</tr><tr>";
+		
+		$currdate = strtotime("+1 day", $currdate);
+	}
 	
 	/* draw table */
-	$calendar .= '<table cellpadding="0" cellspacing="0" class="calendar">';
-
+	$calendar .= '<table cellpadding="0" cellspacing="0" class="cal">';
+	
 	/* table headings */
 	$headings = array('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday');
-	$calendar.= '<tr class="calendar-row"><td class="calendar-day-head">'.implode('</td><td class="calendar-day-head">',$headings).'</td></tr>';
-
-	/* days and weeks vars now ... */
-	$running_day = date('w',mktime(0,0,0,$month,1,$year));
-	$days_in_month = date('t',mktime(0,0,0,$month,1,$year));
-	$days_in_this_week = 1;
-	$day_counter = 0;
-	$dates_array = array();
-	$now_day = intval(date('j'));
-	$now_month = intval(date('m'));
-	$now_year = intval(date('Y'));
+	$calendar.= '<tr><th>'.implode('</th><th>',$headings).'</th></tr>';
 	
+	DB::query('SELECT event_id, title, DAYOFMONTH(date) AS day FROM events WHERE MONTH(date)=%i AND YEAR(date)=%i ORDER BY day ASC',$month,$year);
 	
-	// Query Database
-	$result = DB::queryRaw('SELECT event_id, title, DAYOFMONTH(date) AS day FROM events WHERE date BETWEEN "%i-%i-%i" AND "%i-%i-%i" ORDER BY day ASC',$year,$month,1,$year,$month,$days_in_month);
-	$row = mysqli_fetch_assoc($result);
-	
-	
-
 	/* row for week one */
 	$calendar.= '<tr class="calendar-row">';
-
+	
 	/* print "blank" days until the first of the current week */
 	for($x = 0; $x < $running_day; $x++):
 		$calendar.= '<td class="calendar-day-np">&nbsp;</td>';
@@ -240,18 +241,14 @@ function draw_calendar($month, $year) {
 	/* keep going with days.... */
 	for($list_day = 1; $list_day <= $days_in_month; $list_day++):
 		if($list_day==$now_day&&$month==$now_month&&$year==$now_year)
-			$calendar.= '<td class="calendar-day cal-now">';
+			$calendar.= '<td class="day now">';
 		elseif($list_day<$now_day&&$month==$now_month||$month<$now_month&&$year==$now_year||$year<$now_year)
-			$calendar.= '<td class="calendar-day cal-before">';
+			$calendar.= '<td class="day past">';
 		else
-			$calendar.= '<td class="calendar-day cal-after">';
+			$calendar.= '<td class="day future">';
 			
 			/* add in the day number */
 			$calendar.= '<div class="day-number">'.$list_day.'</div>';
-
-			
-			
-			
 			
 			/* QUERY THE DATABASE FOR AN ENTRY FOR THIS DAY !!  IF MATCHES FOUND, PRINT THEM !! */
 			while ($row && $row['day'] == $list_day) {
@@ -260,37 +257,26 @@ function draw_calendar($month, $year) {
 				$row = mysqli_fetch_assoc($result);
 			}
 			
-			
-			
-			
-			
-			
 			//$calendar.= str_repeat('<p>&nbsp;</p>',2);
 			
 		$calendar.= '</td>';
-		if($running_day == 6):
+		if($running_day == 6){
 			$calendar.= '</tr>';
-			if(($day_counter+1) != $days_in_month):
+			if(($day_counter+1) != $days_in_month)
 				$calendar.= '<tr class="calendar-row">';
-			endif;
 			$running_day = -1;
 			$days_in_this_week = 0;
-		endif;
+		}
 		$days_in_this_week++; $running_day++; $day_counter++;
-	endfor;
+	}
 
 	/* finish the rest of the days in the week */
-	if($days_in_this_week < 8 && $days_in_this_week != 1):
-		for($x = 1; $x <= (8 - $days_in_this_week); $x++):
+	if($days_in_this_week < 8 && $days_in_this_week != 1)
+		for($x = 1; $x <= (8 - $days_in_this_week); $x++)
 			$calendar.= '<td class="calendar-day-np">&nbsp;</td>';
-		endfor;
-	endif;
 
-	/* final row */
-	$calendar.= '</tr>';
-
-	/* end the table */
-	$calendar.= '</table>';
+	/* final row, end of table */
+	$calendar.= '</tr></table>';
 	
 	/* all done, return result */
 	return $calendar;

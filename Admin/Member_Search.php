@@ -18,8 +18,9 @@ $path_to_root = '../';
 require_once '../lib/functions.php';
 restrict_access('A');
 
+page_title('Search Members');
 
-if (isSet($_GET['Query']))
+if (isSet($_REQUEST['query']))
 	do_search();
 else
 	show_search_page();
@@ -34,33 +35,20 @@ else
  * Shows a page where admins can search for a member by name and grade
  */
 function show_search_page() {
-	// A little javascript to put the cursor in the first field when the form loads;
-	// page_header() looks at the $body_onload variable and inserts it into the code.
-	global $body_onload;
-	$body_onload = 'document.forms[\'memberSearch\'].Query.focus()';
+	$previous_query = htmlentities($_REQUEST['query']);
 	
-	// Add some javascript for the jQuery Autocomplete
-	global $jquery_function;
-	$jquery_function = <<<HEREDOC
-	$(function() {
-		$( "#userAutocomplete" ).autocomplete({
-			source: "User_Autocomplete?All"
-		});
-	});
-
-HEREDOC;
+	admin_page_footer('Search Members');
 	
-	page_header('Search Members');
+	echo autocomplete_script('#search',autocomplete_users());
 	echo <<<HEREDOC
       <h1>Search Members</h1>
-      
+	  
       <br />
-      <form id="memberSearch" method="get" action="{$_SERVER['REQUEST_URI']}"><div>
-        <input type="text" id="userAutocomplete" name="Query" size="35"/>
-        <input type="submit" value="Search"/>
+      <form id="memberSearch" method="get"><div>
+        <input type="text" id="search" name="query" value="$previous_query" size="35" class="focus"/>
+        <input type="submit" id="" value="Search"/>
       </div></form>
 HEREDOC;
-	admin_page_footer('Search Members');
 }
 
 
@@ -73,63 +61,24 @@ HEREDOC;
  * Process the above search form
  */
 function do_search() {
-	// Locate User
-	$ans = form_autocomplete_query($_GET['Query']);
-	
-	if ($ans['type'] == 'no-entry') {
-		show_search_page();
-		return;
-	} else if ($ans['type'] == 'none')
-		show_no_results_page();
-	else if ($ans['type'] == 'single') {
-		$row = $ans['row'];
-		redirect($row['id']);
-	} else
-		list_results($ans['result']);
-}
-
-
-
-
-
-/*
- * show_no_results_page()
- *
- * If no results are found, shows an error page
- */
-function show_no_results_page() {
-	$previous_query = htmlentities($_GET['Query']);
-	
-	// A little javascript to put the cursor in the first field when the form loads;
-	// page_header() looks at the $body_onload variable and inserts it into the code.
-	global $body_onload;
-	$body_onload = 'document.forms[\'memberSearch\'].Query.focus()';
-	
-	// Add some javascript for the jQuery Autocomplete
-	global $jquery_function;
-	$jquery_function = <<<HEREDOC
-	$(function() {
-		$( "#userAutocomplete" ).autocomplete({
-			source: "User_Autocomplete?All"
-		});
-	});
-
-HEREDOC;
-	
-	page_header('Search Results');
-	echo <<<HEREDOC
-      <h1>Search Results</h1>
-      
-      <div class="error">Your search returned no results.</div>
-      <br />
-      <form id="memberSearch" method="get" action="{$_SERVER['REQUEST_URI']}">
-        <input type="text" id="userAutocomplete" name="Query" size="35"/>
-        <input type="submit" value="Search"/>
-      </form>
-HEREDOC;
-	admin_page_footer('Search Members');
-	
-	die();
+	$query = $_REQUEST['query'];
+	if(preg_match('@\(([0-9]+)\)@',$query,$matches))
+		redirect(intval($matches[1]));//It was autocompleted with an ID! No ambiguity.
+	else{
+		$results = user_data('name LIKE %ss',$query);
+		if(count($results) == 0){
+			alert('No results!',-1);
+			show_search_page();
+			return;
+		}
+		elseif(count($results) == 1){
+			redirect($results[0]['id']);
+		}
+		else{
+			show_search_page();
+			list_results($results);
+		}
+	}
 }
 
 
@@ -145,9 +94,9 @@ HEREDOC;
  * page.
  */
 function redirect($id) {
-	if (isSet($_POST['return'])) {
+	if (isSet($_REQUEST['return'])) {
 		if (preg_match('/?/', $_POST['return']))
-			header('Location: ../Admin/' . $_POST['return'] . '&MemberSearchID=' . $id);
+			header('Location: ../Admin/' . $_POST['return'] . '&MemberSearchID=' . $id);//If it already has a ? query string in it, make it &
 		else
 			header('Location: ../Admin/' . $_POST['return'] . '?MemberSearchID=' . $id);
 	}
@@ -167,24 +116,8 @@ function redirect($id) {
  * Shows a table of returned results; the admin picks the right one or
  * can modify their search
  */
-function list_results($result) {
-	// A little javascript to put the cursor in the first field when the form loads;
-	// page_header() looks at the $body_onload variable and inserts it into the code.
-	global $body_onload;
-	$body_onload = 'document.forms[\'memberSearch\'].Query.focus()';
-	
-	// Add some javascript for the jQuery Autocomplete
-	global $jquery_function;
-	$jquery_function = <<<HEREDOC
-	$(function() {
-		$( "#userAutocomplete" ).autocomplete({
-			source: "User_Autocomplete?All"
-		});
-	});
-
-HEREDOC;
-	
-	$previous_query = htmlentities($_POST['query']);
+function list_results($results) {
+	$previous_query = htmlentities($_REQUEST['query']);
 	
 	$link_base = 'View_User?ID=';
 	if (isSet($_POST['return'])) {
@@ -194,14 +127,8 @@ HEREDOC;
 			$link_base = '../Admin/' . $_POST['return'] . '?MemberSearchID=';
 	}
 	
-	page_header('Search Results');
+	page_title('Search Results');
 	echo <<<HEREDOC
-      <h1>Search Results</h1>
-      
-      <form id="memberSearch" method="get" action="{$_SERVER['REQUEST_URI']}">
-        <input type="text" id="userAutocomplete" name="Query" value="$previous_query" size="35"/>
-        <input type="submit" value="Search"/>
-      </form>
       <br />
       <br />
       <table class="contrasting">
@@ -211,22 +138,25 @@ HEREDOC;
         </tr>
 HEREDOC;
 	
-	$row = mysqli_fetch_assoc($result);
-	while ($row) {
-		echo <<<HEREDOC
+	$currentcateg = "";
+	foreach ($results as $user) {
+		if($user['category']!=$currentcateg){
+			$currentcateg = $user['category'];
+			echo <<<HEREDOC
         <tr>
-          <td><a href="$link_base{$row['id']}">{$row['name']}</a></td>
-          <td>{$row['yog']}</td>
+          <th colspan="2">-----$currentcateg-----</th>
         </tr>
 HEREDOC;
-		$row = mysqli_fetch_assoc($result);
+		}
+		echo <<<HEREDOC
+        <tr>
+          <td><a href="$link_base{$user['id']}">{$user['name']}</a></td>
+          <td>{$user['yog']}</td>
+        </tr>
+HEREDOC;
 	}
 	
-	echo <<<HEREDOC
-      </table>
-HEREDOC;
-	admin_page_footer('Search Members');
-	die();
+	echo '</table>';
 }
 
 ?>
