@@ -6,6 +6,6 @@ restrict_access('A');
 
 page_title('Search Users');
 
-echo autocomplete_script('#searchbox',autocomplete_users());
+echo autocomplete_js('#searchbox',autocomplete_users());
 ?>
 <input type="text" id="searchbox" class="focus"/>

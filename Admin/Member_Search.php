@@ -39,8 +39,7 @@ function show_search_page() {
 	
 	admin_page_footer('Search Members');
 	
-	echo autocomplete_script('#search',autocomplete_users());
-	echo <<<HEREDOC
+	echo autocomplete_js('#search',autocomplete_users_data()) . <<<HEREDOC
       <h1>Search Members</h1>
 	  
       <br />
@@ -61,23 +60,16 @@ HEREDOC;
  * Process the above search form
  */
 function do_search() {
-	$query = $_REQUEST['query'];
-	if(preg_match('@\(([0-9]+)\)@',$query,$matches))
-		redirect(intval($matches[1]));//It was autocompleted with an ID! No ambiguity.
-	else{
-		$results = user_data('name LIKE %ss',$query);
-		if(count($results) == 0){
-			alert('No results!',-1);
-			show_search_page();
-			return;
-		}
-		elseif(count($results) == 1){
-			redirect($results[0]['id']);
-		}
-		else{
-			show_search_page();
-			list_results($results);
-		}
+	$userdata = autocomplete_users_php($_REQUEST['query']);
+	if(count($userdata) == 0){
+		alert('No results!',-1);
+		show_search_page();
+		return;
+	}elseif(count($userdata) == 1){
+		redirect($userdata[0]['id']);
+	}else{
+		show_search_page();
+		list_results($userdata);
 	}
 }
 

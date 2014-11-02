@@ -5,7 +5,7 @@
  *
  * Shows a detailed information page about a user
  *
- * Requires the GET paramater 'ID' (the user's id)
+ * Requires the GET parameter 'ID' (the user's id)
  */
 
 

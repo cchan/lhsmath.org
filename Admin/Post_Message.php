@@ -131,7 +131,8 @@ function preview_message() {
 	else//if($email=='yes-you')//default
 		$mailing_message = 'Send to the mailing list, reply-to only you, and post online';
 	
-	$quot = function($t){return str_replace('"','\"',$t);}; //hax to make it able to put into {} in HEREDOC
+	$quot = function($t){return htmlentities($t);}; //hax to make it able to put into {} in HEREDOC
+		//For some reason, in html attributes you can't backslash escape; you have to use stuff like &quot;. Weird.
 ?>
 <h1>Post a Message</h1>
 
@@ -157,7 +158,7 @@ function preview_message() {
 	  <input type="hidden" name="email" value="<?=$quot($email)?>"/>
 	  <input type="hidden" name="xsrf_token" value="<?=$_SESSION['xsrf_token']?>"/>
 	  <input type="submit" name="do_reedit_message" value="Back to Editing"/>
-	  <input type="submit" name="do_post_message" value="Post Message"/>
+	  <input type="submit" name="do_post_message" value="Post Message (takes about 30 seconds)"/>
 	</div></form>
   </td>
 </tr><tr>

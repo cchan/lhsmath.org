@@ -12,61 +12,24 @@
 $path_to_root = '../';
 require_once '../lib/functions.php';
 restrict_access('A');
-if (isSet($_POST['do_add_score']))
+if (isSet($_POST['do_add_score']) || isSet($_GET['Override']) || $_GET['Temporary'])
 	process_form();
-else if (isSet($_GET['Override']))
-	do_override();
-else if (isSet($_GET['Overridden']))
-	show_page('', 'Entered a score of ' . htmlentities($_GET['Score']) . ' for ' . htmlentities($_GET['Name']));
-else if (isSet($_GET['Temporary']))
-	do_create_temporary_user();
 else if (isSet($_GET['ID']))
 	show_page('', '');
 else
 	header('Location: Tests');
-
-
-
-
 
 /*
  * function show_page($err, $msg)
  *
  * Shows a page that allows admins to enter test scores
  */
-function show_page($err, $msg) {
-	// Get data about test, if not already cached in form data
-	$test_name = htmlentities($_POST['test_name']);
-	$total_points = htmlentities($_POST['total_points']);
+function show_page() {
+	// Check that the provided ID exists
+	$test_id = DB::queryFirstField('SELECT id FROM tests WHERE test_id=%i LIMIT 1',$_REQUEST['ID']);
+	if (is_null($test_id)) trigger_error('Show_Page: Invalid Test ID', E_USER_ERROR);
 	
-	if (!isSet($_POST['test_name']) || !isSet($_POST['total_points'])) {
-		$row = DB::queryFirstRow('SELECT name, total_points FROM tests WHERE test_id=%i LIMIT 1',$_GET['ID']);
-		if (!$row) trigger_error('Show_Page: Invalid Test ID', E_USER_ERROR);
-		$test_name = $row['name'];
-		$total_points = $row['total_points'];
-	}
-	
-	// Put the cursor in the first field
-	global $body_onload;
-	$body_onload = 'document.forms[\'enterScore\'].user.focus()';
-	
-	// Add some javascript for the jQuery Autocomplete
-	global $jquery_function;
-	$jquery_function = <<<HEREDOC
-	$(function() {
-		$( "#userAutocomplete" ).autocomplete({
-			source: "User_Autocomplete?T",
-			minLength: 2
-		});
-	});
-
-HEREDOC;
-	
-	// If an (error) message is given, put it inside this div
-	if ($err != '')
-		$err = "\n        <div class=\"error\">$err</div><br />\n";
-	if ($msg != '')
-		$msg = "\n        <div class=\"alert\">$msg</div><br />\n";
+	echo autocomplete_js("#userAutocomplete",autocomplete_users_data());
 	
 	page_header('Enter Scores');
 	echo <<<HEREDOC
@@ -77,8 +40,7 @@ HEREDOC;
       <br />
       <br />
       <br />
-      $err$msg
-      <form id="enterScore" method="post" action="{$_SERVER['REQUEST_URI']}">
+      <form id="enterScore" method="post" class="focus">
       <table class="spacious">
         <tr>
           <td>Name:</td>
@@ -89,8 +51,7 @@ HEREDOC;
         </tr><tr>
           <td></td>
           <td>
-            <input type="hidden" name="test_name" value="$test_name"/>
-            <input type="hidden" name="total_points" value="$total_points"/>
+			<input type="hidden" name="ID" value="{$test_id}"/>
             <input type="hidden" name="xsrf_token" value="{$_SESSION['xsrf_token']}"/>
             <input type="submit" name="do_add_score" value="Enter"/>
             &nbsp;&nbsp;<a href="Tests">Cancel</a>
@@ -114,249 +75,70 @@ HEREDOC;
  */
 function process_form() {
 	// Check XSRF token
-	if ($_SESSION['xsrf_token'] != $_POST['xsrf_token'])
+	if ($_SESSION['xsrf_token'] != $_REQUEST['xsrf_token'])
 		trigger_error('Invalid XSRF token', E_USER_ERROR);
 	
-	// No blank data
-	if ($_POST['user'] == '') {
-		show_page('Please enter a name', '');
-		return;
-	}
-	if ($_POST['score'] == '') {
-		show_page('Please enter a score', '');
-		return;
-	}
+	//Check Test ID
+	$row = DB::queryFirstRow('SELECT test_id, name, total_points FROM tests WHERE test_id=%s LIMIT 1',$_REQUEST['ID']);
+	if (!$row) trigger_error('Process_Form: Invalid Test ID', E_USER_ERROR);
 	
-	// Check that test exists
-	$row = DB::queryFirstRow('SELECT test_id, total_points FROM tests WHERE test_id=%s LIMIT 1',$_GET['ID']);
-	
-	if (!$row)
-		trigger_error('Process_Form: Invalid Test ID', E_USER_ERROR);
-	
+	//Get some data
+	$test_name = $row['name'];
 	$test_id = intval($row['test_id']);
 	$total_points = intval($row['total_points']);
+	$score = $_REQUEST['score']; //No intval() because intval('') is 0.
+	$user = sanitize_username($_REQUEST['user']);
 	
-	// Verify score
-	$score = intval($_POST['score']);
-	if(!val('i0+',$score) || $score > $total_points){
-		show_page('Score must be a nonnegative integer not more than the total points.','');
-		return;
-	}
-	
-	// Locate User
-	$ans = form_autocomplete_query($_POST['user']);
-	
-	if ($ans['type'] == 'none') {
-		// Validate name
-		$name_is_valid = true;
-		$name = htmlentities(ucwords(trim($_POST['user'])));
-		$name = preg_replace('/\s\s+/', ' ', $name);
-		if (strlen($name) > 25 || strlen($name) < 6)
-			$name_is_valid = false;
-		if (!preg_match('/^[A-Za-z-\s]+$/', $name))
-			$name_is_valid = false;
-		
-		if ($name_is_valid)
-			show_page('Could not find "' . $name
-				. '". <a href="Enter_Scores?Temporary&amp;ID=' . $_GET['ID']
-				. '&amp;User=' . $name . '&amp;Score=' . $_POST['score']
-				. '&amp;xsrf_token=' . $_SESSION['xsrf_token'] . '">Create Temporary User?</a>', '');
-		else
-			show_page('Could not find "' . $name
-				. '". It is not a valid name.', '');
-		return;
-	}
-	else if ($ans['type'] == 'multiple') {
-		if (!$ans['exact']) {
-			// Validate name
-			$name_is_valid = true;
-			$name = htmlentities(ucwords(trim($_POST['user'])));
-			$name = preg_replace('/\s\s+/', ' ', $name);
-			if (strlen($name) > 25 || strlen($name) < 6)
-				$name_is_valid = false;
-			if (!preg_match('/^[A-Za-z-\s]+$/', $name))
-				$name_is_valid = false;
+	if($user === false)//Validate username
+		alert('Name must have only letters, hyphens, apostrophes, and spaces, and be between 3 and 30 characters long',-1);
+	elseif(!val('i0+',$score) || ($score = intval($score)) > $total_points)//Validate Score
+		alert('Score must be a nonnegative integer not more than the total points.',-1);
+	elseif (count($userdata = autocomplete_users_php($user)) == 0) { // Check for username - No such users found.
+		if($_GET['Temporary']){
+			if (DB::queryFirstField('SELECT COUNT(*) FROM users WHERE name=%s',$user) > 0)
+				alert('User already exists!',-1);
 			
-			if ($name_is_valid)
-				show_page('"' . htmlentities($_POST['user']). '" matches multiple people.'
-					. '" <a href="Enter_Scores?Temporary&amp;ID=' . $_GET['ID']
-					. '&amp;User=' . $name . '&amp;Score=' . $_POST['score']
-					. '&amp;xsrf_token=' . $_SESSION['xsrf_token'] . '">Create Temporary User?</a>', '');
-			else
-				show_page('"' . htmlentities($_POST['user']). '" matches multiple people.', '');
+			DB::insert('users',array('name'=>$user,'permissions'=>'T','approved'=>1));
+			DB::insert('test_scores',array('test_id'=>$test_id,'user_id'=>DB::insertId(),'score'=>$score));
 		}
 		else
-			show_page('"' . htmlentities($_POST['user']). '" matches multiple people.', '');
-		return;
+			alert('Could not find "' . $user
+				. '". <a href="Enter_Scores?Temporary&amp;ID=' . $test_id
+				. '&amp;user=' . $user . '&amp;score=' . $score
+				. '&amp;xsrf_token=' . $_SESSION['xsrf_token'] . '">Create Temporary User</a>?', -1);
 	}
-	
-	$row = $ans['row'];
-	$user_id = (int)$row['id'];
-	$name = htmlentities($row['name']);
-	
-	// Check for previously-entered scores
-	$query = 'SELECT score FROM test_scores WHERE test_id="' . $test_id
-		. '" AND user_id="' . $user_id . '" LIMIT 1';
-	$result = DB::queryRaw($query);
-	$row = mysqli_fetch_assoc($result);
-	
-	if ($row) {
-		if ($row['score'] == $_POST['score'])
-			show_page('This person\'s score has already been entered as '
-				. htmlentities($row['score']), '');
-		else
-			show_page('This person\'s score has already been entered as '
-				. htmlentities($row['score'])
-				. '. <a href="Enter_Scores?Override&amp;ID=' . $_GET['ID']
-				. '&amp;User=' . $user_id . '&amp;Score=' . $_POST['score']
-				. '&amp;xsrf_token=' . $_SESSION['xsrf_token'] . '">Change to ' . htmlentities($score) . '?</a>', '');
-		return;
+	elseif (count($userdata) > 1) {
+		alert('"'.$user.'" matches multiple people.'
+			. '" <a href="Enter_Scores?Temporary&amp;ID=' .  $test_id
+			. '&amp;user=' . $user . '&amp;score=' . $score
+			. '&amp;xsrf_token=' . $_SESSION['xsrf_token'] . '">Create Temporary User?</a>', -1);
 	}
-	
-	// INFORMATION VALIDATED
-	
-	$query = 'INSERT INTO test_scores (test_id, user_id, score) VALUES ("'
-		. mysqli_real_escape_string(DB::get(),$test_id) . '", "'
-		. mysqli_real_escape_string(DB::get(),$user_id) . '", "'
-		. mysqli_real_escape_string(DB::get(),$score) . '")';
-	DB::queryRaw($query);
-	show_page('', 'Entered a score of ' . htmlentities($score) . ' for ' . htmlentities($name));
-}
-
-
-
-
-
-
-/*
- * function do_override()
- *
- * Changes the specified score in the database
- */
-function do_override() {
-	if ($_GET['xsrf_token'] != $_SESSION['xsrf_token'])
-		trigger_error('Override: Invalid XSRF token', E_USER_ERROR);
-	
-	// Check that test exists
-	$query = 'SELECT test_id, total_points FROM tests WHERE test_id="'
-		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
-	$result = DB::queryRaw($query);
-	
-	if (mysqli_num_rows($result) != 1)
-		trigger_error('Override: Invalid Test ID', E_USER_ERROR);
-	
-	$row = mysqli_fetch_assoc($result);
-	$test_id = (int)$row['test_id'];
-	$total_points = (int)$row['total_points'];
-	
-	// Locate user
-	$user_id = mysqli_real_escape_string(DB::get(),$_GET['User']);
-	$query = 'SELECT id, name FROM users WHERE id="' . $user_id . '" LIMIT 2';
-	$result = DB::queryRaw($query);
-	
-	if (mysqli_num_rows($result) > 1)
-		trigger_error('Override: Multiple users match ID', E_USER_ERROR);
-	if (mysqli_num_rows($result) != 1)
-		trigger_error('Override: No usres match ID', E_USER_ERROR);
-	
-	$row = mysqli_fetch_assoc($result);
-	$user_id = (int)$row['id'];
-	$name = htmlentities($row['name']);
-	
-	// Verify score
-	$score = (int)$_GET['Score'];
-	if (!preg_match('/^(\d)*$/', $_GET['Score']))
-		trigger_error('Override: Score could not be parsed', E_USER_ERROR);
-	if ($score > $total_points)
-		trigger_error('Override: Score > total_points', E_USER_ERROR);
-	if ($score < 0)
-		trigger_error('Override: Negative score', E_USER_ERROR);
-	
-	// INFORMATION VALIDATED
-	
-	$query = 'UPDATE test_scores SET score="' . mysqli_real_escape_string(DB::get(),$score)
-		. '" WHERE user_id="' . mysqli_real_escape_string(DB::get(),$user_id)
-		. '" AND test_id="' . mysqli_real_escape_string(DB::get(),$test_id) . '" LIMIT 1';
-	DB::queryRaw($query);
-	header('Location: Enter_Scores?Overridden&ID=' . $_GET['ID'] . '&Score=' . $score . '&Name=' . $name);
-	die();
-}
-
-
-
-
-
-/*
- * function do_create_temporary_user()
- *
- * If the user does not have an account, create a temporary one for them.
- */
-function do_create_temporary_user() {
-	if ($_GET['xsrf_token'] != $_SESSION['xsrf_token'])
-		trigger_error('Temporary_User: Invalid XSRF token', E_USER_ERROR);
-	
-	// Validate name
-	$name = htmlentities(ucwords(trim($_GET['User'])));
-		// capitalizes first letters if they didn't do it; removes whitespace before and after.
-		// and makes sure to escape the name
-	$name = preg_replace('/\s\s+/', ' ', $name);	// removes multiple consecutive spaces, thanks to juglesh at http://bytes.com/topic/php/answers/160400-delete-multiple-spaces-special-characters
-	
-	if (strlen($name) > 25 || strlen($name) < 6)
-		trigger_error('Temporary_User: Invalid  name length', E_USER_ERROR);
-	
-	// Check for extraneous characters
-	if (!preg_match('/^[A-Za-z-\s]+$/', $name))
-		trigger_error('Temporary_User: Bad characters in name', E_USER_ERROR);
-	
-	// Check that test exists
-	$query = 'SELECT test_id, total_points FROM tests WHERE test_id="'
-		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
-	$result = DB::queryRaw($query);
-	
-	if (mysqli_num_rows($result) != 1)
-		trigger_error('Temporary_User: Invalid Test ID', E_USER_ERROR);
-	
-	$row = mysqli_fetch_assoc($result);
-	$test_id = (int)$row['test_id'];
-	$total_points = (int)$row['total_points'];
-	
-	// Check that user does not exist
-	$name = mysqli_real_escape_string(DB::get(),$_GET['User']);
-	$name = preg_replace("/\\040\\050.*\\051/", "", $name);	// remove stuff in parentheses
-	$name = str_replace(" ", "%", $name);
-	$query = 'SELECT id, name FROM users WHERE name="' . $name . '" AND (permissions="R" OR permissions="A" OR permissions="C" OR permissions="T") AND approved="1" LIMIT 2';
-	$result = DB::queryRaw($query);
-	
-	if (mysqli_num_rows($result) > 0)
-		trigger_error('Temporary_User: User already exists', E_USER_ERROR);
-	
-	// Verify score
-	$score = (int)$_GET['Score'];
-	if (!preg_match('/^(\d)*$/', $_GET['Score']))
-		trigger_error('Temporary_User: Score could not be parsed', E_USER_ERROR);
-	if ($score > $total_points)
-		trigger_error('Temporary_User: Score > total_points', E_USER_ERROR);
-	if ($score < 0)
-		trigger_error('Temporary_User: Negative score', E_USER_ERROR);
-	
-	// INFORMATION VALIDATED
-	
-	$name = mysqli_real_escape_string(DB::get(),htmlentities($_GET['User']));
-	$query = 'INSERT INTO users (name, permissions, approved) VALUES ("' . $name . '", "T", 1)';
-	DB::queryRaw($query);
-	
-	$query = 'SELECT id FROM users WHERE name="' . $name . '"';
-	$result = DB::queryRaw($query);
-	$row = mysqli_fetch_assoc($result);
-	$user_id = $row['id'];
-	
-	$query = 'INSERT INTO test_scores (test_id, user_id, score) VALUES ("'
-		. mysqli_real_escape_string(DB::get(),$test_id) . '", "'
-		. mysqli_real_escape_string(DB::get(),$user_id) . '", "'
-		. mysqli_real_escape_string(DB::get(),$score) . '")';
-	DB::queryRaw($query);
-	header('Location: Enter_Scores?Overridden&ID=' . $_GET['ID'] . '&Score=' . $score . '&Name=' . $name);
-	die();
+	else{ //We've got exactly one match for the user name.
+		$user_id = (int)$userdata[0]['id'];
+		
+		// Check for previously-entered scores
+		$prev_score = intval(DB::queryFirstField('SELECT score FROM test_scores WHERE test_id=%i AND user_id=%i LIMIT 1',$test_id,$user_id));
+		
+		if (!is_null($prev_score)) { //Already entered.
+			if ($prev_score == $score)
+				alert('"'.$user.'"\'s score has already been entered as ' . $prev_score, -1);
+			else if (isSet($_REQUEST['Override'])){
+				DB::update('test_scores',array('test_id'=>$test_id,'user_id'=>$user_id,'score'=>$score),'test_id=%i',$test_id);
+				alert('Changed score from ' . $prev_score . ' to ' . $score . ' for ' . $user,1);
+			}
+			else{
+				alert('"'.$user.'"\'s score has already been entered as ' . $prev_score
+					. '. <a href="Enter_Scores?Override&amp;ID=' . $test_id
+					. '&amp;user=' . $user_id . '&amp;score=' . $score
+					. '&amp;xsrf_token=' . $_SESSION['xsrf_token'] . '">Change to ' . $score . '?</a>', -1);
+			}
+		}
+		else{ //Non-duplicate, valid. Let's enter it.
+			DB::insert('test_scores',array('test_id'=>$test_id,'user_id'=>$user_id,'score'=>$score));
+			alert('Entered a score of ' . $score . ' for ' . $user,1);
+		}
+	}
+	show_page();
 }
 
 ?>

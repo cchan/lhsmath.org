@@ -22,16 +22,6 @@ else
 
 
 function show_page($add_err) {
-	if (user_access('A')) {
-		// For Admins: Add some javascript for the jQuery Date Selector
-		global $jquery_function;
-		$jquery_function = <<<HEREDOC
-      $(function() {
-        $("#add_date").datepicker({ });
-      });
-HEREDOC;
-	}
-	
 	global $popup_javascript;
 	$popup_javascript = true;
 		
@@ -141,6 +131,11 @@ HEREDOC;
           </tr>
         </table>
       </form>
+	  <script>
+		  $(function() {
+			$("#add_date").datepicker({ });
+		  });
+	  </script>
 HEREDOC;
 	}
 	

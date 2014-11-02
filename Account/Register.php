@@ -175,48 +175,28 @@ function process_form() {
 	
 	
 	// CHECK THAT THE NAME IS VALID
-	if (strlen($name) > 30)
-		$name = substr($name, 0, 30); 	// you should not be able to enter a name > 30 chars.
-										// If so, you're probably hacking around. Names are trimmed.
-	
-	if (strlen($name) < 3) {		// minimum length: 3 chars
-		show_form('Your name must be at least 3 characters long', 'name');
+	if (($name = sanitize_username($name)) === false){
+		show_form('Your name must have only letters, hyphens, apostrophes, and spaces, and be between 3 and 30 characters long', 'name');
 		return;
 	}
-	
 	if (strpos($name, ' ') == false) {
-		show_form('Please enter your first <span class="i">and</span> last name', 'name');
+		show_form('Please enter both your first <span class="i">and</span> last name', 'name');
 		return;
 	}
-	
-	// Check for extraneous characters
-	if (!preg_match('/^[A-Za-z \-\']+$/', $name)) {
-		show_form('You may only use letters, hyphens, apostrophes and spaces in your name', 'name');
-		return;
-	}
-	
 	
 	// CHECK THAT THE EMAIL ADDRESS IS VALID
-	if (!preg_match('/^([\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+\.)*[\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]'
-		.'+@((((([a-z0-9]{1}[a-z0-9\-]{0,62}[a-z0-9]{1})|[a-z])\.)+[a-z]{2,6})|(\d{1,3}\.){3}\d{1,3}(\:\d{1,5})?)$/i'
-		, $email)) {	// <- a really long regex to *properly* validate email addresses
-					// from http://fightingforalostcause.net/misc/2006/compare-email-regex.php
-					// credit to James Watts and Francisco Jose Martin Moreno
-		show_form('That\'s not a valid email address', 'email');
+	if (!val('e',$email)){
+		alert('That\'s not a valid email address',-1);
+		show_form();
 		return;
 	}
 	
-	
 	if ($cell != '') {	// you can leave your Cell Phone Number blank
-		// CHECK THAT THE CELL PHONE NUMBER IS VALID
-		// by removing all non-digits and seeing if there are 10 digits left over
-		$cell = preg_replace('#[^\d]#', '', $cell); // source: http://stackoverflow.com/questions/1173612/how-do-i-remove-all-non-numbers-in-a-string-using-a-regular-expression
-		if (strlen($cell) != 10) {
-			$cell = htmlentities($_POST['cell']);
-			show_form('That\'s not a valid cell phone number', 'cell');
+		if (($cell = format_phone_number($cell)) === false) { //Validate the format of the cell phone number
+			alert('That\'s not a valid cell phone number',-1);
+			show_form();
 			return;
 		}
-		$cell = format_phone_number($cell);
 	}
 	
 	
@@ -224,7 +204,7 @@ function process_form() {
 	$year4 = (int)date('Y');
 	
 	if ((int)date('n') > 6) // after June...
-		$year4 += 1;
+		$year4 ++;
 	
 	$year3 = $year4 + 1;
 	$year2 = $year4 + 2;
@@ -270,7 +250,7 @@ function process_form() {
 	}
 	
 	// CHECK THAT AN ACCOUNT WITH THE SAME NAME IN THE SAME GRADE DOES NOT EXIST
-		// - with the exception that if it's permissions = 'E', they probably mistyped their email and are redoing.
+		// - with the exception that if it's permissions = 'E', they probably mistyped their email and are redoing it.
 	$c = DB::queryFirstField('SELECT COUNT(*) FROM users WHERE LOWER(name)=%s AND yog=%i AND permissions!="E"',strtolower($name),$yog);
 	if ($c != 0) {
 		show_form('An account in your grade with that name already exists', 'name');

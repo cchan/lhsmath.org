@@ -55,7 +55,7 @@ class Scorer{
 	}
 }
 
-
+//------------------------COPIED FROM LMT SCORING--------------------------//
 function show_page($err, $msg) {
 	global $jquery_function;
 	$jquery_function = <<<HEREDOC

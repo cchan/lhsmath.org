@@ -195,6 +195,9 @@ function val($type /*,$x1,$x2,...*/){
 								// !!preg_match('/^([\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]+\.)*[\w\!\#$\%\&\'\*\+\-\/\=\?\^\`{\|\}\~]'
 								// .'+@((((([a-z0-9]{1}[a-z0-9\-]{0,62}[a-z0-9]{1})|[a-z])\.)+[a-z]{2,6})|(\d{1,3}\.){3}\d{1,3}(\:\d{1,5})?)$/i'
 								// , $email);
+								// ^^^ a really long regex to *properly* validate email addresses
+								// from http://fightingforalostcause.net/misc/2006/compare-email-regex.php
+								// credit to James Watts and Francisco Jose Martin Moreno
 		
 		case 'f':case 'file':		return is_string($x)	//Filename
 										&& preg_match('/^[A-Za-z0-9]([A-Za-z0-9\_\-\.]+[A-Za-z0-9])?$/i',$x)
@@ -401,7 +404,7 @@ if (isSet($_SESSION['user_id']) && time() >= $_SESSION['login_time'] + 28800) {
 
 
 /*
- * restrict_access($levels, $forbidden_page)
+ * restrict_access($levels)
  *  - $levels: what types of users can access this page:
  *    * 'A': Administrative (Advisor and Webmaster)
  *    * 'C': Captains
@@ -417,35 +420,25 @@ if (isSet($_SESSION['user_id']) && time() >= $_SESSION['login_time'] + 28800) {
 function restrict_access($levels) {
 	global $path_to_root;
 	
-	
-	if (!array_key_exists('permissions',$_SESSION))
-		$user_level = $_SESSION['permissions'] = 'X';
-	else
-		$user_level = $_SESSION['permissions'];
-	
-	if (stripos($levels, $user_level) === false) {
+	if (!user_access($levels)) {
 		// Access forbidden
+		
+		$user_level = $_SESSION['permissions'];
+		
 		if ($user_level == 'X') {
 			alert('You need to log in to do that.',-1);
-			// Maybe they have permissions, they're just not logged in
-			// Show login page
 			require_once $path_to_root . 'Account/Signin.php';
 			die();
 		}
 		else if ($user_level == 'E')
-			// Redirect to the 'Confirm your Email' page
 			location('Account/Verify_Email');
 		else if ($user_level == 'P')
-			// Redirect to the 'Get your Account Approved' page
 			location('Account/Approve');
 		else if ($user_level == '+')
-			// Redirect to the Super-Admin page
 			location('Admin/Super_Admin');
 		else if ($user_level == 'B')
-			// Redirect to the 'You Are Banned' page
 			location('Account/Banned');
-		else
-			// Go home - e.g. if you're logged in and it's restrict_access('X') on Signin, it'll just bring you back home.
+		else // Go home - e.g. if you're logged in and it's restrict_access('X') on Signin, you shouldn't be signing in again. It'll just bring you back home.
 			location('Home');
 	}
 }
@@ -602,9 +595,16 @@ function generate_code($length) {
  * unchanged.
  */
 function format_phone_number($num) {
-	if (strlen($num) != 10)
-		return $num;
-	return '(' . substr($num, 0, 3) . ') ' . substr($num, 3, 3) . '-' . substr($num, 6, 4);
+	$num = preg_replace('@[^\d]@','',$num);
+	
+	//if(strlen($num) == 7) $num = '781' . $num; //Probably not a good idea to assume area codes.
+	if(strlen($num) < 10)
+		return false;
+	
+	$formatted = '(' . substr($num, 0, 3) . ') - ' . substr($num, 3, 3) . '-' . substr($num, 6, 4);
+	if(strlen($num) > 10) //Extensions, such as with teachers' phone numbers.
+		$formatted .= 'x' . substr($num, 10);
+	return $formatted;
 }
 
 
@@ -750,9 +750,19 @@ function getGradeFromYOG($yog){
 	else return 'Middle School';
 }
 
+
+function sanitize_username($name){ //'Name must have only letters, hyphens, apostrophes, and spaces, and be between 3 and 30 characters long'
+	$name = ucwords(trim($name));//Capitalize it properly. Remove extraneous whitespace.
+	$name = preg_replace('/\s+/', ' ', $name);//Replace all whitespace of any length with a single space (greedy regex)
+	if (strlen($name) > 30 || strlen($name) < 3)
+		return false;
+	if (!preg_match('/^[A-Za-z\s\-\']+$/', $name))//Alphabetic and space and apostrophe and dash
+		return false;
+	return $name;
+}
 //--todo--: nicknames? e.g. Eula vs Lingrui
 //--todo--: reduce all these "approved" and "email_verification" fields to the "permissions" field?
-function autocomplete_users(){
+function autocomplete_users_data(){
 	restrict_access('A');//Because that's a lot of names you're dumping to the browser.
 	$search = call_user_func_array('user_data',func_get_args());
 	$result = array();
@@ -760,7 +770,13 @@ function autocomplete_users(){
 		$result[] = array('label'=>$user['name'].' ('.$user['id'].')', 'category'=>$user['category']);
 	return $result;
 }
-
+//Autocompletes it on the server side
+function autocomplete_users_php($string){
+	if(preg_match('@\(([0-9]+)\)@',$string,$matches))
+		return user_data('id=%i',intval($matches[1]));//It was autocompleted with an ID value! No ambiguity.
+	else
+		return user_data('name LIKE %ss',$string);
+}
 //Returns a (rather large) array of all users, with all associative-array data things. Where-enabled.
 function user_data($where=NULL){
 	if(isSet($where)){//Allows replacement-parameters too.
@@ -806,8 +822,7 @@ function user_data($where=NULL){
 	});
 	return array_values($results);//Reassigns keys, since uksort will maintain disordered numerical keys.
 }
-
-function autocomplete_script($jqselector,$data){
+function autocomplete_js($jqselector,$data){
 	global $path_to_root;
 	
 	$json = json_encode($data);
@@ -1179,12 +1194,24 @@ HEREDOC;
 	else
 		$content = $alerts_html . $content;
 	
-	echo '<?xml version="1.0" encoding="UTF-8"?>';//Uncooperative because it has the question mark tags.
-?>
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+	header('Content-Type: text/html; charset=utf-8');
+	
+	//We're on to HTML5 now!
+	/*echo '<?xml version="1.0" encoding="UTF-8"?>';//Uncooperative because it has the question mark tags.*/
+	//xmlns="http://www.w3.org/1999/xhtml"
+?><!doctype html>
+<html lang="en">
   <head>
+	<?php //Driving home the message to a ridiculous degree. ?>
+	<meta charset="utf-8">
+	<meta name="charset" content="utf-8" />
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	
     <title><?=$page_title?> | <?=$header_title?></title>
+	
+	<meta name="description" content="The Lexington (MA) High School Math Team website.">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="copyright" content="Lexington High School Math Team">
 	
 	<link rel="icon" href="<?=$path_to_root?>favicon.ico" />
     <link rel="stylesheet" href="<?=$path_to_root?>res/default.css" type="text/css" media="all" />
@@ -1200,13 +1227,21 @@ HEREDOC;
 	<?php //Custom stuff ?>
 	<script type="text/javascript"><?=$jquery_function?></script>
 	
-	<script type="text/javascript">
+	<script>//<![CDATA[
+	  (function(l,h,s,m,a,t,H){l['GoogleAnalyticsObject']=a;l[a]=l[a]||function(){
+	  (l[a].q=l[a].q||[]).push(arguments)},l[a].l=1*new Date();t=h.createElement(s),
+	  H=h.getElementsByTagName(s)[0];t.async=1;t.src=m;H.parentNode.insertBefore(t,H)
+	  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+	  ga('create', 'UA-56328776-1', 'auto');ga('send', 'pageview');
+	//]]></script>
+	
+	<script>//<![CDATA[
 		$(function(){
 			//Focuses on the element with class "focus"
 			//If there's multiple ones it'll probably focus on the first one.
 			$('.focus').focus();
 			
-			//Makes rel='external' links open in a new window.
+			//Makes rel='external' (or rel='(anything with "external" in it)') anchor links open in a new window.
 			$('a[rel*="external"]').on({
 				click: function() {
 					window.open($(this).attr('href'));
@@ -1214,7 +1249,7 @@ HEREDOC;
 				}
 			});
 		});
-	</script>
+	//]]></script>
 	
     <style type="text/css">
       .ui-datepicker, .ui-autocomplete {

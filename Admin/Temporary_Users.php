@@ -94,41 +94,27 @@ HEREDOC;
  * Shows a page that allows the admin to choose a user to combine with.
  */
 function show_combine_page($err) {
-	$id = $_GET['ID'];
-	$query = 'SELECT name FROM users WHERE id="' . mysqli_real_escape_string(DB::get(),$id) . '"';
-	$result = DB::queryRaw($query);
-	
-	if (mysqli_num_rows($result) != 1)
+	$row = DB::queryFirstRow('SELECT id, name FROM users WHERE id=%i',$_GET['ID']);
+	if (is_null($row))
 		trigger_error('Show_Combine: Invalid User ID', E_USER_ERROR);
 	
-	$row = mysqli_fetch_assoc($result);
+	$id = $row['id'];
 	$name = $row['name'];
 	
 	// Add some javascript for the jQuery Autocomplete
-	global $jquery_function;
-	$jquery_function = <<<HEREDOC
-	$(function() {
-		$( "#userAutocomplete" ).autocomplete({
-			source: "User_Autocomplete",
-			minLength: 2
-		});
-	});
-
-HEREDOC;
+	autocomplete_js('#userAutocomplete',autocomplete_users_data());
 	
 	// If an error message is given, put it inside this div
 	if ($err != '')
-		$err = "\n        <div class=\"error\">$err</div><br />\n";
+		alert($err,-1);
 	
 	page_header('Temporary Users');
-	
-	
 	
 	echo <<<HEREDOC
       <h1>Temporary Users</h1>
       
       $err
-      <span class="b">$name's Temporary Test Scores</span><br /><br />
+      <span class="b">Temporary User $name's Test Scores</span><br /><br />
 
 HEREDOC;
 	

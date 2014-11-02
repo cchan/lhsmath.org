@@ -208,11 +208,11 @@ function do_verify() {
 	
 	// All users have a valid name
 	$new_output = '';
-	$query = 'SELECT name FROM users WHERE name NOT REGEXP "^[A-Za-z ]{6,25}$"';
-	$result = DB::queryRaw($query);
+	$result = DB::queryRaw('SELECT name FROM users');
 	$row = mysqli_fetch_assoc($result);
 	while ($row) {
-		$new_output .= '      <span style="color: #a00;">User &quot;' . htmlentities($row['name']) . '&quot; does not have a valid name</span><br />' . "\n";
+		if(sanitize_username($row['name']) === false)
+			$new_output .= '      <span style="color: #a00;">User &quot;' . htmlentities($row['name']) . '&quot; does not have a valid name</span><br />' . "\n";
 		$row = mysqli_fetch_assoc($result);
 	}
 	
@@ -222,8 +222,7 @@ function do_verify() {
 	
 	// Check for duplicate emails
 	$new_output = '';
-	$query = 'SELECT email FROM users GROUP BY email HAVING COUNT(*) > 1';
-	$result = DB::queryRaw($query);
+	$result = DB::queryRaw('SELECT email FROM users GROUP BY email HAVING COUNT(*) > 1');
 	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		if ($row['email'] != '')
@@ -235,10 +234,9 @@ function do_verify() {
 		$new_output .= '      <span style="color: #0a0;">No duplicate email addresses</span><br />' . "\n";
 	$output .= $new_output . '      <br />' . "\n";
 	
-	// All users have an email address
+	// All non-temporary users have an email address
 	$new_output = '';
-	$query = 'SELECT name FROM users WHERE email="" AND permissions!="T"';
-	$result = DB::queryRaw($query);
+	$result = DB::queryRaw('SELECT name FROM users WHERE email="" AND permissions!="T"');
 	$row = mysqli_fetch_assoc($result);
 	while ($row) {
 		$new_output .= '      <span style="color: #a00;">User &quot;' . htmlentities($row['name']) . '&quot; does not have an email address</span><br />' . "\n";
@@ -249,7 +247,7 @@ function do_verify() {
 		$new_output .= '      <span style="color: #0a0;">All users have email addresses</span><br />' . "\n";
 	$output .= $new_output . '      <br />' . "\n";
 	
-	// All users have a password
+	// All non-temporary users have a password
 	$new_output = '';
 	$query = 'SELECT name FROM users WHERE passhash NOT REGEXP "^[0-9a-fA-F]{128}$" AND permissions!="T"';
 	$result = DB::queryRaw($query);
