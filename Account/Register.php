@@ -18,7 +18,7 @@ if (isSet($_SESSION['PREAPPROVED_expiry']) && $_SESSION['PREAPPROVED_expiry'] < 
 if (isSet($_POST['do_register']))
 	process_form();
 else
-	show_form('', 'name');
+	show_form();
 
 
 
@@ -34,11 +34,7 @@ else
  * problematic field, for convenience.
  */
 function show_form($err, $selected_field) {
-	// A little javascript to put the cursor in the first field when the form loads;
-	// page_header() looks at the $body_onload variable and inserts it into the code.
-	global $body_onload;
-	$body_onload = 'document.forms[\'register\'].' . $selected_field
-		. '.focus();document.forms[\'register\'].setAttribute(\'autocomplete\',\'off\')';
+	//--todo-- better way to do focus().
 	
 	// If an error message is given, put it inside this div
 	if ($err != '')
@@ -84,7 +80,7 @@ function show_form($err, $selected_field) {
       Create an account to access scores, handouts and other information.<br />
       <span class="b">These accounts are intended for members of the LHS Math Club only.</span><br /><br />
       $err
-      <form id="register" method="post" action="{$_SERVER['REQUEST_URI']}">
+      <form id="register" method="post" action="{$_SERVER['REQUEST_URI']}" autocomplete="off">
         <table>
           <tr>
             <td>Name:</td>
@@ -176,11 +172,13 @@ function process_form() {
 	
 	// CHECK THAT THE NAME IS VALID
 	if (($name = sanitize_username($name)) === false){
-		show_form('Your name must have only letters, hyphens, apostrophes, and spaces, and be between 3 and 30 characters long', 'name');
+		alert('Your name must have only letters, hyphens, apostrophes, and spaces, and be between 3 and 30 characters long', -1);
+		show_form();
 		return;
 	}
 	if (strpos($name, ' ') == false) {
-		show_form('Please enter both your first <span class="i">and</span> last name', 'name');
+		alert('Please enter both your first <span class="i">and</span> last name', -1);
+		show_form();
 		return;
 	}
 	
@@ -191,30 +189,19 @@ function process_form() {
 		return;
 	}
 	
-	if ($cell != '') {	// you can leave your Cell Phone Number blank
-		if (($cell = format_phone_number($cell)) === false) { //Validate the format of the cell phone number
-			alert('That\'s not a valid cell phone number',-1);
-			show_form();
-			return;
-		}
-	}
-	
-	
-	// CHECK THAT THE YOG IS VALID
-	$year4 = (int)date('Y');
-	
-	if ((int)date('n') > 6) // after June...
-		$year4 ++;
-	
-	$year3 = $year4 + 1;
-	$year2 = $year4 + 2;
-	$year1 = $year4 + 3;
-	
-	if ($yog != $year1 && $yog != $year2 && $yog != $year3 && $yog != $year4) {
-		show_form('That is not a real YOG', 'yog');
+	// CHECK AND FORMAT CELL PHONE NUMBER
+	if ($cell != '' && ($cell = format_phone_number($cell)) === false) { //Validate the format of the cell phone number (if it's not left blank)
+		alert('That\'s not a valid cell phone number',-1);
+		show_form();
 		return;
 	}
 	
+	// CHECK THAT THE YOG IS VALID
+	$grade = getGradeFromYOG($yog);
+	if ($grade < 9 || $grade > 12) {
+		show_form('That is not a valid YOG (you have to be in high school)', 'yog');
+		return;
+	}
 	
 	// CHECK THAT THE PASSWORDS MATCH, MEET MINIMUM LENGTH
 	if ($pass != $_POST['pass2']) {
@@ -226,7 +213,6 @@ function process_form() {
 		return;
 	}
 	
-	
 	// CHECK THAT THEY ENTERED THE RECAPTCHA CORRECTLY
 	global $RECAPTCHA_PRIVATE_KEY;
 	require_once '../lib/recaptchalib.php';
@@ -234,7 +220,6 @@ function process_form() {
 													$_SERVER['REMOTE_ADDR'],
 													$_POST['recaptcha_challenge_field'],
 													$_POST['recaptcha_response_field']);
-	
 	if (!$recaptcha_response->is_valid) {
 		show_form('You entered the reCaptcha incorrectly', 'pass1');
 		return;
@@ -243,16 +228,14 @@ function process_form() {
 	// CHECK THAT AN ACCOUNT WITH THAT EMAIL DOES NOT ALREADY EXIST
 	// this is done *after* checking the reCaptcha to prevent bots from harvesting our email
 	// addresses via a brute-force attack.
-	$c = DB::queryFirstField('SELECT COUNT(*) FROM users WHERE LOWER(email)=%s',strtolower($email));
-	if ($c != 0) {
+	if (DBExt::queryCount('users','LOWER(email)=LOWER(%s)',$email) != 0) {
 		show_form('An account with that email address already exists', 'email');
 		return;
 	}
 	
 	// CHECK THAT AN ACCOUNT WITH THE SAME NAME IN THE SAME GRADE DOES NOT EXIST
 		// - with the exception that if it's permissions = 'E', they probably mistyped their email and are redoing it.
-	$c = DB::queryFirstField('SELECT COUNT(*) FROM users WHERE LOWER(name)=%s AND yog=%i AND permissions!="E"',strtolower($name),$yog);
-	if ($c != 0) {
+	if (DBExt::queryCount('users','LOWER(name)=%s AND yog=%i AND permissions!="E"',strtolower($name),$yog) != 0) {
 		show_form('An account in your grade with that name already exists', 'name');
 		return;
 	}
@@ -278,25 +261,19 @@ function process_form() {
 	else
 		$cell = preg_replace('#[^\d]#', '', $_POST['cell']);  // remove non-numbers from cell phone # again
 	
-	$query = 'INSERT INTO users (name, email, passhash, cell, yog, mailings, approved, email_verification, registration_ip) VALUES ("'
-		. mysqli_real_escape_string(DB::get(),$name) . '", "'
-		. mysqli_real_escape_string(DB::get(),$email) . '", "'
-		. mysqli_real_escape_string(DB::get(),$passhash) . '", "'
-		. mysqli_real_escape_string(DB::get(),$cell) . '", "'
-		. mysqli_real_escape_string(DB::get(),$yog) . '", "'
-		. mysqli_real_escape_string(DB::get(),$mailings) . '", "'
-		. mysqli_real_escape_string(DB::get(),$approved) . '", "'
-		. mysqli_real_escape_string(DB::get(),$verification_code) . '", "'
-		. mysqli_real_escape_string(DB::get(),htmlentities(strtolower($_SERVER['REMOTE_ADDR']))) . '")';
-	DB::queryRaw($query);
+	DB::insert('users',array(
+		'name'=>$name,
+		'email'=>$email,
+		'passhash'=>$passhash,
+		'cell'=>$cell,
+		'yog'=>$yog,
+		'mailings'=>$mailings,
+		'approved'=>$approved,
+		'email_verification'=>$verification_code,
+		'registration_ip'=>htmlentities(strtolower($_SERVER['REMOTE_ADDR']))
+	));
 	
-	// Get user id (which is automatically generated by MySQL)
-	$query = 'SELECT id FROM users WHERE email="' . mysqli_real_escape_string(DB::get(),$email) . '"';
-	$result = DB::queryRaw($query);
-	$row = mysqli_fetch_assoc($result);
-	$id = $row['id'];
-	
-	set_login_data($id);	// LOG THEM IN
+	set_login_data(DB::insertId());	// LOG THEM IN
 	
 	// For pre-approved members:
 	if ($approved == '1') {

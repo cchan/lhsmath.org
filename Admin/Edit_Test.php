@@ -216,14 +216,6 @@ function show_edit_form($err) {
 		$action_name = 'Archive';
 	}
 	
-	// Add some javascript for the jQuery Date Selector
-	global $jquery_function;
-	$jquery_function = <<<HEREDOC
-      $(function() {
-        $("#date").datepicker();
-      });
-HEREDOC;
-
 	$redirect_param = '';
 	if ($_GET['Return'] == 'ListAll')
 		$redirect_param = '?ShowAll';
@@ -274,6 +266,11 @@ HEREDOC;
         </tr>
       </table>
       </form>
+	  <script>
+		  $(function() {
+			$("#date").datepicker({ });
+		  });
+	  </script>
 HEREDOC;
 	admin_page_footer('');
 }

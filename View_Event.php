@@ -109,13 +109,6 @@ function show_full_edit_page($err) {
 		$date = htmlentities($_POST['formatted_date']);
 		$desc = htmlentities($_POST['description']);
 	}
-
-	global $jquery_function;
-	$jquery_function = <<<HEREDOC
-      $(function() {
-        $("#edit_date").datepicker({ });
-      });
-HEREDOC;
 	
 	if ($err != '')
 		$err = "\n        <div class=\"error\">$err</div><br />\n";
@@ -148,6 +141,11 @@ HEREDOC;
           </tr>
         </table>
       </form>
+	  <script>
+		  $(function() {
+			$("#edit_date").datepicker({ });
+		  });
+	  </script>
 HEREDOC;
 	default_page_footer('');
 }

@@ -23,9 +23,6 @@ else
 
 
 function show_page($err, $msg) {
-	global $body_onload;
-	$body_onload = 'document.forms[\'lmtIndivScore\'].autocomplete.focus()';
-	
 	global $jquery_function;
 	$jquery_function = <<<HEREDOC
       //<![CDATA[
@@ -65,7 +62,7 @@ HEREDOC;
       $err$redirAlert$msg
       <form id="lmtIndivScore" method="post" action="{$_SERVER['REQUEST_URI']}"><div class="text-centered">
         Name:
-        <input type="text" id="autocomplete" name="name" size="35" />
+        <input type="text" id="autocomplete" name="name" size="35" class="focus" />
         &nbsp;&nbsp;&nbsp;&nbsp;
         Score:
         <input type="text" name="score" size="5" />
