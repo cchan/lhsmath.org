@@ -1,0 +1,7 @@
+{
+    "require": {
+        "swiftmailer/swiftmailer": "5.3.0",
+		"sergeytsalkov/meekrodb": "2.3",
+		"components/jquery": "2.1.1",
+    }
+}
