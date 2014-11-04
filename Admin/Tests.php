@@ -54,6 +54,7 @@ function show_page() {
 	// Current List
 	$test_list = <<<HEREDOC
       <form method="get" action="View_Scores"><div>
+	  <input type="submit" name="View" value="Compare"/>
       <table class="contrasting">
         <tr>
           <th></th>
@@ -149,7 +150,6 @@ $archived_list
       <br />
       $change_view_link
 HEREDOC;
-	admin_page_footer('Tests');
 }
 
 ?>

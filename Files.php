@@ -86,8 +86,6 @@ HEREDOC;
 		}
 		echo '      </table>' . "\n";
 	}
-	
-	default_page_footer('Files');
 }
 
 ?>

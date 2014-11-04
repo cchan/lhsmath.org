@@ -76,7 +76,6 @@ function show_request_page($err, $selected_field) {
         </table>
       </form>
 HEREDOC;
-	default_page_footer('');
 }
 
 
@@ -188,7 +187,6 @@ function show_email_sent_page() {
       A confirmation message has been sent to <span class="b">{$_SESSION['ACCOUNT_password_reset_email']}</span>.
       Please click on the link in the message to continue.
 HEREDOC;
-	go_home_footer();
 }
 
 
@@ -273,7 +271,6 @@ function show_new_password_page($err) {
         </table>
       </form>
 HEREDOC;
-	go_home_footer();
 }
 
 
@@ -339,7 +336,6 @@ function process_change_page() {
       
       Your password has been changed successfully.
 HEREDOC;
-	go_home_footer();
 }
 
 ?>

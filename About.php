@@ -16,9 +16,6 @@ show_page();
 
 
 function show_page() {
-	global $use_rel_external_script;
-	$use_rel_external_script = true;
-
 	$benjamin_tidor = 'Benjamin T.';
 	if (isSet($_SESSION['user_id']))
 		$benjamin_tidor = '<a href="http://tidor.net" rel="external">Benjamin Tidor</a>';
@@ -28,11 +25,10 @@ function show_page() {
       <h1>About</h1>
       
       <h3>LHS Math Club Website</h3>
-      Written in <a href="http://www.php.net/" rel="external">PHP</a><br />
-      by $benjamin_tidor<br />
-      with design assistance from <a href="http://teddomain.zzl.org/" rel="external">Ted Zhu</a><br />
-	  heavily revised and updated by <a href="clivechan.com">Clive Chan</a><br />
-	  and maintained by all LHSMATH webmasters.<br />
+      Written in <a href="http://www.php.net/" rel="external">PHP</a> by $benjamin_tidor<br />
+      With design assistance from <a href="http://teddomain.zzl.org/" rel="external">Ted Zhu</a><br />
+	  Heavily revised and updated by <a href="http://clivechan.com">Clive Chan</a><br />
+	  and well-maintained by all LHSMATH webmasters.<br />
       
       <br />
       All pages consist of <a href="http://validator.w3.org/check?uri=referer" rel="external">valid XHTML 1.0</a>
@@ -56,8 +52,6 @@ function show_page() {
       &nbsp;&nbsp;<a href="http://swiftmailer.org/" rel="external">Swift Mailer</a><br />
       &nbsp;&nbsp;and others...<br />
 HEREDOC;
-	
-	default_page_footer('About');
 }
 
 ?>

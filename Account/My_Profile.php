@@ -29,7 +29,7 @@ else if (isSet($_GET['Password']))
 else if (isSet($_GET['Mailings']))
 	do_toggle_mailings();
 else
-	show_info_page('');
+	show_info_page();
 
 
 
@@ -72,7 +72,6 @@ function show_info_page() {
 	// Send body of page
 	echo <<<HEREDOC
       <h1>My Profile</h1>
-      $msg
       <table class="spacious">
         <tr>
           <td>User ID:</td>
@@ -113,7 +112,6 @@ function show_info_page() {
       <br />
       <span class="i small">If you wish to change other information, please contact a Captain.</span>
 HEREDOC;
-	default_page_footer('My Profile');
 }
 
 
@@ -171,7 +169,6 @@ function show_change_email_page($err, $selected_field) {
         </table>
       </form>
 HEREDOC;
-	default_page_footer('');
 }
 
 
@@ -308,7 +305,6 @@ function show_change_cell_page($err, $selected_field) {
         </table>
       </form>
 HEREDOC;
-	default_page_footer('');
 }
 
 
@@ -411,7 +407,6 @@ function show_change_password_page($err) {
         </table>
       </form>
 HEREDOC;
-	default_page_footer('');
 }
 
 

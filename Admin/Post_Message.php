@@ -110,7 +110,6 @@ $(function(){
 });
 </script>
 <?php
-	admin_page_footer('Post a Message');
 }
 
 
@@ -167,7 +166,6 @@ function preview_message() {
 </tr>
 </table>
 <?php
-	admin_page_footer('Post a Message');
 }
 
 

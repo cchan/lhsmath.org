@@ -293,3 +293,305 @@ Sun, 28 Sep 14 20:30:24 -0400 Error [256] on line 578 in /fs3a/lhsmath/public/li
 Sun, 28 Sep 14 20:31:27 -0400 Error [256] on line 578 in /fs3a/lhsmath/public/lib/functions.php: email: invalid params
 Sun, 28 Sep 14 20:35:03 -0400 Error [256] on line 578 in /fs3a/lhsmath/public/lib/functions.php: email: invalid params
 Mon, 29 Sep 14 00:24:40 -0400 Error [256] on line 578 in /fs3a/lhsmath/public/lib/functions.php: email: invalid params
+Tue, 04 Nov 14 10:27:28 -0500 Error [2] on line 311 in C:\Users\Clive\Desktop\github\lhsmath\Admin\Files.php: filesize(): stat failed for ../.content/uploads/db-backup-1415071956-04d2.sql
+Tue, 04 Nov 14 10:36:40 -0500 Error [2] on line 257 in C:\Users\Clive\Desktop\github\lhsmath\Admin\Files.php: filesize(): stat failed for ../.content/uploads/db-backup-1415071956-04d2.sql
+Tue, 04 Nov 14 10:38:53 -0500 Error [8] on line 31 in C:\Users\Clive\Desktop\github\lhsmath\Admin\Files.php: Undefined variable: path
+Tue, 04 Nov 14 10:40:44 -0500 Error [8] on line 31 in C:\Users\Clive\Desktop\github\lhsmath\Admin\Files.php: Undefined variable: path
+Tue, 04 Nov 14 10:41:16 -0500 Error [2] on line 261 in C:\Users\Clive\Desktop\github\lhsmath\Admin\Files.php: filesize(): stat failed for ../.content/uploads/db-backup-1415071956-04d2.sql
+Tue, 04 Nov 14 10:46:53 -0500 Error [2] on line 261 in C:\Users\Clive\Desktop\github\lhsmath\Admin\Files.php: filesize(): stat failed for ../.content/uploads/db-backup-1415071956-04d2.sql
+Tue, 04 Nov 14 10:47:25 -0500 Error [2] on line 262 in C:\Users\Clive\Desktop\github\lhsmath\Admin\Files.php: filesize(): stat failed for ../.content/uploads/db-backup-1415071956-04d2.sql
+Tue, 04 Nov 14 10:47:34 -0500 Error [2] on line 262 in C:\Users\Clive\Desktop\github\lhsmath\Admin\Files.php: filesize(): stat failed for ../.content/uploads/db-backup-1415071956-04d2.sql
+Tue, 04 Nov 14 10:50:22 -0500 Error [2] on line 262 in C:\Users\Clive\Desktop\github\lhsmath\Admin\Files.php: filesize(): stat failed for ../.content/uploads/db-backup-1415071956-04d2.sql
+Tue, 04 Nov 14 10:50:39 -0500 Error [2] on line 262 in C:\Users\Clive\Desktop\github\lhsmath\Admin\Files.php: filesize(): stat failed for ../.content/uploads/db-backup-1415071956-04d2.sql
+Tue, 04 Nov 14 10:53:53 -0500 Error [2] on line 262 in C:\Users\Clive\Desktop\github\lhsmath\Admin\Files.php: filesize(): stat failed for ../.content/uploads/db-backup-1415071956-04d2.sql
+Tue, 04 Nov 14 10:57:54 -0500 Error [2] on line 262 in C:\Users\Clive\Desktop\github\lhsmath\Admin\Files.php: filesize(): stat failed for ../.content/uploads/db-backup-1415071956-04d2.sql
+Tue, 04 Nov 14 10:59:09 -0500 Error [2] on line 262 in C:\Users\Clive\Desktop\github\lhsmath\Admin\Files.php: filesize(): stat failed for ../.content/uploads/db-backup-1415071956-04d2.sql
+Tue, 04 Nov 14 11:01:37 -0500 Error [2] on line 255 in C:\Users\Clive\Desktop\github\lhsmath\Admin\Files.php: filesize(): stat failed for ../.content/uploads/db-backup-1415071956-04d2.sql
+Tue, 04 Nov 14 11:04:26 -0500 Error [2] on line 138 in C:\Users\Clive\Desktop\github\lhsmath\Admin\Files.php: filesize(): stat failed for ../.content/uploads/MathTeamTryout2.pdf
+Tue, 04 Nov 14 11:04:59 -0500 Error [2] on line 255 in C:\Users\Clive\Desktop\github\lhsmath\Admin\Files.php: filesize(): stat failed for ../.content/uploads/db-backup-1415071956-04d2.sql
+Tue, 04 Nov 14 11:05:13 -0500 Error [2] on line 255 in C:\Users\Clive\Desktop\github\lhsmath\Admin\Files.php: filesize(): stat failed for ../.content/uploads/db-backup-1415071956-04d2.sql
+Tue, 04 Nov 14 11:05:16 -0500 Error [2] on line 255 in C:\Users\Clive\Desktop\github\lhsmath\Admin\Files.php: filesize(): stat failed for ../.content/uploads/db-backup-1415071956-04d2.sql
+Tue, 04 Nov 14 11:05:17 -0500 Error [2] on line 255 in C:\Users\Clive\Desktop\github\lhsmath\Admin\Files.php: filesize(): stat failed for ../.content/uploads/db-backup-1415071956-04d2.sql
+Tue, 04 Nov 14 11:05:18 -0500 Error [2] on line 255 in C:\Users\Clive\Desktop\github\lhsmath\Admin\Files.php: filesize(): stat failed for ../.content/uploads/db-backup-1415071956-04d2.sql
+Tue, 04 Nov 14 11:09:55 -0500 Error [2] on line 256 in C:\Users\Clive\Desktop\github\lhsmath\Admin\Files.php: filesize(): stat failed for ../.content/uploads/db-backup-1415071956-04d2.sql
+Tue, 04 Nov 14 11:10:05 -0500 Error [2] on line 256 in C:\Users\Clive\Desktop\github\lhsmath\Admin\Files.php: filesize(): stat failed for ../.content/uploads/db-backup-1415071956-04d2.sql
+Tue, 04 Nov 14 11:10:38 -0500 Error [2] on line 257 in C:\Users\Clive\Desktop\github\lhsmath\Admin\Files.php: filesize(): stat failed for ../.content/uploads/db-backup-1415071956-04d2.sql
+Tue, 04 Nov 14 11:11:32 -0500 Error [2] on line 257 in C:\Users\Clive\Desktop\github\lhsmath\Admin\Files.php: filesize(): stat failed for ../.content/uploads/db-backup-1415071956-04d2.sql
+Tue, 04 Nov 14 11:19:05 -0500 Error [2] on line 132 in C:\Users\Clive\Desktop\github\lhsmath\Admin\Files.php: mysqli_fetch_assoc() expects parameter 1 to be mysqli_result, array given
+Tue, 04 Nov 14 11:19:19 -0500 Error [8] on line 141 in C:\Users\Clive\Desktop\github\lhsmath\Admin\Files.php: Undefined variable: name
+Tue, 04 Nov 14 11:19:34 -0500 Error [2] on line 261 in C:\Users\Clive\Desktop\github\lhsmath\Admin\Files.php: filesize(): stat failed for ../.content/uploads/db-backup-1415071968-f347.sql
+Tue, 04 Nov 14 11:19:46 -0500 Error [2] on line 142 in C:\Users\Clive\Desktop\github\lhsmath\Admin\Files.php: filesize(): stat failed for MathTeamTryout2.pdf
+Tue, 04 Nov 14 11:20:17 -0500 Error [2] on line 261 in C:\Users\Clive\Desktop\github\lhsmath\Admin\Files.php: filesize(): stat failed for ../.content/uploads/db-backup-1415071968-f347.sql
+Tue, 04 Nov 14 11:37:55 -0500 Error [8] on line 105 in C:\Users\Clive\Desktop\github\lhsmath\Calendar.php: Undefined index: title
+Tue, 04 Nov 14 11:38:26 -0500 Error [8] on line 105 in C:\Users\Clive\Desktop\github\lhsmath\Calendar.php: Undefined index: title
+Tue, 04 Nov 14 11:39:04 -0500 Error [8] on line 123 in C:\Users\Clive\Desktop\github\lhsmath\Calendar.php: Undefined variable: title
+Tue, 04 Nov 14 12:15:26 -0500 Error [2] on line 691 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: Missing argument 1 for lmt_page_footer(), called in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php on line 717 and defined
+Tue, 04 Nov 14 12:25:39 -0500 Error [1024] on line 686 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 12:26:07 -0500 Error [1024] on line 686 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 12:27:48 -0500 Error [1024] on line 686 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 12:27:51 -0500 Error [1024] on line 686 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 12:28:25 -0500 Error [1024] on line 686 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 12:29:10 -0500 Error [1024] on line 686 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 12:29:46 -0500 Error [1024] on line 686 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 12:29:48 -0500 Error [1024] on line 686 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 12:30:46 -0500 Error [1024] on line 686 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_page_footer
+Tue, 04 Nov 14 12:30:51 -0500 Error [1024] on line 686 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_page_footer
+Tue, 04 Nov 14 12:30:53 -0500 Error [1024] on line 686 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_page_footer
+Tue, 04 Nov 14 12:30:54 -0500 Error [1024] on line 686 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_page_footer
+Tue, 04 Nov 14 12:30:56 -0500 Error [1024] on line 686 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_page_footer
+Tue, 04 Nov 14 12:31:06 -0500 Error [1024] on line 686 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_page_footer
+Tue, 04 Nov 14 12:31:13 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 12:31:58 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 12:34:35 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 12:34:38 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 12:34:40 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 12:34:41 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 12:34:43 -0500 Error [1024] on line 686 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_page_footer
+Tue, 04 Nov 14 12:34:45 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 12:34:47 -0500 Error [8] on line 13 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined variable: EXPORT_STR
+Tue, 04 Nov 14 12:34:48 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 12:34:50 -0500 Error [8] on line 13 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined variable: EXPORT_STR
+Tue, 04 Nov 14 12:35:20 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 12:35:24 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 12:35:25 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 12:35:26 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 12:36:29 -0500 Error [8] on line 17 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Upgrade_Year.php: Undefined index: upyear
+Tue, 04 Nov 14 12:37:10 -0500 Error [8] on line 65 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Upgrade_Year.php: Undefined index: yrfrom
+Tue, 04 Nov 14 12:37:53 -0500 Error [8] on line 65 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Upgrade_Year.php: Undefined index: yrfrom
+Tue, 04 Nov 14 12:39:52 -0500 Error [8] on line 17 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Upgrade_Year.php: Undefined index: upyear
+Tue, 04 Nov 14 12:39:52 -0500 Error [8] on line 65 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Upgrade_Year.php: Undefined index: yrfrom
+Tue, 04 Nov 14 12:39:52 -0500 Error [8] on line 66 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Upgrade_Year.php: Undefined index: yrto
+Tue, 04 Nov 14 12:39:52 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 12:40:53 -0500 Error [8] on line 261 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: Undefined index: LMT_ALERT_upyear
+Tue, 04 Nov 14 12:40:53 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 12:41:08 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 12:41:12 -0500 Error [8] on line 261 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: Undefined index: LMT_ALERT_status
+Tue, 04 Nov 14 12:41:12 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 12:41:20 -0500 Error [8] on line 17 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Upgrade_Year.php: Undefined index: upyear
+Tue, 04 Nov 14 12:41:20 -0500 Error [8] on line 65 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Upgrade_Year.php: Undefined index: yrfrom
+Tue, 04 Nov 14 12:41:20 -0500 Error [8] on line 66 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Upgrade_Year.php: Undefined index: yrto
+Tue, 04 Nov 14 12:41:20 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 12:41:39 -0500 Error [8] on line 261 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: Undefined index: LMT_ALERT_upyear
+Tue, 04 Nov 14 12:41:39 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 12:43:35 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: UPDATE teams SET score_guts=(( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set), 0) * 5)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=2), 0) * 5)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=3), 0) * 6)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=4), 0) * 6)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=5), 0) * 7)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=6), 0) * 7)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=7), 0) * 8)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=8), 0) * 8)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=9), 0) * 9)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=10), 0) * 11)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=11), 0) * 13)
+ + IFNULL(GREATEST( 0, FLOOR(15 - 5*LOG10(guts_ans_a - 3090))), 0) + IFNULL(GREATEST( 0, FLOOR(MIN(3090/guts_ans_b, guts_ans_b/283086))), 0) + IFNULL(guts_ans_c, 0))<br />ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ' guts_ans_b/283086))), 0) + IFNULL(guts_ans_c, 0))' at line 12<br />
+Tue, 04 Nov 14 12:46:02 -0500 Error [8] on line 17 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Upgrade_Year.php: Undefined index: upyear
+Tue, 04 Nov 14 12:46:02 -0500 Error [8] on line 65 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Upgrade_Year.php: Undefined index: yrfrom
+Tue, 04 Nov 14 12:46:02 -0500 Error [8] on line 66 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Upgrade_Year.php: Undefined index: yrto
+Tue, 04 Nov 14 12:46:30 -0500 Error [8] on line 17 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Upgrade_Year.php: Undefined index: upyear
+Tue, 04 Nov 14 12:46:30 -0500 Error [8] on line 65 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Upgrade_Year.php: Undefined index: yrfrom
+Tue, 04 Nov 14 12:46:30 -0500 Error [8] on line 66 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Upgrade_Year.php: Undefined index: yrto
+Tue, 04 Nov 14 12:46:46 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: UPDATE teams SET score_guts=(( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set), 0) * 5)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=2), 0) * 5)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=3), 0) * 6)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=4), 0) * 6)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=5), 0) * 7)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=6), 0) * 7)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=7), 0) * 8)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=8), 0) * 8)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=9), 0) * 9)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=10), 0) * 11)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=11), 0) * 13)
+ + IFNULL(GREATEST( 0, FLOOR(15 - 5*LOG10(guts_ans_a - 3090))), 0) + IFNULL(GREATEST( 0, FLOOR(MIN(3090/guts_ans_b, guts_ans_b/283086))), 0) + IFNULL(guts_ans_c, 0))<br />ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ' guts_ans_b/283086))), 0) + IFNULL(guts_ans_c, 0))' at line 12<br />
+Tue, 04 Nov 14 12:50:48 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: UPDATE teams SET score_guts=(( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set), 0) * 5)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=2), 0) * 5)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=3), 0) * 6)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=4), 0) * 6)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=5), 0) * 7)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=6), 0) * 7)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=7), 0) * 8)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=8), 0) * 8)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=9), 0) * 9)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=10), 0) * 11)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=11), 0) * 13)
+ + IFNULL(GREATEST( 0, FLOOR(15 - 5*LOG10(guts_ans_a - 3090))), 0) + IFNULL(GREATEST( 0, FLOOR(MIN(3090/guts_ans_b, guts_ans_b/283086))), 0) + IFNULL(guts_ans_c, 0))<br />ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ' guts_ans_b/283086))), 0) + IFNULL(guts_ans_c, 0))' at line 12<br />
+Tue, 04 Nov 14 12:52:42 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: UPDATE teams SET score_guts=(( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set), 0) * 5)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=2), 0) * 5)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=3), 0) * 6)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=4), 0) * 6)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=5), 0) * 7)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=6), 0) * 7)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=7), 0) * 8)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=8), 0) * 8)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=9), 0) * 9)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=10), 0) * 11)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=11), 0) * 13)
+ + IFNULL(GREATEST( 0, FLOOR(15 - 5*LOG10(guts_ans_a - 3090))), 0) + IFNULL(GREATEST( 0, FLOOR(MIN(3090/guts_ans_b, guts_ans_b/283086))), 0) + IFNULL(guts_ans_c, 0))<br />ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ' guts_ans_b/283086))), 0) + IFNULL(guts_ans_c, 0))' at line 12<br />
+Tue, 04 Nov 14 13:01:01 -0500 Error [8] on line 17 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Upgrade_Year.php: Undefined index: upyear
+Tue, 04 Nov 14 13:01:01 -0500 Error [8] on line 66 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Upgrade_Year.php: Undefined index: yrfrom
+Tue, 04 Nov 14 13:01:01 -0500 Error [8] on line 67 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Upgrade_Year.php: Undefined index: yrto
+Tue, 04 Nov 14 13:01:19 -0500 Error [8] on line 247 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-scoring.php: Undefined variable: main
+Tue, 04 Nov 14 13:01:19 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: UPDATE teams SET score_guts=( + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=1), 0) * 5)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=2), 0) * 5)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=3), 0) * 6)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=4), 0) * 6)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=5), 0) * 7)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=6), 0) * 7)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=7), 0) * 8)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=8), 0) * 8)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=9), 0) * 9)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=10), 0) * 11)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=11), 0) * 13)
+ + IFNULL(GREATEST( 0, FLOOR(15 - 5*LOG10(guts_ans_a - 3090))), 0) + IFNULL(GREATEST( 0, FLOOR(MIN(3090/guts_ans_b, guts_ans_b/283086))), 0) + IFNULL(guts_ans_c, 0))<br />ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ' guts_ans_b/283086))), 0) + IFNULL(guts_ans_c, 0))' at line 12<br />
+Tue, 04 Nov 14 13:02:22 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: UPDATE teams SET score_guts=(0 + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=1), 0) * 5)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=2), 0) * 5)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=3), 0) * 6)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=4), 0) * 6)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=5), 0) * 7)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=6), 0) * 7)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=7), 0) * 8)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=8), 0) * 8)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=9), 0) * 9)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=10), 0) * 11)
+ + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=11), 0) * 13)
+ + IFNULL(GREATEST( 0, FLOOR(15 - 5*LOG10(guts_ans_a - 3090))), 0) + IFNULL(GREATEST( 0, FLOOR(MIN(3090/guts_ans_b, guts_ans_b/283086))), 0) + IFNULL(guts_ans_c, 0))<br />ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ' guts_ans_b/283086))), 0) + IFNULL(guts_ans_c, 0))' at line 12<br />
+Tue, 04 Nov 14 13:53:05 -0500 Error [8] on line 242 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-scoring.php: Undefined variable: ans_b
+Tue, 04 Nov 14 13:53:05 -0500 Error [8] on line 242 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-scoring.php: Undefined variable: ans_b
+Tue, 04 Nov 14 13:53:05 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: UPDATE teams SET score_guts = (SELECT IFNULL(SUM(score * (
+				case problem_set
+					when 1 then 5
+					when 2 then 5
+					when 3 then 6
+					when 4 then 6
+					when 5 then 7
+					when 6 then 7
+					when 7 then 8
+					when 8 then 8
+					when 9 then 9
+					when 10 then 11
+					when 11 then 13
+					else 0
+				end
+			)),0) FROM guts WHERE team=teams.team_id)+ IFNULL(GREATEST( 0, FLOOR(15 - 5*LOG10(guts_ans_a - 3090))), 0)+ IFNULL(GREATEST( 0, FLOOR(15 * MIN(/guts_ans_b, guts_ans_b/))), 0)+ IFNULL(guts_ans_c, 0))<br />ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '/guts_ans_b, guts_ans_b/))), 0)+ IFNULL(guts_ans_c, 0))' at line 16<br />
+Tue, 04 Nov 14 13:53:54 -0500 Error [8] on line 17 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Upgrade_Year.php: Undefined index: upyear
+Tue, 04 Nov 14 13:53:54 -0500 Error [8] on line 66 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Upgrade_Year.php: Undefined index: yrfrom
+Tue, 04 Nov 14 13:53:54 -0500 Error [8] on line 67 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Upgrade_Year.php: Undefined index: yrto
+Tue, 04 Nov 14 13:54:04 -0500 Error [1024] on line 686 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_page_footer
+Tue, 04 Nov 14 13:54:05 -0500 Error [1024] on line 686 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_page_footer
+Tue, 04 Nov 14 13:56:01 -0500 Error [1024] on line 686 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_page_footer
+Tue, 04 Nov 14 13:56:06 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 13:56:11 -0500 Error [8] on line 17 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Upgrade_Year.php: Undefined index: upyear
+Tue, 04 Nov 14 13:56:11 -0500 Error [8] on line 66 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Upgrade_Year.php: Undefined index: yrfrom
+Tue, 04 Nov 14 13:56:11 -0500 Error [8] on line 67 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Upgrade_Year.php: Undefined index: yrto
+Tue, 04 Nov 14 13:56:51 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: UPDATE teams SET score_guts = (SELECT IFNULL(SUM(score * (
+				case problem_set
+					when 1 then 5
+					when 2 then 5
+					when 3 then 6
+					when 4 then 6
+					when 5 then 7
+					when 6 then 7
+					when 7 then 8
+					when 8 then 8
+					when 9 then 9
+					when 10 then 11
+					when 11 then 13
+					else 0
+				end
+			)),0) FROM guts WHERE team=teams.team_id)+ IFNULL(GREATEST( 0, FLOOR(15 - 5*LOG10(guts_ans_a - 3090))), 0)+ IFNULL(GREATEST( 0, FLOOR(15 * MIN(283086/guts_ans_b, guts_ans_b/283086))), 0)+ IFNULL(guts_ans_c, 0))<br />ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ' guts_ans_b/283086))), 0)+ IFNULL(guts_ans_c, 0))' at line 16<br />
+Tue, 04 Nov 14 13:57:42 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: UPDATE teams SET score_guts = (SELECT IFNULL(SUM(score * (
+				case problem_set
+					when 1 then 5
+					when 2 then 5
+					when 3 then 6
+					when 4 then 6
+					when 5 then 7
+					when 6 then 7
+					when 7 then 8
+					when 8 then 8
+					when 9 then 9
+					when 10 then 11
+					when 11 then 13
+					else 0
+				end
+			)),0) FROM guts WHERE team=teams.team_id)+ IFNULL(GREATEST( 0, FLOOR(15 - 5*LOG10(guts_ans_a - 3090))), 0)+ IFNULL(GREATEST( 0, FLOOR(15 * MIN(283086/guts_ans_b, guts_ans_b/283086))), 0)+ IFNULL(guts_ans_c, 0)<br />ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ' guts_ans_b/283086))), 0)+ IFNULL(guts_ans_c, 0)' at line 16<br />
+Tue, 04 Nov 14 13:58:37 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: UPDATE teams SET score_guts = ((SELECT IFNULL(SUM(guts.score * (
+				case guts.problem_set
+					when 1 then 5
+					when 2 then 5
+					when 3 then 6
+					when 4 then 6
+					when 5 then 7
+					when 6 then 7
+					when 7 then 8
+					when 8 then 8
+					when 9 then 9
+					when 10 then 11
+					when 11 then 13
+					else 0
+				end
+			)),0) FROM guts WHERE team=teams.team_id)+ IFNULL(GREATEST( 0, FLOOR(15 - 5*LOG10(guts_ans_a - 3090))), 0)+ IFNULL(GREATEST( 0, FLOOR(15 * MIN(283086/guts_ans_b, guts_ans_b/283086))), 0)+ IFNULL(guts_ans_c, 0))<br />ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ' guts_ans_b/283086))), 0)+ IFNULL(guts_ans_c, 0))' at line 16<br />
+Tue, 04 Nov 14 14:39:29 -0500 Error [8] on line 17 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Upgrade_Year.php: Undefined index: upyear
+Tue, 04 Nov 14 14:39:29 -0500 Error [8] on line 66 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Upgrade_Year.php: Undefined index: yrfrom
+Tue, 04 Nov 14 14:39:29 -0500 Error [8] on line 67 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Upgrade_Year.php: Undefined index: yrto
+Tue, 04 Nov 14 14:47:52 -0500 Error [8] on line 13 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined variable: EXPORT_STR
+Tue, 04 Nov 14 14:47:52 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: UPDATE teams SET score_guts = ((SELECT IFNULL(SUM(guts.score * (
+				case guts.problem_set
+					when 1 then 5
+					when 2 then 5
+					when 3 then 6
+					when 4 then 6
+					when 5 then 7
+					when 6 then 7
+					when 7 then 8
+					when 8 then 8
+					when 9 then 9
+					when 10 then 11
+					when 11 then 13
+					else 0
+				end
+			)),0) FROM guts WHERE team=teams.team_id)+ IFNULL(GREATEST( 0, FLOOR(15 - 5*LOG10(guts_ans_a - 3090))), 0)+ IFNULL(GREATEST( 0, FLOOR(15 * MIN(283086/guts_ans_b, guts_ans_b/283086))), 0)+ IFNULL(guts_ans_c, 0))<br />ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ' guts_ans_b/283086))), 0)+ IFNULL(guts_ans_c, 0))' at line 16<br />
+Tue, 04 Nov 14 14:55:14 -0500 Error [8] on line 13 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined variable: EXPORT_STR
+Tue, 04 Nov 14 14:55:14 -0500 Error [8] on line 88 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined index: team_id
+Tue, 04 Nov 14 14:55:14 -0500 Error [8] on line 88 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined index: team_id
+Tue, 04 Nov 14 14:55:14 -0500 Error [8] on line 88 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined index: team_id
+Tue, 04 Nov 14 14:55:14 -0500 Error [8] on line 88 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined index: team_id
+Tue, 04 Nov 14 14:55:14 -0500 Error [8] on line 88 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined index: team_id
+Tue, 04 Nov 14 14:55:14 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 14:56:58 -0500 Error [8] on line 13 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined variable: EXPORT_STR
+Tue, 04 Nov 14 14:56:58 -0500 Error [8] on line 89 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined index: team_id
+Tue, 04 Nov 14 14:56:58 -0500 Error [8] on line 89 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined index: team_id
+Tue, 04 Nov 14 14:56:58 -0500 Error [8] on line 89 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined index: team_id
+Tue, 04 Nov 14 14:56:58 -0500 Error [8] on line 89 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined index: team_id
+Tue, 04 Nov 14 14:56:58 -0500 Error [8] on line 89 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined index: team_id
+Tue, 04 Nov 14 14:56:58 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 14:57:01 -0500 Error [8] on line 13 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined variable: EXPORT_STR
+Tue, 04 Nov 14 14:57:01 -0500 Error [8] on line 89 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined index: team_id
+Tue, 04 Nov 14 14:57:01 -0500 Error [8] on line 89 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined index: team_id
+Tue, 04 Nov 14 14:57:01 -0500 Error [8] on line 89 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined index: team_id
+Tue, 04 Nov 14 14:57:01 -0500 Error [8] on line 89 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined index: team_id
+Tue, 04 Nov 14 14:57:01 -0500 Error [8] on line 89 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined index: team_id
+Tue, 04 Nov 14 14:57:01 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 14:57:24 -0500 Error [8] on line 13 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined variable: EXPORT_STR
+Tue, 04 Nov 14 14:57:24 -0500 Error [8] on line 89 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined index: team_id
+Tue, 04 Nov 14 14:57:24 -0500 Error [8] on line 89 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined index: team_id
+Tue, 04 Nov 14 14:57:24 -0500 Error [8] on line 89 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined index: team_id
+Tue, 04 Nov 14 14:57:24 -0500 Error [8] on line 89 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined index: team_id
+Tue, 04 Nov 14 14:57:24 -0500 Error [8] on line 89 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined index: team_id
+Tue, 04 Nov 14 14:57:24 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 14:57:37 -0500 Error [8] on line 14 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined variable: EXPORT_STR
+Tue, 04 Nov 14 14:57:37 -0500 Error [8] on line 90 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined index: team_id
+Tue, 04 Nov 14 14:57:37 -0500 Error [8] on line 90 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined index: team_id
+Tue, 04 Nov 14 14:57:37 -0500 Error [8] on line 90 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined index: team_id
+Tue, 04 Nov 14 14:57:37 -0500 Error [8] on line 90 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined index: team_id
+Tue, 04 Nov 14 14:57:37 -0500 Error [8] on line 90 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined index: team_id
+Tue, 04 Nov 14 14:57:37 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 14:57:51 -0500 Error [8] on line 90 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined index: team_id
+Tue, 04 Nov 14 14:57:51 -0500 Error [8] on line 90 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined index: team_id
+Tue, 04 Nov 14 14:57:51 -0500 Error [8] on line 90 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined index: team_id
+Tue, 04 Nov 14 14:57:51 -0500 Error [8] on line 90 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined index: team_id
+Tue, 04 Nov 14 14:57:51 -0500 Error [8] on line 90 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Export.php: Undefined index: team_id
+Tue, 04 Nov 14 14:57:51 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 16:02:22 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Tue, 04 Nov 14 17:00:29 -0500 Error [1024] on line 686 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_page_footer
+Tue, 04 Nov 14 17:24:44 -0500 Error [8] on line 144 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.template.php: Undefined index: alerts_

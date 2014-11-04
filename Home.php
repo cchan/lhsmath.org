@@ -46,8 +46,6 @@ HEREDOC;
 
       <div class="sidetab"><a href="Admin/Edit_Page?Home">(edit this page)</a></div>
 HEREDOC;
-	
-	default_page_footer('Home');
 }
 
 ?>

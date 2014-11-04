@@ -230,8 +230,6 @@ HEREDOC;
       </table>
 HEREDOC;
 	}
-
-	admin_page_footer('');
 }
 
 ?>

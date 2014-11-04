@@ -17,28 +17,29 @@ $upyear_secret_code = 'hellofromLMT';
 if(@$_POST['upyear']){
 	$good=true;
 	
-	if(@!$_POST['code']||$_POST['code']==$upyear_secret_code){$good=false;add_alert('upyear','Incorrect code');}
+	if(@!$_POST['code']||$_POST['code']!=$upyear_secret_code){$good=false;add_alert('Incorrect code',-1);}
 	
-	if(@!$_POST['yrfrom']){$good=false;add_alert('upyear','No year-from');}
-	if(@!$_POST['yrto']){$good=false;add_alert('upyear','No year-to');}
+	if(@!$_POST['yrfrom']){$good=false;alert('No year-from',-1);}
+	if(@!$_POST['yrto']){$good=false;alert('No year-to',-1);}
 	
 	if ($_POST['xsrf_token'] != $_SESSION['xsrf_token'])
 		trigger_error('XSRF code incorrect', E_USER_ERROR);
 	
 	$nowyr=intval(date('Y'));
 	$yrfrom=intval($_POST['yrfrom']);
-	if(!$yrfrom||abs($yrfrom-$nowyr)>5){$good=false;add_alert('upyear','Weird year-from');}
+	if(!$yrfrom||abs($yrfrom-$nowyr)>5){$good=false;alert('Weird year-from',-1);}
 	$yrto=intval($_POST['yrto']);
-	if(!$yrto||abs($yrto-$nowyr)>5){$good=false;add_alert('upyear','Weird year-to');}
-	if($yrfrom>=$yrto){$good=false;add_alert('upyear','Weird year-from/year-to');}
+	if(!$yrto||abs($yrto-$nowyr)>5){$good=false;alert('Weird year-to',-1);}
+	if($yrfrom>=$yrto){$good=false;add_alert('Weird year-from/year-to',-1);}
 	
-	if(map_value('year')!=$yrfrom){$good=false;add_alert('upyear','Error, the year-from doesn\'t match the year in Map (see Status page)');}
+	if(map_value('year')!=$yrfrom){$good=false;alert('The year-from doesn\'t match the year currently listed in Map (see Status page)',-1);}
 	
 	if($good){
+		global $show_debug_backtrace;$show_debug_backtrace=true;
 		insert_archive_page($yrfrom,$yrto);
 		archive_lmt_db($_POST['uname'],$_POST['passw'],$yrfrom,$yrto);
 		reset_map_data($yrfrom,$yrto);//should be pretty much last
-		add_alert('upyear',"Successfully updated year from $yrfrom to $yrto.");
+		alert("Successfully upgraded year from $yrfrom to $yrto.",1);
 	}
 }
 show_form();
@@ -48,22 +49,22 @@ show_form();
 function show_form(){
 	global $path_to_lmt_root;
 	lmt_page_header('Upgrade Year');
-	echo fetch_alert('upyear').<<<HEREDOC
+?>
 	<h1>Upgrade Year</h1>
 	<p>This page is for upgrading things across the LMT website to reflect the next year's information,
 	and archiving the last year's information. If you're not an admin, you <b>should not be here</b>.</p>
 	<br>
-	Before doing this, you MUST download a <a href='{$path_to_lmt_root}Backstage/Database/Backup.php' target='_blank'>backup</a> of the database. (opens in new window)<br>
+	<b style="color:red">Before doing this, you MUST download a <a href='<?=$path_to_lmt_root?>Backstage/Database/Backup.php' target='_blank'>backup</a> of the database. (opens in new window)</b><br>
 	<br>
 	<h3>Form</h3>
 	<form id='upyearform' autocomplete='off' method="POST" action="Upgrade_Year" onsubmit="return confirm('Are you sure?');" >
-		<input type='hidden' name='xsrf_token' value='{$_SESSION['xsrf_token']}'/>
+		<input type='hidden' name='xsrf_token' value='<?=$_SESSION['xsrf_token']?>'/>
 		<table>
 			<tr><td>Webmaster Secret Code (see PHP code):<td><input type="password" name="code" />
 			<tr><td>PMA Username:<td> <input type="text" name="uname" /><br>
 			<tr><td>PMA Password:<td> <input type="password" name="passw" /><br>
-			<tr><td>Year upgrading from:<td> <input type="text" name="yrfrom" value="{$_POST['yrfrom']}" length=4/><br>
-			<tr><td>Year upgrading to:<td> <input type="text" name="yrto" value="{$_POST['yrto']}" length=4 />
+			<tr><td>Year upgrading from:<td> <input type="text" name="yrfrom" value="<?=$_POST['yrfrom']?>" length=4/><br>
+			<tr><td>Year upgrading to:<td> <input type="text" name="yrto" value="<?=$_POST['yrto']?>" length=4 />
 		</table>
 		<input type="submit" name="upyear" value="Upgrade Year" />
 		<div style='color:#f00'>This is a very complicated operation, and CANNOT be undone. Please be careful that you only run this once, and that you enter the correct inputs.</div>
@@ -75,8 +76,7 @@ function show_form(){
 		<li>Put all problems, solutions, and the full zip file into the LMT Dropbox folder</li>
 		<li>Change any necessary general information in <a href="Status" target="_blank">Status</a></li>
 	</ul>
-HEREDOC;
-	lmt_backstage_footer('Upgrade Year');
+<?php
 	die();
 }
 

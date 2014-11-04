@@ -183,7 +183,6 @@ function confirm_delete() {
         &nbsp;&nbsp;<a href="Edit_Test?Edit&amp;ID={$_GET['ID']}&amp;Return={$_GET['Return']}">Cancel</a>
       </div></form>
 HEREDOC;
-	admin_page_footer('');
 }
 
 
@@ -272,7 +271,6 @@ function show_edit_form($err) {
 		  });
 	  </script>
 HEREDOC;
-	admin_page_footer('');
 }
 
 
@@ -401,7 +399,6 @@ HEREDOC;
       </table>
       </form>
 HEREDOC;
-	admin_page_footer('');
 }
 
 

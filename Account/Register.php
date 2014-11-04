@@ -132,7 +132,6 @@ function show_form($err, $selected_field) {
         </table>
       </form>
 HEREDOC;
-	default_page_footer('');
 }
 
 

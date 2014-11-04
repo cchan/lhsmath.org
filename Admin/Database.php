@@ -46,8 +46,6 @@ HEREDOC;
 	
 	if ($check_results != '')
 		echo "\n      \n      <br />" . $check_results;
-	
-	admin_page_footer('Database');
 }
 
 

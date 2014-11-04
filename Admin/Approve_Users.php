@@ -70,7 +70,6 @@ HEREDOC;
 			echo "\n      " . $_SESSION['approved_list'][$i] . '<br />';
 		echo "\n      </div>";
 	}
-	admin_page_footer('Approve Users');
 }
 
 

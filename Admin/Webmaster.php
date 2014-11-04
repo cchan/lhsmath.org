@@ -107,7 +107,10 @@ page_header('Webmaster Guide');
 		<a href="http://notepad-plus-plus.org/">Notepad++</a> work excellently. Avoid Vim or Emacs :).</li>
 	<li>Local test server. Probably the easiest and most flexible way is to download 
 		<a href="https://www.apachefriends.org/index.html">XAMPP</a>. Use <span class="monospace">lib/CONFIG.local.php</span> 
-		to override configuration values for local testing (don't upload this). Never test code on the real lhsmath.org server.</li>
+		to override configuration values for local testing (don't upload this). Never test code on the real lhsmath.org server. 
+		To set this up properly you'll also have to go to LHSMATH PHPMyAdmin and export the database, and import it into your 
+		XAMPP's PHPMyAdmin. Be careful of what you do - sending mail <i>still actually works</i>! (you can, of course, abuse your local 
+		data however you like, so you can remove everyone's emails.)</li>
 	<li>Editing the production copy via SFTP. Try <a href="http://winscp.net/eng/index.php">WinSCP</a> or 
 		<a href="https://filezilla-project.org/">FileZilla</a>. Don't upload the <span class="monospace">.git</span> directory.</li>
 	<li>A lot of secret and important stuff is on the Dropbox. Ask your predecessor if they haven't 
@@ -144,5 +147,4 @@ page_header('Webmaster Guide');
   <p><span class="b">Clive Chan</span> (<a href="mailto:cchan3141@gmail.com">cchan3141@gmail.com</a>): developer & webmaster 2013-2016</p>
   </div>
 <?php
-	go_home_footer();
 ?>

@@ -79,7 +79,6 @@ HEREDOC;
 	  <br />$admin_footer
 	  <a href="Calendar?Month={$row['month']}&amp;Year={$row['year']}" class="small">&lt; Back to Calendar</a>
 HEREDOC;
-	default_page_footer('');
 }
 
 
@@ -147,7 +146,6 @@ function show_full_edit_page($err) {
 		  });
 	  </script>
 HEREDOC;
-	default_page_footer('');
 }
 
 
@@ -211,7 +209,6 @@ function show_full_delete_page() {
         <a href="View_Event?ID=$id}">Cancel</a>
       </div></form>
 HEREDOC;
-	default_page_footer('');
 }
 
 

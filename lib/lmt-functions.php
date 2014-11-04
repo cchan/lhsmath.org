@@ -682,79 +682,66 @@ HEREDOC;
 }
 
 
-
-
-
-/*
- * lmt_page_footer($page_name)
- */
-function lmt_page_footer($page_name) {
-	if ($page_name == 'About')  {
-		$names[] = 'Math Club Home';
-		$pages[] = 'Home';
-		
-		global $BACKSTAGE_OPEN;
-		if (array_key_exists('permissions',$_SESSION) && (user_access('A') || 
-			(user_access('RL') && backstage_is_open()))) {
-			$names[] = 'Backstage';
-			$pages[] = 'LMT/Backstage/Home';
-		}
-		$names[] = '';
-		$pages[] = '';
-	}
-	
-	$result = DB::queryRaw('SELECT page_id, name FROM pages ORDER BY order_num');
-	
-	while ($row = $result->fetch_assoc()) {
-		if ($row['page_id'] == '-1') {
-			if (registration_is_open()) {
-				$names[] = 'Registration';
-				$pages[] = 'LMT/Registration/Home';
-				
-				$names[] = '';
-				$pages[] = '';
-			}
-		}
-		else if ($row['name'] == '') {
-			$names[] = '';
-			$pages[] = '';
-		}
-		else {
-			$names[] = $row['name'];
-			$pages[] = 'LMT/' . str_replace(' ', '_', $row['name']);
-		}
-	}
-	
-	if(($n=array_search($page_name,$names))!==false)$pages[$n]='';
-	
-	page_footer($names, $pages);
+function lmt_page_footer(){
+	trigger_error('used lmt_page_footer',E_USER_NOTICE);
+}
+function lmt_backstage_footer(){
+	trigger_error('used lmt_backstage_footer',E_USER_NOTICE);
 }
 
-
-
-
-
-/*
- * lmt_backstage_footer($page_name)
- */
-function lmt_backstage_footer($page_name) {
-	$names = array('LMT Home','Backstage Home','','Check-in','Score Entry','Guts Round','Results','','Data','Verification','Backup');
-	$pages = array('LMT/About','LMT/Backstage/Home','','LMT/Backstage/Checkin/Home','LMT/Backstage/Scoring/Home',
-		'LMT/Backstage/Guts/Home','LMT/Backstage/Results/Full','','LMT/Backstage/Data/Home',
-		'LMT/Backstage/Database/Verify','LMT/Backstage/Database/Backup');
-	
-	if (user_access('A')) {
-		array_splice($names,2,0,array('','Status','Website','Email','Export'));
-		array_splice($pages,2,0,array('','LMT/Backstage/Status','LMT/Backstage/Pages/List','LMT/Backstage/Email/Home','LMT/Backstage/Export'));
+$lmt_main_navbar = array(
+	'Math Club Home'=>'Home',
+	(backstage_is_open() ? 'ARL' : 'A')=>['Backstage'=>'LMT/Backstage/Home'],
+	'',
+);
+$result = DB::query('SELECT page_id, name FROM pages ORDER BY order_num');
+foreach ($result as $row) {
+	if ($row['page_id'] == '-1') {
+		if (registration_is_open()) {
+			$lmt_main_navbar['Registration'] = 'LMT/Registration/Home';
+			$lmt_main_navbar[] = '';
+		}
 	}
-	
-	if(($n=array_search($page_name,$names))!==false)$pages[$n]='';
-	
-	page_footer($names, $pages);
+	else if ($row['name'] == '') {
+		$lmt_main_navbar[] = '';
+	}
+	else {
+		$lmt_main_navbar[$row['name']] = 'LMT/' . str_replace(' ', '_', $row['name']);
+	}
 }
+$lmt_backstage_navbar = array(
+	'ARL'=>[
+		'LMT Home'=>'LMT/About',
+		'Backstage Home'=>'LMT/Backstage/Home',
+		'A'=>[
+			'',
+			'Status'=>'LMT/Backstage/Status',
+			'Website'=>'LMT/Backstage/Pages/List',
+			'Email'=>'LMT/Backstage/Email/Home',
+			'Export'=>'LMT/Backstage/Export',
+		],
+		'',
+		'Check-in'=>'LMT/Backstage/Checkin/Home',
+		'Score Entry'=>'LMT/Backstage/Scoring/Home',
+		'Guts Round'=>'LMT/Backstage/Guts/Home',
+		'Results'=>'LMT/Backstage/Results/Full',
+		'',
+		'Data'=>'LMT/Backstage/Data/Home',
+		'Verification'=>'LMT/Backstage/Database/Verify',
+		'Backup'=>'LMT/Backstage/Database/Backup',
+	],
+);
 
-
-
+if(strpos(get_relative_path(),'Backstage') === 4){ //position 4, because it's after 'LMT/'
+	if(backstage_is_open())
+		restrict_access('ARL');
+	else
+		restrict_access('A');
+	set_navbar($lmt_backstage_navbar);
+}
+else{
+	set_navbar($lmt_main_navbar);
+}
 
 
 /*

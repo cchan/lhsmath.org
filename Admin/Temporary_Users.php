@@ -80,8 +80,6 @@ HEREDOC;
 
       </table>
 HEREDOC;
-	
-	admin_page_footer('Temporary Users');
 }
 
 
@@ -154,8 +152,6 @@ HEREDOC;
         <a href="Temporary_Users">Cancel</a>
       </div></form>
 HEREDOC;
-	
-	admin_page_footer('Temporary Users');
 }
 
 
@@ -355,8 +351,6 @@ HEREDOC;
         <a href="Temporary_Users">Cancel</a>
       </div></form>
 HEREDOC;
-	
-	admin_page_footer('Temporary Users');
 }
 
 

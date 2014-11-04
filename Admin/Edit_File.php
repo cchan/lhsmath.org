@@ -88,7 +88,6 @@ function show_add_page($err) {
       </form>
     </div>
 HEREDOC;
-	admin_page_footer('');
 }
 
 
@@ -265,7 +264,6 @@ function show_edit_page($err) {
       </form>
     </div>
 HEREDOC;
-	admin_page_footer('');
 }
 
 

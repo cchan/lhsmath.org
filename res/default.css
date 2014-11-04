@@ -299,7 +299,7 @@ textarea {
 .cal td.day:hover{ background:#eceff5; }
 .cal td.day div.day-number	{ background:#999; padding:5px; color:#fff; font-weight:bold; float:right; margin:-5px -5px 0 0; width:20px; text-align:center; }
 
-.cal td.day.now{background-color:#99f}
+.cal td.day.now{background-color:#ccf}
 .cal td.day.past{background-color:#ccc}
 .cal td.day.future{background-color:#fff}
 

@@ -54,7 +54,6 @@ function show_public_page() {
         </li>
       </ul>
 HEREDOC;
-	default_page_footer('Contact');
 }
 
 
@@ -76,6 +75,7 @@ function show_page_for_members() {
           <span class="b">All Captains</span><br />
           <a href="mailto:$CAPTAIN_EMAIL" rel="external">$CAPTAIN_EMAIL</a><br />
           <br />
+		  <br />
         </li>
 
 HEREDOC;
@@ -94,14 +94,13 @@ HEREDOC;
 		if ($cell != 'None')
 			echo "          $cell<br />\n";
 		
-		echo  "          <br />\n"
-			. "        </li>\n";
+		echo "        </li>\n";
 		
 		$row = mysqli_fetch_assoc($result);
 	}
 	
 	echo <<<HEREDOC
-        <li>
+        <br><li>
           If you experience difficulty using this site, please
           <a href="mailto:$WEBMASTER_EMAIL" rel="external">
           email the Webmaster</a>
@@ -109,7 +108,6 @@ HEREDOC;
       </ul>
       <br />
 HEREDOC;
-	default_page_footer('Contact');
 }
 
 ?>

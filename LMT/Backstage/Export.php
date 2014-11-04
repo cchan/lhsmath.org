@@ -10,6 +10,8 @@ $path_to_lmt_root = '../';
 require_once $path_to_lmt_root . '../lib/lmt-functions.php';
 backstage_access();
 
+
+if(!isSet($EXPORT_STR)) $EXPORT_STR = false;
 if(!$EXPORT_STR){
 show_page();
 }
@@ -72,7 +74,7 @@ HEREDOC;
 	// TEAM ROUND
 	$code .= '<h4>Top Teams in Team Round</h4><table class="contrasting"><tr><th>Place</th><th>Team</th><th>School</th><th>Score</th></tr>';
 	
-	$query = 'SELECT name, IFNULL(score_team_short, 0) + IFNULL(score_team_long, 0) AS score_team, (SELECT name FROM schools WHERE schools.school_id=teams.school) AS school_name, RAND() AS rand FROM teams WHERE deleted="0" ORDER BY score_team DESC, rand';
+	$query = 'SELECT team_id, name, IFNULL(score_team_short, 0) + IFNULL(score_team_long, 0) AS score_team, (SELECT name FROM schools WHERE schools.school_id=teams.school) AS school_name, RAND() AS rand FROM teams WHERE deleted="0" ORDER BY score_team DESC, rand';
 	$result = DB::queryRaw($query);
 	$row = mysqli_fetch_assoc($result);
 	$place = 0;
@@ -209,9 +211,7 @@ HEREDOC;
 	$code .= "</table>\n";
 	
 	if($EXPORT_STR)return $code;
-	else echo nl2br(str_replace(' ', '&nbsp;', htmlentities($code)));
-	
-	lmt_backstage_footer('Export');
+	else echo "Exported results (to paste into website page):<br><textarea cols='100' rows='10' onclick='this.setSelectionRange(0, this.value.length)'>".(str_replace(' ', '&nbsp;', htmlentities($code)))."</textarea>";
 }
 
 ?>

@@ -46,7 +46,6 @@ function show_page() {
         <input type="submit" name="do_set_alumni" value="Update"/>
       </div></form>
 HEREDOC;
-	admin_page_footer('Alumni');
 }
 
 

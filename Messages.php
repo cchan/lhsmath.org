@@ -62,8 +62,6 @@ HEREDOC;
 		echo "\n      <br /><br /><a href=\"Messages#Old\">Hide Older Messages</a>";
 	else
 		echo "\n      <br /><br /><a href=\"Messages?Older#Old\">Show Older Messages</a>";
-	
-	default_page_footer('Messages');
 }
 
 
@@ -131,8 +129,6 @@ function view_message() {
       <hr/><div class="halfbreak"></div>
       {$row['body']}
 HEREDOC;
-	
-	default_page_footer('');
 }
 
 
@@ -152,8 +148,6 @@ function confirm_delete() {
         <a href="Messages?View={$_GET['Delete']}">Cancel</a>
       </div></form>
 HEREDOC;
-	
-	default_page_footer('');
 }
 
 

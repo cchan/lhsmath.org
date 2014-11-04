@@ -32,8 +32,6 @@ HEREDOC;
 
       <div class="sidetab"><a href="Admin/Edit_Page?Contests">(edit this page)</a></div>
 HEREDOC;
-	
-	default_page_footer('Contests');
 }
 
 ?>

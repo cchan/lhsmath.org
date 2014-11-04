@@ -26,14 +26,10 @@ function show_page() {
 	
 	$captains_table = generate_user_table('SELECT id, name, email, yog FROM users WHERE permissions="C" ORDER BY yog ASC, name');
 	$other_admins_table = generate_user_table('SELECT id, name, email, yog FROM users WHERE permissions="A" ORDER BY yog ASC, name');
-	$special_table = generate_user_table('SELECT id, name, email, yog FROM users WHERE permissions="S" ORDER BY yog ASC, name');
 	$members_table = generate_user_table('SELECT id, name, email, yog FROM users WHERE permissions="R" AND approved="1" ORDER BY yog ASC, name');
 	$alumni_table = generate_user_table('SELECT id, name, email, yog FROM users WHERE permissions="L" ORDER BY yog DESC, name');
 	$banned_users_table = generate_user_table('SELECT id, name, email, yog, creation_date, DATE_FORMAT(creation_date, "%M %e, %Y") AS formatted_creation FROM users WHERE approved="-1" ORDER BY creation_date DESC');
-
-	if (mysqli_num_rows($special_table) == 0)
-		$special_table .= "        <tr><td colspan=\"5\" class=\"text-centered\">None</td></tr>\n";	
-
+	
 	// The Pending Approval Table is different
 	$pending_approval_table = <<<HEREDOC
       <table class="contrasting">
@@ -117,7 +113,6 @@ HEREDOC;
       <br />
       
 HEREDOC;
-	admin_page_footer('User List');
 }
 
 

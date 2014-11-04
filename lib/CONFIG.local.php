@@ -13,8 +13,8 @@
 
 // DATABASE INFORMATION:
 $DB_SERVER =			'localhost';  // to speficy a port, use 'hostname:port'
-$DB_USERNAME =			'php';
-$DB_PASSWORD =			'moosecow';
+$DB_USERNAME =			'root';
+$DB_PASSWORD =			'';
 
 $PHP_MY_ADMIN_LINK =	'http://localhost/phpmyadmin/';
 

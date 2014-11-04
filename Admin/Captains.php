@@ -205,5 +205,4 @@ page_header('Captains Guide');
   <p><span class="b">Clive Chan</span> (<a href="mailto:cchan3141@gmail.com">cchan3141@gmail.com</a>): developer & webmaster 2013-2016</p>
   </div>
 <?php
-	go_home_footer();
 ?>

@@ -122,7 +122,6 @@ HEREDOC;
       <h4 class="smbottom">Old Tests</h4><div class="halfbreak"></div>
       &nbsp;&nbsp;There are no old tests to display.
 HEREDOC;
-	default_page_footer('My Scores');
 }
 
 ?>

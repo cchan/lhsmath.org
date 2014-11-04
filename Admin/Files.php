@@ -22,69 +22,20 @@ show_main_page();
 /*
  * dirsize($path)
  *
- * Calculate the size of a directory by iterating its contents
+ * Calculate the size of a directory
  *
- * @author      Aidan Lister <aidan@php.net>
- * @version     1.2.0
- * @link        http://aidanlister.com/2004/04/calculating-a-directories-size-in-php/
- * @param       string   $directory    Path to directory
+ * http://stackoverflow.com/a/18288029/1181387
  */
-function dirsize($path)
-{
-    // Init
-    $size = 0;
-
-    // Trailing slash
-    if (substr($path, -1, 1) !== DIRECTORY_SEPARATOR) {
-        $path .= DIRECTORY_SEPARATOR;
-    }
-
-    // Sanity check
-    if (is_file($path)) {
-        return filesize($path);
-    } elseif (!is_dir($path)) {
-        return false;
-    }
-
-    // Iterate queue
-    $queue = array($path);
-    for ($i = 0, $j = count($queue); $i < $j; ++$i)
-    {
-        // Open directory
-        $parent = $i;
-        if (is_dir($queue[$i]) && $dir = @dir($queue[$i])) {
-            $subdirs = array();
-            while (false !== ($entry = $dir->read())) {
-                // Skip pointers
-                if ($entry == '.' || $entry == '..') {
-                    continue;
-                }
-
-                // Get list of directories or filesizes
-                $path = $queue[$i] . $entry;
-                if (is_dir($path)) {
-                    $path .= DIRECTORY_SEPARATOR;
-                    $subdirs[] = $path;
-                } elseif (is_file($path)) {
-                    $size += filesize($path);
-                }
-            }
-
-            // Add subdirectories to start of queue
-            unset($queue[0]);
-            $queue = array_merge($subdirs, $queue);
-
-            // Recalculate stack size
-            $i = -1;
-            $j = count($queue);
-
-            // Clean up
-            $dir->close();
-            unset($dir);
+function dirsize($path){
+    $bytestotal = 0;
+    $path = realpath($path);
+    if($path!==false){
+        foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS)) as $name=>$object){
+			$bytestotal += $object->getSize();
+			//echo $object->getSize().' '.basename($name).'<br>';
         }
     }
-
-    return $size;
+    return $bytestotal;
 }
 
 
@@ -131,43 +82,36 @@ function size_readable($size, $max = null, $system = 'si', $retstring = '%01.2f 
 
 
 function show_main_page() {
-	$add_msg = '';
 	if (isSet($_SESSION['FILE_category_added'])) {
-		$add_msg = "\n        <div class=\"alert\">{$_SESSION['FILE_category_added']}</div><br />\n";
+		alert($_SESSION['FILE_category_added'],1);
 		unset($_SESSION['FILE_category_added']);
 	}
-	$edit_msg = '';
 	if (isSet($_SESSION['FILE_category_edited'])) {
-		$edit_msg = "\n        <div class=\"alert\">{$_SESSION['FILE_category_edited']}</div><br />\n";
+		alert($_SESSION['FILE_category_edited'],1);
 		unset($_SESSION['FILE_category_edited']);
 	}
-	$delete_msg = '';
 	if (isSet($_SESSION['FILE_category_deleted'])) {
-		$delete_msg = "\n        <div class=\"alert\">{$_SESSION['FILE_category_deleted']}</div><br />\n";
+		alert($_SESSION['FILE_category_deleted'],1);
 		unset($_SESSION['FILE_category_deleted']);
 	}
-	$f_add_msg = '';
 	if (isSet($_SESSION['FILE_added'])) {
-		$f_add_msg = "\n        <div class=\"alert\">{$_SESSION['FILE_added']}</div><br />\n";
+		alert($_SESSION['FILE_added'],1);
 		unset($_SESSION['FILE_added']);
 	}
-	$f_edit_msg = '';
 	if (isSet($_SESSION['FILE_edited'])) {
-		$f_edit_msg = "\n        <div class=\"alert\">{$_SESSION['FILE_edited']}</div><br />\n";
+		alert($_SESSION['FILE_edited'],1);
 		unset($_SESSION['FILE_edited']);
 	}
-	$f_delete_msg = '';
 	if (isSet($_SESSION['FILE_deleted'])) {
-		$f_delete_msg = "\n        <div class=\"alert\">{$_SESSION['FILE_deleted']}</div><br />\n";
+		alert($_SESSION['FILE_deleted'],1);
 		unset($_SESSION['FILE_deleted']);
 	}
 	
-	$total_space = size_readable(dirsize('../.content/uploads'));
+	$total_space = dirsize('../.content/uploads');
 	
 	page_header('File List');
 	echo <<<HEREDOC
       <h1>File List</h1>
-      $add_msg$edit_msg$delete_msg$f_add_msg$f_edit_msg$f_delete_msg
       <span class="b">Total Space Used:&nbsp;&nbsp;</span>$total_space
 	  
 	  <br /> <br />
@@ -186,16 +130,23 @@ HEREDOC;
 		. ' ORDER BY category_name, category_id, order_num';
 	$result = DB::queryRaw($query);
 	$row = mysqli_fetch_assoc($result);
+	//foreach($result as $file)
+	//	file['filename'];
+	//	file[''];
 	
 	$current_category = -1;
 	$has_files = false;
 	while ($row) {
 		$filename = $row['filename'];
-		@$file_size = filesize('../.content/uploads/' . $filename);
-		if ($file_size === false)
-			$file_size = '?';
+		if(file_exists('../.content/uploads/' . $filename)){
+			$file_size = filesize('../.content/uploads/' . $filename);
+			if ($file_size === false)
+				$file_size = '?';
+			else
+				$file_size = size_readable($file_size);
+		}
 		else
-			$file_size = size_readable($file_size);
+			$file_size = 'File does not exist.';
 		$visibility = $row['permissions'];
 		if ($visibility == 'P')
 			$visibility = 'Public';
@@ -308,11 +259,15 @@ HEREDOC;
 			$file_id = $row['file_id'];
 			$name = $row['name'];
 			$filename = $row['filename'];
-			@$file_size = filesize('../.content/uploads/' . $filename);
-			if ($file_size === false)
-				$file_size = '?';
+			if(file_exists('../.content/uploads/' . $filename)){
+				$file_size = filesize('../.content/uploads/' . $filename);
+				if ($file_size === false)
+					$file_size = '?';
+				else
+					$file_size = size_readable($file_size);
+			}
 			else
-				$file_size = size_readable($file_size);
+				$file_size = 'File does not exist.';
 			$visibility = $row['permissions'];
 			if ($visibility == 'P')
 				$visibility = 'Public';
@@ -336,8 +291,6 @@ HEREDOC;
 		}
 		echo "      </table>\n";
 	}
-	
-	admin_page_footer('Files');
 }
 
 

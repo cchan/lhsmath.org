@@ -213,56 +213,34 @@ HEREDOC;
  * score_guts()
  *
  * Calculate every team's (integral) guts score and store it in the score_guts field.
- * All special answers (34-36) are guarenteed to be pre-screened using prescreen_guts
+ * All special answers (34-36) have to have been pre-screened using prescreen_guts()
  *
  * RULE: it's complicated. see comments.
  */
 function score_guts() {
-	
-	$N=283086;
-	//15 * min($m/$N, $N/$m);
-	
-	
-	// These are the point values per round.
-	// BTW, round 12 has a maximum of 15, for
-	//   a total of 200 points in Guts
-	$points = array(1 => 5,
-				2 => 5,
-				3 => 6,
-				4 => 6,
-				5 => 7,
-				6 => 7,
-				7 => 8,
-				8 => 8,
-				9 => 9,
-				10 => 11,
-				11 => 13);
-	// Answers for 34 & 35
-	$ans_b = 283086;
-	$ans_a = 3090;
-	
-	// Code to add up values for rounds 1 to 11
-	//$main = "(SELECT (SUM(IFNULL(score,0))*($points)[problem_set]) WHERE team=teams.team_id AND problem_set>=1 AND problem_set<=11
-	$main = "( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set), 0) * {$points[1]})\n";
-	for ($n = 2; $n <= 11; $n++)
-		$main .= " + ( IFNULL((SELECT score FROM guts WHERE team=teams.team_id AND problem_set=$n), 0) * {$points[$n]})\n";
-	
-	// Code to score 34 & 35
-	$a = "GREATEST( 0, FLOOR(15 - 5*LOG10(guts_ans_a - $ans_a)))";
-    $b = "GREATEST( 0, FLOOR(MIN($ans_a/guts_ans_b, guts_ans_b/$ans_b)))";
-	
-	// Problem 36:
-	//$c_sub = "SELECT (SELECT AVG(guts_ans_c) FROM teams WHERE deleted=\"0\") as avg";
-	//$row = DB::queryFirstRow($c_sub);
-	//$avg = $row['avg'];
-	//if ($avg == '' || is_null($avg))
-	//	$avg = '0';
-	//
-	//$c = "IF(  guts_ans_c > $avg,  0,  guts_ans_c)";
-    $c = "guts_ans_c";
-	
-	$query = "UPDATE teams SET score_guts=($main + IFNULL($a, 0) + IFNULL($b, 0) + IFNULL($c, 0))";
-	DB::queryRaw($query);
+			// In this "case" statement are the point values per round.
+			// BTW, round 12 has a maximum of 15 each, for
+			//   a total of 300 possible points in Guts.
+			// Multiples "score" out of 3 by the point value each problem_set has.
+	DB::query("UPDATE teams SET score_guts = ((SELECT IFNULL(SUM(guts.score * (
+				case guts.problem_set
+					when 1 then 5
+					when 2 then 5
+					when 3 then 6
+					when 4 then 6
+					when 5 then 7
+					when 6 then 7
+					when 7 then 8
+					when 8 then 8
+					when 9 then 9
+					when 10 then 11
+					when 11 then 13
+					else 0
+				end
+			)),0) FROM guts WHERE team=teams.team_id)".
+		"+ IFNULL(GREATEST( 0, FLOOR(15 - 5*LOG10(guts_ans_a - 3090))), 0)". /*Scoring #34 */
+		"+ IFNULL(GREATEST( 0, FLOOR(15 * LEAST(283086/guts_ans_b, guts_ans_b/283086))), 0)". /*Scoring #35 */
+		"+ IFNULL(guts_ans_c, 0))"); /*Scoring #36 -- was done manually, because numbers are really big */
 }
 
 ?>

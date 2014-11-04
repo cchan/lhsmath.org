@@ -102,9 +102,12 @@ HEREDOC;
 		if ($add_err != '')
 			$add_err = "\n        <div class=\"error\">$add_err</div><br />\n";
 		
-		$title = htmlentities($_POST['title']);
-		$date = htmlentities($_POST['date']);
-		$desc = htmlentities($_POST['description']);
+		$title = $date = $desc = '';
+		if(array_key_exists('title',$_POST)){
+			$title = htmlentities($_POST['title']);
+			$date = htmlentities($_POST['date']);
+			$desc = htmlentities($_POST['description']);
+		}
 		$action = htmlentities($_SERVER['REQUEST_URI']);
 		echo <<<HEREDOC
       
@@ -138,8 +141,6 @@ HEREDOC;
 	  </script>
 HEREDOC;
 	}
-	
-	default_page_footer('Calendar');
 }
 
 
@@ -191,84 +192,60 @@ function process_add_event() {
  * function draw_calendar($month, $year)
  *
  * Returns code for a calendar.
- * Vaguely inspired by David Walsh's terrible code [http://davidwalsh.name/php-calendar]
+ * Vaguely inspired by the disappointingly verbose David Walsh [http://davidwalsh.name/php-calendar]
  */
 function draw_calendar($month, $year) {
-	$thismonth = strototime('this month');
-	$currmonth = $currdate = strtotime($year.'-'.$month);
-	$nextmonth = strtotime($year.'-'.$month.' + 1 month');
+	$thismonth 				= strtotime('this month');
+	$currmonth = $currdate 	= strtotime($year.'-'.$month);
+	$nextmonth 				= strtotime($year.'-'.$month.' + 1 month');
 	
 	$pastnowfuture = function($timestamp){
-		$now = strtotime('now');
+		$now = strtotime('today');
 		if($timestamp > $now) return 'future';
 		if($timestamp == $now) return 'now';
 		if($timestamp < $now) return 'past';
-	}
+	};
 	
-	//while(date('dayofweek',$curr) != 0){ $calendar += "<td class='blank'></td>" $curr++; }
-	while($currdate < $nextmonth){
-		//date('d',$currdate);
-		$calendar .= "<td class='day {$pastnowfuture($currdate)}>";
-		
-		//if() $calendar += "</tr><tr>";
-		
-		$currdate = strtotime("+1 day", $currdate);
-	}
+	$events = DB::query('SELECT event_id, title, DAYOFMONTH(date) AS day FROM events WHERE MONTH(date)=%i AND YEAR(date)=%i ORDER BY day ASC',$month,$year);
 	
-	/* draw table */
-	$calendar .= '<table cellpadding="0" cellspacing="0" class="cal">';
+	
+	$calendar = '<table cellpadding="0" cellspacing="0" class="cal">';
 	
 	/* table headings */
 	$headings = array('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday');
-	$calendar.= '<tr><th>'.implode('</th><th>',$headings).'</th></tr>';
-	
-	DB::query('SELECT event_id, title, DAYOFMONTH(date) AS day FROM events WHERE MONTH(date)=%i AND YEAR(date)=%i ORDER BY day ASC',$month,$year);
+	$calendar .= '<tr><th>'.implode('</th><th>',$headings).'</th></tr>';
 	
 	/* row for week one */
 	$calendar.= '<tr class="calendar-row">';
 	
-	/* print "blank" days until the first of the current week */
-	for($x = 0; $x < $running_day; $x++):
-		$calendar.= '<td class="calendar-day-np">&nbsp;</td>';
-		$days_in_this_week++;
-	endfor;
-
-	/* keep going with days.... */
-	for($list_day = 1; $list_day <= $days_in_month; $list_day++):
-		if($list_day==$now_day&&$month==$now_month&&$year==$now_year)
-			$calendar.= '<td class="day now">';
-		elseif($list_day<$now_day&&$month==$now_month||$month<$now_month&&$year==$now_year||$year<$now_year)
-			$calendar.= '<td class="day past">';
-		else
-			$calendar.= '<td class="day future">';
-			
-			/* add in the day number */
-			$calendar.= '<div class="day-number">'.$list_day.'</div>';
-			
-			/* QUERY THE DATABASE FOR AN ENTRY FOR THIS DAY !!  IF MATCHES FOUND, PRINT THEM !! */
-			while ($row && $row['day'] == $list_day) {
-				$title = htmlentities($row['title']);
-				$calendar .= "<a href=\"View_Event?ID={$row['event_id']}\" style='display:block;width:100%;height:100%;' onclick=\"popup_id('{$row['event_id']}'); return false;\">$title</a><br /><br />";
-				$row = mysqli_fetch_assoc($result);
-			}
-			
-			//$calendar.= str_repeat('<p>&nbsp;</p>',2);
-			
-		$calendar.= '</td>';
-		if($running_day == 6){
-			$calendar.= '</tr>';
-			if(($day_counter+1) != $days_in_month)
-				$calendar.= '<tr class="calendar-row">';
-			$running_day = -1;
-			$days_in_this_week = 0;
+	/* print blank days until the first of the current week */
+	for($x = 0; $x < date('w',$currdate); $x++)
+		$calendar.= '<td class="blank">&nbsp;</td>';
+	
+	while($currdate < $nextmonth){
+		if(date('w',$currdate) == 0)//New week!
+			$calendar .= "</tr><tr>";
+		
+		$calendar .= "<td class='day {$pastnowfuture($currdate)}'>";
+		
+		// Add in day number
+		$calendar .= '<div class="day-number">'.date('j',$currdate).'</div>';
+		
+		// Look for matching events from the earlier query
+		while (count($events) > 0 && $events[0]['day'] == date('j',$currdate)) {
+			$event = array_shift($events);
+			$title = htmlentities($event['title']);
+			$calendar .= "<a href=\"View_Event?ID={$event['event_id']}\" style='display:block;width:100%;height:100%;' onclick=\"popup_id('{$event['event_id']}'); return false;\">$title</a><br /><br />";
 		}
-		$days_in_this_week++; $running_day++; $day_counter++;
+		
+		$calendar .= "</td>";
+		
+		$currdate = strtotime("+1 day", $currdate);
 	}
-
+	
 	/* finish the rest of the days in the week */
-	if($days_in_this_week < 8 && $days_in_this_week != 1)
-		for($x = 1; $x <= (8 - $days_in_this_week); $x++)
-			$calendar.= '<td class="calendar-day-np">&nbsp;</td>';
+	for($x = intval(date('w',$currdate)); $x < 7; $x++)
+		$calendar.= '<td class="blank">&nbsp;</td>';
 
 	/* final row, end of table */
 	$calendar.= '</tr></table>';

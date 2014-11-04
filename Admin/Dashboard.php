@@ -21,7 +21,6 @@ if(isSet($_REQUEST['do_clear_errors'])){
 }
 
 page_title('Admin Dashboard');
-admin_page_footer('Admin Dashboard');
 
 //Fetch data
 

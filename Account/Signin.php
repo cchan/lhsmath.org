@@ -36,9 +36,6 @@ DB::useDB($DB_DATABASE);//Because it can be included from lmt pages, which uses 
  * Shows the login page, keeping the email from the previous login attempt if specified.
  */
 function show_login_form($email) {
-	if ($err != '')
-		alert($err,-1);
-	
 	// Assemble the page, and send.
 	echo <<<HEREDOC
       <h1>Log In</h1>
@@ -63,7 +60,6 @@ function show_login_form($email) {
       <br /><br /><br />
       <div class="alert neut">Don't have an account? <a href="Register">Register here</a>.</div>
 HEREDOC;
-	default_page_footer('Member Login');
 }
 
 

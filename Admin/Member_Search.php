@@ -35,9 +35,7 @@ else
  * Shows a page where admins can search for a member by name and grade
  */
 function show_search_page() {
-	$previous_query = htmlentities($_REQUEST['query']);
-	
-	admin_page_footer('Search Members');
+	$previous_query = htmlentities(@$_REQUEST['query']);
 	
 	echo autocomplete_js('#search',autocomplete_users_data()) . <<<HEREDOC
       <h1>Search Members</h1>
