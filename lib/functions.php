@@ -100,15 +100,20 @@ function custom_errors($errno, $errstr, $errfile, $errline) {
         return TRUE;
     }
 	
-	
-	if((stripos($errstr, 'Notice') !== false || stripos($errstr,'Warning')) && $CATCH_ERRORS)
-		return; //Just a notice, no problem.
-	
+	if(stripos($errstr, 'Undefined variable'))
+	{
+		trigger_error($errstr, E_USER_NOTICE);//Whatever, doesn't matter
+		return TRUE;
+	}
 	
 	global $path_to_root;
 	$err = date(DATE_RFC822) . ' Error [' . $errno . '] on line ' . $errline . ' in ' . $errfile . ': ' . $errstr . "\n";
 	
 	file_put_contents($path_to_root . '.content/Errors.txt', $err, FILE_APPEND);
+	
+	if($errno & (E_USER_NOTICE | E_USER_WARNING | E_WARNING | E_NOTICE))
+		return; //Just a notice, no problem.
+	var_dump($errno);
 	
 	if(!$CATCH_ERRORS){
 		global $show_debug_backtrace; //Insert anywhere: "$show_debug_backtrace = true;" and it'll do it.

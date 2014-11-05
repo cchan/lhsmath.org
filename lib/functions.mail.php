@@ -1,9 +1,9 @@
 <?php
 
-function send_list_email($subject, $body, $reply_to){
+function send_list_email($subject, $bb_body, $reply_to){
 	$site_url = get_site_url();
 	$stripped_url = str_replace(array('http://www.','http://'), '', $site_url);
-	send_email(get_bcc_list(), $subject, $body, $reply_to,
+	send_email(get_bcc_list(), $subject, $bb_body, $reply_to,
 		NULL,
 		"LHS Math Club\n$site_url\nTo unsubscribe from this list, visit [url]$site_url/Account/My_Profile[/url]",
 		array(
@@ -27,15 +27,15 @@ function val_email_msg($subject,$body){
 }
 
 /*
- * send_email($to, $subject, $body, $reply_to)
+ * send_email($to, $subject, $bb_body, $reply_to)
  *  - $to: who to send the email to, as an string array of $email OR $email=>$name pairs
  *  - $subject: the subject line; $prefix is automatically prefixed
- *  - $body: the body of the message
+ *  - $body: the body of the message, in BBCode.
  *  - $reply_to: the email address to send replies to, if different from the TO address
  *
  *  NOTE: THIS FUNCTION REQUIRES THE SWIFT MAIL PACKAGE
  */
-function send_email($bcc_list, $subject, $body, $reply_to=NULL, $prefix=NULL, $footer=NULL, $headers=NULL) {
+function send_email($bcc_list, $subject, $bb_body, $reply_to=NULL, $prefix=NULL, $footer=NULL, $headers=NULL) {
 	global $EMAIL_ADDRESS, $EMAIL_USERNAME, $EMAIL_PASSWORD,
 		$SMTP_SERVER, $SMTP_SERVER_PORT, $SMTP_SERVER_PROTOCOL, $LMT_EMAIL, $path_to_lmt_root;
 		
@@ -47,13 +47,13 @@ function send_email($bcc_list, $subject, $body, $reply_to=NULL, $prefix=NULL, $f
 	if(is_null($footer))$footer="LHS Math Club\n[url]".get_site_url()."[/url]\nTo stop receiving LHSMATH emails, contact [email]webmaster@lhsmath.org[/email].";
 	if(is_null($headers))$headers=array();
 	
-	if(!is_array($bcc_list)||!is_string($subject)||!is_string($body)||(!is_array($reply_to)&&!is_string($reply_to))||!is_string($prefix)||!is_string($footer)||!is_array($headers))
+	if(!is_array($bcc_list)||!is_string($subject)||!is_string($bb_body)||(!is_array($reply_to)&&!is_string($reply_to))||!is_string($prefix)||!is_string($footer)||!is_array($headers))
 		return 'Invalid email parameters.';
-	if(($error_msg = val_email_msg($subject,$body))!==true)
+	if(($error_msg = val_email_msg($subject,$bb_body))!==true)
 		return $error_msg;
 	
-	$body .= "\n\n\n---\n$footer\n"; //Attach footer.
-	$html = BBCode($body); //BBCode it.
+	$bb_body .= "\n\n\n---\n$footer\n"; //Attach footer.
+	$html = BBCode($bb_body); //BBCode it.
 	$subject = preg_replace("/[^\S ]/ui", '', strip_tags($prefix.' '.$subject));//"remove everything that's not [non-whitespace or space]"
 	//preg_replace("/[^[:alnum][:space]]/ui", '', $string);?
 	

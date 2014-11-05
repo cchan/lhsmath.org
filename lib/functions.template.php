@@ -298,4 +298,8 @@ function navbar_html($navbar=NULL){
 	return $html;
 }
 
+function default_page_footer(){trigger_error('default_page_footer',E_USER_NOTICE);}
+function page_footer(){trigger_error('page_footer',E_USER_NOTICE);}
+function admin_page_footer(){trigger_error('admin_page_footer',E_USER_NOTICE);}
+
 ?>

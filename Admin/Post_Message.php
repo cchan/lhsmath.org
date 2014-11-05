@@ -14,8 +14,11 @@ restrict_access('A');
 page_title('Post Message');
 
 
-if ((isSet($_POST["do_preview_message"]) || isSet($_POST["do_post_message"]) || isSet($_POST["do_reedit_message"])) && validate_message()){//POSTed.
-	//Stuff was posted, AND it's validated & loaded into globals.
+if ((isSet($_POST["do_preview_message"]) || isSet($_POST["do_post_message"]) || isSet($_POST["do_reedit_message"]))){//POSTed.
+	if ($_POST['xsrf_token'] != $_SESSION['xsrf_token'])
+		trigger_error('XSRF code incorrect', E_USER_ERROR);
+	
+	//Stuff was posted, AND it's validated.
 	if (isSet($_POST['do_preview_message']))
 		preview_message();
 	elseif (isSet($_POST['do_post_message']))
@@ -32,14 +35,11 @@ else{
 
 
 function edit_message() {
-	// Get info for the byline
-	$by_line = htmlentities($_SESSION['user_name'].' <'.$_SESSION['email'].'>');
-	
 	// Previously-filled data?
 	global $subject, $bb_body, $email; //$post_through??
 	
 	$email_checked = array('yes-captains'=>'', 'yes-you'=>'', 'no'=>'');
-	$email_checked[empty($email) ? 'yes-you' : $email] = 'checked="checked"';
+	$email_checked[empty($_POST['email']) ? 'yes-you' : $_POST['email']] = 'checked="checked"';
 	
 	// Assemble Page
 ?>
@@ -49,15 +49,15 @@ function edit_message() {
   <tr>
 	<td>By:</td>
 	<td>
-	  <span class="b"><?=$by_line?></span><br />
+	  <span class="b"><?=htmlentities($_SESSION['user_name'].' <'.$_SESSION['email'].'>')?></span><br />
 	</td>
   </tr><tr>
 	<td>Subject:</td>
-	<td><input type="text" name="subject" value="<?=$subject?>" size="45" maxlength="75" class="focus"/></td>
+	<td><input type="text" name="subject" value="<?=htmlentities($_POST['subject'])?>" size="45" maxlength="75" class="focus"/></td>
   </tr><tr>
 	<td>Body:</td>
 	<td>
-	  <textarea name="body" rows="10" cols="80"><?=$bb_body?></textarea>
+	  <textarea name="body" rows="10" cols="80"><?=htmlentities($_POST['body'])?></textarea>
 	  <div class="small">LHSMATH features <a href="Captains#BBCode" rel="external">bbCode-like syntax</a>.</div>
 	  <br /><br />
 	</td>
@@ -117,34 +117,31 @@ $(function(){
 
 
 function preview_message() {
-	global $subject, $bb_body, $html_body, $email;
-	
 	// Get info for the byline
 	$by_line = $_SESSION['user_name'].' <'.$_SESSION['email'].'>';
 	
 	$mailing_message = '';
-	if($email=='yes-captains')
+	if($_POST['email']=='yes-captains')
 		$mailing_message = 'Send to the mailing list, reply-to all captains, and post online';
-	elseif($email=='no')
+	elseif($_POST['email']=='no')
 		$mailing_message = 'Post online only';
-	else//if($email=='yes-you')//default
+	else//if($_POST['email']=='yes-you')//default
 		$mailing_message = 'Send to the mailing list, reply-to only you, and post online';
 	
-	$quot = function($t){return htmlentities($t);}; //hax to make it able to put into {} in HEREDOC
-		//For some reason, in html attributes you can't backslash escape; you have to use stuff like &quot;. Weird.
+	//For some reason, in html attributes you can't backslash escape; you have to use stuff like &quot;. Weird.
 ?>
 <h1>Post a Message</h1>
 
 <table class="spacious">
 <tr>
   <td>By:</td>
-  <td><span class="b"><?=$by_line?></span></td>
+  <td><span class="b"><?=htmlentities($by_line)?></span></td>
 </tr><tr>
   <td>Subject:</td>
-  <td><span class="b">[LHS Math Club] <?=$subject?></span><br /><br /></td>
+  <td><span class="b">[LHS Math Club] <?=htmlentities($_POST['subject'])?></span><br /><br /></td>
 </tr><tr>
   <td>Body:</td>
-  <td><?=$html_body?><br /><br /></td>
+  <td><?=BBCode($_POST['body'])?><br /><br /></td>
 </tr><tr>
   <td>Mailing:&nbsp;</td>
   <td><span class="b"><?=$mailing_message?></span><br /><br /></td>
@@ -152,9 +149,9 @@ function preview_message() {
   <td></td>
   <td>
 	<form id="composeMessage" method="post"><div>
-	  <input type="hidden" name="subject" value="<?=$quot($subject)?>"/>
-	  <input type="hidden" name="body" value="<?=$quot($bb_body)?>"/>
-	  <input type="hidden" name="email" value="<?=$quot($email)?>"/>
+	  <input type="hidden" name="subject" value="<?=htmlentities($_POST['subject'])?>"/>
+	  <input type="hidden" name="body" value="<?=htmlentities($_POST['body'])?>"/>
+	  <input type="hidden" name="email" value="<?=htmlentities($_POST['email'])?>"/>
 	  <input type="hidden" name="xsrf_token" value="<?=$_SESSION['xsrf_token']?>"/>
 	  <input type="submit" name="do_reedit_message" value="Back to Editing"/>
 	  <input type="submit" name="do_post_message" value="Post Message (takes about 30 seconds)"/>
@@ -172,28 +169,28 @@ function preview_message() {
 
 
 function post_message() {
-	global $subject, $html_body, $email;
-	
-	// Insert into database
-	DB::insert('messages',array('author'=>$_SESSION['user_id'], 'subject'=>$subject, 'body'=>$html_body));
-	
 	// Send email
-	if ($email != 'no') {
-		if($email == 'yes-captains'){
+	if ($_POST['email'] != 'no') {
+		if($_POST['email'] == 'yes-captains'){
 			$reply_to = array('captains@lhsmath.org'=>'LHS Math Club Captains');
 			$m = " and emailed to everyone (reply-to all captains)";
 		}
-		else{ //if($email == 'yes-you')
+		else{ //if($_POST['email'] == 'yes-you')
 			$reply_to = array($_SESSION['email']=>$_SESSION['user_name']);
 			$m = " and emailed to everyone (reply-to you)";
 		}
 		
-		send_list_email($subject, $html_body, $reply_to);
+		//Send
+		if(($msg = send_list_email($_POST['subject'], $_POST['body'], $reply_to))!==true){
+			alert($msg,-1);
+			return;
+		}
+		// Insert into database
+		DB::insert('messages',array('author'=>$_SESSION['user_id'], 'subject'=>$_POST['subject'], 'body'=>$_POST['body']));
 	}
 	else $m = ", but not emailed out";
 	
 	alert("Your message has been posted$m. <a href='../Messages?View=".DB::insertId()."'>View</a>",1);
-	var_dump($path_to_root.'Admin/Post_Message');
 	location('Admin/Post_Message');
 }
 
@@ -208,15 +205,10 @@ function post_message() {
  */
 function validate_message() {
 	// Check XSRF token
-	if ($_POST['xsrf_token'] != $_SESSION['xsrf_token'])
-		trigger_error('XSRF code incorrect', E_USER_ERROR);
+
 	
 	// Get data
 	global $subject, $bb_body, $html_body, $email;
-	$subject = strip_tags($_POST['subject']);
-	$bb_body = strip_tags($_POST['body']);
-	$html_body = BBCode($bb_body);
-	$email = strip_tags($_POST['email']);
 	
 	// Maximum lengths on subject, body
 	if(($err=val_email_msg($subject,$bb_body))!==true){
