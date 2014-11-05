@@ -43,7 +43,6 @@ function restrict_access($levels) {
 	}
 }
 function user_access($levels){
-	var_dump(debug_backtrace());
 	if (!array_key_exists('permissions',$_SESSION))
 		$user_level = $_SESSION['permissions'] = 'X';
 	else

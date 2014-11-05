@@ -595,3 +595,327 @@ Tue, 04 Nov 14 14:57:51 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop
 Tue, 04 Nov 14 16:02:22 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
 Tue, 04 Nov 14 17:00:29 -0500 Error [1024] on line 686 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_page_footer
 Tue, 04 Nov 14 17:24:44 -0500 Error [8] on line 144 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.template.php: Undefined index: alerts_
+Tue, 04 Nov 14 20:50:41 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: SELECT STDDEV(test_scores.score) AS st, AVG(test_scores.score) AS average<br />ERROR: Unknown table 'test_scores' in field list<br />
+Tue, 04 Nov 14 20:50:48 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: SELECT STDDEV(test_scores.score) AS st, AVG(test_scores.score) AS average<br />ERROR: Unknown table 'test_scores' in field list<br />
+Tue, 04 Nov 14 20:51:51 -0500 Error [8] on line 80 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Undefined variable: test_ids
+Tue, 04 Nov 14 20:51:51 -0500 Error [2] on line 80 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Invalid argument supplied for foreach()
+Tue, 04 Nov 14 20:51:51 -0500 Error [8] on line 84 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Undefined variable: test_ids
+Tue, 04 Nov 14 20:51:51 -0500 Error [2] on line 84 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Invalid argument supplied for foreach()
+Tue, 04 Nov 14 20:51:51 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: SELECT users.name, users.id, SUM(score) FROM test_scores INNER JOIN users ON test_scores.user_id=users.id WHERE GROUP BY user_id ORDER BY SUM(score) DESC, name<br />ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'GROUP BY user_id ORDER BY SUM(score) DESC, name' at line 1<br />
+Tue, 04 Nov 14 20:54:14 -0500 Error [8] on line 82 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Undefined variable: test_ids
+Tue, 04 Nov 14 20:54:14 -0500 Error [2] on line 82 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Invalid argument supplied for foreach()
+Tue, 04 Nov 14 20:54:14 -0500 Error [8] on line 86 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Undefined variable: test_ids
+Tue, 04 Nov 14 20:54:14 -0500 Error [2] on line 86 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Invalid argument supplied for foreach()
+Tue, 04 Nov 14 20:54:14 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: SELECT users.name, users.id, SUM(score) FROM test_scores INNER JOIN users ON test_scores.user_id=users.id WHERE GROUP BY user_id ORDER BY SUM(score) DESC, name<br />ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'GROUP BY user_id ORDER BY SUM(score) DESC, name' at line 1<br />
+Tue, 04 Nov 14 22:27:04 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: select users.name as name, sum(case tests.test_id when 249 then (score-5.5385)/3.4777398632176357 end ) as total,sum(case tests.test_id when 249 then (score-5.5385)/3.4777398632176357 end) as t249from test_scores
+	inner join tests
+	  on test_scores.test_id = tests.test_id
+    inner join users
+      on test_scores.user_id = users.id
+    where tests.test_id in (249)
+	group by test_scores.user_id
+    order by sum(test_scores.score) desc, users.name asc<br />ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'test_scores
+	inner join tests
+	  on test_scores.test_id = tests.test_id
+    i' at line 1<br />
+Tue, 04 Nov 14 22:41:56 -0500 Error [8] on line 63 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Undefined variable: test_names
+Tue, 04 Nov 14 22:42:35 -0500 Error [8] on line 101 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Undefined offset: 249
+Tue, 04 Nov 14 22:42:35 -0500 Error [8] on line 102 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Undefined offset: 249
+Tue, 04 Nov 14 22:42:35 -0500 Error [8] on line 103 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Undefined offset: 249
+Tue, 04 Nov 14 22:42:35 -0500 Error [8] on line 103 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Undefined offset: 249
+Tue, 04 Nov 14 22:42:35 -0500 Error [8] on line 104 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Undefined offset: 249
+Tue, 04 Nov 14 22:42:35 -0500 Error [8] on line 104 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Undefined offset: 249
+Tue, 04 Nov 14 22:42:35 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: select users.name as name, sum(case tests.test_id when 249 then (score-)/ end ) as total ,sum(case tests.test_id when 249 then (score-)/ end) as t249  , tests.test_id as tid from test_scores
+	inner join tests
+	  on test_scores.test_id = tests.test_id
+    inner join users
+      on test_scores.user_id = users.id
+    where tests.test_id in (249)
+	group by test_scores.user_id
+    order by sum(test_scores.score) desc, users.name asc<br />ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')/ end ) as total ,sum(case tests.test_id when 249 then (score-)/ end) as t249  ' at line 1<br />
+Tue, 04 Nov 14 22:44:11 -0500 Error [8] on line 101 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Undefined offset: 249
+Tue, 04 Nov 14 22:44:11 -0500 Error [8] on line 102 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Undefined offset: 249
+Tue, 04 Nov 14 22:44:11 -0500 Error [8] on line 103 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Undefined offset: 249
+Tue, 04 Nov 14 22:44:11 -0500 Error [8] on line 103 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Undefined offset: 249
+Tue, 04 Nov 14 22:44:11 -0500 Error [8] on line 104 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Undefined offset: 249
+Tue, 04 Nov 14 22:44:11 -0500 Error [8] on line 104 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Undefined offset: 249
+Tue, 04 Nov 14 22:44:11 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: select users.name as name, sum(case tests.test_id when 249 then (score-)/ end ) as total ,sum(case tests.test_id when 249 then (score-)/ end) as t249  , tests.test_id as tid from test_scores
+	inner join tests
+	  on test_scores.test_id = tests.test_id
+    inner join users
+      on test_scores.user_id = users.id
+    where tests.test_id in (249)
+	group by test_scores.user_id
+    order by sum(test_scores.score) desc, users.name asc<br />ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')/ end ) as total ,sum(case tests.test_id when 249 then (score-)/ end) as t249  ' at line 1<br />
+Tue, 04 Nov 14 22:48:03 -0500 Error [8] on line 89 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Undefined offset: 249
+Tue, 04 Nov 14 22:48:03 -0500 Error [8] on line 89 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Undefined offset: 249
+Tue, 04 Nov 14 22:48:03 -0500 Error [8] on line 90 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Undefined offset: 249
+Tue, 04 Nov 14 22:48:03 -0500 Error [8] on line 90 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Undefined offset: 249
+Tue, 04 Nov 14 22:48:03 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: select users.name as name, sum(case tests.test_id when 249 then (score-)/ end ) as total ,sum(case tests.test_id when 249 then (score-)/ end) as t249  , tests.test_id as tid from test_scores
+	inner join tests
+	  on test_scores.test_id = tests.test_id
+    inner join users
+      on test_scores.user_id = users.id
+    where tests.test_id in (249)
+	group by test_scores.user_id
+    order by sum(test_scores.score) desc, users.name asc<br />ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')/ end ) as total ,sum(case tests.test_id when 249 then (score-)/ end) as t249  ' at line 1<br />
+Tue, 04 Nov 14 23:22:22 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: select users.name as name, CONCAT('&Sigma;z: ',round(sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 when 237 then (score-7.6667)/4.035949564710749 when 236 then (score-4.4000)/3.149603149604724 end ),2),'<br>&Sigma;x: '),sum(score)) as total ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 end),3),')') as t246 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 237 then (score-7.6667)/4.035949564710749 end),3),')') as t237 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 236 then (score-4.4000)/3.149603149604724 end),3),')') as t236  , tests.test_id as tid from test_scores
+	inner join tests
+	  on test_scores.test_id = tests.test_id
+    inner join users
+      on test_scores.user_id = users.id
+    where tests.test_id in (246,237,236)
+	group by test_scores.user_id
+    order by total desc, users.name asc<br />ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ') as total ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 246 then (sco' at line 1<br />
+Tue, 04 Nov 14 23:23:48 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: select users.name as name, CONCAT('&Sigma;z: ',round(sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 when 237 then (score-7.6667)/4.035949564710749 when 236 then (score-4.4000)/3.149603149604724 end ) as zsum,2),'<br>&#772;z:',zsum/3,'<br>&Sigma;x: ',sum(score)) as total ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 end),3),')') as t246 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 237 then (score-7.6667)/4.035949564710749 end),3),')') as t237 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 236 then (score-4.4000)/3.149603149604724 end),3),')') as t236  , tests.test_id as tid from test_scores
+	inner join tests
+	  on test_scores.test_id = tests.test_id
+    inner join users
+      on test_scores.user_id = users.id
+    where tests.test_id in (246,237,236)
+	group by test_scores.user_id
+    order by total desc, users.name asc<br />ERROR: Incorrect parameters in the call to native function 'round'<br />
+Tue, 04 Nov 14 23:25:37 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: select users.name as name, sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 when 237 then (score-7.6667)/4.035949564710749 when 236 then (score-4.4000)/3.149603149604724 end ) as zsum,
+			CONCAT('&Sigma;z: ',round(zsum,2),'<br>&#772;z:',round(zsum/3,2),'<br>&Sigma;x: ',sum(score)) as total ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 end),3),')') as t246 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 237 then (score-7.6667)/4.035949564710749 end),3),')') as t237 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 236 then (score-4.4000)/3.149603149604724 end),3),')') as t236  , tests.test_id as tid from test_scores
+	inner join tests
+	  on test_scores.test_id = tests.test_id
+    inner join users
+      on test_scores.user_id = users.id
+    where tests.test_id in (246,237,236)
+	group by test_scores.user_id
+    order by total desc, users.name asc<br />ERROR: Unknown column 'zsum' in 'field list'<br />
+Tue, 04 Nov 14 23:31:40 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: select *, CONCAT('&Sigma;z: ',round(zsum,2),'<br>&#772;z:',round(zsum/count,2),'<br>&Sigma;x: ',sum(score)) as total select users.name as name, sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 when 237 then (score-7.6667)/4.035949564710749 when 236 then (score-4.4000)/3.149603149604724 end ) as zsum, sum(case when a is null then 1 else 0 end) as count ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 end),3),')') as t246 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 237 then (score-7.6667)/4.035949564710749 end),3),')') as t237 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 236 then (score-4.4000)/3.149603149604724 end),3),')') as t236  , tests.test_id as tid from test_scores
+	inner join tests
+	  on test_scores.test_id = tests.test_id
+    inner join users
+      on test_scores.user_id = users.id
+    where tests.test_id in (246,237,236)
+	group by test_scores.user_id
+    order by total desc, users.name asc<br />ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'select users.name as name, sum(case tests.test_id when 246 then (score-4.4375)/4' at line 1<br />
+Tue, 04 Nov 14 23:32:12 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: select *, CONCAT('&Sigma;z: ',round(zsum,2),'<br>&#772;z:',round(zsum/count,2),'<br>&Sigma;x: ',sum(score)) as total select users.name as name, sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 when 237 then (score-7.6667)/4.035949564710749 when 236 then (score-4.4000)/3.149603149604724 end ) as zsum, sum(case when a is null then 1 else 0 end) as count ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 end),3),')') as t246 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 237 then (score-7.6667)/4.035949564710749 end),3),')') as t237 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 236 then (score-4.4000)/3.149603149604724 end),3),')') as t236  , tests.test_id as tid from test_scores
+	inner join tests
+	  on test_scores.test_id = tests.test_id
+    inner join users
+      on test_scores.user_id = users.id
+    where tests.test_id in (246,237,236)
+	group by test_scores.user_id
+    order by total desc, users.name asc<br />ERROR: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'select users.name as name, sum(case tests.test_id when 246 then (score-4.4375)/4' at line 1<br />
+Tue, 04 Nov 14 23:33:11 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: select *, CONCAT('&Sigma;z: ',round(zsum,2),'<br>&#772;z:',round(zsum/count,2),'<br>&Sigma;x: ',sum(score)) as total
+	from (select users.name as name, sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 when 237 then (score-7.6667)/4.035949564710749 when 236 then (score-4.4000)/3.149603149604724 end ) as zsum, sum(case when a is null then 1 else 0 end) as count ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 end),3),')') as t246 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 237 then (score-7.6667)/4.035949564710749 end),3),')') as t237 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 236 then (score-4.4000)/3.149603149604724 end),3),')') as t236  , tests.test_id as tid from test_scores
+	inner join tests
+	  on test_scores.test_id = tests.test_id
+    inner join users
+      on test_scores.user_id = users.id
+    where tests.test_id in (246,237,236)
+	group by test_scores.user_id
+    order by total desc, users.name asc)<br />ERROR: Every derived table must have its own alias<br />
+Tue, 04 Nov 14 23:33:42 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: select *, CONCAT('&Sigma;z: ',round(zsum,2),'<br>&#772;z:',round(zsum/count,2),'<br>&Sigma;x: ',sum(score)) as total
+	from (select users.name as name, sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 when 237 then (score-7.6667)/4.035949564710749 when 236 then (score-4.4000)/3.149603149604724 end ) as zsum, sum(case when a is null then 1 else 0 end) as count ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 end),3),')') as t246 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 237 then (score-7.6667)/4.035949564710749 end),3),')') as t237 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 236 then (score-4.4000)/3.149603149604724 end),3),')') as t236  , tests.test_id as tid from test_scores
+	inner join tests
+	  on test_scores.test_id = tests.test_id
+    inner join users
+      on test_scores.user_id = users.id
+    where tests.test_id in (246,237,236)
+	group by test_scores.user_id
+    order by total/count desc, users.name asc)<br />ERROR: Every derived table must have its own alias<br />
+Tue, 04 Nov 14 23:33:46 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: select *, CONCAT('&Sigma;z: ',round(zsum,2),'<br>&#772;z:',round(zsum/count,2),'<br>&Sigma;x: ',sum(score)) as total
+	from (select users.name as name, sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 when 237 then (score-7.6667)/4.035949564710749 when 236 then (score-4.4000)/3.149603149604724 end ) as zsum, sum(case when a is null then 1 else 0 end) as count ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 end),3),')') as t246 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 237 then (score-7.6667)/4.035949564710749 end),3),')') as t237 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 236 then (score-4.4000)/3.149603149604724 end),3),')') as t236  , tests.test_id as tid from test_scores
+	inner join tests
+	  on test_scores.test_id = tests.test_id
+    inner join users
+      on test_scores.user_id = users.id
+    where tests.test_id in (246,237,236)
+	group by test_scores.user_id
+    order by total/count desc, users.name asc)<br />ERROR: Every derived table must have its own alias<br />
+Tue, 04 Nov 14 23:34:00 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: select *, CONCAT('&Sigma;z: ',round(zsum,2),'<br>&#772;z:',round(zsum/count,2),'<br>&Sigma;x: ',sum(score)) as total
+	from (select users.name as name, sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 when 237 then (score-7.6667)/4.035949564710749 when 236 then (score-4.4000)/3.149603149604724 end ) as zsum, sum(case when a is null then 1 else 0 end) as count ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 end),3),')') as t246 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 237 then (score-7.6667)/4.035949564710749 end),3),')') as t237 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 236 then (score-4.4000)/3.149603149604724 end),3),')') as t236  , tests.test_id as tid from test_scores
+	inner join tests
+	  on test_scores.test_id = tests.test_id
+    inner join users
+      on test_scores.user_id = users.id
+    where tests.test_id in (246,237,236)
+	group by test_scores.user_id
+    order by total/count desc, users.name asc) tbl<br />ERROR: Unknown column 'a' in 'field list'<br />
+Tue, 04 Nov 14 23:34:39 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: select *, CONCAT('&Sigma;z: ',round(zsum,2),'<br>&#772;z:',round(zsum/count,2),'<br>&Sigma;x: ',sum(score)) as total
+	from (select users.name as name, sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 when 237 then (score-7.6667)/4.035949564710749 when 236 then (score-4.4000)/3.149603149604724 end ) as zsum, sum(case when score is null then 1 else 0 end) as count ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 end),3),')') as t246 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 237 then (score-7.6667)/4.035949564710749 end),3),')') as t237 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 236 then (score-4.4000)/3.149603149604724 end),3),')') as t236  , tests.test_id as tid from test_scores
+	inner join tests
+	  on test_scores.test_id = tests.test_id
+    inner join users
+      on test_scores.user_id = users.id
+    where tests.test_id in (246,237,236)
+	group by test_scores.user_id
+    order by total/count desc, users.name asc) tbl<br />ERROR: Unknown column 'total' in 'order clause'<br />
+Tue, 04 Nov 14 23:34:59 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: select *, CONCAT('&Sigma;z: ',round(zsum,2),'<br>&#772;z:',round(zsum/count,2),'<br>&Sigma;x: ',sum(score)) as total
+	from (select users.name as name, sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 when 237 then (score-7.6667)/4.035949564710749 when 236 then (score-4.4000)/3.149603149604724 end ) as zsum, sum(case when score is null then 1 else 0 end) as count ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 end),3),')') as t246 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 237 then (score-7.6667)/4.035949564710749 end),3),')') as t237 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 236 then (score-4.4000)/3.149603149604724 end),3),')') as t236  , tests.test_id as tid from test_scores
+	inner join tests
+	  on test_scores.test_id = tests.test_id
+    inner join users
+      on test_scores.user_id = users.id
+    where tests.test_id in (246,237,236)
+	group by test_scores.user_id
+    order by zsum/count desc, users.name asc) tbl<br />ERROR: Reference 'zsum' not supported (reference to group function)<br />
+Tue, 04 Nov 14 23:35:04 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: select *, CONCAT('&Sigma;z: ',round(zsum,2),'<br>&#772;z:',round(zsum/count,2),'<br>&Sigma;x: ',sum(score)) as total
+	from (select users.name as name, sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 when 237 then (score-7.6667)/4.035949564710749 when 236 then (score-4.4000)/3.149603149604724 end ) as zsum, sum(case when score is null then 1 else 0 end) as count ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 end),3),')') as t246 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 237 then (score-7.6667)/4.035949564710749 end),3),')') as t237 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 236 then (score-4.4000)/3.149603149604724 end),3),')') as t236  , tests.test_id as tid from test_scores
+	inner join tests
+	  on test_scores.test_id = tests.test_id
+    inner join users
+      on test_scores.user_id = users.id
+    where tests.test_id in (246,237,236)
+	group by test_scores.user_id
+    order by zsum/count desc, users.name asc) tbl<br />ERROR: Reference 'zsum' not supported (reference to group function)<br />
+Tue, 04 Nov 14 23:35:30 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: select *, CONCAT('&Sigma;z: ',round(zsum,2),'<br>&#772;z:',round(zsum/count,2),'<br>&Sigma;x: ',sum(score)) as total
+	from (select users.name as name, sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 when 237 then (score-7.6667)/4.035949564710749 when 236 then (score-4.4000)/3.149603149604724 end ) as zsum, sum(case when score is null then 1 else 0 end) as count ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 end),3),')') as t246 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 237 then (score-7.6667)/4.035949564710749 end),3),')') as t237 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 236 then (score-4.4000)/3.149603149604724 end),3),')') as t236  , tests.test_id as tid from test_scores
+	inner join tests
+	  on test_scores.test_id = tests.test_id
+    inner join users
+      on test_scores.user_id = users.id
+    where tests.test_id in (246,237,236)
+	group by test_scores.user_id) tbl
+    order by zsum/count desc, users.name asc<br />ERROR: Unknown column 'score' in 'field list'<br />
+Tue, 04 Nov 14 23:36:59 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: select *, CONCAT('&Sigma;z: ',round(zsum,2),'<br>&#772;z:',round(zsum/count,2),'<br>&Sigma;x: ',sum) as total
+	from (select users.name as name, sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 when 237 then (score-7.6667)/4.035949564710749 when 236 then (score-4.4000)/3.149603149604724 end ) as zsum, sum(case when score is null then 1 else 0 end) as count, sum(score) as sum ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 end),3),')') as t246 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 237 then (score-7.6667)/4.035949564710749 end),3),')') as t237 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 236 then (score-4.4000)/3.149603149604724 end),3),')') as t236  , tests.test_id as tid from test_scores
+	inner join tests
+	  on test_scores.test_id = tests.test_id
+    inner join users
+      on test_scores.user_id = users.id
+    where tests.test_id in (246,237,236)
+	group by test_scores.user_id) tbl
+    order by zsum/count desc, users.name asc<br />ERROR: Unknown column 'users.name' in 'order clause'<br />
+Tue, 04 Nov 14 23:38:23 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: select *, CONCAT('&Sigma;z: ',round(zsum,2),'<br>&#772;z:',round(zsum/count,2),'<br>&Sigma;x: ',sum) as total
+	from (select users.name as name, sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 when 237 then (score-7.6667)/4.035949564710749 when 236 then (score-4.4000)/3.149603149604724 end ) as zsum, sum(case when score is null then 1 else 0 end) as count, sum(score) as sum ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 end),3),')') as t246 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 237 then (score-7.6667)/4.035949564710749 end),3),')') as t237 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 236 then (score-4.4000)/3.149603149604724 end),3),')') as t236  , tests.test_id as tid from test_scores
+	inner join tests
+	  on test_scores.test_id = tests.test_id
+    inner join users
+      on test_scores.user_id = users.id
+    where tests.test_id in (246,237,236)
+	group by test_scores.user_id) tbl
+	group by test_scores.user_id
+    order by (zsum/count) desc, tbl.name asc<br />ERROR: Unknown column 'test_scores.user_id' in 'group statement'<br />
+Tue, 04 Nov 14 23:38:32 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: select *, CONCAT('&Sigma;z: ',round(zsum,2),'<br>&#772;z:',round(zsum/count,2),'<br>&Sigma;x: ',sum) as total
+	from (select users.name as name, sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 when 237 then (score-7.6667)/4.035949564710749 when 236 then (score-4.4000)/3.149603149604724 end ) as zsum, sum(case when score is null then 1 else 0 end) as count, sum(score) as sum ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 end),3),')') as t246 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 237 then (score-7.6667)/4.035949564710749 end),3),')') as t237 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 236 then (score-4.4000)/3.149603149604724 end),3),')') as t236  , tests.test_id as tid from test_scores
+	inner join tests
+	  on test_scores.test_id = tests.test_id
+    inner join users
+      on test_scores.user_id = users.id
+    where tests.test_id in (246,237,236)
+	group by test_scores.user_id) tbl
+	group by user_id
+    order by (zsum/count) desc, tbl.name asc<br />ERROR: Unknown column 'user_id' in 'group statement'<br />
+Tue, 04 Nov 14 23:46:51 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: select users.name as name, sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 when 237 then (score-7.6667)/4.035949564710749 when 236 then (score-4.4000)/3.149603149604724 end ) as zsum,
+			sum(case when score is null then 1 else 0 end) as count,
+			sum(score) as sum ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 end),3),')') as t246 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 237 then (score-7.6667)/4.035949564710749 end),3),')') as t237 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 236 then (score-4.4000)/3.149603149604724 end),3),')') as t236  , tests.test_id as tid from test_scores
+	inner join tests
+	  on test_scores.test_id = tests.test_id
+    inner join users
+      on test_scores.user_id = users.id
+    where tests.test_id in (246,237,236)
+	group by test_scores.user_id
+    order by total desc, users.name asc<br />ERROR: Unknown column 'total' in 'order clause'<br />
+Tue, 04 Nov 14 23:47:13 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: select users.name as name, sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 when 237 then (score-7.6667)/4.035949564710749 when 236 then (score-4.4000)/3.149603149604724 end ) as zsum,
+			sum(case when score is null then 1 else 0 end) as count,
+			sum(score) as sum ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 end),3),')') as t246 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 237 then (score-7.6667)/4.035949564710749 end),3),')') as t237 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 236 then (score-4.4000)/3.149603149604724 end),3),')') as t236  , tests.test_id as tid from test_scores
+	inner join tests
+	  on test_scores.test_id = tests.test_id
+    inner join users
+      on test_scores.user_id = users.id
+    where tests.test_id in (246,237,236)
+	group by test_scores.user_id
+    order by zsum/count desc, users.name asc<br />ERROR: Reference 'zsum' not supported (reference to group function)<br />
+Tue, 04 Nov 14 23:47:21 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: select users.name as name, sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 when 237 then (score-7.6667)/4.035949564710749 when 236 then (score-4.4000)/3.149603149604724 end ) as zsum,
+			sum(case when score is null then 1 else 0 end) as count,
+			sum(score) as sum ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 end),3),')') as t246 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 237 then (score-7.6667)/4.035949564710749 end),3),')') as t237 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 236 then (score-4.4000)/3.149603149604724 end),3),')') as t236  , tests.test_id as tid from test_scores
+	inner join tests
+	  on test_scores.test_id = tests.test_id
+    inner join users
+      on test_scores.user_id = users.id
+    where tests.test_id in (246,237,236)
+	group by test_scores.user_id
+    order by (zsum/count) desc, users.name asc<br />ERROR: Reference 'zsum' not supported (reference to group function)<br />
+Tue, 04 Nov 14 23:47:49 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: select users.name as name, sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 when 237 then (score-7.6667)/4.035949564710749 when 236 then (score-4.4000)/3.149603149604724 end ) as zsum,
+			sum(case when score is null then 1 else 0 end) as count,
+			sum(score) as sum ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 end),3),')') as t246 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 237 then (score-7.6667)/4.035949564710749 end),3),')') as t237 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 236 then (score-4.4000)/3.149603149604724 end),3),')') as t236  , tests.test_id as tid from test_scores
+	inner join tests
+	  on test_scores.test_id = tests.test_id
+    inner join users
+      on test_scores.user_id = users.id
+    where tests.test_id in (246,237,236)
+	group by test_scores.user_id
+    order by (zsum/count) desc, users.name asc<br />ERROR: Reference 'zsum' not supported (reference to group function)<br />
+Tue, 04 Nov 14 23:49:25 -0500 Error [256] on line 10 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.db.php: DB ERROR: QUERY: select users.name as name, sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 when 237 then (score-7.6667)/4.035949564710749 when 236 then (score-4.4000)/3.149603149604724 end ) as zsum,
+			sum(case when score is null then 1 else 0 end) as count,
+			sum(score) as sum ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 246 then (score-4.4375)/4.561643755270682 end),3),')') as t246 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 237 then (score-7.6667)/4.035949564710749 end),3),')') as t237 ,CONCAT(score,' (z: ',round(sum(case tests.test_id when 236 then (score-4.4000)/3.149603149604724 end),3),')') as t236  , tests.test_id as tid from test_scores
+	inner join tests
+	  on test_scores.test_id = tests.test_id
+    inner join users
+      on test_scores.user_id = users.id
+    where tests.test_id in (246,237,236)
+	group by test_scores.user_id
+    order by (zsum/count) desc, users.name asc<br />ERROR: Reference 'zsum' not supported (reference to group function)<br />
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Tue, 04 Nov 14 23:49:34 -0500 Error [2] on line 121 in C:\Users\Clive\Desktop\github\lhsmath\Admin\View_Scores.php: Division by zero
+Wed, 05 Nov 14 00:17:01 -0500 Error [8] on line 149 in C:\Users\Clive\Desktop\github\lhsmath\Admin\Temporary_Users.php: Undefined variable: request_uri
+Wed, 05 Nov 14 00:17:01 -0500 Error [8] on line 150 in C:\Users\Clive\Desktop\github\lhsmath\Admin\Temporary_Users.php: Undefined variable: duplicate_input
+Wed, 05 Nov 14 00:17:12 -0500 Error [8] on line 149 in C:\Users\Clive\Desktop\github\lhsmath\Admin\Temporary_Users.php: Undefined variable: request_uri
+Wed, 05 Nov 14 00:17:12 -0500 Error [8] on line 150 in C:\Users\Clive\Desktop\github\lhsmath\Admin\Temporary_Users.php: Undefined variable: duplicate_input
+Wed, 05 Nov 14 00:30:21 -0500 Error [1024] on line 686 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_page_footer
+Wed, 05 Nov 14 00:30:29 -0500 Error [1024] on line 686 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_page_footer
+Wed, 05 Nov 14 00:30:31 -0500 Error [1024] on line 686 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_page_footer
+Wed, 05 Nov 14 00:30:32 -0500 Error [1024] on line 686 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_page_footer
+Wed, 05 Nov 14 00:30:33 -0500 Error [1024] on line 686 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_page_footer
+Wed, 05 Nov 14 00:30:34 -0500 Error [1024] on line 686 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_page_footer
+Wed, 05 Nov 14 00:31:15 -0500 Error [1024] on line 686 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_page_footer
+Wed, 05 Nov 14 00:34:15 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Wed, 05 Nov 14 00:34:38 -0500 Error [8] on line 17 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Upgrade_Year.php: Undefined index: upyear
+Wed, 05 Nov 14 00:34:38 -0500 Error [8] on line 66 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Upgrade_Year.php: Undefined index: yrfrom
+Wed, 05 Nov 14 00:34:38 -0500 Error [8] on line 67 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Backstage\Upgrade_Year.php: Undefined index: yrto
+Wed, 05 Nov 14 00:35:11 -0500 Error [8] on line 144 in C:\Users\Clive\Desktop\github\lhsmath\lib\functions.template.php: Undefined index: alerts_
+Wed, 05 Nov 14 00:35:17 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Wed, 05 Nov 14 00:35:35 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Wed, 05 Nov 14 00:35:37 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Wed, 05 Nov 14 00:35:44 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Wed, 05 Nov 14 00:35:46 -0500 Error [1024] on line 689 in C:\Users\Clive\Desktop\github\lhsmath\lib\lmt-functions.php: used lmt_backstage_footer
+Wed, 05 Nov 14 00:35:47 -0500 Error [8] on line 11 in C:\Users\Clive\Desktop\github\lhsmath\LMT\Error.php: A session had already been started - ignoring session_start()

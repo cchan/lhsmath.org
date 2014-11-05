@@ -257,7 +257,7 @@ $admin_navbar = array(
 
 
 if(strpos(get_relative_path(),'Admin') === 0){
-	restrict_access('A');
+//	restrict_access('A');
 	set_navbar($admin_navbar);
 }
 else{

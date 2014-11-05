@@ -37,8 +37,6 @@ function show_page() {
 	lmt_page_header($name);
 	
 	echo $content;
-	
-	lmt_page_footer($name);
 }
 
 ?>

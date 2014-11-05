@@ -63,8 +63,8 @@ function show_form(){
 			<tr><td>Webmaster Secret Code (see PHP code):<td><input type="password" name="code" />
 			<tr><td>PMA Username:<td> <input type="text" name="uname" /><br>
 			<tr><td>PMA Password:<td> <input type="password" name="passw" /><br>
-			<tr><td>Year upgrading from:<td> <input type="text" name="yrfrom" value="<?=$_POST['yrfrom']?>" length=4/><br>
-			<tr><td>Year upgrading to:<td> <input type="text" name="yrto" value="<?=$_POST['yrto']?>" length=4 />
+			<tr><td>Year upgrading from:<td> <input type="text" name="yrfrom" value="" length=4/><br>
+			<tr><td>Year upgrading to:<td> <input type="text" name="yrto" value="" length=4 />
 		</table>
 		<input type="submit" name="upyear" value="Upgrade Year" />
 		<div style='color:#f00'>This is a very complicated operation, and CANNOT be undone. Please be careful that you only run this once, and that you enter the correct inputs.</div>

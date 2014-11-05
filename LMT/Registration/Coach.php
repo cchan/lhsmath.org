@@ -73,7 +73,6 @@ function show_form($err, $selected_field) {
         </table>
       </form>
 HEREDOC;
-	lmt_page_footer('');
 	die;
 }
 
@@ -136,8 +135,6 @@ HEREDOC;
         Your account was created. Please check your email inbox for a confirmation email.
       </div>
 HEREDOC;
-	
-	lmt_page_footer('');
 }
 
 ?>

@@ -34,7 +34,6 @@ function show_public_page() {
         <a href="Coach">Team Registration</a>
       </div>
 HEREDOC;
-	lmt_page_footer('Registration');
 }
 
 
@@ -69,7 +68,6 @@ function show_logged_in_page() {
       <span class="small">&nbsp;<a href="Team?Add">Add a Team</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="Signout">Sign Out</a></span><br /><br />
       $table
 HEREDOC;
-	lmt_page_footer('Registration');
 }
 
 ?>

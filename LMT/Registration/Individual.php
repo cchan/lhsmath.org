@@ -90,7 +90,6 @@ function show_form($err, $selected_field) {
         </table>
       </form>
 HEREDOC;
-	lmt_page_footer('');
 	die;
 }
 
@@ -173,8 +172,6 @@ HEREDOC;
         You have successfully registered for LMT $lmt_year. We sent you an email with more information.
       </div>
 HEREDOC;
-	
-	lmt_page_footer('');
 }
 
 ?>

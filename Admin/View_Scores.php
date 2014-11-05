@@ -11,8 +11,9 @@ $path_to_root = '../';
 require_once '../lib/functions.php';
 restrict_access('A');
 
+page_title('View Scores');
 
-if (isSet($_GET['View']))
+if (isSet($_GET['View']) && isSet($_GET['Test']) && count($_GET['Test']) > 0)
 	show_scores();
 else
 	header('Location: Tests');
@@ -28,64 +29,118 @@ else
  * sorted highest to lowest in total
  */
 function show_scores() {
-	if (count($_GET['Test']) == 0) {
-		header('Location: Tests');
-		die;
-	}
+/*
+//What's the difference between inner, right, left, and full?
+//NO IDEA STILL.
+SELECT * FROM (
+    SELECT score_id, tests.test_id FROM (test_scores INNER JOIN tests ON tests.test_id = test_scores.test_id)
+    UNION ALL
+    SELECT score_id, tests.test_id FROM (test_scores RIGHT JOIN tests ON tests.test_id = test_scores.test_id)
+) tbl
+GROUP BY score_id HAVING COUNT(*) =1
+*/
+
+/*
+//Valiant attempt:
+SELECT tests.test_id, tests.name, tests.total_points, (test_scores.score - stats.average) / stats.st AS zvalue
+FROM (test_scores
+	INNER JOIN tests ON test_scores.test_id = tests.test_id
+	CROSS JOIN (SELECT STDDEV(test_scores.score) AS st, AVG(test_scores.score) AS average) stats)
+WHERE test_scores.test_id IN (1,2,3,4,5,6,7,8)
+GROUP BY test_scores.test_id ORDER BY tests.date DESC
+*/
+
+	$teststats = DB::query('SELECT
+			tests.test_id as test_id,
+			tests.name as name,
+			tests.total_points as total_points,
+			STDDEV(test_scores.score) AS stddev,
+			AVG(test_scores.score) AS avg
+		FROM (test_scores INNER JOIN tests ON test_scores.test_id = tests.test_id)
+		WHERE test_scores.test_id IN %li
+		GROUP BY test_scores.test_id ORDER BY tests.date DESC',$_GET['Test']);
 	
-	page_header('View Scores');
+	$test_ids = DBHelper::verticalSlice($teststats,'test_id');
+	
+	$test_names = DBHelper::verticalSlice($teststats,'name','test_id');
+	$avgs = DBHelper::verticalSlice($teststats,'avg','test_id');
+	$stddevs = DBHelper::verticalSlice($teststats,'stddev','test_id');	
+	
+	/*
+	Original, readable one:
+	select users.name,
+	  sum(case tests.test_id when 248 then score/12 end) as t1,
+	  sum(case tests.test_id when 249 then score/16 end) as t2,
+      sum(case tests.test_id when 248 then score/12 when 249 then score/16 end) as total
+	from test_scores
+	inner join tests
+	  on test_scores.test_id = tests.test_id
+    inner join users
+      on test_scores.user_id = users.id
+    where tests.test_id in (248, 249)
+	group by test_scores.user_id
+    order by sum(test_scores.score) desc, users.name asc
+	*/
+	
+	//Generating HTML in my SQL. LOLZ.
+	$query = "select users.name as name, ";
+		$sums = "";
+		$total = "sum(case tests.test_id ";
+		foreach($test_ids as $test_id){
+			$sums .= ",CONCAT(score,' (z: ',round(sum(case tests.test_id when {$test_id} then (score-{$avgs[$test_id]})/{$stddevs[$test_id]} end),3),')') as t{$test_id} ";
+			$total .= "when {$test_id} then (score-{$avgs[$test_id]})/{$stddevs[$test_id]} ";
+		}
+		$total .= "end ) as zsum,
+			sum(case when score is null then 0 else 1 end) as count,
+			sum(score) as sum";//the sum thing is bonkers
+	$query .= "$total $sums , tests.test_id as tid from test_scores
+	inner join tests
+	  on test_scores.test_id = tests.test_id
+    inner join users
+      on test_scores.user_id = users.id
+    where tests.test_id in %li
+	group by test_scores.user_id";
+	
+	
+	foreach($test_ids as $id){
+		$test_names['t'.$id]=$test_names[$id]; unset($test_names[$id]);
+		$avgs['t'.$id]=round($avgs[$id],3); unset($avgs[$id]);
+		$stddevs['t'.$id]=round($stddevs[$id],3); unset($stddevs[$id]);
+	}//Sets each assoc array key from ID to tID, just like in the SQL above.
+	
+	$headers = array('name'=>'Name','total'=>'Total') + $test_names;//Assoc array with key test_id and value test name
+	
+	$data = array();
+	$data[] = array('name'=>'Average','total'=>'') + $avgs;
+	$data[] = array('name'=>'Pop Std Dev','total'=>'') + $stddevs;
+	$data[] = array();
+	
+	$querydata = DB::query($query, $test_ids);
+	
+	foreach($querydata as &$row){
+		//The extra addition creates a significant bias toward people who have taken more tests..
+		$row['finalscore'] = ($row['zsum'])/$row['count']+$row['count']/2.5;
+		$row['total'] = "score: ".round($row['finalscore'],3)
+			."<br>&Sigma;z: ".round($row['zsum'],3)."<br>&Sigma;x: ".$row['sum'];
+	}
+	usort($querydata,function($r1,$r2){
+		if($r1['finalscore'] != $r2['finalscore'])//First in order of z-average
+			return $r1['finalscore'] < $r2['finalscore'] ? 1 : -1;
+		elseif($r1['name']!=$r2['name'])//Then in order of name
+			return $r1['name'] > $r2['name'] ? 1 : -1;
+		else
+			return 0;
+	});
+	
+	$data = array_merge($data,$querydata);
+	
 	echo <<<HEREDOC
       <h1>View Scores</h1>
-      
+      <p>Z-scores are a very good way of standardizing scores. It is sorted by a (slightly modified) z-average, which is the average of the <i>available</i> z-scores only.</p>
+	  
       <a href="Tests">&lt; Back</a>
-      <table class="contrasting">
-        <tr>
-          <th>Name</th>
-          <th>Total</th>
-HEREDOC;
-
-	// Get test names
-	$query = 'SELECT test_id, name, total_points FROM tests WHERE';
-	$or = '';
-	foreach ($_GET['Test'] as $test_id) {
-		$query .= $or . ' test_id="' . mysqli_real_escape_string(DB::get(),$test_id) . '"';
-		$or = ' OR';
-	}
-	$query .= ' ORDER BY date DESC';
-	$result = DB::queryRaw($query);
-	
-	$row = mysqli_fetch_assoc($result);
-	$i = 0;
-	$test_ids = array();
-	while ($row) {
-		$test_ids[$i++] = $row['test_id'];
-		echo "\n          <th class=\"min-width\">" . htmlentities($row['name']) . ' [' . $row['total_points'] . ']</th>';
-		$row = mysqli_fetch_assoc($result);
-	}
-	echo "\n        </tr>";
-	
-	// Get Scores
-	$query = 'SELECT users.name, users.id';
-	foreach ($test_ids as $test_id)
-		$query .= ', MAX(IF(test_id="' . $test_id . '", score, NULL)) AS test_' . $test_id;
-	$query .= ', SUM(score) FROM test_scores INNER JOIN users ON test_scores.user_id=users.id WHERE';
-	$or = '';
-	foreach ($test_ids as $test_id) {
-		$query .= $or . ' test_id="' . $test_id . '"';
-		$or = ' OR';
-	}
-	$query .= ' GROUP BY user_id ORDER BY SUM(score) DESC, name';
-	$result = DB::queryRaw($query);
-	$row = mysqli_fetch_assoc($result);
-	
-	while ($row) {
-		echo "\n        <tr>\n          <td><a href=\"View_User?ID=" . $row['id'] . '">' . $row['name'] . "</a></td>\n          <td>" . $row['SUM(score)'] . "</td>";
-		foreach ($test_ids as $test_id)
-			echo "\n          <td>" . $row['test_' . $test_id] . '</td>';
-		echo "\n        </tr>";
-		$row = mysqli_fetch_assoc($result);
-	}
-	echo "\n      </table>";
+HEREDOC
+	. make_table('contrasting',$headers,$data);
 }
 
 ?>

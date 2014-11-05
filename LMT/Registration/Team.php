@@ -155,7 +155,6 @@ function show_add_page($err, $selected_field) {
         </table>
       </form>
 HEREDOC;
-	lmt_page_footer('');
 	die;
 }
 
@@ -306,7 +305,6 @@ HEREDOC;
         </tr>$add_member
       </table>
 HEREDOC;
-	lmt_page_footer('');
 	die;
 }
 
@@ -436,7 +434,6 @@ function show_edit_member_page($err) {
         </table>
       </form>
 HEREDOC;
-	lmt_page_footer('');
 	die;
 }
 
@@ -538,7 +535,6 @@ function show_delete_page() {
         </tr>
       </table>
 HEREDOC;
-	lmt_page_footer('');
 	die;
 }
 

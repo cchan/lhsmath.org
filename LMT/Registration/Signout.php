@@ -24,7 +24,6 @@ function do_signout() {
         registration closes through the link in the confirmation email.
       </div>
 HEREDOC;
-	lmt_page_footer('');
 }
 
 ?>
