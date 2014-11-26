@@ -2,4 +2,4 @@
 Welcome to the website of the Lexington High School Math Club! Information about the club, along with our calendar and contact information, can be found to the left. If you are looking for the Lexington Math Tournament website, visit [url=/LMT/About]http://www.lhsmath.org/LMT[/url].
 
 [subheading]Members and Alumni[/subheading]
-[url=/Account/Register]Register[/url] for an account to gain access to downloads, test scores, and the mailing list.
+[b][url=/Account/Register]Register[/url][/b] for an account to gain access to downloads, test scores, and the mailing list.
