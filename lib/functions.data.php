@@ -1,5 +1,6 @@
 <?php
 
+
 /*
  * val()
  *
@@ -211,5 +212,95 @@ function sanitize_username($name){ //'Name must have only letters, hyphens, apos
 
 
 
+
+
+
+
+function inRange($n,$a,$b){//Checks if $n is in range [$a,$b].
+	if(!val('i',$n))return NULL;
+	if($a>$b)err('inRange: invalid range');
+	if($n<$a)return -1;
+	if($n>$b)return 1;
+	return 0;
+}
+function normRange($n,$a,$b,$default=NULL){//Normalizes $n to the range [$a,$b]; if $n is invalid it sets to $default.
+	$i=inRange($n,$a,$b);
+	if($i===NULL)return $default;
+	if($i===-1)return $a;
+	if($i===1)return $b;
+	return $n;
+}
+
+function arrayKeysExist($ARR,$indices){
+	if(!val('*',$ARR))return false;
+	foreach($indices as $index)
+		if(!array_key_exists($index,$ARR))return false;
+	return true;
+}
+function arrayKeysNotEmpty($ARR,$indices){//'' is empty - however, empty() takes 0 and '0' as empty :(
+	if(!val('*',$ARR))return false;
+	foreach($indices as $index)
+		if(!array_key_exists($index,$ARR)||is_null($ARR[$index])||$ARR[$index]==='')return false;
+	return true;
+}
+//--todo--Naming conventions... parametric conventions...
+function anyIndicesEmpty($array/*, var1, var2, ...,varN*/){//it's NOT anyIndicesEmpty. '' is empty.
+	$args=func_get_args();
+	array_shift($args);
+	foreach($args as $arg)
+		if(!array_key_exists($arg,$array)||empty($array[$arg])/*&&$array[$arg]==='0'*/)return true;
+	return false;
+}
+
+/****************ARRAY OPERATIONS*****************/
+function randomizeArr($arr){//Randomly permute an array - yes, it works! in what amounts to O(n)!
+//realization several months later... this is exactly the Fisher-Yates shuffle. But I discovered it myself, hmph!
+	for($i=count($arr)-1;$i>0;$i--){
+		$ind=mt_rand(0,$i);//Get the index of the one to swap with.
+		$tmp=$arr[$ind];$arr[$ind]=$arr[$i];$arr[$i]=$tmp;//Swap with the last one.
+	}
+	return $arr;
+}
+function arrayToRanges($arr){//Converts [1,2,3,5,6,8,9,10] to the human-readable "1-3, 5-6, 8-10"
+	if(count($arr)==0)return '';
+	if(count($arr)==1)return $arr[0];
+	sort($arr);
+	$string='';
+	$string.=$arr[0];
+	for($i=1;$i < count($arr);$i++){
+		if($arr[$i] > $arr[$i-1]+1){
+			if($i>=2&&$arr[$i-1]==$arr[$i-2]+1)$string.=$arr[$i-1];
+				$string.=', '.$arr[$i];
+		}
+		elseif($arr[$i]==$arr[$i-1]+1&&($i<2||$arr[$i]>$arr[$i-2]+2))$string.='-';
+	}
+	if($arr[count($arr)-1]==$arr[count($arr)-2]+1)$string.=$arr[count($arr)-1];
+	return $string;
+}
+function Array2DTranspose($arr){//Transposes a 2d array (aka flipping x and y)
+    $out = array();
+    foreach ($arr as $key => $subarr)
+		foreach ($subarr as $subkey => $subvalue)
+			$out[$subkey][$key] = $subvalue;
+    return $out;
+}
+
+/***************HTTP Data Exist/Get*******************/
+//:( Always gonna be string type anyway...
+function posted(){return arrayKeysExist($_POST,func_get_args());}
+function POST($index){if(posted($index))return $_POST[$index];else return NULL;}
+
+function getted(){return arrayKeysExist($_GET,func_get_args());}
+function GET($index){if(getted($index))return $_GET[$index];else return NULL;}
+
+function sessioned(){return arrayKeysExist($_SESSION,func_get_args());}
+function SESSION($index){if(sessioned($index))return $_SESSION[$index];else return NULL;}
+
+//Note: never trust REQUEST_URI or stuff like that. Can be spoofed.
+function servered(){return arrayKeysExist($_SERVER,func_get_args());}
+function SERVER($index){if(servered($index))return $_SERVER[$index];else return NULL;}
+
+function filed(){return arrayKeysExist($_FILES,func_get_args());}
+function FILES($index){if(filed($index))return $_FILE[$index];else return NULL;}
 
 ?>

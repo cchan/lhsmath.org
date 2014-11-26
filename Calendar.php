@@ -4,104 +4,46 @@
  * LHS Math Club Website
  *
  * Shows an event calendar
- *
- * Credit to David Walsh [http://davidwalsh.name/php-calendar]
  */
 
 $path_to_root = '';
 require_once 'lib/functions.php';
 restrict_access('XRLA');
 
+page_title('Calendar');
+
 if (isSet($_POST['do_add_event']) && user_access('A'))
 	process_add_event();
 else
-	show_page('');
+	show_page();
 
 
 
 
-
-function show_page($add_err) {
-	global $popup_javascript;
-	$popup_javascript = true;
-		
-	page_header('Calendar');
+function show_page() {
+	$curr_ts = mktime(0,0,0,isSet($_GET['Month'])?$_GET['Month']:date('n'),1,isSet($_GET['Year'])?$_GET['Year']:date('Y'));
+	if($curr_ts === false)$curr_ts = mktime(0,0,0,date('n'),1);
 	
-	$year = (int)date('Y');
-	$month_num = (int)date('m');
+	$back_ts = strtotime('-1 month',$curr_ts);
+	$fwd_ts = strtotime('+1 month',$curr_ts);
 	
-	// URL parameters to specify Month and Year
-	if (isSet($_GET['Month']) && isSet($_GET['Year'])) {
-		$requested_month = (int)$_GET['Month'];
-		$requested_year = (int)$_GET['Year'];
-		if ($requested_month > 0 && $requested_month <= 12 && $requested_year > 0) {
-			$year = $requested_year;
-			$month_num = $requested_month;
-		}
-	}
-	
-	$month_text = date('F', mktime(0, 0, 0, $month_num, 1, $year));
-	
-	// Calculate text for Forward and Back links
-	$back_month_num = $month_num - 1;
-	$back_year = $year;
-	if ($back_month_num <= 0) {
-		$back_month_num = 12;
-		$back_year--;
-	}
-	$back_month_text = date('F', mktime(0, 0, 0, $back_month_num, 1, $back_year));
-	
-	$fwd_month_num = $month_num + 1;
-	$fwd_year = $year;
-	if ($fwd_month_num > 12) {
-		$fwd_month_num = 1;
-		$fwd_year++;
-	}
-	$fwd_month_text = date('F', mktime(0, 0, 0, $fwd_month_num, 1, $fwd_year));
-	
-	// Link to return to the current month
-	$returnlink = "\n      <div class=\"text-centered small\">&nbsp;</div>";
-	if ($year != (int)date('Y') || $month_num != (int)date('m'))
-		$returnlink = "\n      <div class=\"text-centered small\"><a href=\"Calendar\" class=\"text-centered small\">return to Today</a></div>";
-	
-	$add_msg = '';
-	if (isSet($_SESSION['CALENDAR_added_event'])) {
-		$add_msg = "\n        <div class=\"alert\">{$_SESSION['CALENDAR_added_event']}</div><br />\n";
-		unset($_SESSION['CALENDAR_added_event']);
-	}
-	
-	$delete_msg = '';
-	if (isSet($_SESSION['CALENDAR_deleted_event'])) {
-		$delete_msg = "\n        <div class=\"alert\">{$_SESSION['CALENDAR_deleted_event']}</div><br />\n";
-		unset($_SESSION['CALENDAR_deleted_event']);
-	}
+	$tsurl = function($ts){return "Calendar?Month=".date('n',$ts)."&amp;Year=".date('Y',$ts);};
+	$tstxt = function($ts){return date('F Y',$ts);};
 	
 	// Assemble Page
 	echo <<<HEREDOC
       <h1>Calendar</h1>
-      $add_msg$delete_msg
-      <h2 class="text-centered" style="margin: 2px;">$month_text $year</h2>$returnlink
-      <a href="Calendar?Month=$back_month_num&amp;Year=$back_year" class="left">&lt; $back_month_text $back_year</a>
-      <a href="Calendar?Month=$fwd_month_num&amp;Year=$fwd_year" class="right">$fwd_month_text $fwd_year &gt;</a>
-      <p class="small" />
-
-HEREDOC;
-	
-	echo draw_calendar($month_num, $year);
-	
-	echo <<<HEREDOC
-
-      <div id="blanket" style="display:none;"></div>
-      <div id="popUpDiv" style="display:none;">
-        <object id="eventDisplay" data="" type="text/html"></object>
-      </div>
+      
+	  <h2 class="text-centered" style="margin: 2px;">{$tstxt($curr_ts)}</h2>
+	  <div class="text-centered small"><a href="Calendar">back to today</a></div>
+	  
+      <a href="{$tsurl($back_ts)}" class="left">&lt; {$tstxt($back_ts)}</a>
+      <a href="{$tsurl($fwd_ts)}" class="right">{$tstxt($fwd_ts)} &gt;</a>
+HEREDOC
+.draw_calendar($curr_ts).<<<HEREDOC
 HEREDOC;
 	
 	if (user_access('A')) {
-		// Special Admin Edit functions
-		if ($add_err != '')
-			$add_err = "\n        <div class=\"error\">$add_err</div><br />\n";
-		
 		$title = $date = $desc = '';
 		if(array_key_exists('title',$_POST)){
 			$title = htmlentities($_POST['title']);
@@ -113,7 +55,7 @@ HEREDOC;
       
       <br /><br />
       
-      <h3>Add an Event</h3>$add_err
+      <h3>Add an Event</h3>
       <form method="post" action="$action">
         <table>
           <tr>
@@ -155,32 +97,29 @@ function process_add_event() {
 	$date = $_POST['date'];
 	$desc = $_POST['description'];
 	
-	if ($title == '') {
-		show_page('Title cannot be blank');
+	if ($title == '' || strlen($title) > 25) {
+		alert('Title must be between 1 and 25 characters long',-1);
+		show_page();
 		return;
 	}
-	if (strlen($title) > 25)
-		trigger_error('Add_Event: Title too long', E_USER_ERROR);
 	
-	$date = date_parse($date);
+	$date = date_parse($date);//Builtin PHP function
 	if (!($date['year'] && $date['month'] && $date['day'])) {
-		show_page('That\'s not a real date');
+		alert('That\'s not a real date',-1);
+		show_page();
 		return;
 	}
 	$date = $date['year'] . '-' . $date['month'] . '-' . $date['day'];
 	
 	if (strlen($desc) > 2000) {
-		show_page('Please limit your description to 2000 characters');
+		alert('Please limit your description to 2000 characters',-1);
+		show_page();
 		return;
 	}
 	
-	$query = 'INSERT INTO events (title, date, description) VALUES ("'
-		. mysqli_real_escape_string(DB::get(),$title) . '", "'
-		. mysqli_real_escape_string(DB::get(),$date) . '", "'
-		. mysqli_real_escape_string(DB::get(),$desc) . '")';
-	DB::queryRaw($query);
+	DB::insert('events',array('title'=>$title,'date'=>$date,'description'=>$desc));
 	
-	$_SESSION['CALENDAR_added_event'] = 'The event &quot;' . htmlentities($title) . '&quot; has been added';
+	alert('The event &quot;' . htmlentities($title) . '&quot; has been added',1);
 	header('Location: ' . $_SERVER['REQUEST_URI']);
 }
 
@@ -194,10 +133,9 @@ function process_add_event() {
  * Returns code for a calendar.
  * Vaguely inspired by the disappointingly verbose David Walsh [http://davidwalsh.name/php-calendar]
  */
-function draw_calendar($month, $year) {
-	$thismonth 				= strtotime('this month');
-	$currmonth = $currdate 	= strtotime($year.'-'.$month);
-	$nextmonth 				= strtotime($year.'-'.$month.' + 1 month');
+function draw_calendar($current_month_timestamp) {
+	$currmonth = $currdate 	= strtotime('this month',$current_month_timestamp);
+	$nextmonth 				= strtotime('this month + 1 month',$current_month_timestamp);
 	
 	$pastnowfuture = function($timestamp){
 		$now = strtotime('today');
@@ -206,8 +144,7 @@ function draw_calendar($month, $year) {
 		if($timestamp < $now) return 'past';
 	};
 	
-	$events = DB::query('SELECT event_id, title, DAYOFMONTH(date) AS day FROM events WHERE MONTH(date)=%i AND YEAR(date)=%i ORDER BY day ASC',$month,$year);
-	
+	$events = DB::query('SELECT event_id, title, DAYOFMONTH(date) AS day FROM events WHERE %i < UNIX_TIMESTAMP(date) AND UNIX_TIMESTAMP(date) < %i ORDER BY day ASC',$currmonth,$nextmonth);
 	
 	$calendar = '<table cellpadding="0" cellspacing="0" class="cal">';
 	
@@ -216,7 +153,7 @@ function draw_calendar($month, $year) {
 	$calendar .= '<tr><th>'.implode('</th><th>',$headings).'</th></tr>';
 	
 	/* row for week one */
-	$calendar.= '<tr class="calendar-row">';
+	$calendar.= '<tr>';
 	
 	/* print blank days until the first of the current week */
 	for($x = 0; $x < date('w',$currdate); $x++)
@@ -244,7 +181,7 @@ function draw_calendar($month, $year) {
 	}
 	
 	/* finish the rest of the days in the week */
-	for($x = intval(date('w',$currdate)); $x < 7; $x++)
+	for($x = intval(date('w',$currdate)); $x > 0 && $x < 7; $x++)
 		$calendar.= '<td class="blank">&nbsp;</td>';
 
 	/* final row, end of table */

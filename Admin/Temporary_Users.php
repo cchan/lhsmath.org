@@ -174,61 +174,38 @@ function do_combine() {
 		return;
 	}
 	
-	// Check user ID
 	$id = $_GET['ID'];
-	$query = 'SELECT name FROM users WHERE id="' . mysqli_real_escape_string(DB::get(),$id) . '" AND permissions="T"';
-	$result = DB::queryRaw($query);
-	
-	if (mysqli_num_rows($result) != 1)
-		trigger_error('Do_Combine: Invalid User ID', E_USER_ERROR);
 	
 	// Locate entered user
-	$ans = form_autocomplete_query($_POST['actual_user']);
-	if ($ans['type'] == 'none') {
+	$completed = autocomplete_users_php($_POST['actual_user'],'permissions="T" AND id!=%i',$id);
+	if (count($completed)==0) {
 		show_combine_page('"' . htmlentities($_POST['actual_user']). '" could not be found');
 		return;
-	} else if ($ans['type'] == 'multiple') {
+	} else if (count($completed)>1) {
 		show_combine_page('"' . htmlentities($_POST['actual_user']). '" matches multiple people');
 		return;
 	}
 	
-	$row = $ans['row'];
+	$combine_with = $completed[0]['id'];
 	
-	if ($row['permissions'] == 'T') {
-		show_combine_page('You cannot combine two temporary users');
+	if ($combine_with == $id) {
+		show_combine_page('You cannot combine an account with itself');
 		return;
 	}
 	
-	$combine_with = $row['id'];
-	
-	
 	// Check for duplicate values
-	$query = 'SELECT COUNT(*) AS num_tests FROM test_scores WHERE user_id="' . mysqli_real_escape_string(DB::get(),$id)
-		. '" OR user_id="' . mysqli_real_escape_string(DB::get(),$combine_with) . '" GROUP BY test_id';
-	$result = DB::queryRaw($query);
+	$duplicates = DB::queryFirstField('SELECT COUNT(*) AS num_tests FROM test_scores WHERE user_id=%i OR user_id=%i GROUP BY test_id',$id,$combine_with);
 	
-	$no_duplicates = true;
-	$row = mysqli_fetch_assoc($result);
-	while ($row) {
-		if ($row['num_tests'] > 1)
-			$no_duplicates = false;
-		$row = mysqli_fetch_assoc($result);
-	}
-	if (!$no_duplicates) {
+	if ($duplicates > 0) {
 		global $duplicate_with_id;
 		$duplicate_with_id = $combine_with;
-		show_combine_page('Some tests overlap. The actual account\'s scores will be used.');
+		show_combine_page('Some tests overlap. The scores from the account being merged into will be used.');
 		return;
 	}
 	
 	// INFORMATION VALIDATED
-	
-	$query = 'UPDATE test_scores SET user_id="' . mysqli_real_escape_string(DB::get(),$combine_with) . '"'
-		. ' WHERE user_id="' . mysqli_real_escape_string(DB::get(),$id) . '"';
-	DB::queryRaw($query);
-	
-	$query = 'DELETE FROM users WHERE id="' . mysqli_real_escape_string(DB::get(),$id) . '" LIMIT 1';
-	DB::queryRaw($query);
+	DB::update('test_scores','user_id=%i','user_id=%i',$combine_with,$id);
+	DB::delete('users','id=%i LIMIT 1',$id);
 	
 	header('Location: Temporary_Users');
 }

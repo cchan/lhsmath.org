@@ -34,10 +34,7 @@ else{
 
 
 
-function edit_message() {
-	// Previously-filled data?
-	global $subject, $bb_body, $email; //$post_through??
-	
+function edit_message() {//"$post_through"??
 	$email_checked = array('yes-captains'=>'', 'yes-you'=>'', 'no'=>'');
 	$email_checked[empty($_POST['email']) ? 'yes-you' : $_POST['email']] = 'checked="checked"';
 	
@@ -58,7 +55,7 @@ function edit_message() {
 	<td>Body:</td>
 	<td>
 	  <textarea name="body" rows="10" cols="80"><?=htmlentities($_POST['body'])?></textarea>
-	  <div class="small">LHSMATH features <a href="Captains#BBCode" rel="external">bbCode-like syntax</a>.</div>
+	  <div class="small">LHSMATH features <a href="Captains#BBCode" target="_blank" rel="external">bbCode-like syntax</a>. [opens in new tab]</div>
 	  <br /><br />
 	</td>
   </tr><tr>
@@ -117,16 +114,14 @@ $(function(){
 
 
 function preview_message() {
-	// Get info for the byline
-	$by_line = $_SESSION['user_name'].' <'.$_SESSION['email'].'>';
-	
 	$mailing_message = '';
-	if($_POST['email']=='yes-captains')
-		$mailing_message = 'Send to the mailing list, reply-to all captains, and post online';
-	elseif($_POST['email']=='no')
-		$mailing_message = 'Post online only';
-	else//if($_POST['email']=='yes-you')//default
-		$mailing_message = 'Send to the mailing list, reply-to only you, and post online';
+	
+	$email_msgs = array(
+		'yes-captains'=>'Send to the mailing list, reply-to all captains, and post online',
+		'yes-you'=>'Send to the mailing list, reply-to only you, and post online',
+		'no'=>'Post online only',
+	);
+	$mailing_message = $email_msgs[empty($_POST['email']) ? 'yes-you' : $_POST['email']];
 	
 	//For some reason, in html attributes you can't backslash escape; you have to use stuff like &quot;. Weird.
 ?>
@@ -135,7 +130,7 @@ function preview_message() {
 <table class="spacious">
 <tr>
   <td>By:</td>
-  <td><span class="b"><?=htmlentities($by_line)?></span></td>
+  <td><span class="b"><?=htmlentities($_SESSION['user_name'].' <'.$_SESSION['email'].'>')?></span></td>
 </tr><tr>
   <td>Subject:</td>
   <td><span class="b">[LHS Math Club] <?=htmlentities($_POST['subject'])?></span><br /><br /></td>
@@ -192,31 +187,6 @@ function post_message() {
 	
 	alert("Your message has been posted$m. <a href='../Messages?View=".DB::insertId()."'>View</a>",1);
 	location('Admin/Post_Message');
-}
-
-
-
-
-
-/*
- * validate_message()
- *
- * Validates the form
- */
-function validate_message() {
-	// Check XSRF token
-
-	
-	// Get data
-	global $subject, $bb_body, $html_body, $email;
-	
-	// Maximum lengths on subject, body
-	if(($err=val_email_msg($subject,$bb_body))!==true){
-		alert($err,-1);
-		return false;
-	}
-	
-	return true;
 }
 
 ?>

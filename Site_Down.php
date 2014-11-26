@@ -1,4 +1,8 @@
-<?php echo'<?xml version="1.0" encoding="UTF-8"?>'; ?>
+<?php
+//Go to the .htaccess file to enable/disable this page.
+
+echo'<?xml version="1.0" encoding="UTF-8"?>';
+?>
 <!DOCTYPE html
      PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -83,7 +87,8 @@ a {
     </div>
     
     <div id="content">
-      The Math Club site is down for repairs. Please check back later.
+	  <h1>:(</h1>
+      The Math Club site is down for repairs. Check back later; it'll be working again soon!
     </div>
   </body>
 </html>

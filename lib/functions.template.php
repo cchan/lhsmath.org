@@ -60,8 +60,8 @@ HEREDOC;
 	<script>window.jQuery || document.write('<script src="<?=$path_to_root?>res/jquery/jquery-1.11.1.min.js"><\/script>')</script>
 	
 	<?php //We serve our own custom build of jqUI (all we need is DatePicker and Autocomplete, so we don't use CDNs. ?>
-	<script src="<?=$path_to_root?>res/jquery/jquery-ui-1.11.1.min.js"></script>
-	<link rel="stylesheet" href="<?=$path_to_root?>res/jquery/jquery-ui-1.11.1.min.css" />
+	<script src="<?=$path_to_root?>res/jquery/jquery-ui.min.js"></script>
+	<link rel="stylesheet" href="<?=$path_to_root?>res/jquery/jquery-ui.min.css" />
 	
 	<?php //View_Event popups ?>
 	<script type="text/javascript" src="<?=$path_to_root?>res/popup.js"></script>
@@ -141,7 +141,7 @@ function alert($text,$disposition=0,$page_name=NULL){
 		$page_name='';//basename($_SERVER['REQUEST_URI']);
 	$sp='alerts_'.$page_name;
 	
-	if(@!$_SESSION[$sp])$_SESSION[$sp]=array();
+	if(!array_key_exists($sp,$_SESSION))$_SESSION[$sp]=array();
 	$_SESSION[$sp][]=array($text,$disposition);
 }
 function fetch_alerts_html(){
@@ -217,7 +217,7 @@ $main_navbar = array( //Name => Page path, or if it's the same you can omit the 
 		'Contests',
 		'Files',
 		'',
-		'!L'=>[//Not alumni
+		'AR'=>[//Not alumni
 			'My Scores'=>'My_Scores'
 		],
 		'My Profile'=>'Account/My_Profile',
@@ -231,6 +231,8 @@ $admin_navbar = array(
 	'A'=>[
 		'Home',
 		'Admin Dashboard'=>'Admin/Dashboard',
+		'Captains\' Guide'=>'Admin/Captains',
+		'Webmasters\' Guide'=>'Admin/Webmaster',
 		'',
 		'User List'=>'Admin/User_List',
 		'Search Members'=>'Admin/Member_Search',

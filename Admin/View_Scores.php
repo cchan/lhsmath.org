@@ -92,7 +92,7 @@ GROUP BY test_scores.test_id ORDER BY tests.date DESC
 		}
 		$total .= "end ) as zsum,
 			sum(case when score is null then 0 else 1 end) as count,
-			sum(score) as sum";//the sum thing is bonkers
+			sum(score) as sum";
 	$query .= "$total $sums , tests.test_id as tid from test_scores
 	inner join tests
 	  on test_scores.test_id = tests.test_id
@@ -118,8 +118,8 @@ GROUP BY test_scores.test_id ORDER BY tests.date DESC
 	$querydata = DB::query($query, $test_ids);
 	
 	foreach($querydata as &$row){
-		//The extra addition creates a significant bias toward people who have taken more tests..
-		$row['finalscore'] = ($row['zsum'])/$row['count']+$row['count']/2.5;
+		//The extra addition creates a significant bias toward people who have taken more tests.
+		$row['finalscore'] = ($row['zsum'])/$row['count'] + $row['count']/2.5;
 		$row['total'] = "score: ".round($row['finalscore'],3)
 			."<br>&Sigma;z: ".round($row['zsum'],3)."<br>&Sigma;x: ".$row['sum'];
 	}
@@ -136,7 +136,7 @@ GROUP BY test_scores.test_id ORDER BY tests.date DESC
 	
 	echo <<<HEREDOC
       <h1>View Scores</h1>
-      <p>Z-scores are a very good way of standardizing scores. It is sorted by a (slightly modified) z-average, which is the average of the <i>available</i> z-scores only.</p>
+      <p>Z-scores are a very good way of standardizing scores. It is sorted by a (slightly modified) z-average, which is the average of the <i>available</i> z-scores only. The final sorted-by score has a bit of weight placed toward attending more tryouts.</p>
 	  
       <a href="Tests">&lt; Back</a>
 HEREDOC

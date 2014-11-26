@@ -85,7 +85,7 @@ page_header('Webmaster Guide');
   <h3>Keep in mind...</h3>
   <p>Please follow these guidelines when managing the site:</p>
   <ul>
-	<li>Guard the password list very carefully. Share it with as few people as possible.<br /><br /></li>
+	<li>Guard the password & accounts file very carefully. Share it with as few people as possible.<br /><br /></li>
 	
 	<li>Respect users' privacy. Never give out anyone's personal information. Don't look at test scores
 	unless you have to. Information not accessible to all members should be treated as strictly
@@ -96,13 +96,20 @@ page_header('Webmaster Guide');
 	Remember, the club advisor is ultimately responsible for all content on this site.<br /><br /></li>
   </ul>
   
+  <h3>LMT</h3>
+  <p>Running the LMT is considerably more involved. The best way to do this is probably to be trained by the last
+  Tech Czar. Knowing PHP is a must (just for the Guts round - ask a predecessor for help (nicely) if necessary)
+  me to). Edit <span class="monospace">lib/lmt-scoring.php</span>, and mind the preconditions and posconditions!
+  Content on the public part of the LMT website is updated through the web interface (in database rather than files). 
+  Please write in <a href="http://validator.w3.org/">valid XHTML 1.0</a> for those pages!</p>
+  
   <h3>Developing the Website</h3>
   <p>If you would like to improve upon the Math Club website, awesome!</p>
   <ul>
 	<li>We use Git on BitBucket (because private repositories) for source control. Before editing anything you must get 
 		<a href="http://git-scm.com/">Git</a> command line, or 
 		<a href="https://windows.github.com/">GitHub for Windows</a> beginner UI. 
-		Demand some Git help from the previous webmaster.</li>
+		Demand some Git help from the previous webmaster if you don't already know it.</li>
 	<li>Text editor. <a href="http://www.sublimetext.com/">Sublime Text</a> or 
 		<a href="http://notepad-plus-plus.org/">Notepad++</a> work excellently. Avoid Vim or Emacs :).</li>
 	<li>Local test server. Probably the easiest and most flexible way is to download 
@@ -110,7 +117,7 @@ page_header('Webmaster Guide');
 		to override configuration values for local testing (don't upload this). Never test code on the real lhsmath.org server. 
 		To set this up properly you'll also have to go to LHSMATH PHPMyAdmin and export the database, and import it into your 
 		XAMPP's PHPMyAdmin. Be careful of what you do - sending mail <i>still actually works</i>! (you can, of course, abuse your local 
-		data however you like, so you can remove everyone's emails.)</li>
+		data however you like as long as it's not uploaded back up.)</li>
 	<li>Editing the production copy via SFTP. Try <a href="http://winscp.net/eng/index.php">WinSCP</a> or 
 		<a href="https://filezilla-project.org/">FileZilla</a>. Don't upload the <span class="monospace">.git</span> directory.</li>
 	<li>A lot of secret and important stuff is on the Dropbox. Ask your predecessor if they haven't 
@@ -123,15 +130,10 @@ page_header('Webmaster Guide');
 	starts like this. Honestly, the best way to get familiar with the site is through reading the code directly.</li>
 	<li>It's a pretty big codebase, and it's pretty complex. You're encouraged to try to improve it 
 	and reduce it, as long as you don't break it. You can check the list of Issues on BitBucket to see if 
-	the previous webmaster left any known problems unsolved.</li>
+	the previous webmaster left any known problems unsolved. Though we tried our best to make the code readable 
+	and neat, it can be hard to decipher at times, so feel free to ask what particular things do if you just
+	can't figure it out yourself.</li>
   </ul>
-  
-  <h3>LMT</h3>
-  <p>Running the LMT is considerably more involved. The best way to do this is probably to be trained by the last
-  Tech Czar. Knowing PHP is a must (just for the Guts round - I can help with this if you need
-  me to). Edit <span class="monospace">lib/lmt-scoring.php</span>, and mind the preconditions and posconditions!
-  Content on the public part of the LMT website is updated through the web interface (in database rather than files). 
-  Please write in <a href="http://validator.w3.org/">valid XHTML 1.0</a> for those pages!</p>
   
   <h3>Help!</h3>
   <p>Webmastering is hard. If anything comes up, we're happy to help. Just email any of us who have listed our emails below.</p>
@@ -140,7 +142,7 @@ page_header('Webmaster Guide');
   
   <br />
   <br />
-  <h3>Cheers!~</h3>
+  <h3 id="Cheers">Cheers!~</h3>
   <div class="small">
   <p><span class="b">Benjamin Tidor</span> (<a href="mailto:dev@tidor.net">dev@tidor.net</a>): original developer & webmaster to 2012</p>
   <p><span class="b">Peijin Zhang</span>: webmaster 2012-2013</p>

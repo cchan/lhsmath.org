@@ -7,7 +7,8 @@
  *
  * Requires the GET parameter 'ID' set to the ID of the test to enter.
  */
-
+//NOTE: WHAT IF YOU'RE TRYING TO CREATE A TEMPORARY USER WITH THE SAME
+//NAME AS SOMEONE ELSE IN A DIFFERENT GRADE
 
 $path_to_root = '../';
 require_once '../lib/functions.php';
@@ -27,19 +28,19 @@ else
 function show_page() {
 	// Check that the provided ID exists
 	$row = DB::queryFirstRow('SELECT test_id, name, total_points FROM tests WHERE test_id=%i LIMIT 1',$_REQUEST['ID']);
+	if (is_null($row)) trigger_error('Show_Page: Invalid Test ID', E_USER_ERROR);
 	$test_id = $row['test_id'];
 	$test_name = $row['name'];
 	$total_points = $row['total_points'];
-	if (is_null($test_id)) trigger_error('Show_Page: Invalid Test ID', E_USER_ERROR);
+	
+	page_title('Enter Scores');
 	
 	echo autocomplete_js("#userAutocomplete",autocomplete_users_data());
-	
-	page_header('Enter Scores');
-	echo <<<HEREDOC
+?>
       <h1>Enter Scores</h1>
       
-      <h3>$test_name</h3>
-      Total Points: <b>$total_points</b>
+      <h3><?=$test_name?></h3>
+      Total Points: <b><?=$total_points?></b>
       <br />
       <br />
       <br />
@@ -54,15 +55,15 @@ function show_page() {
         </tr><tr>
           <td></td>
           <td>
-			<input type="hidden" name="ID" value="{$test_id}"/>
-            <input type="hidden" name="xsrf_token" value="{$_SESSION['xsrf_token']}"/>
+			<input type="hidden" name="ID" value="<?=$test_id?>"/>
+            <input type="hidden" name="xsrf_token" value="<?=$_SESSION['xsrf_token']?>"/>
             <input type="submit" name="do_add_score" value="Enter"/>
             &nbsp;&nbsp;<a href="Tests">Cancel</a>
           </td>
         </tr>
       </table>
       </form>
-HEREDOC;
+<?php
 }
 
 

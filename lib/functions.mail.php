@@ -3,7 +3,7 @@
 function send_list_email($subject, $bb_body, $reply_to){
 	$site_url = get_site_url();
 	$stripped_url = str_replace(array('http://www.','http://'), '', $site_url);
-	send_email(get_bcc_list(), $subject, $bb_body, $reply_to,
+	return send_email(get_bcc_list(), $subject, $bb_body, $reply_to,
 		NULL,
 		"LHS Math Club\n$site_url\nTo unsubscribe from this list, visit [url]$site_url/Account/My_Profile[/url]",
 		array(
@@ -130,7 +130,7 @@ function BBCode ($string, $strip_tags = false) {
 		'@\[bullets\](.*?)\[/bullets\]@si',
 		'@\[item\](.*?)\[/item\]@si',
 		'@\[pi\]@si',
-		'@\[sqrt\]@si'
+		'@\[sqrt\]@si',
 	);
 	$replace = array(
 		'<b>\\1</b>',
@@ -145,7 +145,7 @@ function BBCode ($string, $strip_tags = false) {
 		'<ul>\\1</ul>',
 		'<li>\\1</li>',
 		'&pi;',
-		'&#8730;'
+		'&#8730;',
 	);
 	$strip_tags_replace = array(
 		'\\1',
@@ -160,7 +160,8 @@ function BBCode ($string, $strip_tags = false) {
 		'\\1',
 		'\\1',
 		'pi',
-		'sqrt'
+		'sqrt',
+		'\\1',
 	);
 	
 	$string = htmlentities(strip_tags($string));
@@ -173,6 +174,11 @@ function BBCode ($string, $strip_tags = false) {
 		// $string = str_replace("</ul><br />", "</ul>", $string);
 		$string = nl2br($string);
 	}
+	
+	//Special quote block
+	preg_replace_callback('@\[quote\](.*?)\[/quote\]@si',function($matches){
+		return preg_replace("@[\r\n]+@","\r\n>",$matches[1]);
+	},$string);
 	
 	//CHECK FOR EXTRA UNPARSED BBCODE - [] brackets with no spaces in them
 	if(preg_match('@\[\S+\]@si',$string))

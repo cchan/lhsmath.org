@@ -19,32 +19,15 @@
  
  
  Hints for Debugging:
- debug_print_backtrace()
- register_shutdown_function()
- set_error_handler()
+ debug_print_backtrace(), register_shutdown_function(), set_error_handler() -- put these in various locations and move it around to locate the problem
  Google, PHP.net, StackOverflow, past webmasters
  Looking for cautionary comments [e.g. "I hate mail config $#%^$%#"]
  */
  
  /*
- Table of Contents and Descriptions (IN PROGRESS!)
- Use your IDE's 'find' function to get to these.
+ Table of Contents and Descriptions
  
- custom_errors($errno,$errstr,$errfile,$errline)	Custom error handler that logs error and displays opaque error page
- restrict_access($levels)							Restricts permission levels to those specified, redirecting based on that. Levels: E,R,P,B,R,+,L,X
- set_login_data($id)								Sets the SESSION variables that contain a logged-in user's information
- log_attempt($email,$success)						?
- hash_pass($email,$pass)							?
- generate_code($length)								?
- format_phone_number($num)							?
- trim_email($email)									?
- get_site_url()										?
- form_autocomplete_query($input)					?
- send_email($to,$subject,$body,$reply_to)			?
- BBCode($string)									?
- dirsize($path)										?
- size_readable($size[,$max[,$system[,$retstring]]])	?
- email_obfuscate($address[,$link_text][,$pre_text][,$post_text])	?
+ ---todo--- come up with universal standard naming conventions - UpperCamelCase for function names plz
  */
 
 //CONFIG only defines global variables. Nothing else.
@@ -53,7 +36,7 @@ require_once $path_to_root . 'lib/CONFIG.php';	// configuration information
 	date_default_timezone_set($TIMEZONE);//Timezone setting in CONFIG
 
 //These are only allowed to define functions and classes, and require files subject to the same constraints.
-require_once $path_to_root . 'lib/functions.sanitation.php';
+require_once $path_to_root . 'lib/functions.data.php';//All data-management stuff - sanitation, validation, $_POST/$_GET/$_SESSION.
 
 require_once $path_to_root . 'lib/functions.mail.php';
 
@@ -82,54 +65,50 @@ require_once $path_to_root . 'lib/functions.db.php';
 
 require_once $path_to_root . 'lib/functions.template.php';
 
-
 /*
  * custom_errors($errno, $errstr, $errfile, $errline)
  *
  * Logs errors and shows an error page
  */
 $show_debug_backtrace = false;
-function custom_errors($errno, $errstr, $errfile, $errline) {
+set_error_handler(function($errno, $errstr, $errfile, $errline) {
 	global $CATCH_ERRORS;
 	
 	//Being safe: https://stackoverflow.com/questions/16655453/change-php-behavior-for-undefined-constants
-	if(stripos($errstr, 'Use of undefined constant') !== FALSE)
-    {
-        // god forbid - someone's used an undefined constant. Act appropriately.
-        trigger_error($errstr, E_USER_ERROR); // Triggers a fatal error.
+	if(stripos($errstr, 'Use of undefined constant') !== FALSE){
+        trigger_error($errstr, E_USER_ERROR);//Undefined consts automatically become strings, which is really bad. Elevate it to a fatal error.
         return TRUE;
     }
 	
-	if(stripos($errstr, 'Undefined variable'))
-	{
-		trigger_error($errstr, E_USER_NOTICE);//Whatever, doesn't matter
+	if(stripos($errstr, 'Undefined variable')){
+		trigger_error($errstr, E_USER_NOTICE);//Whatever, doesn't matter, but log it anyway
 		return TRUE;
 	}
 	
-	global $path_to_root;
-	$err = date(DATE_RFC822) . ' Error [' . $errno . '] on line ' . $errline . ' in ' . $errfile . ': ' . $errstr . "\n";
+	//Generate error text
+	$err = ' DATE:' . date(DATE_RFC822) . ' IP:' . $_SERVER['REMOTE_ADDR'] . ' Error [#' . $errno . '] on line ' . $errline . ' in ' . $errfile . ': ' . $errstr . "\n";
 	
+	//Log it in the proper file
+	global $path_to_root;
 	file_put_contents($path_to_root . '.content/Errors.txt', $err, FILE_APPEND);
 	
-	if($errno & (E_USER_NOTICE | E_USER_WARNING | E_WARNING | E_NOTICE))
-		return; //Just a notice, no problem.
-	var_dump($errno);
-	
-	if(!$CATCH_ERRORS){
-		global $show_debug_backtrace; //Insert anywhere: "$show_debug_backtrace = true;" and it'll do it.
-		if($show_debug_backtrace)var_dump(debug_backtrace());
+	if(!$CATCH_ERRORS){//If catching errors is disabled, dump everything out.
 		alert($err,-1);
+		global $show_debug_backtrace; //Insert anywhere: "global $show_debug_backtrace;$show_debug_backtrace=true;" and it'll do it.
+		if($show_debug_backtrace)var_dump(debug_backtrace());
 		return;
 	}
-	elseif (headers_sent())
+	
+	if($errno & (E_USER_NOTICE | E_USER_WARNING | E_WARNING | E_NOTICE))
+		return; //Just a notice/warning, not worth bothering the user for
+	
+	if (headers_sent())//Headers were already sent; we can't tell the browser HTTP/1.1 500 Internal Server Error
 		echo '<meta http-equiv="refresh" content="0;url=' . $path_to_root . 'Error">';
-	
-	elseif (isSet($_GET['xsrf_token']))
+	elseif (isSet($_GET['xsrf_token']))//So we don't resubmit with the xsrf_token again and cause infinite error generation.
 		header('Location: ' . $path_to_root . 'Error');
-	
 	else {
 		header("HTTP/1.1 500 Internal Server Error");
-		page_header('Error');
+		page_title('Error');
 		echo <<<HEREDOC
       <h1>Error</h1>
       
@@ -138,12 +117,12 @@ HEREDOC;
 	}
 	
 	die;
-}
-set_error_handler('custom_errors', E_ALL);
+}, E_ALL);
 error_reporting(E_ALL);
 /*else{function a(){debug_print_backtrace();}function b(){global $a;if($a)echo var_dump($a);}
 function c(){global $a;if(!$a)$a=array();$a[]=debug_backtrace();}set_error_handler('a',E_ALL&!E_NOTICE);
 register_shutdown_function('b');}*/ //Debug backtracing; put c() wherever to output; will also output on program end
+
 
 // check IP ban list
 if (in_array(strtolower($_SERVER['REMOTE_ADDR']), $BANNED_IPS)) {
@@ -209,9 +188,6 @@ if (isSet($_SESSION['user_id'])) {
 }
 
 // everyone gets logged out after 8 hours, no matter what
-// (this is in case an account is compromised without the password, i.e. left logged
-// in somewhere, or via intercepted verification email). Not that that's our most
-// significant worry.
 if (isSet($_SESSION['user_id']) && time() >= $_SESSION['login_time'] + 28800) {
 	session_destroy();
 	session_name('Session');
