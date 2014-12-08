@@ -221,6 +221,19 @@ function get_relative_path(){//https://coderwall.com/p/gdam2w
 }
 
 
+//Case-insensitive glob
+//Turns search pattern ("amc","",".php") into globbed "[aA][mM][cC].php"
+function globi($pattern, $base = '', $suffix = ''){
+	//Pattern is case insensitive, 
+	//$base and $suffix are prepended and appended and are case sensitive.
+	$p = $base;
+	$p .= preg_replace_callback('@[a-zA-Z]@i',function($matches){
+		$l = $matches[0];//full match
+		return '['.strtolower($l).strtoupper($l).']';
+	},$pattern);
+	$p .= $suffix;
+	return glob($p);
+}
 
 
 

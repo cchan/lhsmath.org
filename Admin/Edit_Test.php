@@ -40,9 +40,9 @@ elseif (isSet($_POST['do_perform_delete']))
 else if (isSet($_GET['Edit']))
 	show_edit_form('');
 else if (isSet($_GET['Archive']))
-	do_archive();
+	do_archive(true);
 else if (isSet($_GET['UnArchive']))
-	do_unarchive();
+	do_archive(false);
 else if (isSet($_GET['Delete']))
 	confirm_delete();
 else
@@ -52,6 +52,9 @@ else
 
 
 
+function valid_test_id($id){
+	return DB::queryFirstField('SELECT COUNT(*) FROM tests WHERE test_id = %i',$id) == 1;
+}
 
 /*
  * function do_archive()
@@ -59,52 +62,19 @@ else
  * Archives the specified test by changing "archived" to 1 in the database;
  * If the test is already archived, nothing happens.
  */
-function do_archive() {
+function do_archive($archive) {
 	// Check XSRF token
 	if ($_SESSION['xsrf_token'] != $_GET['xsrf_token'])
 		trigger_error('Archive: XSRF token invalid', E_USER_ERROR);
 	
-	// Check that the Test ID is valid
-	$query = 'SELECT test_id FROM tests WHERE test_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"';
-	$result = DB::queryRaw($query);
-	
 	// If Test ID isn't valid, show an error page
-	if (mysqli_num_rows($result) != 1)
+	if (!valid_test_id($_GET['ID']))
 		trigger_error('Archive: Nonexistent Test ID', E_USER_ERROR);
 	
-	// Otherwise, archive the test
-	$query = 'UPDATE tests SET archived="1" WHERE test_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
-	DB::queryRaw($query);
-	
-	redirect();
-}
-
-
-
-
-
-/*
- * function do_unarchive()
- *
- * Un-archives the specified test by changing "archived" to 0 in the database;
- * If the test is already un-archived, nothing happens.
- */
-function do_unarchive() {
-	// Check XSRF token
-	if ($_SESSION['xsrf_token'] != $_GET['xsrf_token'])
-		trigger_error('Unarchive: XSRF token invalid', E_USER_ERROR);
-	
-	// Check that the Test ID is valid
-	$query = 'SELECT test_id FROM tests WHERE test_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"';
-	$result = DB::queryRaw($query);
-	
-	// If Test ID isn't valid, show an error page
-	if (mysqli_num_rows($result) != 1)
-		trigger_error('Unarchive: Nonexistent Test ID', E_USER_ERROR);
+	$archive = $archive ? 1 : 0;
 	
 	// Otherwise, archive the test
-	$query = 'UPDATE tests SET archived="0" WHERE test_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1';
-	DB::queryRaw($query);
+	DB::update('tests',array('archived'=>$archive),'test_id=%i LIMIT 1',$_GET['ID']);
 	
 	redirect();
 }
@@ -139,7 +109,7 @@ function do_perform_delete() {
 	DB::queryRaw($query);
 	
 
-	$_SESSION['TEST_deleted'] = 'The test "' . $test_name . '" has been deleted';
+	alert('The test "' . $test_name . '" has been deleted',1);
 	
 	if ($_GET['Return'] == 'ListAll')
 		header('Location: Tests?ShowAll');
@@ -393,7 +363,7 @@ HEREDOC;
           <td>
             <input type="hidden" name="xsrf_token" value="{$_SESSION['xsrf_token']}"/>
             <input type="submit" name="do_add_test" value="Add"/>
-            &nbsp;&nbsp;<a href="Tests$rediret_param">Cancel</a>
+            &nbsp;&nbsp;<a href="Tests$redirect_param">Cancel</a>
           </td>
         </tr>
       </table>

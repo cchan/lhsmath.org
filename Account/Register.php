@@ -38,7 +38,7 @@ function show_form($err, $selected_field) {
 	
 	// If an error message is given, put it inside this div
 	if ($err != '')
-		$err = "\n        <div class=\"error\">$err</div><br />\n";
+		alert($err,-1);
 	
 	// Figure out what year people will be graduating.
 	$year4 = (int)date('Y');
@@ -77,9 +77,10 @@ function show_form($err, $selected_field) {
 	echo <<<HEREDOC
       <h1>Register</h1>
       
-      Create an account to access scores, handouts and other information.<br />
-      <span class="b">These accounts are intended for members of the LHS Math Club only.</span><br /><br />
-      $err
+      <p>Create an account to access scores, handouts and other information.</p>
+      <p><span class="b">These accounts are intended for members of the LHS Math Club only.</span>
+		If you're trying to register for LMT, visit <a href="http://www.lhsmath.org/LMT/Registration/">http://www.lhsmath.org/LMT/Registration/</a> once registration is open.</p>
+	  <small>Please contact <a href="mailto:webmaster@lhsmath.org">webmaster@lhsmath.org</a> if this page doesn't work!</small>
       <form id="register" method="post" action="{$_SERVER['REQUEST_URI']}" autocomplete="off">
         <table>
           <tr>
@@ -196,9 +197,9 @@ function process_form() {
 	}
 	
 	// CHECK THAT THE YOG IS VALID
-	$grade = getGradeFromYOG($yog);
+	$grade = intval(getGradeFromYOG($yog));
 	if ($grade < 9 || $grade > 12) {
-		show_form('That is not a valid YOG (you have to be in high school)', 'yog');
+		show_form('That is not a valid YOG ('.$grade.'you have to be in high school)', 'yog');
 		return;
 	}
 	

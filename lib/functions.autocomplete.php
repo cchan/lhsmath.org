@@ -11,15 +11,18 @@ function autocomplete_users_data($where=NULL/*,...*/){
 	return $result;
 }
 //Autocompletes it on the server side
-function autocomplete_users_php($string,$where/*,...*/){
-	$args = func_get_args();array_shift($args);array_shift($args);
+function autocomplete_users_php($string/*,$where,...*/){
+	$args = func_get_args();
+	array_shift($args);
+	$where = array_shift($args);
+	if($where == NULL) $where = "1";
 	
 	if(preg_match('@\(([0-9]+)\)@',$string,$matches)){
 		$where = 'id=%i AND ('.$where.')';//It was autocompleted with an ID value! No ambiguity.
 		array_unshift($args,$matches[1]);
 	}
 	else{
-		$where = 'name LIKE %ss AND ('.$where.')',$string);
+		$where = 'name LIKE %ss AND ('.$where.')';
 		array_unshift($args,$string);
 	}
 	
@@ -32,7 +35,7 @@ function user_data($where=NULL/*,...*/){
 	if(isSet($where)){//Allows replacement-parameters too.
 		$args=func_get_args();
 		array_shift($args);
-		$args[0]='SELECT * FROM users WHERE '.$where;
+		array_unshift($args,'SELECT * FROM users WHERE '.$where);
 		$users = call_user_func_array("DB::query",$args);
 	}
 	else
@@ -48,7 +51,7 @@ function user_data($where=NULL/*,...*/){
 				$order[] = 1;//Temporary users go first
 				break;
 			case 'R': case 'L':
-				$categ = getGradeFromYOG($user["yog"]);
+				$categ = getTextGradeFromYOG($user["yog"]);
 				$order[] = 30000 - intval($user["yog"]);//Reverse order of yog
 				break;
 			case 'A': case 'C':

@@ -172,7 +172,7 @@ function draw_calendar($current_month_timestamp) {
 		while (count($events) > 0 && $events[0]['day'] == date('j',$currdate)) {
 			$event = array_shift($events);
 			$title = htmlentities($event['title']);
-			$calendar .= "<a href=\"View_Event?ID={$event['event_id']}\" style='display:block;width:100%;height:100%;' onclick=\"popup_id('{$event['event_id']}'); return false;\">$title</a><br /><br />";
+			$calendar .= "<a href=\"View_Event?ID={$event['event_id']}\" style='display:block;width:100%;height:100%;' onclick=\"return true; popup_id('{$event['event_id']}'); return false;\">$title</a><br /><br />";
 		}
 		
 		$calendar .= "</td>";

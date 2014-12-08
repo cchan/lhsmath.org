@@ -159,18 +159,20 @@ td {
   font-size:0.9em;
 }
 
-.error, .alert, .alert.neut, .alert.neut *{
+.error, .alert{
   width: 100%;
   padding: 10px;
   
-  background-color: #555;
-  
-  color: #fff;
   text-align: center;
   font-size: 12px;
   font-weight: bold;
   
   margin-bottom: 1em;
+}
+
+.alert.neut, .alert.neut *{
+  background-color: #555;
+  color: #fff;
 }
 
 .error, .alert.neg, .alert.neg *{

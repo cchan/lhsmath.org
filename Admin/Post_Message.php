@@ -55,7 +55,7 @@ function edit_message() {//"$post_through"??
 	<td>Body:</td>
 	<td>
 	  <textarea name="body" rows="10" cols="80"><?=htmlentities($_POST['body'])?></textarea>
-	  <div class="small">LHSMATH features <a href="Captains#BBCode" target="_blank" rel="external">bbCode-like syntax</a>. [opens in new tab]</div>
+	  <div class="small">LHSMATH features <a href="Captains#BBCode" target="_blank" rel="external">bbCode-like syntax</a>. [opens in new window]</div>
 	  <br /><br />
 	</td>
   </tr><tr>

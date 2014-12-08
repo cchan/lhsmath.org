@@ -197,18 +197,21 @@ $main_navbar = array( //Name => Page path, or if it's the same you can omit the 
 	//Interestingly, for the Email-Verify, etc. people, it outputs nothing except Home, which was what was originally intended by Tidor. :)
 	'Home',
 	'X'=>[
+		'LMT',
+		'AMC',
+		'',
 		'Calendar',
 		'Contests',
 		'Contact',
 		'About',
-		'',
-		'LMT',
 		'',
 		'Member Sign-in'=>'Account/Signin',
 		'Member Registration'=>'Account/Register',
 	],
 	'ARL'=>[
 		'LMT',
+		'AMC',
+		'',
 		'Contact',
 		'About',
 		'',

@@ -87,13 +87,16 @@ GROUP BY test_scores.test_id ORDER BY tests.date DESC
 		$sums = "";
 		$total = "sum(case tests.test_id ";
 		foreach($test_ids as $test_id){
-			$sums .= ",CONCAT(score,' (z: ',round(sum(case tests.test_id when {$test_id} then (score-{$avgs[$test_id]})/{$stddevs[$test_id]} end),3),')') as t{$test_id} ";
+			$sums .= ",GROUP_CONCAT(
+				case tests.test_id
+				when {$test_id} then CONCAT('<div style=\'height:4em;\' onmouseover=\"$(this).find(\'small\').css({display:\'inline\'});\"><b>',score,'</b> <small style=\"float:right;display:none;\">(z: ',round((score-{$avgs[$test_id]})/{$stddevs[$test_id]},3),')</small></div>')
+				else '' end SEPARATOR '') as t{$test_id} ";
 			$total .= "when {$test_id} then (score-{$avgs[$test_id]})/{$stddevs[$test_id]} ";
 		}
 		$total .= "end ) as zsum,
 			sum(case when score is null then 0 else 1 end) as count,
-			sum(score) as sum";
-	$query .= "$total $sums , tests.test_id as tid from test_scores
+			sum(score) as sum";//zsum is bonkers
+	$query .= "$total $sums from test_scores
 	inner join tests
 	  on test_scores.test_id = tests.test_id
     inner join users
@@ -110,33 +113,42 @@ GROUP BY test_scores.test_id ORDER BY tests.date DESC
 	
 	$headers = array('name'=>'Name','total'=>'Total') + $test_names;//Assoc array with key test_id and value test name
 	
-	$data = array();
-	$data[] = array('name'=>'Average','total'=>'') + $avgs;
-	$data[] = array('name'=>'Pop Std Dev','total'=>'') + $stddevs;
-	$data[] = array();
+	$headdata = array();
+	$headdata[] = array('name'=>'Average','total'=>'') + $avgs;
+	$headdata[] = array('name'=>'Pop Std Dev','total'=>'') + $stddevs;
+	$headdata[] = array();
 	
 	$querydata = DB::query($query, $test_ids);
 	
 	foreach($querydata as &$row){
 		//The extra addition creates a significant bias toward people who have taken more tests.
 		$row['finalscore'] = ($row['zsum'])/$row['count'] + $row['count']/2.5;
-		$row['total'] = "score: ".round($row['finalscore'],3)
+		$row['total'] = "score: <b>".round($row['finalscore'],3)."</b>"
 			."<br>&Sigma;z: ".round($row['zsum'],3)."<br>&Sigma;x: ".$row['sum'];
 	}
+	unset($row);//php, why do I actually have to do this?
+	
 	usort($querydata,function($r1,$r2){
 		if($r1['finalscore'] != $r2['finalscore'])//First in order of z-average
 			return $r1['finalscore'] < $r2['finalscore'] ? 1 : -1;
-		elseif($r1['name']!=$r2['name'])//Then in order of name
-			return $r1['name'] > $r2['name'] ? 1 : -1;
-		else
-			return 0;
+		else//Then in random order.
+			return mt_rand(-1000,1000);
 	});
 	
-	$data = array_merge($data,$querydata);
+	$data = array_merge($headdata,$querydata);
 	
+	$namestr = '<div><b>Tests:</b> '.implode(', ',$test_names).'</div><br>';
+	foreach($querydata as $row)
+		$namestr .= $row['name'].'<br>';
 	echo <<<HEREDOC
       <h1>View Scores</h1>
-      <p>Z-scores are a very good way of standardizing scores. It is sorted by a (slightly modified) z-average, which is the average of the <i>available</i> z-scores only. The final sorted-by score has a bit of weight placed toward attending more tryouts.</p>
+	  
+	  <h3>TL;DR</h3>
+	  <div>$namestr</div>
+	  <br>
+	  
+	  <h3>Stats</h3>
+      <p>Z-scores are a very good way of standardizing scores. It is sorted by a (slightly modified) z-average, which is the average of the <i>available</i> z-scores only. The final sorted-by score has a bit of weight placed toward attending more tryouts. Ties, as always, are broken in random order.</p>
 	  
       <a href="Tests">&lt; Back</a>
 HEREDOC

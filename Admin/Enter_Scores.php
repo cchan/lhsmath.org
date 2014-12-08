@@ -13,7 +13,7 @@
 $path_to_root = '../';
 require_once '../lib/functions.php';
 restrict_access('A');
-if (isSet($_POST['do_add_score']) || isSet($_GET['Override']) || $_GET['Temporary'])
+if (isSet($_POST['do_add_score']) || isSet($_GET['Override']) || isSet($_GET['Temporary']))
 	process_form();
 else if (isSet($_GET['ID']))
 	show_page('', '');
@@ -44,11 +44,11 @@ function show_page() {
       <br />
       <br />
       <br />
-      <form id="enterScore" method="post" action="Enter_Scores" class="focus" autocomplete="off">
+      <form id="enterScore" method="post" action="Enter_Scores" autocomplete="off">
       <table class="spacious">
         <tr>
           <td>Name:</td>
-          <td><input type="text" id="userAutocomplete" name="user" size="25"/></td>
+          <td><input type="text" id="userAutocomplete" name="user" class="focus" size="25"/></td>
         </tr><tr>
           <td>Score:&nbsp;</td>
           <td><input type="text" name="score" size="3"/></td>
@@ -97,7 +97,6 @@ function process_form() {
 	elseif(!val('i0+',$score) || ($score = intval($score)) > $total_points)//Validate Score
 		alert('Score must be a nonnegative integer not more than the total points',-1);
 	elseif (count($userdata = autocomplete_users_php($_REQUEST['user'])) == 0) { // Check for username - No such users found.
-		var_dump($user,$userdata);
 		if($_GET['Temporary']){
 			if (DB::queryFirstField('SELECT COUNT(*) FROM users WHERE name=%s',$user) > 0)
 				alert('User already exists!',-1);
@@ -139,7 +138,6 @@ function process_form() {
 			}
 		}
 		else{ //Non-duplicate, valid. Let's enter it.
-		var_dump(array('test_id'=>$test_id,'user_id'=>$user_id,'score'=>$score));
 			DB::insert('test_scores',array('test_id'=>$test_id,'user_id'=>$user_id,'score'=>$score));
 			alert('Entered a score of ' . $score . ' for ' . $user,1);
 		}

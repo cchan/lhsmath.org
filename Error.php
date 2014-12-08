@@ -21,18 +21,29 @@
 		<p>-LHSMATH Webmaster(s)</p>";
 */
 
-if(!array_key_exists('Error.php',$_SESSION)){ //Preventing redirect loops when including a buggy functions.php.
-	$_SESSION = array();
-	session_name('Session');
-	session_start();
-	$_SESSION['Error.php'] = true;
-	
-	$path_to_root = '../';
-	require_once $path_to_root.'lib/functions.php';
-	page_title("Error");
+if(!$path_to_root)$path_to_root = '';
+require_once $path_to_root.'lib/functions.php';
+//May present problems if functions.php itself has bugs.
+
+//Making pages case-insensitive.
+$pagename = $_SERVER['REQUEST_URI'];
+if(strpos($pagename,'.php')!==false)
+	$pagename=substr($pagename,0,-4);
+if(strpos($pagename,'/')===0)
+	$pagename=substr($pagename,1);
+if(preg_match('@[^a-zA-Z0-9\/]@i',$pagename)===0){//Nothing but alphanumeric and slashes
+	$files=globi($pagename,'','.php');
+	if(is_array($files) && count($files)>0){
+		cancel_templateify();
+		header('HTTP/1.1 301 Moved Permanently');
+		header('Location: '.$files[0]);
+		die();
+	}
 }
+
+page_title("Error");
 
 header("HTTP/1.1 500 Internal Server Error");
 ?>
-<h1>Error</h1>
+<h1>Error <?=$_SERVER['REDIRECT_STATUS']?></h1>
 Whoops! Something went wrong. Try again?

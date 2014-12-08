@@ -185,6 +185,12 @@ function trim_email($email) {
 	return substr($email, 0, $end_of_name - ($len - 27)) . '...' . substr($email, $end_of_name);
 }
 
+function getTextGradeFromYOG($yog){
+	$grade = getGradeFromYOG($yog);
+	if($grade <= 12 && $grade >= 9) return 'Grade '.strval($grade);
+	elseif($grade > 12) return 'Alumni';
+	else return 'Middle School';
+}
 function getGradeFromYOG($yog){
 	//$yog = 2016 means they're graduating in ~~June of 2016. Let's have the switchover happen in July/August, since that's safer.
 	if($yog != intval($yog)) return 'error';
@@ -193,10 +199,9 @@ function getGradeFromYOG($yog){
 	$currentyear = intval(date('Y'));
 	$currentmonth = intval(date('n'));
 	$grade = ($currentyear - $yog) + 12;
-	if($currentmonth > 7) $grade++;
-	if($grade <= 12 && $grade >= 9) return 'Grade '.strval($grade);
-	elseif($grade > 12) return 'Alumni';
-	else return 'Middle School';
+	if($currentmonth > 7) $grade++; //July/Aug switchover
+	
+	return $grade;
 }
 
 function sanitize_username($name){ //'Name must have only letters, hyphens, apostrophes, and spaces, and be between 3 and 30 characters long'

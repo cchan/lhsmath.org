@@ -37,15 +37,28 @@ function show_page() {
       <h1>Home</h1>$welcome_msg$new_address_msg
 
 HEREDOC;
-
-	$text = file_get_contents('.content/Home.txt');
-	echo BBCode($text);
-	
-	if (@user_access('A'))
-		echo <<<HEREDOC
-
-      <div class="sidetab"><a href="Admin/Edit_Page?Home">(edit this page)</a></div>
-HEREDOC;
 }
 
 ?>
+
+<h2>Welcome</h2>
+Welcome to the website of the Lexington High School Math Club!<br>
+<br>
+Events that are coming up:<br>
+<div>
+<?php
+$current_events = DB::query('SELECT * FROM events WHERE %l',DBExt::timeInInterval('date','+0d','+20d'));
+$count = count($current_events);
+if($count > 0){
+	foreach($current_events as $event){
+		$date = date("F j",strtotime($event["date"]));
+		echo "<a href='View_Event?ID={$event["event_id"]}'><b>{$event["title"]}</b> on $date</a><br>";
+	}
+}
+//else echo "[no events]";
+echo "<a href='http://calcbee.org'><b>CalcBee</b> on January 10, MIT 1-190</a><br>";
+?>
+</div>
+
+<h2>LMT</h2>
+If you are looking for the Lexington Math Tournament website, visit <a href="/LMT/About">http://www.lhsmath.org/LMT</a>.
