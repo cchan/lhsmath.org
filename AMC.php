@@ -14,7 +14,8 @@ page_title('AMC 10/12 Signup');
 
 <h1>AMC 10/12 Signup</h1>
 
-<h4 style="text-align:center"><a href="http://goo.gl/forms/9ak1BvE5NK" rel="external">Registration Form</a></h4>
+<h3 style="text-align:center;color:red">Registration is now closed.</h3>
+<h5 style="text-align:center">Contact us at <a href="mailto:captains@lhsmath.org">captains@lhsmath.org</a> if you have any questions.</h5>
 
 <div>
 	<p>The AMC (American Mathematics Competition) is an international examination in secondary school mathematics consisting of 
@@ -34,5 +35,3 @@ page_title('AMC 10/12 Signup');
 	<p>See <a href="http://www.maa.org/math-competitions/amc-contests">the AMC website</a> for more information on this series of contests.
 	If you have any questions, you can contact us at <a href="mailto:amc@lhsmath.org">amc@lhsmath.org</a>.</p>
 </div>
-
-<h4 style="text-align:center"><a href="http://goo.gl/forms/9ak1BvE5NK" rel="external">Registration Form</a></h4>
