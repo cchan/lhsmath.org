@@ -1,7 +1,9 @@
 <?php
 /*
- * lib/CONFIG.local.php
+ * lib/CONFIG.local.sample.php
  * LHS Math Club Website
+ *
+ * !!!SAMPLE SAMPLE SAMPLE SAMPLE SAMPLE!!!
  *
  * This file is where information such as database connections, etc. are
  * specified. YOU MAY EDIT THIS FILE.
