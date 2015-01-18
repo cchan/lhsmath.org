@@ -51,7 +51,7 @@ function show_form($err, $selected_field) {
       <h1>Individual Registration</h1>
       
       <div class="instruction">
-      To register as an individual <span class="u">not affiliated with a school</span>, please fill out this form with your parents.<br />
+      To register as an individual <span class="b">not affiliated with a school</span>, please fill out this form with your parents.<br />
       <br />
       The Lexington Mathematics Tournament $lmt_year will be held on <span class="b">$lmt_date</span>
       at Lexington High School. Please read the rules before registering.<br />
@@ -128,7 +128,7 @@ function process_form() {
 	// ** All information has been validated at this point **
 	
 	// Create database entry
-	DB::insert('individuals',array('name'=>$name,'grade'=>$grade,'team'=>$team));
+	DB::insert('individuals',array('name'=>$name,'grade'=>$grade,'email'=>$email));
 	$id = DB::insertId();//Get AUTO_INCREMENT id
 	
 	// Start outputting the top part of the page, to make it seem responsive while we send the email
@@ -141,25 +141,25 @@ function process_form() {
 	$url = get_site_url() . '/LMT';
 	global $LMT_EMAIL;
 	
-	$subject = 'Registration Receipt';
+	$subject = "LMT $lmt_year Registration Receipt";
 	$body = <<<HEREDOC
 Hi $name,
-You have successfully registered for LMT $lmt_year!
+You have successfully registered as an individual for LMT $lmt_year!
 
-Please print out this email and bring it to the competition
-along with the registration fee of $cost.
+[b]Please print out this email and bring it to the competition
+along with the registration fee of $cost [/b].
 
-Date: $lmt_date
-Location: Lexington High School [http://goo.gl/XiGkj]
+Date: [b]$lmt_date [/b]
+Location: Lexington High School [url]http://www.lhsmath.org/LMT/Location [/url]
 
-If you have any questions, please contact <$LMT_EMAIL>.
+If you have any questions, please contact us at [email]$LMT_EMAIL [/email].
 ______________________________________________________________
 
-Registration: Individual
-ID: $id
-Name: $name
-Email: $email
-Grade: $grade
+Registration: [b]Individual[/b]
+ID: [b]$id [/b]
+Name: [b]$name [/b]
+Email: [b]$email [/b]
+Grade: [b]$grade [/b]
 ______________________________________________________________
 HEREDOC;
 	lmt_send_email(array($email=>$name), $subject, $body);
@@ -169,7 +169,7 @@ HEREDOC;
       <h1>Individual Registration</h1>
       
       <div class="text-centered">
-        You have successfully registered for LMT $lmt_year. We sent you an email with more information.
+        You have successfully registered for LMT $lmt_year! An email has been sent with more information.
       </div>
 HEREDOC;
 }

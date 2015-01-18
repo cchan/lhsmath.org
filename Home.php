@@ -55,8 +55,7 @@ if($count > 0){
 		echo "<a href='View_Event?ID={$event["event_id"]}'><b>{$event["title"]}</b> on $date</a><br>";
 	}
 }
-//else echo "[no events]";
-echo "<a href='http://calcbee.org'><b>CalcBee</b> on January 10, MIT 1-190</a><br>";
+else echo "[no events]";
 ?>
 </div>
 

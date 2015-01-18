@@ -16,20 +16,15 @@ else
 	show_page();
 
 
-
-
-
 function show_page() {
 	$id = htmlentities($_GET['ID']);
-	$row = DB::queryFirstRow('SELECT name, coach_email, teams_paid FROM schools WHERE school_id="'
-		. mysqli_real_escape_string(DB::get(),$id) . '" AND deleted="0"');
+	$row = DB::queryFirstRow('SELECT name, coach_email, teams_paid FROM schools WHERE school_id=%i AND deleted="0"',$id);
 	$name = htmlentities($row['name']);
 	$email = htmlentities($row['coach_email']);
 	$grade = htmlentities($row['grade']);
 	$paid = htmlentities($row['teams_paid']);
 	
-	$result = DB::queryRaw('SELECT team_id, name FROM teams WHERE school="'
-		. mysqli_real_escape_string(DB::get(),$id) . '" AND deleted="0" ORDER BY name');
+	$result = DB::queryRaw('SELECT team_id, name FROM teams WHERE school=%i AND deleted="0" ORDER BY name',$id);
 	$num_teams = htmlentities(mysqli_num_rows($result));
 	$add_teams_paid = $num_teams - $paid;
 	if ($add_teams_paid < 0) {
@@ -172,8 +167,7 @@ function process_form() {
 		DB::queryRaw($query);
 	}
 	
-	add_alert('checkinSchool', $name . ' has been updated. (<a href="School?ID='
-		. htmlentities($_GET['ID']) . '" style="color: blue">go back</a>)');
+	alert($name . ' has been updated. (<a href="School?ID=' . htmlentities($_GET['ID']) . '" style="color: blue">go back</a>)',1);
 	header('Location: Home');
 }
 

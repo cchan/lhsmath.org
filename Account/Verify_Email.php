@@ -61,10 +61,6 @@ function show_page() {
           <input type="submit" name="do_resend_verification_email" value="Resend the Verification Email"/>
         </form>
 HEREDOC;
-	
-	$names[0] = 'Verify Email';
-	$pages[0] = '';
-	page_footer($names, $pages);
 }
 
 

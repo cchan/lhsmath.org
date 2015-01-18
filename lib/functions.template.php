@@ -164,8 +164,8 @@ function fetch_alerts_html(){
 }
 
 function location($path_from_root){
-	cancel_templateify();
-	header('Location: /'.$path_from_root);//--todo-- $path_to_root doesn't work for Post_Message, etc.
+	cancel_templateify();//so it doesn't mess up alerts, etc.
+	header('Location: '.$path_to_root.$path_from_root);//--todo-- $path_to_root doesn't work for Post_Message, etc.
 	die;
 }
 
@@ -196,6 +196,15 @@ $main_navbar = array( //Name => Page path, or if it's the same you can omit the 
 	//End result: flattens and concatenates all permissible pages into a list and then outputs it as a single navbar.
 	//Interestingly, for the Email-Verify, etc. people, it outputs nothing except Home, which was what was originally intended by Tidor. :)
 	'Home',
+	'E'=>[
+		'Verify Email'=>'Account/Verify_Email',
+	],
+	'+'=>[
+		'Super-Admin'=>'Admin/Super_Admin',
+	],
+	'B'=>[
+		'Banned',
+	],
 	'X'=>[
 		'LMT',
 		'AMC',

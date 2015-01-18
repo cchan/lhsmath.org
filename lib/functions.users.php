@@ -1,8 +1,4 @@
 <?php
-
-
-
-
 /*
  * restrict_access($levels)
  *  - $levels: what types of users can access this page:

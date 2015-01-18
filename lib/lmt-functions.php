@@ -683,7 +683,7 @@ HEREDOC;
 
 
 function lmt_page_footer(){
-	trigger_error('used lmt_page_footer',E_USER_NOTICE);
+	trigger_error('used lmt_page_footer'.var_export(debug_backtrace()),E_USER_NOTICE);
 }
 function lmt_backstage_footer(){
 	trigger_error('used lmt_backstage_footer',E_USER_NOTICE);
@@ -748,10 +748,7 @@ else{
  * lmt_home_footer($page_name)
  */
 function lmt_home_footer() {
-	$names = array('About');
-	$pages = array('LMT/About');
-	
-	page_footer($names, $pages);
+	trigger_error('used lmt_home_footer',E_USER_NOTICE);
 }
 
 ?>

@@ -48,6 +48,9 @@ $num_member_files = DBExt::queryCount('files','permissions="M"');
 $num_public_files = DBExt::queryCount('files','permissions="P"');
 $num_admin_files = DBExt::queryCount('files','permissions="A"');
 
+$errors_file_size='File does not exist.';
+if(file_exists($path_to_root.".content/Errors.txt"))$errors_file_size = filesize($path_to_root.".content/Errors.txt");
+
 
 //Version checking
 global $path_to_root;
@@ -124,7 +127,7 @@ catch(Exception $e){$swift_version = '(ERROR)';}
 	  <td>
 		<h4>Error Log</h4>
 		<ul>
-		  <li>Size of <span class="monospace">/home/public/ .content/Errors.txt</span>: <?=filesize($path_to_root.".content/Errors.txt")?>. <a href="?do_download_errors">[Download]</a> <a href="?do_clear_errors" onclick="window.location.reload()">[Download & clear]</a></li>
+		  <li>Size of <span class="monospace">/home/public/ .content/Errors.txt</span>: <?=$errors_file_size?>. <a href="?do_download_errors">[Download]</a> <a href="?do_clear_errors" onclick="window.location.reload()">[Download & clear]</a></li>
 		  <li>Also check via FTP <span class="monospace">/home/logs/*</span>.</li>
 		</ul>
 	  </td>

@@ -22,7 +22,7 @@ else
 
 
 function show_main_page() {
-	page_header('Registration Log');
+	page_title('Registration Log');
 	
 	// Top banned registrations
 	echo <<<HEREDOC
@@ -60,7 +60,6 @@ HEREDOC;
 		$row = mysqli_fetch_assoc($result);
 	}
 	echo "      </table>\n";
-	admin_page_footer('Registration Log');
 }
 
 
@@ -68,7 +67,7 @@ HEREDOC;
 
 
 function show_detail_page() {
-	page_header('Registration Log');
+	page_title('Registration Log');
 	
 	$ip = htmlentities($_GET['IP']);
 	
@@ -121,8 +120,6 @@ HEREDOC;
 		$row = mysqli_fetch_assoc($result);
 	}
 	echo "      </table>\n";
-	
-	admin_page_footer('Registration Log');
 }
 
 ?>

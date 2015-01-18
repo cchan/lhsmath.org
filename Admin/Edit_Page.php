@@ -17,10 +17,6 @@ if (isSet($_POST['do_edit_page']))
 else
 	show_page('');
 
-
-
-
-
 function show_page($err) {
 	$file = '';
 	$name = '';

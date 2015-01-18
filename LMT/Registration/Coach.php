@@ -41,8 +41,8 @@ function show_form($err, $selected_field) {
       <h1>Coach Registration</h1>
       
       <div class="instruction">
-      In order to register teams for the Lexington Math Tournament, coaches must first create an account.
-      Only one account per school or organization is required.<br />
+      In order to register <b>teams</b> for the Lexington Math Tournament, create an account by filling out this form.
+      Only one account per school or organization is required; each account may register multiple teams.<br />
       <br />
       If you have already registered, use the link in the confirmation email to access your school's information. For
       assistance, please <a href="../Contact">contact us</a>.
@@ -113,17 +113,26 @@ function process_form() {
 	// Start outputting the top part of the page, to make it seem responsive while we send the email
 	lmt_page_header('Coach Registration');
 	
+	global $LMT_EMAIL;
+	$lmt_year = htmlentities(map_value('year'));
+	$lmt_date = htmlentities(map_value('date'));
+	
 	// Send the email
 	$url = get_site_url() . '/LMT/Registration/Signin?ID=' . $id . '&Code=' . $access_code;
 	
-	$subject = 'LMT Account';
+	$subject = "LMT $lmt_year Account";
 	$body = <<<HEREDOC
 To: $school_name
 
-You may register teams for the LMT by clicking the link below. This link will
+Thank you for registering your school for the LMT! The contest will be 
+held on [b]$lmt_date [/b] at Lexington High School.
+
+You may register teams for LMT $lmt_year via the link below. This link will
 also enable you to modify teams as long as registration is open.
 
-$url
+[b][url]$url [/url][/b]
+
+If you have any questions, please contact us at [email]$LMT_EMAIL [/email].
 HEREDOC;
 	lmt_send_email(array($email=>$school_name), $subject, $body);
 	

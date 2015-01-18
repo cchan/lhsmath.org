@@ -258,11 +258,13 @@ function sendfile($downloadname,$content){
 }
 
 /*
+make_table(string $classes, array $headers, array array $data)
+
 USAGE:
 make_table(
 	"contrasting",
 	array("name"=>"Name","email"=>"Email Address"),
-	array(
+	array( //this can be from a DB::query!
 		array("name"=>"Person","email"=>"asdf@asdf.com"),
 		array("name"=>"Oinker","email"=>"oink@oink.org"),
 		//...
@@ -271,7 +273,7 @@ make_table(
 //Alternatively, you don't necessarily need associative indices as long as you keep everything in order yourself.
 
 */
-function make_table($classes, $headers, $data){
+function make_table($classes, $headers, $data, $row_class_callback=NULL){
 	if(is_array($classes))$classes = implode(' ',$classes);
 	$table = "<table class='$classes'>";
 	
@@ -284,12 +286,15 @@ function make_table($classes, $headers, $data){
 		$table .= "</tr>";
 		
 		foreach($data as $row){
-			$table .= "<tr>";
+			if(isSet($row_class_callback))//You can assign classes to the row based on the data (see Login_Log)
+				$table .= "<tr class='" . $row_class_callback($row) . "'>";
+			else
+				$table .= "<tr>";
 			
 			foreach($indices as $index)
 				if(array_key_exists($index,$row))
 					$table .= "<td>{$row[$index]}</td>";
-				else //No data for this row, just skip (e.g. with scoring comparison, maybe they just didn't take the test.)
+				else //No data for this cell, just skip (e.g. with scoring comparison, maybe that person just didn't take that test.)
 					$table .= "<td>&nbsp;</td>";
 			
 			$table .= "</tr>";

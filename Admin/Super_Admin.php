@@ -48,10 +48,6 @@ function show_page($err) {
         </table>
       </form>
 HEREDOC;
-	
-	$names[0] = 'Super-Admin';
-	$pages[0] = '';
-	page_footer($names, $pages);
 }
 
 

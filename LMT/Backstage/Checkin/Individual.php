@@ -10,18 +10,26 @@ $path_to_lmt_root = '../../';
 require_once $path_to_lmt_root . '../lib/lmt-functions.php';
 backstage_access();
 
+page_title('Check-in');
+
 if (isSet($_POST['do_lmt_checkin_individual']))
 	process_form();
 else
 	show_page();
 
 
-
-
-
 function show_page() {
-	$row = DB::queryFirstRow('SELECT id, name, email, grade, paid, attendance FROM individuals WHERE id="'
-		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" AND deleted="0"');
+	$row = DB::queryFirstRow('SELECT id, name, email, grade, paid, attendance FROM individuals WHERE id=%i AND deleted="0"',$_GET['ID']);
+	
+	if ($row == null){
+		alert('Individual not found',-1);
+		lmt_location('Home');
+	}
+	else if ($row['email'] == ""){
+		alert('Individual was registered as part of a team',-1);
+		lmt_location('Home');
+	}
+	
 	$id = htmlentities($row['id']);
 	$name = htmlentities($row['name']);
 	$email = htmlentities($row['email']);
@@ -29,7 +37,6 @@ function show_page() {
 	$paid = ($row['paid'] == "1") ? '<span style="color: red">Yes</span>' : 'No';
 	$attendance = ($row['attendance'] == "1") ? '<span style="color: red">Present</span>' : 'Absent';
 	
-	lmt_page_header('Check-in');
 	echo <<<HEREDOC
       <h1>Individual Check-in</h1>
       $err
@@ -88,14 +95,11 @@ function process_form() {
 	$paid = ($_POST['paid'] == 'Yes') ? '1' : '0';
 	$attendance = ($_POST['attendance'] == 'Yes') ? '1' : '0';
 	
-	$row = DB::queryFirstRow('SELECT name FROM individuals WHERE id="'
-		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"');
-	$name = htmlentities($row['name']);
+	$name = DB::queryFirstField('SELECT name FROM individuals WHERE id=%i',$_GET['ID']);
 	
 	DB::update('individuals',array('paid'=>$paid,'attendance'=>$attendance),'id=%i',$_GET['ID']);
 	
-	add_alert('checkinIndividual', $name . ' has been checked in. (<a href="Individual?ID='
-		. htmlentities($_GET['ID']) . '" style="color: blue">go back</a>)');
+	alert($name . ' has been checked in. (<a href="Individual?ID=' . htmlentities($_GET['ID']) . '">go back</a>)',1);
 	header('Location: Home');
 }
 

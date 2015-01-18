@@ -52,7 +52,7 @@ function send_email($bcc_list, $subject, $bb_body, $reply_to=NULL, $prefix=NULL,
 	if(($error_msg = val_email_msg($subject,$bb_body))!==true)
 		return $error_msg;
 	
-	$bb_body .= "\n\n\n---\n$footer\n"; //Attach footer.
+	if($footer!="")$bb_body .= "\n\n\n---\n$footer\n"; //Attach footer.
 	$html = BBCode($bb_body); //BBCode it.
 	$subject = preg_replace("/[^\S ]/ui", '', strip_tags($prefix.' '.$subject));//"remove everything that's not [non-whitespace or space]"
 	//preg_replace("/[^[:alnum][:space]]/ui", '', $string);?

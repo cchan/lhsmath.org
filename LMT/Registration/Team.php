@@ -40,6 +40,7 @@ function show_add_page($err, $selected_field) {
 	global $team_name, $members;
 	
 	$c = DB::queryFirstField('SELECT COUNT(*) FROM teams WHERE school=%i', $_SESSION['LMT_user_id']);
+	$cancel_link = '';
 	if ($c != 0)
 		$cancel_link = "\n              &nbsp;<a href=\"Home\">Cancel</a>";
 	
@@ -60,9 +61,8 @@ function show_add_page($err, $selected_field) {
       Please read the rules before registering teams. Though LMT is open to teams of 4, 5, or 6 competitors,
       we stress that a full team is one of 6 students. The option for smaller teams is intended for schools
       who may not be able to field full teams, but still have significant interest in the competition, or in
-      case unexpected conflicts arise for individual members come competition day. We strongly discourage the
-      forming of smaller teams solely for the purpose of somehow gaining a competitive advantage over a
-      potentially larger team.<br />
+      case unexpected conflicts arise for individual members come competition day. Forming smaller teams is 
+	  otherwise strongly discouraged.<br />
       <br />
       You may add, remove and edit teams until registration closes.
       </div>
@@ -72,13 +72,12 @@ function show_add_page($err, $selected_field) {
         <table>
           <tr>
             <td>School:</td>
-            <td><span class="b">$school_name</span></td>
+            <td><span class="b">$school_name</span><br><br></td>
             <td></td>
           </tr><tr>
             <td>Team Name:&nbsp;</td>
             <td>
               <input type="text" name="team_name" size="25" maxlength="25" value="$team_name" />
-              <br /><br />
             </td>
             <td></td>
           </tr><tr>
@@ -146,10 +145,9 @@ function show_add_page($err, $selected_field) {
               </select>
             </td>
           </tr><tr>
-            <td></td>
-            <td>
+            <td colspan="2">
               <input type="hidden" name="xsrf_token" value="{$_SESSION['xsrf_token']}" />
-              <input type="submit" name="lmt_do_reg_add" value="Add Team" />$cancel_link
+              <input type="submit" name="lmt_do_reg_add" value="Add This Team" />$cancel_link
             </td>
           </tr>
         </table>
