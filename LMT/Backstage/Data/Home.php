@@ -76,7 +76,6 @@ HEREDOC;
       ...<a href="Add?Individual">an Individual</a><br />
       ...<a href="Undelete">Undelete</a>
 HEREDOC;
-	lmt_backstage_footer('Data');
 }
 
 ?>

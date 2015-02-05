@@ -106,14 +106,6 @@ HEREDOC;
 	if ($err != '')
 		$err = "\n        <div class=\"error\">$err</div><br />\n";
 	
-	$a = fetch_alert('lmt_data_individual_update_name');
-	$b = fetch_alert('lmt_data_individual_update_grade');
-	$c = fetch_alert('lmt_data_individual_update_email');
-	$d = fetch_alert('lmt_data_individual_update_attendance');
-	$e = fetch_alert('lmt_data_individual_update_team');
-	$f = fetch_alert('lmt_data_individual_update_individual_score');
-	$g = fetch_alert('lmt_data_individual_update_theme_score');
-	
 	if (!scoring_is_enabled()) {
 		$scoring_warning = "\n      " . '<div class="text-centered">Note: Scoring has been frozen, so results may not be changed.</div><br /><br />';
 		$scoring_freeze = 'disabled="disabled" ';
@@ -122,7 +114,7 @@ HEREDOC;
 	lmt_page_header($name);
 	echo <<<HEREDOC
       <h1>Individual</h1>
-      $scoring_warning$a$b$c$d$e$f$g$err
+      $scoring_warning
       <table>
         <tr>
           <td>Name:</td>
@@ -213,7 +205,6 @@ $teams_dropdown
         </tr>
       </table>
 HEREDOC;
-	lmt_backstage_footer('');
 	die;
 }
 
@@ -485,7 +476,6 @@ function do_confirm_delete() {
         </div></form>
       </div>
 HEREDOC;
-	lmt_backstage_footer('');
 }
 
 

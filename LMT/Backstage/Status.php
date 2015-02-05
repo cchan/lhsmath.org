@@ -10,36 +10,39 @@ $path_to_lmt_root = '../';
 require_once $path_to_lmt_root . '../lib/lmt-functions.php';
 restrict_access('A');
 
-if (isSet($_POST['lmt_close_reg']))
-	do_close_reg();
-else if (isSet($_POST['lmt_open_reg']))
-	do_open_reg();
-else if (isSet($_POST['lmt_close_backstage']))
-	do_close_backstage();
-else if (isSet($_POST['lmt_open_backstage']))
-	do_open_backstage();
-else if (isSet($_POST['lmt_freeze_scoring']))
-	do_freeze_scoring();
-else if (isSet($_POST['lmt_enable_scoring']))
-	do_enable_scoring();
-else if (isSet($_POST['lmt_update_date']))
-	do_update_date();
-else if (isSet($_POST['lmt_update_year']))
-	do_update_year();
-else if (isSet($_POST['lmt_update_indiv_cost']))
-	do_update_indiv_cost();
-else if (isSet($_POST['lmt_update_team_cost']))
-	do_update_team_cost();
-else if (isSet($_POST['lmt_update_backstage_message']))
-	do_update_backstage_message();
-else
-	show_page('');
+
+if ($_POST['xsrf_token'] == $_SESSION['xsrf_token']){
+	if (isSet($_POST['lmt_close_reg']))
+		do_close_reg();
+	else if (isSet($_POST['lmt_open_reg']))
+		do_open_reg();
+	else if (isSet($_POST['lmt_close_backstage']))
+		do_close_backstage();
+	else if (isSet($_POST['lmt_open_backstage']))
+		do_open_backstage();
+	else if (isSet($_POST['lmt_freeze_scoring']))
+		do_freeze_scoring();
+	else if (isSet($_POST['lmt_enable_scoring']))
+		do_enable_scoring();
+	else if (isSet($_POST['lmt_update_date']))
+		do_update_date();
+	else if (isSet($_POST['lmt_update_year']))
+		do_update_year();
+	else if (isSet($_POST['lmt_update_indiv_cost']))
+		do_update_indiv_cost();
+	else if (isSet($_POST['lmt_update_team_cost']))
+		do_update_team_cost();
+	else if (isSet($_POST['lmt_update_backstage_message']))
+		do_update_backstage_message();
+}
+
+show_page();
 
 
 
 
 
-function show_page($err) {
+function show_page() {
 	global $javascript;
 	$javascript = <<<HEREDOC
       function processKey(e, id) {
@@ -97,16 +100,11 @@ HEREDOC;
 	$num_teams = DB::queryFirstField('SELECT COUNT(*) AS c FROM teams WHERE deleted="0"');
 	$num_individuals = DB::queryFirstField('SELECT COUNT(*) AS c FROM individuals WHERE email <> "" AND deleted="0"');
 	
-	if ($err != '')
-		$err = "\n        <div class=\"error\">$err</div><br />\n";
-	$alert = fetch_alert('status');
-	
 	echo <<<HEREDOC
       <h1>Status</h1>
       
       <h2>Settings</h2>
       <div class="indented">
-        $err$alert
         <form method="post" action="{$_SERVER['REQUEST_URI']}">
         <div><input type="hidden" name="xsrf_token" value="{$_SESSION['xsrf_token']}" /></div>
           <table style='vertical-align:middle;'>
@@ -154,7 +152,6 @@ HEREDOC;
         <span class="b">$num_individuals</span> unaffiliated individuals have signed up.
       </div>
 HEREDOC;
-	lmt_backstage_footer('Status');
 	die;
 }
 
@@ -163,173 +160,68 @@ HEREDOC;
 
 
 function do_close_reg() {
-	if ($_POST['xsrf_token'] != $_SESSION['xsrf_token'])
-		trigger_error('XSRF code incorrect', E_USER_ERROR);
-	
 	map_set('registration', '0');
-	
-	add_alert('status', 'Registration has been closed. Be sure to update the About page.');
-	show_page('');
+	alert('Registration has been closed. Be sure to update the About page.', 1);
 }
-
-
-
-
-
 function do_open_reg() {
-	if ($_POST['xsrf_token'] != $_SESSION['xsrf_token'])
-		trigger_error('XSRF code incorrect', E_USER_ERROR);
-	
 	map_set('registration', '1');
-	
-	add_alert('status', 'Registration has been opened. Be sure to update the About page.');
-	
-	show_page('');
+	alert('Registration has been opened. Be sure to update the About page.', 1);
 }
-
-
-
-
-
 function do_close_backstage() {
-	if ($_POST['xsrf_token'] != $_SESSION['xsrf_token'])
-		trigger_error('XSRF code incorrect', E_USER_ERROR);
-	
 	map_set('backstage', '0');
-	
-	add_alert('status', 'Backstage has been closed');
-	
-	show_page('');
+	alert('Backstage has been closed', 1);
 }
-
-
-
-
-
 function do_open_backstage() {
-	if ($_POST['xsrf_token'] != $_SESSION['xsrf_token'])
-		trigger_error('XSRF code incorrect', E_USER_ERROR);
-	
 	map_set('backstage', '1');
-	
-	add_alert('status', 'Backstage has been opened');
-	
-	show_page('');
+	alert('Backstage has been opened', 1);
 }
-
-
-
-
-
 function do_freeze_scoring() {
-	if ($_POST['xsrf_token'] != $_SESSION['xsrf_token'])
-		trigger_error('XSRF code incorrect', E_USER_ERROR);
-	
 	map_set('scoring', '0');
-	
-	add_alert('status', 'Score entry has been frozen');
-	
-	show_page('');
+	alert('Score entry has been frozen', 1);
 }
-
-
-
-
-
 function do_enable_scoring() {
-	if ($_POST['xsrf_token'] != $_SESSION['xsrf_token'])
-		trigger_error('XSRF code incorrect', E_USER_ERROR);
-	
 	map_set('scoring', '1');
-	
-	add_alert('status', 'Score entry has been enabled');
-	show_page('');
+	alert('Score entry has been enabled', 1);
 }
-
-
-
-
-
 function do_update_date() {
-	if ($_POST['xsrf_token'] != $_SESSION['xsrf_token'])
-		trigger_error('XSRF code incorrect', E_USER_ERROR);
-	
 	if (strlen($_POST['date']) > 2000)
 		show_page('Please limit all fields to 2000 characters');
 	
 	map_set('date', $_POST['date']);
-	
-	add_alert('status', 'Date has been changed. Be sure to update the About page.');
-	show_page('');
+	alert('Date has been changed. Be sure to update the About page.', 1);
 }
 
-
-
-
-
 function do_update_year() {
-	if ($_POST['xsrf_token'] != $_SESSION['xsrf_token'])
-		trigger_error('XSRF code incorrect', E_USER_ERROR);
-	
 	$year = $_POST['year'];
 	if (!preg_match('/^\d\d\d\d$/', $year) || (int)$year < 1000 || (int)$year > 9999)
 		show_page('That\'s not a valid year');
 	
 	map_set('year', $year);
-	
-	add_alert('status', 'Year has been changed. Be sure to update the About page.');
-	show_page('');
+	alert('Year has been changed. Be sure to update the About page.', 1);
 }
 
-
-
-
-
 function do_update_indiv_cost() {
-	if ($_POST['xsrf_token'] != $_SESSION['xsrf_token'])
-		trigger_error('XSRF code incorrect', E_USER_ERROR);
-	
 	if (strlen($_POST['indiv_cost']) > 2000)
 		show_page('Please limit all fields to 2000 characters');
 	
 	map_set('indiv_cost', $_POST['indiv_cost']);
-	
-	add_alert('status', 'Individual cost has been changed');
-	show_page('');
+	alert('Individual cost has been changed', 1);
 }
 
-
-
-
-
 function do_update_team_cost() {
-	if ($_POST['xsrf_token'] != $_SESSION['xsrf_token'])
-		trigger_error('XSRF code incorrect', E_USER_ERROR);
-	
 	if (strlen($_POST['team_cost']) > 2000)
 		show_page('Please limit all fields to 2000 characters');
 	
 	map_set('team_cost', $_POST['team_cost']);
-	
-	add_alert('status', 'Team cost has been changed');
-	show_page('');
+	alert('Team cost has been changed', 1);
 }
 
-
-
-
-
 function do_update_backstage_message() {
-	if ($_POST['xsrf_token'] != $_SESSION['xsrf_token'])
-		trigger_error('XSRF code incorrect', E_USER_ERROR);
-	
 	if (strlen($_POST['backstage_message']) > 2000)
 		show_page('Please limit your message to 2000 characters');
 	
 	map_set('backstage_message', $_POST['backstage_message']);
-	
-	add_alert('status', 'Backstage message has been changed');
-	show_page('');
+	alert('Backstage message has been changed', 1);
 }
 
 ?>

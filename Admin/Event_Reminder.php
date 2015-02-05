@@ -11,7 +11,6 @@
 //Next steps: Add a field "remind_when" that indicates a time to remind at. Can specify multiple comma-separated, I suppose.
 //auto_remind will then hold the number of notifications that have so far been sent through this.
 
-$path_to_root = '../';
 require_once '../lib/functions.php';
 cancel_templateify();
 

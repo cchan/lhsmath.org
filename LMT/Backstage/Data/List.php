@@ -174,7 +174,6 @@ HEREDOC;
 	
 	$return .= "      </table>\n";
 	echo $return;
-	lmt_backstage_footer('');
 }
 
 
@@ -333,7 +332,6 @@ HEREDOC;
 	
 	$return .= "      </table>\n";
 	echo $return;
-	lmt_backstage_footer('');
 }
 
 
@@ -508,7 +506,6 @@ HEREDOC;
 	
 	$return .= "      </table>\n";
 	echo $return;
-	lmt_backstage_footer('');
 }
 
 
@@ -678,7 +675,6 @@ HEREDOC;
 	
 	$return .= "      </table>\n";
 	echo $return;
-	lmt_backstage_footer('');
 }
 
 ?>

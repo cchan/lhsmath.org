@@ -74,7 +74,6 @@ function show_page($err) {
         </table>
       </form>
 HEREDOC;
-	lmt_backstage_footer('Email Coaches');
 }
 
 
@@ -131,8 +130,6 @@ function preview_message() {
       
 
 HEREDOC;
-	
-	lmt_backstage_footer('Email Coaches');
 }
 
 
@@ -206,7 +203,7 @@ function post_message() {
 	if ($count != 0)
 		lmt_send_multipart_list_email($bcc_list, $subject, $txt_body, $html_body, $reply_to, $list_id);
 	
-	add_alert('msgCoach', 'Your message has been sent');
+	alert('Your message has been sent', 1);
 	header('Location: Coaches');
 }
 

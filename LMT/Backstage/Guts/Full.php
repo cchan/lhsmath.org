@@ -202,7 +202,6 @@ $table
         </tr>
       </table></div></form>
 HEREDOC;
-	lmt_backstage_footer('');
 	die;
 }
 
@@ -272,7 +271,7 @@ function process_form() {
 				. '" AND problem_set="' . mysqli_real_escape_string(DB::get(),$set) . '"');
 		}
 	}
-	add_alert('gutsFull', 'The score for set ' . $set . ' has been updated');
+	alert('The score for set ' . $set . ' has been updated', 1);
 	header('Location: ' . $_SERVER['REQUEST_URI']);
 	die;
 }
@@ -324,7 +323,7 @@ function process_special_form() {
 		. $new . ' WHERE team_id="'
 		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1');
 	
-	add_alert('gutsFull', 'The score for problem ' . $problem . ' has been updated');
+	alert('The score for problem ' . $problem . ' has been updated', 1);
 	header('Location: ' . $_SERVER['REQUEST_URI']);
 	die;
 }

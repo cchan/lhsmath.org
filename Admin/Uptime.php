@@ -6,7 +6,6 @@
  * Reports on the website's uptime
  */
 
-$path_to_root = '../';
 require_once '../lib/functions.php';
 restrict_access('A');
 

@@ -6,7 +6,7 @@
  * Shows an event calendar
  */
 
-$path_to_root = '';
+
 require_once 'lib/functions.php';
 restrict_access('XRLA');
 
@@ -63,7 +63,7 @@ HEREDOC;
             <td><input type="text" name="title" value="$title" size="25" maxlength="25"/></td>
           </tr><tr>
             <td>Date:</td>
-            <td><input id="add_date" type="text" name="date" value="$date" size="15"/></td>
+            <td><input type="text" name="date" value="$date" size="15" class="datepicker"/></td>
           </tr><tr>
             <td>Description:&nbsp;</td>
             <td><textarea name="description" rows="10" cols="80">$desc</textarea></td>
@@ -76,11 +76,6 @@ HEREDOC;
           </tr>
         </table>
       </form>
-	  <script>
-		  $(function() {
-			$("#add_date").datepicker({ });
-		  });
-	  </script>
 HEREDOC;
 	}
 }

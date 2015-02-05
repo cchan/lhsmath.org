@@ -27,7 +27,6 @@ function show_page() {
 		<a href="Extra" class="box-light">Extra</a>
       </div>
 HEREDOC;
-	lmt_backstage_footer('Guts Round');
 }
 
 ?>

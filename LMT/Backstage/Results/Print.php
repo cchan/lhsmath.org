@@ -98,7 +98,6 @@ HEREDOC;
 	}
 	
 	echo "      </div>";
-	lmt_backstage_footer('');
 }
 
 ?>

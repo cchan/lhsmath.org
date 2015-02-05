@@ -7,7 +7,7 @@
  * homepage, which is stored in a separate file.
  */
 
-$path_to_root = '';
+
 require_once 'lib/functions.php';
 restrict_access('XRLA');
 
@@ -44,7 +44,7 @@ HEREDOC;
 <h2>Welcome</h2>
 Welcome to the website of the Lexington High School Math Club!<br>
 <br>
-Events that are coming up:<br>
+<h2>Events</h2>
 <div>
 <?php
 $current_events = DB::query('SELECT * FROM events WHERE %l',DBExt::timeInInterval('date','+0d','+20d'));
@@ -60,4 +60,4 @@ else echo "[no events]";
 </div>
 
 <h2>LMT</h2>
-If you are looking for the Lexington Math Tournament website, visit <a href="/LMT/About">http://www.lhsmath.org/LMT</a>.
+The Lexington Math Tournament website is at <a href="/LMT/About">http://www.lhsmath.org/LMT</a>.

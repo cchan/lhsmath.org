@@ -26,7 +26,6 @@ function show_page() {
         <a href="Individuals">Email Individuals</a>
       </div>
 HEREDOC;
-	lmt_backstage_footer('Email');
 }
 
 ?>

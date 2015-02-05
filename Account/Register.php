@@ -7,7 +7,6 @@
  */
 
 
-$path_to_root = '../';
 require_once '../lib/functions.php';
 restrict_access('X'); // only for logged-out users
 
@@ -33,13 +32,7 @@ else
  * form was already submitted but had errors, the cursor goes into the
  * problematic field, for convenience.
  */
-function show_form($err, $selected_field) {
-	//--todo-- better way to do focus().
-	
-	// If an error message is given, put it inside this div
-	if ($err != '')
-		alert($err,-1);
-	
+function show_form() {
 	// Figure out what year people will be graduating.
 	$year4 = (int)date('Y');
 	
@@ -86,7 +79,7 @@ function show_form($err, $selected_field) {
           <tr>
             <td>Name:</td>
             <td>
-              <input type="text" name="name" size="25" maxlength="25" value="$name"/><br />
+              <input type="text" name="name" size="25" maxlength="25" value="$name" class="focus"/><br />
               <span class="small">First name or nickname AND last name</span><br /><br />
             </td>
           </tr><tr>
@@ -199,17 +192,20 @@ function process_form() {
 	// CHECK THAT THE YOG IS VALID
 	$grade = intval(getGradeFromYOG($yog));
 	if ($grade < 9 || $grade > 12) {
-		show_form('That is not a valid YOG ('.$grade.'you have to be in high school)', 'yog');
+		alert('That is not a valid YOG ('.$grade.'you have to be in high school)', -1);
+		show_form();
 		return;
 	}
 	
 	// CHECK THAT THE PASSWORDS MATCH, MEET MINIMUM LENGTH
 	if ($pass != $_POST['pass2']) {
-		show_form('The passwords that you entered do not match', 'pass1');
+		alert('The passwords that you entered do not match', -1);
+		show_form();
 		return;
 	}
 	if (strlen($pass) < 6) {
-		show_form('Please choose a password that has at least 6 characters', 'pass1');
+		alert('Please choose a password that has at least 6 characters', -1);
+		show_form();
 		return;
 	}
 	
@@ -221,7 +217,8 @@ function process_form() {
 													$_POST['recaptcha_challenge_field'],
 													$_POST['recaptcha_response_field']);
 	if (!$recaptcha_response->is_valid) {
-		show_form('You entered the reCaptcha incorrectly', 'pass1');
+		alert('You entered the reCaptcha incorrectly', -1);
+		show_form();
 		return;
 	}
 	
@@ -229,14 +226,16 @@ function process_form() {
 	// this is done *after* checking the reCaptcha to prevent bots from harvesting our email
 	// addresses via a brute-force attack.
 	if (DBExt::queryCount('users','LOWER(email)=LOWER(%s)',$email) != 0) {
-		show_form('An account with that email address already exists', 'email');
+		alert('An account with that email address already exists', -1);
+		show_form();
 		return;
 	}
 	
 	// CHECK THAT AN ACCOUNT WITH THE SAME NAME IN THE SAME GRADE DOES NOT EXIST
 		// - with the exception that if it's permissions = 'E', they probably mistyped their email and are redoing it.
 	if (DBExt::queryCount('users','LOWER(name)=%s AND yog=%i AND permissions!="E"',strtolower($name),$yog) != 0) {
-		show_form('An account in your grade with that name already exists', 'name');
+		alert('An account in your grade with that name already exists', -1);
+		show_form();
 		return;
 	}
 	

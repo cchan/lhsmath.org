@@ -6,7 +6,6 @@
 * Contains information for site Webmasters.
 */
 
-$path_to_root = '../';
 require_once '../lib/functions.php';
 restrict_access('A');
 
@@ -123,7 +122,7 @@ page_header('Webmaster Guide');
 	<li>A lot of secret and important stuff is on the Dropbox. Ask your predecessor if they haven't 
 		already shared it with you. Most of the accounts are fairly self-explanatory.</li>
   </ul>
-  <p>The Code</p>
+  <h3>The Code</h3>
   <ul>
 	<li>Examine the code see how the site works - a good starting point is 
 	<span class="monospace">Account/Register.php</span>. Note the code at the top - just about every page 
@@ -134,6 +133,26 @@ page_header('Webmaster Guide');
 	and neat, it can be hard to decipher at times, so feel free to ask what particular things do if you just
 	can't figure it out yourself.</li>
   </ul>
+  <h3>Debugging Tips</h3>
+  <p>Things break often when you're changing things up. Here's a few tips to help you on your way.</p>
+debug_print_backtrace(), register_shutdown_function(), set_error_handler() -- put these in various locations and move it around to locate the problem
+Google, PHP.net, StackOverflow, past webmasters
+Looking for cautionary comments [e.g. "I hate mail config $#%^$%#"]
+If it's crashing on the website but working on your computer, check that CONFIG.local.php isn't uploaded.
+<pre>
+/*
+ User Types
+ *    * 'A': Administrative (Captains, Advisor and Webmaster)
+ *    * 'R': Regular (approved users)
+ *    * 'P': Pending approval
+ *    * 'B': Banned
+ *    * 'E': Email verification pending
+ *    * '+': Super-Admin (LHSMATH account)
+ *    * 'L': Alumnus
+ *    * 'X': Logged-out user
+ *    * 'T': Temporary user (should not be able to log in)
+ */
+</pre>
   
   <h3>Help!</h3>
   <p>Webmastering is hard. If anything comes up, we're happy to help. Just email any of us who have listed our emails below.</p>

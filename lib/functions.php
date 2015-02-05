@@ -11,38 +11,34 @@
  *  - attach custom_errors as custom error handler if $CATCH_ERRORS is true.
  *  - Initialize a bunch of config variables
  *
- * Dependencies: $path_to_root defined as the relative path to the root directory of the site.
  * For example, the admin page '/Admin/blah.php' needs to have at the top:
- * 		$path_to_root = '../';								//Define the path_to_root to get to the root directory INCLUDING trailing slash
- * 		require_once $path_to_root . 'lib/functions.php';	//require_ONCE the functions.php library
+ * 		require_once '/functions.php';						//require_ONCE the functions.php library (TODO: does it have to be a hardcoded path)
  * 		restrict_access('A');								//Restrict access to admins only.
  
- 
- Hints for Debugging:
- debug_print_backtrace(), register_shutdown_function(), set_error_handler() -- put these in various locations and move it around to locate the problem
- Google, PHP.net, StackOverflow, past webmasters
- Looking for cautionary comments [e.g. "I hate mail config $#%^$%#"]
- */
- 
- /*
- Table of Contents and Descriptions
  
  ---todo--- come up with universal standard naming conventions - UpperCamelCase for function names plz
  */
 
-//CONFIG only defines global variables. Nothing else.
-require_once $path_to_root . 'lib/CONFIG.php';	// configuration information
+
+define('FUNCTIONSPHP',true);
+
+
+require_once __DIR__ . '/functions.pathinfo.php';
+
+
+//CONFIG.php only defines global variables. Nothing else.
+require_once PATH::lib() . '/CONFIG.php';	// configuration information
 	set_include_path(get_include_path() . PATH_SEPARATOR . $ADD_INCLUDE_PATH);//Extra include path specified in CONFIG
 	date_default_timezone_set($TIMEZONE);//Timezone setting in CONFIG
 
-//These are only allowed to define functions and classes, and require files subject to the same constraints.
-require_once $path_to_root . 'lib/functions.data.php';//All data-management stuff - sanitation, validation, $_POST/$_GET/$_SESSION.
+//These are only allowed to define functions and classes, and/or require files subject to the same constraints. (Not actually execute stuff)
+require_once PATH::lib() . '/functions.data.php';//All data-management stuff - sanitation, validation, $_POST/$_GET/$_SESSION.
 
-require_once $path_to_root . 'lib/functions.mail.php';
+require_once PATH::lib() . '/functions.mail.php';//Mail management
 
-require_once $path_to_root . 'lib/functions.autocomplete.php';
+require_once PATH::lib() . '/functions.autocomplete.php';//Autocompletion of various things
 
-require_once $path_to_root . 'lib/functions.users.php';
+require_once PATH::lib() . '/functions.users.php';//User management
 	 /*
 	 User Types
 	 *    * 'A': Administrative (Captains, Advisor and Webmaster)
@@ -56,14 +52,14 @@ require_once $path_to_root . 'lib/functions.users.php';
 	 *    * 'T': Temporary user (should not be able to log in)
 	 */
 
-require_once $path_to_root . 'lib/functions.db.php';
+require_once PATH::lib() . '/functions.db.php';
 	DB::$host = $DB_SERVER; //defaults to localhost if omitted
 	DB::$user = $DB_USERNAME;
 	DB::$password = $DB_PASSWORD;
 	DB::$dbName = $DB_DATABASE;
 	DB::$error_handler = 'db_error_handler';
 
-require_once $path_to_root . 'lib/functions.template.php';
+require_once PATH::lib() . '/functions.template.php';
 
 /*
  * custom_errors($errno, $errstr, $errfile, $errline)
@@ -89,8 +85,7 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
 	$err = ' DATE:' . date(DATE_RFC822) . ' IP:' . $_SERVER['REMOTE_ADDR'] . ' Error [#' . $errno . '] on line ' . $errline . ' in ' . $errfile . ': ' . $errstr . "\n";
 	
 	//Log it in the proper file
-	global $path_to_root;
-	file_put_contents($path_to_root . '.content/Errors.txt', $err, FILE_APPEND);
+	file_put_contents(PATH::errfile(), $err, FILE_APPEND);
 	
 	if(!$CATCH_ERRORS){//If catching errors is disabled, dump everything out.
 		alert($err,-1);
@@ -103,9 +98,9 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
 		return; //Just a notice/warning, not worth bothering the user for
 	
 	if (headers_sent())//Headers were already sent; we can't tell the browser HTTP/1.1 500 Internal Server Error
-		echo '<meta http-equiv="refresh" content="0;url=' . $path_to_root . 'Error">';
+		echo '<meta http-equiv="refresh" content="0;url='.URL::root().'/Error">';
 	elseif (isSet($_GET['xsrf_token']))//So we don't resubmit with the xsrf_token again and cause infinite error generation.
-		header('Location: ' . $path_to_root . 'Error');
+		header('Location: '.URL::root().'/Error');
 	else {
 		header("HTTP/1.1 500 Internal Server Error");
 		page_title('Error');
@@ -131,7 +126,7 @@ if (in_array(strtolower($_SERVER['REMOTE_ADDR']), $BANNED_IPS)) {
 	session_destroy();
 	
 	$_SESSION['permissions'] = 'B';
-	require_once $path_to_root . 'Account/Banned.php';
+	require_once PATH::root() . '/Account/Banned.php';
 }
 
 // hide .PHP extension (/Home.php -> /Home - this works because of a URL Rewrite in the .htaccess file)
@@ -164,6 +159,37 @@ session_start();
 // one stored in SESSION (therefore, we had to have generated the form ourselves)
 if (!isSet($_SESSION['xsrf_token']))
 	$_SESSION['xsrf_token'] = generate_code(20);
+
+
+function hashEquals($a,$b){//Compares the *hashes* of two variables to mess with timing attacks. Because PHP hash_equals is inadequate.
+	if(!val('s',$a,$b))return false;
+	$m=microtime();
+	$str1 = sha1($a.$m.$b);
+	$str2 = sha1($b.$m.$a);
+	return hash_equals($str1, $str2);
+}
+function genRandStr($length=NULL){
+	if(!$length)$length=mt_rand(64,96);
+	$c = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';$cl = strlen($c);
+	$s = '';
+	for($i=0;$i<$length;$i++)$s.=$c[mt_rand(0,$cl-1)];
+	return $s;
+}
+function csrfVerify(){//Checks CSRF code validity, and returns whether to proceed. The return value is static. Erases 'ver'.
+	static $valid=NULL;
+	if(is_null($valid)){
+		if($_SESSION['ver'] && hashEquals($_POST['ver'],$_SESSION['ver']))$valid=true;
+		unset($_POST['ver'],$_SESSION['ver']);
+	}
+	return $valid;
+}
+function csrfCode(/*$forceNew*/ /*$ver_name*/){//Returns randomly generated CSRF code. The return value is static.
+	static $code='';
+	if($_SESSION['ver']&&$code===$_SESSION['ver'])return $code;
+	
+	return ($code=$_SESSION['ver']=genRandStr());
+}
+
 
 
 // lock session to IP address
@@ -268,7 +294,8 @@ make_table(
 		array("name"=>"Person","email"=>"asdf@asdf.com"),
 		array("name"=>"Oinker","email"=>"oink@oink.org"),
 		//...
-	)
+	),
+	function($r){} //Given a row of data, return a class to assign to the row (e.g. coloring based on category)
 );
 //Alternatively, you don't necessarily need associative indices as long as you keep everything in order yourself.
 
@@ -304,6 +331,8 @@ function make_table($classes, $headers, $data, $row_class_callback=NULL){
 	
 	return $table;
 }
+
+
 
 
 
@@ -359,8 +388,8 @@ function email_obfuscate($address, $link_text=null, $pre_text='', $post_text='')
 		$ns_link_text = $link_text;
 	}
 	
-	global $MAILHIDE_PUBLIC_KEY, $MAILHIDE_PRIVATE_KEY, $path_to_root;
-	require_once $path_to_root . 'lib/recaptchalib.php';
+	global $MAILHIDE_PUBLIC_KEY, $MAILHIDE_PRIVATE_KEY;
+	require_once PATH::lib().'/recaptchalib.php';
 	$mailhide_url = htmlentities(recaptcha_mailhide_url($MAILHIDE_PUBLIC_KEY, $MAILHIDE_PRIVATE_KEY, $address));
 	
 	$escaped_pre_text = str_replace('"', '\"', $pre_text);

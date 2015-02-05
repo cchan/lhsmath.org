@@ -7,7 +7,6 @@
  * to new members
  */
 
-$path_to_root = '../';
 require_once '../lib/functions.php';
 restrict_access('A');
 
@@ -45,7 +44,6 @@ function show_page() {
         <input type="submit" name="do_invite_members" value="Send Invitations"/>
       </div></form>
 HEREDOC;
-	admin_page_footer('Invite Members');
 }
 
 

@@ -7,7 +7,7 @@
  */
 
 
-$path_to_root = '';
+
 require_once 'lib/functions.php';
 
 

@@ -47,8 +47,6 @@ function show_page() {
 HEREDOC;
 
 	echo $content;
-	
-	lmt_backstage_footer('');
 }
 
 ?>

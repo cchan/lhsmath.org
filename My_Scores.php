@@ -6,7 +6,7 @@
  * Displays the user's contest scores
  */
 
-$path_to_root = '';
+
 require_once 'lib/functions.php';
 restrict_access('RA');
 

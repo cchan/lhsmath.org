@@ -6,8 +6,7 @@
  * Deletes a user's test score
  */
 
-$path_to_root = '../';
-require_once $path_to_root . 'lib/functions.php';
+require_once '../lib/functions.php';
 restrict_access('A');
 
 

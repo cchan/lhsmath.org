@@ -42,7 +42,6 @@ HEREDOC;
         </tr>
       </table>
 HEREDOC;
-	lmt_backstage_footer('');
 }
 
 ?>

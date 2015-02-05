@@ -1,7 +1,6 @@
 <?php
 
-$path_to_root = '../';
-require_once $path_to_root.'lib/functions.php';
+require_once '../lib/functions.php';
 restrict_access('A');
 
 page_title('Search Users');

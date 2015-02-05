@@ -276,8 +276,6 @@ function show_edit_page($err, $selected_field) {
         </tr>
 HEREDOC;
 	
-	$change_alert = fetch_alert('regChangeName');
-	
 	echo <<<HEREDOC
       <h1>Modify a Team</h1>
       <a href="Home">&larr; Back to Team List</a><br /><br />

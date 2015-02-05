@@ -52,7 +52,6 @@ function show_page($err) {
         </div></form>
       </div>
 HEREDOC;
-	lmt_backstage_footer('');
 	die;
 }
 

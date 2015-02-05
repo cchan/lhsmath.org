@@ -90,11 +90,6 @@ HEREDOC;
 	if ($err != '')
 		$err = "\n        <div class=\"error\">$err</div><br />\n";
 	
-	$a = fetch_alert('lmt_data_team_update_name');
-	$b = fetch_alert('lmt_data_team_update_school');
-	$c = fetch_alert('lmt_data_team_update_team_score_short');
-	$d = fetch_alert('lmt_data_team_update_team_score_long');
-	
 	$id = htmlentities($_GET['ID']);
 
 	if (!scoring_is_enabled()) {
@@ -105,7 +100,7 @@ HEREDOC;
 	lmt_page_header($team_name);
 	echo <<<HEREDOC
       <h1>Team</h1>
-      $scoring_warning$a$b$c$d$err
+      $scoring_warning
       <table>
         <tr>
           <td>Team Name:</td>
@@ -172,7 +167,6 @@ $members_list              <br />
         </tr>
       </table>
 HEREDOC;
-	lmt_backstage_footer('');
 	die;
 }
 
@@ -377,7 +371,6 @@ function do_confirm_delete() {
         </div></form>
       </div>
 HEREDOC;
-	lmt_backstage_footer('');
 }
 
 

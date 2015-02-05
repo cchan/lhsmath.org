@@ -5,7 +5,6 @@
  */
 
 
-$path_to_root = '../';
 require_once '../lib/functions.php';
 restrict_access('+');
 
@@ -84,7 +83,7 @@ function process_form() {
       
       <span class="b">$name</span> was approved and elevated. Now clear the Super-Admin password.
 HEREDOC;
-	$names[0] = 'Super-Admin';
-	$pages[0] = '';
-	page_footer($names, $pages);
+	//$names[0] = 'Super-Admin';
+	//$pages[0] = '';
+	//page_footer($names, $pages);
 }

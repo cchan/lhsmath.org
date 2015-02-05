@@ -11,6 +11,7 @@
 $miniature_page = true;
 $path_to_lmt_root = '../../';
 require_once $path_to_lmt_root . '../lib/lmt-functions.php';
+cancel_templateify();
 backstage_access();
 scoring_access();
 

@@ -20,7 +20,6 @@
  */
 
 
-$path_to_root = '../';
 require_once '../lib/functions.php';
 restrict_access('A');
 
@@ -197,7 +196,6 @@ function show_change_name_page($err) {
         </table>
       </form>
 HEREDOC;
-	admin_page_footer('');
 }
 
 
@@ -339,7 +337,6 @@ function show_change_yog_page($err) {
         </table>
       </form>
 HEREDOC;
-	admin_page_footer('');
 }
 
 
@@ -469,7 +466,6 @@ function show_change_permissions_page($err) {
         </table>
       </form>
 HEREDOC;
-	admin_page_footer('');
 }
 
 

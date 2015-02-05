@@ -9,8 +9,8 @@
  */
 
 
-$path_to_root = '../';
 require_once '../lib/functions.php';
+restrict_access('E');
 
 
 if (isSet($_GET['code']))
@@ -33,13 +33,8 @@ else
  *  Shows a message to users who have not yet verified their email address.
  */
 function show_page() {
-	restrict_access('E');
-	
 	// Fetch email
-	$query = 'SELECT email FROM users WHERE id="' . $_SESSION['user_id'] . '"';
-	$result = DB::queryRaw($query);
-	$row = mysqli_fetch_assoc($result);
-	$email = $row['email'];
+	$email = DB::queryFirstField('SELECT email FROM users WHERE id=%i',$_SESSION['user_id']);
 	
 	// the message that's shown after you click the button
 	$resent_text = '';
@@ -68,14 +63,10 @@ HEREDOC;
 
 
 function send_verification_email() {
-	restrict_access('E');
-	
 	global $WEBMASTER_EMAIL;
 	
 	// Fetch email and code
-	$query = 'SELECT name, email, email_verification FROM users WHERE id="' . $_SESSION['user_id'] . '"';
-	$result = DB::queryRaw($query);
-	$row = mysqli_fetch_assoc($result);
+	$row = DB::queryFirstRow('SELECT name, email, email_verification FROM users WHERE id=%i',$_SESSION['user_id']);
 	$name = $row['name'];
 	$email = $row['email'];
 	$verification_code = $row['email_verification'];
@@ -83,8 +74,7 @@ function send_verification_email() {
 	// Generate the verification link
 	$protocol = (@$_SERVER['HTTPS'] == 'on') ? 'https' : 'http';
 	$url_pieces = parse_url($_SERVER['REQUEST_URI']);
-	$link = $protocol . '://' . $_SERVER['HTTP_HOST'] . dirname($url_pieces['path']) .
-	'/Verify_Email?id=' . $_SESSION['user_id'] . '&code=' . $verification_code;
+	$link = URL::fileurl() . '?id=' . $_SESSION['user_id'] . '&code=' . $verification_code;
 	
 	// Assemble the email
 	$to = $email; //'"' . $name . '" <' . $email . '>'; //For some reason this gives an error about RFC format.
@@ -117,26 +107,12 @@ HEREDOC;
 
 
 function verify_code() {
-	$id = mysqli_real_escape_string(DB::get(),$_GET['id']);
-	$query = 'SELECT id, name, permissions, email_verification FROM users WHERE id="' . $id . '" LIMIT 1';
-	$result = DB::queryRaw($query);
+	DB::query('UPDATE users SET email_verification=1 WHERE id=%i AND email_verification=%s LIMIT 1',$_GET['id'],$_GET['code']);
 	
-	if (mysqli_num_rows($result) != 1)
-		trigger_error('ID not found', E_USER_ERROR);
-	
-	$row = mysqli_fetch_assoc($result);
-	if ($row['email_verification'] != mysqli_real_escape_string(DB::get(),$_GET['code']))
-		trigger_error('Code does not match', E_USER_ERROR);
-	
-	// ** LINK VALIDATED AT THIS POINT **
-	
-	// mark the email address as validated
-	$query = 'UPDATE users SET email_verification="1" WHERE id="' . $id . '" LIMIT 1';
-	DB::queryRaw($query);
+	if (DB::affectedRows()!=1)
+		trigger_error('ID or code incorrect', E_USER_ERROR);
 	
 	set_login_data($id);	// LOG THEM IN
-	
-	// go to the approval page
 	header('Location: Approve');
 }
 

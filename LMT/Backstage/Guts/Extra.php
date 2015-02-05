@@ -33,8 +33,6 @@ HEREDOC;
 		$avg = '0';
 	
 	echo $avg;
-	
-	lmt_backstage_footer('');
 }
 
 

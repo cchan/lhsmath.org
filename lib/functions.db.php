@@ -1,6 +1,6 @@
 <?php
 
-require_once $path_to_root . 'lib/meekrodb.2.3.class.php'; //Even better version of class.DB.php, with OO'd database management.
+require_once PATH::lib() . '/meekrodb.2.3.class.php'; //Even better version of class.DB.php, with OO'd database management.
 
 function db_error_handler($params){
 	$out = 'DB ERROR: ';

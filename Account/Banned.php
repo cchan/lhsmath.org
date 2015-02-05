@@ -6,16 +6,13 @@
  * Displays a message to banned users.
  */
 
-global $being_included;
-$being_included = true;
-if (!isSet($path_to_root)) {
-	$path_to_root = '../';
-	$being_included = false;
-}
-require_once $path_to_root . 'lib/functions.php';
+if (!defined('FUNCTIONSPHP'))require_once '../lib/functions.php';
+	//If functions hasn't been included, get functions.
+	//(if it has been, that means someone's including this file, so rootpath may be messed up and the require will fail)
+
 restrict_access('B');
 
-page_header('Banned');
+page_title('Banned');
 ?>
 <h1>Banned</h1>
 You have been banned from the Math Club system.

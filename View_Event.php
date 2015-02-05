@@ -10,7 +10,7 @@
  * for a popup window.
  */
 
-$path_to_root = '';
+
 require_once 'lib/functions.php';
 restrict_access('XRLA');
 
@@ -126,7 +126,7 @@ function show_full_edit_page($err) {
             <td><input type="text" id="form_title" name="title" value="$title" size="25" maxlength="25" class="focus"/></td>
           </tr><tr>
             <td>Date:</td>
-            <td><input id="edit_date" type="text" name="date" value="$date" size="15"/></td>
+            <td><input type="text" name="date" value="$date" size="15" class="datepicker"/></td>
           </tr><tr>
             <td>Description:&nbsp;</td>
             <td><textarea name="description" rows="10" cols="80">$desc</textarea></td>
@@ -140,11 +140,6 @@ function show_full_edit_page($err) {
           </tr>
         </table>
       </form>
-	  <script>
-		  $(function() {
-			$("#edit_date").datepicker({ });
-		  });
-	  </script>
 HEREDOC;
 }
 
@@ -490,11 +485,6 @@ function show_popup_edit_page($err) {
     <link rel="stylesheet" href="res/jquery/css/smoothness/jquery-ui-1.8.5.custom.css" type="text/css" media="all"/>
     <script type="text/javascript" src="res/jquery/js/jquery-1.4.2.min.js"></script>
     <script type="text/javascript" src="res/jquery/js/jquery-ui-1.8.5.custom.min.js"></script>
-    <script type="text/javascript">
-      $(function() {
-        $("#edit_date").datepicker({ });
-      });
-    </script>
     <style type="text/css">
       .ui-datepicker, .ui-autocomplete {
         font-size: 12px;
@@ -514,7 +504,7 @@ function show_popup_edit_page($err) {
             <td><input type="text" id="title" name="title" value="$title" size="25" maxlength="25"/></td>
           </tr><tr>
             <td>Date:</td>
-            <td><input id="edit_date" type="text" name="date" value="$date" size="15"/></td>
+            <td><input type="text" name="date" value="$date" size="15"  class="datepicker"/></td>
           </tr><tr>
             <td>Description:&nbsp;</td>
             <td><textarea name="description" rows="10" cols="40">$desc</textarea></td>

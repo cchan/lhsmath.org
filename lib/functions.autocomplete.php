@@ -77,8 +77,6 @@ function user_data($where=NULL/*,...*/){
 	return array_values($results);//Reassigns keys, since uksort will maintain disordered numerical keys.
 }
 function autocomplete_js($jqselector,$data){
-	global $path_to_root;
-	
 	$json = json_encode($data);
 	
 	return <<<HEREDOC

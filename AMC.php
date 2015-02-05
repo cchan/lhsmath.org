@@ -6,8 +6,8 @@
 * For general AMC signup.
 */
 
-$path_to_root = '';
-require_once $path_to_root.'lib/functions.php';
+
+require_once '../lib/functions.php';
 
 page_title('AMC 10/12 Signup');
 ?>

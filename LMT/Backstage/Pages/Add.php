@@ -56,7 +56,6 @@ function show_form($err) {
         </table>
       </form>
 HEREDOC;
-	lmt_backstage_footer('');
 	die;
 }
 

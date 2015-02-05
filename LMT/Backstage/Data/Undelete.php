@@ -59,7 +59,6 @@ HEREDOC;
 			. '">' . htmlentities($row['name']) . '</a><br />' . "\n";
 		$row = mysqli_fetch_assoc($result);
 	}
-	lmt_backstage_footer('');
 }
 
 

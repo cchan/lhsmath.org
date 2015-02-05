@@ -34,7 +34,6 @@ function show_page() {
       <iframe src="Backup?Download" style="display: none;">
       </iframe>
 HEREDOC;
-	lmt_backstage_footer('Backup');
 }
 
 

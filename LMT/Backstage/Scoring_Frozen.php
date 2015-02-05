@@ -31,7 +31,6 @@ function show_frozen_page() {
       may be tabulated. If some results have not yet been entered or are incorrect,
       please see the Head Grader immediately!</div>
 HEREDOC;
-	lmt_backstage_footer('');
 	die;
 }
 

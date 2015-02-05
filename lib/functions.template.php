@@ -7,7 +7,7 @@ function templateify(){
 	global $CANCEL_TEMPLATEIFY;//In case, for example, you want to send an attachment.
 	if(@$CANCEL_TEMPLATEIFY)return;
 	
-	global $page_title, $header_title, $header_class, $path_to_root, $jquery_function, $LOCAL_BORDER_COLOR, $popup_code, $more_head_stuff;
+	global $page_title, $header_title, $header_class, $jquery_function, $LOCAL_BORDER_COLOR, $popup_code, $more_head_stuff;
 	
 	//Title bar: "Page_Name | LHS Math Club"
 	if(!isSet($header_title))$header_title = 'LHS Math Club'; //Also in main white-on-black header "LHS Math Club"
@@ -15,9 +15,7 @@ function templateify(){
 	
 	global $logged_in_header;
 	if (isSet($_SESSION['user_id']))
-		$logged_in_header = <<<HEREDOC
-      <div id="user"><span id="username">{$_SESSION['user_name']}</span><span id="bar"> | </span><a href="{$path_to_root}Account/Signout">Sign Out</a></div>
-HEREDOC;
+		$logged_in_header = '<div id="user"><span id="username">'.$_SESSION['user_name'].'</span><span id="bar"> | </span><a href="'.URL::root().'/Account/Signout">Sign Out</a></div>';
 	
 	if (isSet($meta_refresh))
 		$more_head_stuff .= '<meta http-equiv="refresh" content="' . $meta_refresh . '" />';
@@ -51,22 +49,22 @@ HEREDOC;
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="copyright" content="Lexington High School Math Team">
 	
-	<link rel="icon" href="<?=$path_to_root?>favicon.ico" />
-    <link rel="stylesheet" href="<?=$path_to_root?>res/default.css" type="text/css" media="all" />
-    <link rel="stylesheet" href="<?=$path_to_root?>res/print.css" type="text/css" media="print" />
+	<link rel="icon" href="<?=URL::root()?>/favicon.ico" />
+    <link rel="stylesheet" href="<?=URL::root()?>/res/default.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="<?=URL::root()?>/res/print.css" type="text/css" media="print" />
 	
 	<?php //Using Google's CDN, with fallback if it's unavailable ?>
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-	<script>window.jQuery || document.write('<script src="<?=$path_to_root?>res/jquery/jquery-1.11.1.min.js"><\/script>')</script>
+	<script>window.jQuery || document.write('<script src="<?=URL::root()?>/res/jquery/jquery-1.11.1.min.js"><\/script>')</script>
 	
-	<?php //We serve our own custom build of jqUI (all we need is DatePicker and Autocomplete, so we don't use CDNs. ?>
-	<script src="<?=$path_to_root?>res/jquery/jquery-ui.min.js"></script>
-	<link rel="stylesheet" href="<?=$path_to_root?>res/jquery/jquery-ui.min.css" />
+	<?php //We serve our own custom build of jqUI (all we need is DatePicker and Autocomplete, so we don't use CDNs.) ?>
+	<script src="<?=URL::root()?>/res/jquery/jquery-ui.min.js"></script>
+	<link rel="stylesheet" href="<?=URL::root()?>/res/jquery/jquery-ui.min.css" />
 	
 	<?php //View_Event popups ?>
-	<script type="text/javascript" src="<?=$path_to_root?>res/popup.js"></script>
+	<script type="text/javascript" src="<?=URL::root()?>/res/popup.js"></script>
     
-	<?php //Custom stuff ?>
+	<?php //Custom stuff - deprecated ?>
 	<script type="text/javascript"><?=$jquery_function?></script>
 	
 	<script>//<![CDATA[
@@ -82,6 +80,9 @@ HEREDOC;
 			//Focuses on the element with class "focus"
 			//If there's multiple ones it'll probably focus on the first one.
 			$('.focus').focus();
+			
+			//Puts datepicker on all elements with class "datepicker"
+			$(".datepicker").datepicker();
 			
 			//Makes rel='external' (or rel='(anything with "external" in it)') anchor links open in a new window.
 			$('a[rel*="external"]').on({
@@ -103,7 +104,7 @@ HEREDOC;
   </head>
   <body>
     <div id="header" class="<?=$header_class?>" style="border-bottom: 4px solid <?=$LOCAL_BORDER_COLOR?>">
-      <a href="<?=$path_to_root?>Home" id="title"><?=$header_title?></a><?=$logged_in_header?>
+      <a href="<?=URL::root()?>/Home" id="title"><?=$header_title?></a><?=$logged_in_header?>
     </div>
     
     <div id="content">
@@ -165,7 +166,7 @@ function fetch_alerts_html(){
 
 function location($path_from_root){
 	cancel_templateify();//so it doesn't mess up alerts, etc.
-	header('Location: '.$path_to_root.$path_from_root);//--todo-- $path_to_root doesn't work for Post_Message, etc.
+	header('Location: '.URL::root().'/'.$path_from_root);
 	die;
 }
 
@@ -207,7 +208,6 @@ $main_navbar = array( //Name => Page path, or if it's the same you can omit the 
 	],
 	'X'=>[
 		'LMT',
-		'AMC',
 		'',
 		'Calendar',
 		'Contests',
@@ -219,7 +219,6 @@ $main_navbar = array( //Name => Page path, or if it's the same you can omit the 
 	],
 	'ARL'=>[
 		'LMT',
-		'AMC',
 		'',
 		'Contact',
 		'About',
@@ -284,7 +283,6 @@ function set_navbar($n){
 	$navbar_array = $n;
 }
 function navbar_html($navbar=NULL){
-	global $path_to_root;
 	if(is_null($navbar)){
 		global $navbar_array;
 		$navbar = $navbar_array;
@@ -301,13 +299,13 @@ function navbar_html($navbar=NULL){
 			if($nav_elem === get_relative_path())//In this case it's the current page, so indicate so.
 				$html .= "<span class='selected'>$key</span><br />";
 			else
-				$html .= "<a href='{$path_to_root}{$nav_elem}'>{$key}</a><br />";
+				$html .= "<a href='".URL::root()."/{$nav_elem}'>{$key}</a><br />";
 		}
 		else{//In this case $nav_elem is both the name and the path.
 			if($nav_elem === get_relative_path())//In this case it's the current page, so indicate so.
 				$html .= "<span class='selected'>$nav_elem</span><br />";
 			else
-				$html .= "<a href='{$path_to_root}{$nav_elem}'>{$nav_elem}</a><br />";
+				$html .= "<a href='".URL::root()."/{$nav_elem}'>{$nav_elem}</a><br />";
 		}
 	return $html;
 }

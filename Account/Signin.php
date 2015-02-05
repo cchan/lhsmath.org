@@ -10,13 +10,12 @@ global $being_included;
 $being_included = true;	// this page can be INCLUDE'd into another page, so, for example
 							// when a user wants to access /Scores but isn't logged in, they
 							// are shown a login form *without* being redirected.
-if (!isSet($path_to_root)) {
-	$path_to_root = '../';
+if (!defined('FUNCTIONSPHP')) {
+	require_once '../lib/functions.php';
 	$being_included = false;
 }
 
-require_once $path_to_root . 'lib/functions.php';
-restrict_access('X');
+restrict_access('X'); // Will restrict to non-logged-in: redirects logged in users back home.
 
 page_title('Log In');
 
@@ -104,8 +103,7 @@ function process_login_form() {
 			$_SESSION['login_time'] = time();
 			$_SESSION['user_id'] = '-999';
 			
-			global $path_to_root;
-			header('Location: ' . $path_to_root . 'Admin/Super_Admin');
+			header('Location: ' . URL::root() . '/Admin/Super_Admin');
 			die();
 		}
 	}

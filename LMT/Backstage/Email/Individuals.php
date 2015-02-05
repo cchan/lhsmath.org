@@ -89,7 +89,6 @@ function show_page($err) {
         </table>
       </form>
 HEREDOC;
-	lmt_backstage_footer('Email Individuals');
 }
 
 
@@ -138,8 +137,6 @@ function preview_message() {
       
 
 HEREDOC;
-	
-	lmt_backstage_footer('Email Individuals');
 }
 
 ?>

@@ -7,7 +7,6 @@
  */
 
 
-$path_to_root = '../';
 require_once '../lib/functions.php';
 restrict_access('A');
 
@@ -45,9 +44,9 @@ function show_page($err) {
 	global $use_rel_external_script;
 	$use_rel_external_script = true;
 	
-	page_header('Edit Page');
+	page_header("Edit $name Page");
 	echo <<<HEREDOC
-      <h1>Edit Page</h1>
+      <h1>Edit $name Page</h1>
       
       <div class="instruction">You may use bold, italic, underline,
       named links and images with <a href="http://www.bbcode.org/reference.php" rel="external">bbCode</a>.</div>
@@ -61,8 +60,6 @@ function show_page($err) {
         <a href="Dashboard">Cancel</a>
       </div></form>
 HEREDOC;
-	
-	admin_page_footer('Edit ' . $name . ' Page');
 }
 
 
@@ -92,8 +89,6 @@ function process_form() {
       
       <div class="alert">The $name page was saved successfully&nbsp;&nbsp;(<a href="../$name">View</a>)</div>
 HEREDOC;
-	
-	admin_page_footer('');
 }
 
 ?>

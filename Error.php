@@ -21,9 +21,8 @@
 		<p>-LHSMATH Webmaster(s)</p>";
 */
 
-if(!$path_to_root)$path_to_root = '';
-require_once $path_to_root.'lib/functions.php';
-//May present problems if functions.php itself has bugs.
+if(!defined('FUNCTIONSPHP'))require_once 'lib/functions.php'; //Require it only if Errors.php isn't being included by another file.
+	//May present problems if functions.php itself has bugs.
 
 //Making pages case-insensitive.
 $pagename = $_SERVER['REQUEST_URI'];

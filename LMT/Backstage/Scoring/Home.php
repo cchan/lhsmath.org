@@ -36,7 +36,6 @@ function show_page() {
         <a href="Verification" class="box-light">Verification</a>
       </div>
 HEREDOC;
-	lmt_backstage_footer('Score Entry');
 }
 
 ?>

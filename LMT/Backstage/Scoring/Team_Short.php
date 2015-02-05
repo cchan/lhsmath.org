@@ -58,8 +58,6 @@ HEREDOC;
 	if ($msg != '')
 		$msg = "\n        <div class=\"alert\">$msg</div><br />\n";
 	
-	$redirAlert = fetch_alert('indivScore');
-	
 	lmt_page_header('Score Entry');
 	echo <<<HEREDOC
       <h1>Team Round (Short) Score Entry</h1>
@@ -75,8 +73,6 @@ HEREDOC;
         <input type="submit" name="do_enter_team_score" value="Enter" />
       </div></form>
 HEREDOC;
-	
-	lmt_backstage_footer('');
 	die;
 }
 
@@ -119,7 +115,7 @@ function do_enter_team_score() {
 		. htmlentities($row['name']);
 	
 	if (isSet($_GET['ID'])) {
-		add_alert('indivScore', $msg);
+		alert($msg, 1);
 		header('Location: Team_Short');
 		die;
 	}
@@ -178,7 +174,6 @@ HEREDOC;
       
       <a href="Team_Short">&larr; Cancel</a>
 HEREDOC;
-	lmt_backstage_footer('');
 	die;
 }
 
@@ -220,7 +215,7 @@ function do_enter_clarified_score() {
 		. htmlentities($row['name']);
 	
 	if (isSet($_GET['ID'])) {
-		add_alert('indivScore', $msg);
+		alert($msg, 1);
 		header('Location: Team_Short');
 		die;
 	}

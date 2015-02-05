@@ -22,7 +22,6 @@
  * - 'New": create a new test
  */
 
-$path_to_root = '../';
 require_once '../lib/functions.php';
 restrict_access('A');
 
@@ -210,7 +209,7 @@ function show_edit_form($err) {
           <td><input type="text" name="name" value="{$row['name']}" size="20" maxlength="20"/></td>
         </tr><tr>
           <td>Date:</td>
-          <td><input type="text" id="date" name="date" value="{$row['formatted_date']}" size="15"/></td>
+          <td><input type="text" name="date" value="{$row['formatted_date']}" size="15" class="datepicker"/></td>
         </tr><tr>
           <td>Total Points:&nbsp;</td>
           <td><input type="text" name="total_points" value="{$row['total_points']}" size="3"/></td>
@@ -235,11 +234,6 @@ function show_edit_form($err) {
         </tr>
       </table>
       </form>
-	  <script>
-		  $(function() {
-			$("#date").datepicker({ });
-		  });
-	  </script>
 HEREDOC;
 }
 
@@ -316,16 +310,6 @@ function do_perform_edit() {
  */
 function show_add_form($err) {
 	// Put the cursor in the first field
-	global $body_onload;
-	$body_onload = 'document.forms[\'addTest\'].name.focus()';
-	
-	// Add some javascript for the jQuery Date Selector
-	global $jquery_function;
-	$jquery_function = <<<HEREDOC
-      $(function() {
-        $("#date").datepicker();
-      });
-HEREDOC;
 
 	$redirect_param = '';
 	if ($_GET['Return'] == 'ListAll')
@@ -351,10 +335,10 @@ HEREDOC;
       <table class="spacious">
         <tr>
           <td>Name:</td>
-          <td><input type="text" name="name" value="$name" size="20" maxlength="20"/></td>
+          <td><input type="text" name="name" value="$name" size="20" maxlength="20" class="focus"/></td>
         </tr><tr>
           <td>Date:</td>
-          <td><input type="text" id="date" name="date" value="$date" size="15"/></td>
+          <td><input type="text" name="date" value="$date" size="15" class="datepicker"/></td>
         </tr><tr>
           <td>Total Points:&nbsp;</td>
           <td><input type="text" name="total_points" value="$total_points" size="3"/></td>

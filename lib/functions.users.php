@@ -14,8 +14,6 @@
  *    * 'T': Temporary user (should not be able to log in)
  */
 function restrict_access($levels) {
-	global $path_to_root;
-	
 	if (!user_access($levels)) {
 		// Access forbidden
 		
@@ -23,7 +21,7 @@ function restrict_access($levels) {
 		
 		if ($user_level == 'X') {
 			alert('You need to log in to do that.',-1);
-			require_once $path_to_root . 'Account/Signin.php';
+			require_once PATH::root() . '/Account/Signin.php';
 			die();
 		}
 		else if ($user_level == 'E')

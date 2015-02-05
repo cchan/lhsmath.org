@@ -43,8 +43,6 @@ function show_page() {
 HEREDOC;
 
 	echo $content;
-	
-	lmt_backstage_footer('');
 }
 
 
@@ -65,7 +63,7 @@ function do_delete_page() {
 	DB::queryRaw('DELETE FROM pages WHERE page_id="'
 		. mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1');
 	
-	add_alert('deletePage', 'The page &quot;' . $page_name . '&quot; has been deleted');
+	alert('The page &quot;' . $page_name . '&quot; has been deleted', 1);
 	header('Location: List');
 }
 

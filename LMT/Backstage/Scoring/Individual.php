@@ -54,8 +54,6 @@ HEREDOC;
 	if ($msg != '')
 		$msg = "\n        <div class=\"alert\">$msg</div><br />\n";
 	
-	$redirAlert = fetch_alert('indivScore');
-	
 	lmt_page_header('Score Entry');
 	echo <<<HEREDOC
       <h1>Individual Round Score Entry</h1>
@@ -71,8 +69,6 @@ HEREDOC;
         <input type="submit" name="do_enter_individual_score" value="Enter" />
       </div></form>
 HEREDOC;
-	
-	lmt_backstage_footer('');
 	die;
 }
 
@@ -88,8 +84,7 @@ function do_enter_individual_score() {
 	if ($score_msg !== true)
 		show_page($score_msg, '');
 	
-	$result = DB::queryRaw('SELECT id, name, attendance, score_individual FROM individuals WHERE name="'
-		. mysqli_real_escape_string(DB::get(),$_POST['name']) . '" AND deleted="0"');
+	$result = DB::queryRaw('SELECT id, name, attendance, score_individual FROM individuals WHERE name=%s AND deleted="0"', $_POST['name']);
 	
 	if (mysqli_num_rows($result) == 0)
 		show_page('An individual named "' . htmlentities($_POST['name']) .'" not found', '');
@@ -111,20 +106,17 @@ function do_enter_individual_score() {
 		show_page($msg, '');
 	}
 	
-	DB::queryRaw('UPDATE individuals SET score_individual="'
-		. mysqli_real_escape_string(DB::get(),$_POST['score']) . '" WHERE id="'
-		. mysqli_real_escape_string(DB::get(),$row['id']) . '" LIMIT 1');
+	DB::query('UPDATE individuals SET score_individual=%s WHERE id=%i LIMIT 1', $_POST['score', $row['id']);
 
 	$msg = 'A score of ' . htmlentities($_POST['score']) . ' was entered for '
 		. htmlentities($row['name']);
 	
-	if (isSet($_GET['ID'])) {
-		add_alert('indivScore', $msg);
-		header('Location: Individual');
-		die;
+	if (isSet($_GET['ID'])){
+		alert($msg, 1);
+		show_page('', '');
 	}
-	
-	show_page('', $msg);
+	else
+		show_page('', $msg);
 }
 
 
@@ -185,7 +177,6 @@ HEREDOC;
       
       <a href="Individual">&larr; Cancel</a>
 HEREDOC;
-	lmt_backstage_footer('');
 	die;
 }
 
@@ -227,7 +218,7 @@ function do_enter_clarified_score() {
 		. htmlentities($row['name']);
 	
 	if (isSet($_GET['ID'])) {
-		add_alert('indivScore', $msg);
+		alert($msg, 1);
 		header('Location: Individual');
 		die;
 	}

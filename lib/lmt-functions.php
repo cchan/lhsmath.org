@@ -4,17 +4,14 @@
  * LHS Math Club Website
  */
 
-if (!isSet($path_to_root))
-	$path_to_root = '../'.$path_to_lmt_root; //this is wrong
+// include regular functions and all of its stuff
+require_once __DIR__ . '/functions.php';
+//class LMT_DB extends DB{}; LMT_DB::useDB('lmt');
+DB::useDB('lmt');// except use the LMT db
 
-require_once $path_to_root . 'lib/CONFIG.php';
+// include scoring
+require_once PATH::lib() . '/lmt-scoring.php';
 
-
-// include regular functions
-require_once $path_to_root . 'lib/functions.php';
-require_once $path_to_root . 'lib/lmt-scoring.php';
-
-DB::useDB('lmt');
 
 //
 // DEFAULT ACTIONS:
@@ -22,8 +19,7 @@ DB::useDB('lmt');
 
 // Replace the custom error handler with this one
 function lmt_custom_errors($errno, $errstr, $errfile, $errline) {
-	global $path_to_root;
-	$rh = fopen($path_to_root . '.content/Errors.txt', 'a+');
+	$rh = fopen(PATH::errfile(), 'a+');
 	fwrite($rh, date(DATE_RFC822) . ' Error [' . $errno . '] on line ' . $errline . ' in ' . $errfile . ': ' . $errstr . "\n");
 	fclose($rh);
 	
@@ -32,13 +28,14 @@ function lmt_custom_errors($errno, $errstr, $errfile, $errline) {
 		$miniature_page = '?Mini';
 	
 	if (headers_sent())
-		echo '<meta http-equiv="refresh" content="0;url=' . $path_to_root . 'LMT/Error' . $miniature_page . '">';
+		echo '<meta http-equiv="refresh" content="0;url=' . URL::root() . '/LMT/Error' . $miniature_page . '">';
 	
 	else if (isSet($_GET['xsrf_token']))
-		header('Location: ' . $path_to_root . 'LMT/Error' . $miniature_page);
+		header('Location: ' . URL::root() . '/LMT/Error' . $miniature_page);
 	
 	else {
 		if (isSet($miniature_page)) {
+			$urlroot = URL::root();
 			echo <<<HEREDOC
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html
@@ -47,9 +44,9 @@ function lmt_custom_errors($errno, $errstr, $errfile, $errline) {
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
   <head>
     <title></title>
-    <link rel="stylesheet" href="{$path_to_root}res/default.css" type="text/css" media="all" />
-    <link rel="stylesheet" href="{$path_to_root}res/lmt.css" type="text/css" media="all" />
-    <link rel="stylesheet" href="{$path_to_root}res/print.css" type="text/css" media="print" />
+    <link rel="stylesheet" href="{$urlroot}/res/default.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="{$urlroot}/res/lmt.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="{$urlroot}/res/print.css" type="text/css" media="print" />
   </head>
   
   <body class="gutsEmbedSetup">
@@ -72,7 +69,6 @@ HEREDOC;
       
       Whoops! Something went wrong. Try again?
 HEREDOC;
-			lmt_home_footer();
 		}
 	}
 	
@@ -258,6 +254,7 @@ function lmt_location($s){
  * another page calls fetch_alert($name)
  */
 function add_alert($name, $value) {
+	trigger_error('Used add_alert '.var_export(debug_backtrace(),true),E_USER_NOTICE);
 	if(@!$_SESSION['LMT_ALERT_' . $name])$_SESSION['LMT_ALERT_' . $name]=array();
 	$_SESSION['LMT_ALERT_' . $name][] = $value;
 }
@@ -271,7 +268,7 @@ function add_alert($name, $value) {
  * Returns code to show a saved alert if it exists
  */
 function fetch_alert($name) {
-	if (isSet($_SESSION['LMT_ALERT_' . $name])) {
+	if (isSet($_SESSION)&&array_key_exists('LMT_ALERT_' . $name,$_SESSION)) {
 		$message='';
 		foreach($_SESSION['LMT_ALERT_' . $name] as $alert){
 			$message .= "\n        <div class=\"alert\">{$alert}</div><br />\n";
@@ -416,8 +413,7 @@ function validate_password($password, $verify) {
  * Returns true if the recaptcha was entered correctly, else else an error.
  */
 function validate_recaptcha() {
-	global $RECAPTCHA_PRIVATE_KEY, $path_to_root;
-	require_once $path_to_root . 'lib/recaptchalib.php';
+	require_once PATH::lib().'/recaptchalib.php';
 	$recaptcha_response = recaptcha_check_answer(	$RECAPTCHA_PRIVATE_KEY,
 													$_SERVER['REMOTE_ADDR'],
 													$_POST['recaptcha_challenge_field'],
@@ -656,8 +652,6 @@ HEREDOC;
  *  Sets some stuff which is passed to the templateify() shutdown function.
  */
 function lmt_page_header($title) {
-	global $path_to_root;
-	
 	global $page_title;
 	$page_title = $title;
 	
@@ -666,12 +660,10 @@ function lmt_page_header($title) {
 	
 	global $logged_in_header;
 	if(isSet($_SESSION['LMT_user_id']))
-		$logged_in_header = <<<HEREDOC
-		<div id="user"><span id="username">School: {$_SESSION['LMT_school_name']}</span><span id="bar"> | </span><a href="{$path_to_root}LMT/Registration/Signout">Log Out</a></div>
-HEREDOC;
+		$logged_in_header = '<div id="user"><span id="username">School: '.$_SESSION['LMT_school_name'].'</span><span id="bar"> | </span><a href="'.URL::root().'/LMT/Registration/Signout">Log Out</a></div>';
 	
 	global $more_head_stuff;
-	$more_head_stuff.='<link rel="stylesheet" href="'.$path_to_root.'res/lmt.css" type="text/css" media="all" />';
+	$more_head_stuff.='<link rel="stylesheet" href="'.URL::root().'/res/lmt.css" type="text/css" media="all" />';
 	
 	global $jquery_function, $javascript;
 	$jquery_function .= $javascript;
@@ -681,13 +673,6 @@ HEREDOC;
 		$header_class = 'noPrint';
 }
 
-
-function lmt_page_footer(){
-	trigger_error('used lmt_page_footer'.var_export(debug_backtrace()),E_USER_NOTICE);
-}
-function lmt_backstage_footer(){
-	trigger_error('used lmt_backstage_footer',E_USER_NOTICE);
-}
 
 $lmt_main_navbar = array(
 	'Math Club Home'=>'Home',
@@ -741,14 +726,6 @@ if(strpos(get_relative_path(),'Backstage') === 4){ //position 4, because it's af
 }
 else{
 	set_navbar($lmt_main_navbar);
-}
-
-
-/*
- * lmt_home_footer($page_name)
- */
-function lmt_home_footer() {
-	trigger_error('used lmt_home_footer',E_USER_NOTICE);
 }
 
 ?>

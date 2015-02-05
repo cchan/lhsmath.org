@@ -17,7 +17,7 @@ $upyear_secret_code = 'hellofromLMT';
 if(@$_POST['upyear']){
 	$good=true;
 	
-	if(@!$_POST['code']||$_POST['code']!=$upyear_secret_code){$good=false;add_alert('Incorrect code',-1);}
+	if(@!$_POST['code']||$_POST['code']!=$upyear_secret_code){$good=false;alert('Incorrect code',-1);}
 	
 	if(@!$_POST['yrfrom']){$good=false;alert('No year-from',-1);}
 	if(@!$_POST['yrto']){$good=false;alert('No year-to',-1);}
@@ -30,7 +30,7 @@ if(@$_POST['upyear']){
 	if(!$yrfrom||abs($yrfrom-$nowyr)>5){$good=false;alert('Weird year-from',-1);}
 	$yrto=intval($_POST['yrto']);
 	if(!$yrto||abs($yrto-$nowyr)>5){$good=false;alert('Weird year-to',-1);}
-	if($yrfrom>=$yrto){$good=false;add_alert('Weird year-from/year-to',-1);}
+	if($yrfrom>=$yrto){$good=false;alert('Weird year-from/year-to',-1);}
 	
 	if(map_value('year')!=$yrfrom){$good=false;alert('The year-from doesn\'t match the year currently listed in Map (see Status page)',-1);}
 	

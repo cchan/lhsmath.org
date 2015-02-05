@@ -47,15 +47,9 @@ function display_school($err, $selected_field) {
 	if ($err != '')
 		$err = "\n        <div class=\"error\">$err</div><br />\n";
 	
-	$a = fetch_alert('lmt_data_school_update_name');
-	$b = fetch_alert('lmt_data_school_update_email');
-	$c = fetch_alert('lmt_data_school_resend_login');
-	$d = fetch_alert('lmt_data_school_update_paid');
-	
 	lmt_page_header($school_name);
 	echo <<<HEREDOC
       <h1>School</h1>
-      $a$b$c$d$err
       <table>
         <tr>
           <td>School Name:</td>
@@ -109,7 +103,6 @@ $team_list            <br />
         </tr>
       </table>
 HEREDOC;
-	lmt_backstage_footer('');
 	die;
 }
 
@@ -264,7 +257,6 @@ function do_confirm_delete() {
         </div></form>
       </div>
 HEREDOC;
-	lmt_backstage_footer('');
 }
 
 

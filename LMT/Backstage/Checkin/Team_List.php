@@ -55,8 +55,6 @@ HEREDOC;
 	}
 	
 	echo '      </table>' . "\n" . '      <a href="Team_List?Download">Download</a>';
-	
-	lmt_backstage_footer('');
 }
 
 

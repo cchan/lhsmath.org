@@ -6,7 +6,7 @@
  * Downloads the specified file
  */
 
-$path_to_root = '';
+
 require_once 'lib/functions.php';
 
 do_download();
@@ -49,7 +49,6 @@ function do_download() {
       
       <div>The captains have requested that you not view this file.</div>
 HEREDOC;
-			go_home_footer();
 			die;
 		}
 		

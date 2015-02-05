@@ -309,8 +309,6 @@ HEREDOC;
 		$row = mysqli_fetch_assoc($result);
 	}
 	echo "      </table>\n";
-	
-	lmt_backstage_footer('Results');
 	die;
 }
 

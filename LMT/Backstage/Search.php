@@ -224,7 +224,6 @@ HEREDOC;
         <a href="$back_link">&larr; Go Back</a>
       </div>
 HEREDOC;
-		lmt_backstage_footer('');
 		die;
 	}
 	
@@ -245,7 +244,6 @@ HEREDOC;
       <br />
 $result_table
 HEREDOC;
-	lmt_backstage_footer('');
 }
 
 

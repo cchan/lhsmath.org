@@ -6,17 +6,16 @@
  * The front page of the Admin control panel - lots of administrative information.
  */
 
-$path_to_root = '../';
 require_once '../lib/functions.php';
 restrict_access('A');
 
 if(isSet($_REQUEST['do_download_errors'])){
-	download($path_to_root.'.content/Errors.txt');
+	download(PATH::errfile());
 	die;
 }
 if(isSet($_REQUEST['do_clear_errors'])){
-	download($path_to_root.'.content/Errors.txt');
-	file_put_contents($path_to_root.'.content/Errors.txt','');
+	download(PATH::errfile());
+	file_put_contents(PATH::errfile(),'');
 	die;
 }
 
@@ -49,19 +48,19 @@ $num_public_files = DBExt::queryCount('files','permissions="P"');
 $num_admin_files = DBExt::queryCount('files','permissions="A"');
 
 $errors_file_size='File does not exist.';
-if(file_exists($path_to_root.".content/Errors.txt"))$errors_file_size = filesize($path_to_root.".content/Errors.txt");
+if(file_exists(PATH::errfile()))$errors_file_size = filesize(PATH::errfile());
 
 
 //Version checking
-global $path_to_root;
+//--MeekroDB
 $included_files = get_included_files();
 foreach($included_files as $f)if(strpos($f,'meekro')){$meekro_file=$f;break;}
 preg_match('@meekrodb\.([0-9\.]+)\.class.php$@i',$meekro_file,$matches);
 if(!empty($matches))$meekro_version = $matches[1];
 else $meekro_version = '(ERROR)';
-
+//--SwiftMail
 try{
-	require_once $path_to_root."lib/swiftmailer/classes/Swift.php";
+	require_once PATH::lib()."/swiftmailer/classes/Swift.php";
 	$swift_version = Swift::VERSION;
 }
 catch(Exception $e){$swift_version = '(ERROR)';}
@@ -127,7 +126,7 @@ catch(Exception $e){$swift_version = '(ERROR)';}
 	  <td>
 		<h4>Error Log</h4>
 		<ul>
-		  <li>Size of <span class="monospace">/home/public/ .content/Errors.txt</span>: <?=$errors_file_size?>. <a href="?do_download_errors">[Download]</a> <a href="?do_clear_errors" onclick="window.location.reload()">[Download & clear]</a></li>
+		  <li>Size of <span class="monospace"><?=PATH::errfile()?></span>: <?=$errors_file_size?>. <a href="?do_download_errors">[Download]</a> <a href="?do_clear_errors" onclick="window.location.reload()">[Download & clear]</a></li>
 		  <li>Also check via FTP <span class="monospace">/home/logs/*</span>.</li>
 		</ul>
 	  </td>

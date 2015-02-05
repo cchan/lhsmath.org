@@ -37,8 +37,6 @@ function show_page() {
 HEREDOC;
 	
 	echo do_verify();
-	
-	lmt_backstage_footer('Verification');
 }
 
 

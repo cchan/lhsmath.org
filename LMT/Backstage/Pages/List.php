@@ -58,8 +58,6 @@ HEREDOC;
 	$table = preg_replace($search, $replace, $table);
 	
 	echo $table;
-	
-	lmt_backstage_footer('Website');
 }
 
 ?>

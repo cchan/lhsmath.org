@@ -1,6 +1,5 @@
 <?php
-$path_to_root = '../';
-require_once $path_to_root.'lib/functions.php';
+require_once '../lib/functions.php';
 restrict_access('A');
 
 if(isSet($_POST["sendemail"])){
@@ -19,7 +18,7 @@ if(isSet($_POST["sendemail"])){
 This is just for special use, if you want to send mail to activities fair signups or to LMT registration-is-opening, 
 for example. If you don't know what you're doing, don't touch it.
 <br>This is extremely security-vulnerable, so yeah. You need a password which is in the PHP code. 
-Or ask the webmaster nicely and he'll give it to you.
+Or ask the webmaster nicely and (s)he'll give it to you.
 <br>All fields must be filled.
 <style>
 textarea,input{display:block;}
