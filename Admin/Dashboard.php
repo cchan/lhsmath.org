@@ -96,7 +96,7 @@ catch(Exception $e){$swift_version = '(ERROR)';}
 		  <li><span class="b"><?=$num_pending_approval?></span> users pending approval</li>
 		  <li><span class="b"><?=$num_banned?></span> banned users<br /><br /></li>
 		  
-		  <li><span class="b"><?=count(get_bcc_list())?></span> users on mailing list [Gmail SMTP limit 500]</li>
+		  <li><span class="b"><?=count(get_bcc_list())?></span> users on mailing list [Mandrill SMTP limit 12000 emails / month, 250 emails / hr.]</li>
 		</ul>
 	  </td>
 	  <td>

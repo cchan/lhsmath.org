@@ -5,6 +5,8 @@
  *
  * This file is where information such as database connections, etc. are
  * specified. YOU MAY EDIT THIS FILE.
+ *
+ * [I like this for password generation: https://www.grc.com/passwords.htm]
  */
 
 
@@ -34,13 +36,13 @@ ini_set('magic_quotes_gpc','0');
 
 
 
-// EMAIL ACCOUNT INFORMATION for the LHS Math Club Mailbot:
-// get this from your email provider.
+// EMAIL/SMTP INFORMATION for the LHS Math Club Mailbot:
+// https://mandrillapp.com/
 // SSL is used automatically.
 $EMAIL_ADDRESS =			'mailbot@lhsmath.org';
-$EMAIL_USERNAME =			'mailbot@lhsmath.org';
-$EMAIL_PASSWORD =			']|S~)h,oQ`tIfv6L}Jd)1s-W(dvl.^G7O}Ex{qCdJCMF]PIusG7.Op+F7MH36E-'; //There CANNOT be any backslashes. Or quotes, duh.
-$SMTP_SERVER =				'smtp.gmail.com';
+$EMAIL_USERNAME =			'webmaster@lhsmath.org';
+$EMAIL_PASSWORD =			'-Kpwnr7vZC2b1J334eOqvA'; //'tkMsRY0qdC94K9IeWSAGiw'; //The real key is -Kp..., the test key is tkM....
+$SMTP_SERVER =				'smtp.mandrillapp.com';
 $SMTP_SERVER_PORT =			'587';	//https://support.google.com/mail/answer/78775?hl=en
 									//The source of a month of failed email sendings when it changed 587 to 465 for whatever reason.
 									//Note to people: keep track of this number.

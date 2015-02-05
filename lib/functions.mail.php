@@ -61,7 +61,7 @@ function send_email($bcc_list, $subject, $bb_body, $reply_to=NULL, $prefix=NULL,
 	require_once __DIR__ . "/swiftmailer/swift_required.php";
 	Swift_Preferences::getInstance()->setCacheType('array'); //Prevents a ton of warnings about SwiftMail's DiskKeyCache, thus actually speeding things up considerably.
 	
-	//Connect to the super-secret LHS Math Club Mailbot Gmail account
+	//Connect to the SMTP server
 	$transport = Swift_SmtpTransport::newInstance($SMTP_SERVER,$SMTP_SERVER_PORT,$SMTP_SERVER_PROTOCOL)
 	  ->setUsername($EMAIL_USERNAME)->setPassword($EMAIL_PASSWORD);
 	
