@@ -34,6 +34,8 @@ if ($_POST['xsrf_token'] == $_SESSION['xsrf_token']){
 		do_update_team_cost();
 	else if (isSet($_POST['lmt_update_backstage_message']))
 		do_update_backstage_message();
+	else if (isSet($_POST['lmt_update_reg_close']))
+		do_update_reg_close();
 }
 
 show_page();
@@ -95,6 +97,7 @@ HEREDOC;
 	$individual_cost = htmlentities(map_value('indiv_cost'));
 	$team_cost = htmlentities(map_value('team_cost'));
 	$backstage_message = htmlentities(map_value('backstage_message'));
+	$reg_close = htmlentities(map_value('reg_close'));
 	
 	$num_coaches = DB::queryFirstField('SELECT COUNT(*) AS c FROM schools WHERE deleted="0"');
 	$num_teams = DB::queryFirstField('SELECT COUNT(*) AS c FROM teams WHERE deleted="0"');
@@ -140,6 +143,10 @@ HEREDOC;
               <td>Backstage Message:&nbsp;</td>
               <td><textarea name="backstage_message" rows="5" cols="20">$backstage_message</textarea></td>
               <td><input id="lmtBackstageMessage" type="submit" name="lmt_update_backstage_message" value="Update" /></td>
+            </tr><tr>
+              <td>Registration Closing Date:</td>
+              <td><input type="text" name="reg_close" value="$reg_close" size="25" onkeydown="return processKey(event, 'lmtRegClose');" /></td>
+              <td><input id="lmtRegClose" type="submit" name="lmt_update_reg_close" value="Update" /></td>
             </tr>
           </table>
         </form>
@@ -222,6 +229,14 @@ function do_update_backstage_message() {
 	
 	map_set('backstage_message', $_POST['backstage_message']);
 	alert('Backstage message has been changed', 1);
+}
+
+function do_update_reg_close(){
+	if (strlen($_POST['reg_close']) > 2000)
+		show_page('Please limit all fields to 2000 characters');
+	
+	map_set('reg_close', $_POST['reg_close']);
+	alert('Registration closing date has been changed. Be sure to update the About page.', 1);
 }
 
 ?>

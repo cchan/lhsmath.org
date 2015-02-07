@@ -219,7 +219,7 @@ pip-log.txt
 #LHSMATH
 
 #Local Configs
-.local.php
+*.local.php
 
 #Database backups
 db-backup-*.sql

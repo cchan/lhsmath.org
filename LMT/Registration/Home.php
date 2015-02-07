@@ -22,13 +22,15 @@ else
 function show_public_page() {
 	lmt_page_header('Registration');
 	
-	$lmt_year = htmlentities(map_value('year'));
+	$lmt_date = htmlentities(map_value('date'));
+	$reg_close = htmlentities(map_value('reg_close'));
 	
 	echo <<<HEREDOC
       <h1>Registration</h1>
       
       <div class="registration-box">
-        <h3>Registration for LMT $lmt_year is Open.</h3>
+        <h3>Registration for LMT on $lmt_date is Open.</h3>
+		<h4>Registration closes on $reg_close.</h4>
         <br /><br />
         <a href="Individual">Individual Registration</a>
         <a href="Coach">Team Registration</a>
