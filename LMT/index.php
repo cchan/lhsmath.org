@@ -7,6 +7,6 @@
  */
 
 
-header('Location: About');
+header('Location: Home');
 
 ?>

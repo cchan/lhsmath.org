@@ -56,7 +56,7 @@ HEREDOC;
   <body>
 
     <div id="header">
-      <a href="/LMT/About" id="title">Lexington Math Tournament</a><?php
+      <a href="/LMT" id="title">Lexington Math Tournament</a><?php
 if (isSet($_SESSION['user_name']))
 	echo "\n" . '      <div id="user"><span id="username">' . $_SESSION['user_name'] . '</span><span id="bar"> | </span><a href="/Account/Signout">Sign Out</a></div>';
 ?>

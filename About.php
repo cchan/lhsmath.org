@@ -19,9 +19,9 @@ restrict_access('XRLA');
 <h1>About</h1>
 
 <h3>LHS Math Club Website</h3>
-Written in <a href="http://www.php.net/" rel="external">PHP</a> starting in ~2008 by <?=$benjamin_tidor?><br />
+Written in <a href="http://www.php.net/" rel="external">PHP</a> 2008-2012 by <?=$benjamin_tidor?><br />
 With design assistance from <a href="http://teddomain.zzl.org/" rel="external">Ted Zhu</a><br />
-Heavily revised and updated by Clive Chan<br />
+Heavily revised and updated by Clive Chan 2013-present<br />
 and well-maintained by all LHSMATH webmasters.<br />
 
 <br />

@@ -87,5 +87,5 @@ function stringAllPathInfo(){
 		$out .= 'URL::'.$method.'() = ['.call_user_func(array('URL',$method))."]\n";
 	return $out;
 }
-echo nl2br(stringAllPathInfo());
+//echo nl2br(stringAllPathInfo());
 ?>

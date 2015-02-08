@@ -696,7 +696,7 @@ foreach ($result as $row) {
 }
 $lmt_backstage_navbar = array(
 	'ARL'=>[
-		'LMT Home'=>'LMT/About',
+		'LMT Home'=>'LMT',
 		'Backstage Home'=>'LMT/Backstage/Home',
 		'A'=>[
 			'',
