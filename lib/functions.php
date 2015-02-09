@@ -61,6 +61,30 @@ require_once PATH::lib() . '/functions.db.php';
 
 require_once PATH::lib() . '/functions.template.php';
 
+require_once PATH::lib() . '/recaptchalib-1.11.php';
+	/*
+	 * validate_recaptcha()
+	 * Returns true if the recaptcha was entered correctly, else else an error.
+	 */
+	function validate_recaptcha() {
+		global $RECAPTCHA_PRIVATE_KEY;
+		$recaptcha_response = recaptcha_check_answer(	$RECAPTCHA_PRIVATE_KEY,
+														$_SERVER['REMOTE_ADDR'],
+														$_POST['recaptcha_challenge_field'],
+														$_POST['recaptcha_response_field']);
+		if (!$recaptcha_response->is_valid)
+			return 'You entered the reCaptcha incorrectly';
+		return true;
+	}
+	/*
+	 * recaptcha_get_html_f()
+	 * A laziness function that puts in the $RECAPTCHA_PUBLIC_KEY for me.
+	 */
+	function  recaptcha_get_html_f(){
+		global $RECAPTCHA_PUBLIC_KEY;
+		return recaptcha_get_html($RECAPTCHA_PUBLIC_KEY);
+	}
+
 /*
  * custom_errors($errno, $errstr, $errfile, $errline)
  *
@@ -389,7 +413,6 @@ function email_obfuscate($address, $link_text=null, $pre_text='', $post_text='')
 	}
 	
 	global $MAILHIDE_PUBLIC_KEY, $MAILHIDE_PRIVATE_KEY;
-	require_once PATH::lib().'/recaptchalib.php';
 	$mailhide_url = htmlentities(recaptcha_mailhide_url($MAILHIDE_PUBLIC_KEY, $MAILHIDE_PRIVATE_KEY, $address));
 	
 	$escaped_pre_text = str_replace('"', '\"', $pre_text);

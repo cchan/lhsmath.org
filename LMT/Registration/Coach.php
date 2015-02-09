@@ -29,9 +29,7 @@ function show_form($err, $selected_field) {
 		$err = "\n        <div class=\"error\">$err</div><br />\n";
 	
 	// Get the code for reCAPTCHA
-	global $RECAPTCHA_PUBLIC_KEY;
-	require_once '../../lib/recaptchalib.php';
-	$recaptcha_code = recaptcha_get_html($RECAPTCHA_PUBLIC_KEY);
+	$recaptcha_code = recaptcha_get_html_f();
 	
 	global $school_name, $email;
 	
@@ -42,7 +40,8 @@ function show_form($err, $selected_field) {
       
       <div class="instruction">
       In order to register <b>teams</b> for the Lexington Math Tournament, create an account by filling out this form.
-      Only one account per school or organization is required; each account may register multiple teams.<br />
+      Only one account per school or organization is required; each account may register multiple teams. Note that 
+	  each <i>team</i> <b>must</b> have one adult volunteer (coach, teacher, parent, or otherwise) for supervision.<br />
       <br />
       If you have already registered, use the link in the confirmation email to access your school's information. For
       assistance, please <a href="../Contact">contact us</a>.

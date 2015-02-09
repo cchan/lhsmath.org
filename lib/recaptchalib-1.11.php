@@ -1,13 +1,5 @@
 <?php
 /*
- * lib/recaptchalib.php
- * LHS Math Club Website
- *
- * Contains recaptcha functions.
- * Provided by recaptcha.
- */
-
-/*
  * This is a PHP library that handles calling reCAPTCHA.
  *    - Documentation and latest version
  *          http://recaptcha.net/plugins/php/
@@ -129,11 +121,11 @@ function recaptcha_get_html ($pubkey, $error = null, $use_ssl = false)
         }
         return '<script type="text/javascript" src="'. $server . '/challenge?k=' . $pubkey . $errorpart . '"></script>
 
-	<noscript><div>
-  		<object type="text/html" data="'. $server . '/noscript?k=' . $pubkey . $errorpart . '" height="300" width="500"></object><br />
+	<noscript>
+  		<iframe src="'. $server . '/noscript?k=' . $pubkey . $errorpart . '" height="300" width="500" frameborder="0"></iframe><br/>
   		<textarea name="recaptcha_challenge_field" rows="3" cols="40"></textarea>
   		<input type="hidden" name="recaptcha_response_field" value="manual_challenge"/>
-	</div></noscript>';
+	</noscript>';
 }
 
 
@@ -223,7 +215,7 @@ function _recaptcha_aes_encrypt($val,$ky) {
 	if (! function_exists ("mcrypt_encrypt")) {
 		die ("To use reCAPTCHA Mailhide, you need to have the mcrypt php module installed.");
 	}
-	$mode=MCRYPT_MODE_CBC;
+	$mode=MCRYPT_MODE_CBC;   
 	$enc=MCRYPT_RIJNDAEL_128;
 	$val=_recaptcha_aes_pad($val);
 	return mcrypt_encrypt($enc, $ky, $val, $mode, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");

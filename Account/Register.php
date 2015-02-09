@@ -61,9 +61,7 @@ function show_form() {
 		$email = htmlentities($_SESSION['PREAPPROVED']);
 	
 	// Get the code for reCAPTCHA
-	global $RECAPTCHA_PUBLIC_KEY;
-	require_once '../lib/recaptchalib.php';
-	$recaptcha_code = recaptcha_get_html($RECAPTCHA_PUBLIC_KEY);
+	$recaptcha_code = recaptcha_get_html_f();
 	
 	// Assemble the page, and send.
 	page_header('Register');
@@ -210,14 +208,9 @@ function process_form() {
 	}
 	
 	// CHECK THAT THEY ENTERED THE RECAPTCHA CORRECTLY
-	global $RECAPTCHA_PRIVATE_KEY;
-	require_once '../lib/recaptchalib.php';
-	$recaptcha_response = recaptcha_check_answer(	$RECAPTCHA_PRIVATE_KEY,
-													$_SERVER['REMOTE_ADDR'],
-													$_POST['recaptcha_challenge_field'],
-													$_POST['recaptcha_response_field']);
-	if (!$recaptcha_response->is_valid) {
-		alert('You entered the reCaptcha incorrectly', -1);
+	$recaptcha_msg = validate_recaptcha();
+	if ($recaptcha_msg !== true) {
+		alert($recaptcha_msg, -1);
 		show_form();
 		return;
 	}

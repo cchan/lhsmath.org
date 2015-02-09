@@ -36,9 +36,7 @@ function show_form($err, $selected_field) {
 	$grade8_sel = $grade == '8' ? ' selected' : '';
 	
 	// Get the code for reCAPTCHA
-	global $RECAPTCHA_PUBLIC_KEY;
-	require_once '../../lib/recaptchalib.php';
-	$recaptcha_code = recaptcha_get_html($RECAPTCHA_PUBLIC_KEY);
+	$recaptcha_code = recaptcha_get_html_f();
 	
 	// Dates
 	$lmt_year = htmlentities(map_value('year'));

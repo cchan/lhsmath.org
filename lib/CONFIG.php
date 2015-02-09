@@ -80,8 +80,8 @@ if ($LHSMATH_PASSWORD != '')
 
 // This site uses reCAPTCHA to prevent bots from messing with it. You can
 // get a key at http://recaptcha.net
-$RECAPTCHA_PUBLIC_KEY =		'6LdVjr0SAAAAAILlPfF5-n11TmZE_NXsm6mlxz5_';
-$RECAPTCHA_PRIVATE_KEY =	'6LdVjr0SAAAAAB3N6CCEL0rXiXfKohLF7MFpSqHI';
+$RECAPTCHA_PUBLIC_KEY =		'6LfrvwETAAAAACQvf7d9fEkpnfoIn3A8di_LR-8U';
+$RECAPTCHA_PRIVATE_KEY =	'6LfrvwETAAAAAOCERu7Hbu_wuMBjNfVLbm-uHs5q';
 
 // This site also uses Mailhide. Get a key at:
 // http://www.google.com/recaptcha/mailhide/apikey
@@ -108,7 +108,7 @@ $BANNED_IPS =	array(
 
 
 
-$CATCH_ERRORS = false;			// For website debugging. Should normally be set to TRUE,
+$CATCH_ERRORS = true;			// For website debugging. Should normally be set to TRUE,
 								// which means it will just say "Whoops, something went wrong"
 								// rather than talk about the error.
 								

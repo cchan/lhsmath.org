@@ -40,9 +40,7 @@ function show_request_page($err, $selected_field) {
 		$err = "\n        <div class=\"error\">$err</div><br />\n";
 	
 	// Get the code for reCAPTCHA
-	global $RECAPTCHA_PUBLIC_KEY;
-	require_once '../lib/recaptchalib.php';
-	$recaptcha_code = recaptcha_get_html($RECAPTCHA_PUBLIC_KEY);
+	$recaptcha_code = recaptcha_get_html_f();
 	
 	// A little javascript to put the cursor in the first field when the form loads;
 	// page_header() looks at the $body_onload variable and inserts it into the code.
@@ -92,18 +90,11 @@ function process_request_page() {
 	restrict_access('X');
 	
 	// Check the reCaptcha
-	global $RECAPTCHA_PRIVATE_KEY;
-	require_once '../lib/recaptchalib.php';
-	$recaptcha_response = recaptcha_check_answer(	$RECAPTCHA_PRIVATE_KEY,
-													$_SERVER['REMOTE_ADDR'],
-													$_POST['recaptcha_challenge_field'],
-													$_POST['recaptcha_response_field']);
-	
-	if (!$recaptcha_response->is_valid) {
-		show_request_page('You entered the reCaptcha incorrectly.', 'recaptcha_response_field');
+	$recaptcha_msg = validate_recaptcha();
+	if($recaptcha_msg !== true){
+		show_request_page($recaptcha_msg,'recaptcha_response_field');
 		return;
 	}
-	
 	
 	// Check that an account with that email address exists.
 	$email = mysqli_real_escape_string(DB::get(),strtolower($_POST['email']));

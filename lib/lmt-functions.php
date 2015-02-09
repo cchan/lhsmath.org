@@ -347,7 +347,7 @@ function validate_school_name($name) {
 		return 'The school name cannot be blank';
 	if (strlen($name) > 35)
 		return 'The school name is too long';
-	if (!preg_match('/^[A-Za-z\s]+$/', $name))
+	if (!preg_match('/^[A-Za-z\s\-]+$/', $name))
 		return 'School names may only contain letters, hyphens and spaces';
 	return true;
 }
@@ -365,7 +365,7 @@ function validate_team_name($name) {
 		return 'The team name cannot be blank';
 	if (strlen($name) > 25)
 		return 'The team name is too long';
-	if (!preg_match('/^[A-Za-z0-9\s]+$/', $name))
+	if (!preg_match('/^[A-Za-z0-9\s\-]+$/', $name))
 		return 'Team names may only contain letters, numbers, hyphens and spaces';
 	return true;
 }
@@ -383,7 +383,7 @@ function validate_member_name($name) {
 		return 'The name cannot be blank';
 	if (strlen($name) > 25)
 		return 'The name is too long';
-	if (!preg_match('/^[A-Za-z\s]+$/', $name))
+	if (!preg_match('/^[A-Za-z\s\-]+$/', $name))
 		return 'Names may only contain letters, hyphens and spaces';
 	return true;
 }
@@ -401,25 +401,6 @@ function validate_password($password, $verify) {
 		return 'Passwords do not match';
 	if (strlen($password) < 6)
 		return 'Password must contain at least six characters';
-	return true;
-}
-
-
-
-
-
-/*
- * validate_recaptcha()
- * Returns true if the recaptcha was entered correctly, else else an error.
- */
-function validate_recaptcha() {
-	require_once PATH::lib().'/recaptchalib.php';
-	$recaptcha_response = recaptcha_check_answer(	$RECAPTCHA_PRIVATE_KEY,
-													$_SERVER['REMOTE_ADDR'],
-													$_POST['recaptcha_challenge_field'],
-													$_POST['recaptcha_response_field']);
-	if (!$recaptcha_response->is_valid)
-		return 'You entered the reCaptcha incorrectly';
 	return true;
 }
 

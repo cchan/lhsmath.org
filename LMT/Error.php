@@ -4,17 +4,21 @@
  * LHS Math Club Website
  *
  * A generic error page: whenever anything goes wrong, users are
- * redirected here.
+ * redirected/included to here.
  */
 
-@session_name('Session');
-@session_start();
+
+if(!isSet($_SESSION)){
+	session_name('Session');
+	session_start();
+}
+
+cancel_templateify();
 
 echo '<?xml version="1.0" encoding="UTF-8"?>';
 
 if (isSet($_GET['Mini'])) {	// error page for Guts embedded frame
 	echo <<<HEREDOC
-
 <!DOCTYPE html
      PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -41,7 +45,6 @@ HEREDOC;
 	die;
 	}
 ?>
-
 <!DOCTYPE html
      PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -56,7 +59,7 @@ HEREDOC;
   <body>
 
     <div id="header">
-      <a href="/LMT" id="title">Lexington Math Tournament</a><?php
+      <a href="../LMT" id="title">Lexington Math Tournament</a><?php
 if (isSet($_SESSION['user_name']))
 	echo "\n" . '      <div id="user"><span id="username">' . $_SESSION['user_name'] . '</span><span id="bar"> | </span><a href="/Account/Signout">Sign Out</a></div>';
 ?>
@@ -70,7 +73,7 @@ if (isSet($_SESSION['user_name']))
     
     <div id="linkbar"><br />
       <div class="linkgroup">
-        <a href="/LMT/About">About</a><br />
+        <a href="../LMT/Home">Home</a><br />
       </div>
     </div>
   </body>
