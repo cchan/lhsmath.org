@@ -58,7 +58,7 @@ function send_email($bcc_list, $subject, $bb_body, $reply_to=NULL, $prefix=NULL,
 	//preg_replace("/[^[:alnum][:space]]/ui", '', $string);?
 	
 	//Ok everything seems to be working, let's go ahead
-	require_once __DIR__ . "/swiftmailer/swift_required.php";
+	require_once PATH::lib() . "/swiftmailer/swift_required.php";
 	Swift_Preferences::getInstance()->setCacheType('array'); //Prevents a ton of warnings about SwiftMail's DiskKeyCache, thus actually speeding things up considerably.
 	
 	//Connect to the SMTP server
@@ -67,7 +67,7 @@ function send_email($bcc_list, $subject, $bb_body, $reply_to=NULL, $prefix=NULL,
 	
 	//Make a Mailer that will send through that transport (limiting to 50/send)
 	$mailer = Swift_Mailer::newInstance($transport);
-	$mailer->registerPlugin(new Swift_Plugins_AntiFloodPlugin(50, 1));//Max 50 emails per send, 1 sec delay between sends
+	//$mailer->registerPlugin(new Swift_Plugins_AntiFloodPlugin(50, 1));//Max 50 emails per send, 1 sec delay between sends
 	
 	try{
 		//Mush all info into the Mailer
