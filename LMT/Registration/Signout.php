@@ -5,8 +5,7 @@
  */
 
 
-$path_to_lmt_root = '../';
-require_once $path_to_lmt_root . '../lib/lmt-functions.php';
+require_once '../../lib/lmt-functions.php';
 
 do_signout();
 

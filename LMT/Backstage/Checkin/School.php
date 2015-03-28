@@ -6,8 +6,7 @@
  * - ID: the ID of a school
  */
 
-$path_to_lmt_root = '../../';
-require_once $path_to_lmt_root . '../lib/lmt-functions.php';
+require_once '../../../lib/lmt-functions.php';
 backstage_access();
 
 if (isSet($_POST['do_lmt_checkin_school']))

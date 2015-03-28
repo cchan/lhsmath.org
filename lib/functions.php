@@ -301,10 +301,10 @@ function sendfile($downloadname,$content){
 	header('Pragma: public');
 	header('Content-Length: ' . strlen($content));
 	
-	ob_clean();
-	echo $content;
-	
 	cancel_templateify();
+	ob_clean();
+	
+	echo $content;
 }
 
 /*

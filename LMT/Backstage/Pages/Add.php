@@ -4,8 +4,7 @@
  * LHS Math Club Website
  */
 
-$path_to_lmt_root = '../../';
-require_once $path_to_lmt_root . '../lib/lmt-functions.php';
+require_once '../../../lib/lmt-functions.php';
 restrict_access('A');
 
 if (isSet($_POST['lmt_do_add_page']))

@@ -6,8 +6,7 @@
  * Checks the database for errors
  */
 
-$path_to_lmt_root = '../../';
-require_once $path_to_lmt_root . '../lib/lmt-functions.php';
+require_once '../../../lib/lmt-functions.php';
 backstage_access();
 
 show_page();
@@ -48,45 +47,30 @@ function do_verify() {
 	
 	// All individuals have a valid name
 	$new_output = '';
-	$query = 'SELECT id, name FROM individuals WHERE name NOT REGEXP "^[A-Za-z ]{1,25}$" AND deleted="0"';
-	$result = DB::queryRaw($query);
-	$row = mysqli_fetch_assoc($result);
-	while ($row) {
+	$query = DB::query('SELECT id, name FROM individuals WHERE name NOT REGEXP "^[A-Za-z -]{1,40}$" AND deleted="0"');
+	foreach ($query as $row)
 		$new_output .= '      <span style="color: #a00;">Individual &quot;<a href="../Data/Individual?ID=' . htmlentities($row['id'])
 			. '" rel="external">' . htmlentities($row['name']) . '</a>&quot; does not have a valid name</span><br />' . "\n";
-		$row = mysqli_fetch_assoc($result);
-	}
-	
 	if ($new_output == '')
 		$new_output .= '      <span style="color: #0a0;">All individuals have a valid name</span><br />' . "\n";
 	$output .= $new_output . '      <br />' . "\n";
 	
 	// All teams have a valid name
 	$new_output = '';
-	$query = 'SELECT team_id, name FROM teams WHERE name NOT REGEXP "^[A-Za-z0-9 ]{1,25}$" AND deleted="0"';
-	$result = DB::queryRaw($query);
-	$row = mysqli_fetch_assoc($result);
-	while ($row) {
+	$query = DB::query('SELECT team_id, name FROM teams WHERE name NOT REGEXP "^[A-Za-z0-9 -]{1,40}$" AND deleted="0"');
+	foreach ($query as $row)
 		$new_output .= '      <span style="color: #a00;">Team &quot;<a href="../Data/Team?ID=' . htmlentities($row['team_id'])
 			. '" rel="external">' . htmlentities($row['name']) . '</a>&quot; does not have a valid name</span><br />' . "\n";
-		$row = mysqli_fetch_assoc($result);
-	}
-	
 	if ($new_output == '')
 		$new_output .= '      <span style="color: #0a0;">All teams have a valid name</span><br />' . "\n";
 	$output .= $new_output . '      <br />' . "\n";
 	
 	// All schools have a valid name
 	$new_output = '';
-	$query = 'SELECT school_id, name FROM schools WHERE name NOT REGEXP "^[A-Za-z ]{1,25}$" AND deleted="0"';
-	$result = DB::queryRaw($query);
-	$row = mysqli_fetch_assoc($result);
-	while ($row) {
+	$query = DB::query('SELECT school_id, name FROM schools WHERE name NOT REGEXP "^[A-Za-z -]{1,40}$" AND deleted="0"');
+	foreach ($query as $row)
 		$new_output .= '      <span style="color: #a00;">School &quot;<a href="../Data/School?ID=' . htmlentities($row['school_id'])
 			. '" rel="external">' . htmlentities($row['name']) . '</a>&quot; does not have a valid name</span><br />' . "\n";
-		$row = mysqli_fetch_assoc($result);
-	}
-	
 	if ($new_output == '')
 		$new_output .= '      <span style="color: #0a0;">All schools have a valid name</span><br />' . "\n";
 	$output .= $new_output . '      <br />' . "\n";

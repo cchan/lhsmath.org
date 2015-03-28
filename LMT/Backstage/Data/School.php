@@ -8,8 +8,7 @@
  * ID:	the school_id of the school to display
  */
 
-$path_to_lmt_root = '../../';
-require_once $path_to_lmt_root . '../lib/lmt-functions.php';
+require_once '../../../lib/lmt-functions.php';
 backstage_access();
 
 if (isSet($_POST['lmtDataSchool_changeName']))
@@ -140,20 +139,17 @@ function do_change_name() {
 	if ($name_msg !== true)
 		display_school($name_msg, 'document.forms[\'lmtDataSchoolName\'].school_name.focus();');
 	
-	DB::queryRaw('UPDATE schools SET name="' . mysqli_real_escape_string(DB::get(),$name)
-		. '" WHERE school_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID'])
-		. '" AND name <> "' . mysqli_real_escape_string(DB::get(),$name) . '" LIMIT 1');
+	DB::update('schools','name=%s','school_id=%i AND name <> %s LIMIT 1', $name, $_GET['ID'], $name);
 	
 	global $LMT_DB;
 	if (mysqli_affected_rows($LMT_DB) == 1) {
-		$row = DB::queryFirstRow('SELECT COUNT(*) FROM schools WHERE name="' . mysqli_real_escape_string(DB::get(),$name)
-			. '" AND school_id <> "' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" AND deleted="0"');
+		$row = DB::queryFirstRow('SELECT COUNT(*) FROM schools WHERE name=%s AND school_id <> %i AND deleted="0"', $name, $_GET['ID']);
 		if ($row['COUNT(*)'] > 0)
-			add_alert('lmt_data_school_update_name', 'School name was changed. WARNING: Another school has the same name.');
+			alert('School name was changed. WARNING: Another school has the same name.',1);
 		else
-			add_alert('lmt_data_school_update_name', 'School name was changed');
+			alert('School name was changed',1);
 	}
-	header('Location: School?ID=' . $_GET['ID']);
+	lmt_location('Backstage/Data/School?ID=' . $_GET['ID']);
 }
 
 
@@ -166,7 +162,7 @@ function do_change_email() {
 	
 	$email = $_POST['coach_email'];
 	
-	$row = DB::queryFirstRow('SELECT coach_email FROM schools WHERE school_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"');
+	$row = DB::queryFirstRow('SELECT coach_email FROM schools WHERE school_id=%i',$_GET['ID']);
 	if ($email == $row['coach_email']) {
 		header('Location: School?ID=' . $_GET['ID']);
 		die;
@@ -176,11 +172,10 @@ function do_change_email() {
 	if ($email_msg !== true)
 		display_school($email_msg, 'document.forms[\'lmtDataSchoolEmail\'].coach_email.focus();');
 	
-	DB::queryRaw('UPDATE schools SET coach_email="' . mysqli_real_escape_string(DB::get(),$email)
-		. '" WHERE school_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '" LIMIT 1');
+	DB::update('schools','coach_email=%s', 'school_id=%i LIMIT 1', $email, $_GET['ID']);
 	
-	add_alert('lmt_data_school_update_email', 'Coach email was changed');
-	header('Location: School?ID=' . $_GET['ID']);
+	alert('Coach email was changed', 1);
+	lmt_location('Backstage/Data/School?ID=' . $_GET['ID']);
 }
 
 
@@ -210,8 +205,8 @@ $url
 HEREDOC;
 	lmt_send_email($to, $subject, $body);
 	
-	add_alert('lmt_data_school_resend_login', 'The login information was resent to ' . htmlentities($email));
-	header('Location: School?ID=' . $_GET['ID']);
+	alert('The login information was resent to ' . htmlentities($email),1);
+	lmt_location('Backstage/Data/School?ID=' . $_GET['ID']);
 }
 
 
@@ -228,8 +223,8 @@ function do_change_paid() {
 	
 	global $LMT_DB;
 	if (mysqli_affected_rows($LMT_DB) == 1)
-		add_alert('lmt_data_school_update_paid', 'Number of teams paid was changed');
-	header('Location: School?ID=' . $_GET['ID']);
+		alert('Number of teams paid was changed', 1);
+	lmt_location('Backstage/Data/School?ID=' . $_GET['ID']);
 }
 
 

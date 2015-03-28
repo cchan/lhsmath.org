@@ -6,9 +6,8 @@
  * Informs users that scoring has been frozen.
  */
 
-if (!isSet($path_to_lmt_root)) {	// not being included
-	$path_to_lmt_root = '../';
-	require_once $path_to_lmt_root . '../lib/lmt-functions.php';
+if (!defined("FUNCTIONSPHP")) {	// not being included
+	require_once '../../lib/lmt-functions.php';
 	backstage_access();
 }
 

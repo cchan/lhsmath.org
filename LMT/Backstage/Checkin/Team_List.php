@@ -6,8 +6,7 @@
  * for inclusion in the Welcome Packet
  */
 
-$path_to_lmt_root = '../../';
-require_once $path_to_lmt_root . '../lib/lmt-functions.php';
+require_once '../../../lib/lmt-functions.php';
 backstage_access();
 
 if (isSet($_GET['Download']))
@@ -79,6 +78,7 @@ function download_csv() {
 		$row = mysqli_fetch_assoc($result);
 	}
 	
+	
 	// Download File
 	header('Content-Description: File Transfer');
 	header('Content-Type: text/csv');
@@ -87,6 +87,7 @@ function download_csv() {
 	header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 	header('Pragma: public');
 	header('Content-Length: ' . strlen($file));
+	cancel_templateify();
 	ob_clean();
 	flush();
 	echo $file;

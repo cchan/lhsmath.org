@@ -8,8 +8,7 @@
  * ID:	the id of the individual to display
  */
 
-$path_to_lmt_root = '../../';
-require_once $path_to_lmt_root . '../lib/lmt-functions.php';
+require_once '../../../lib/lmt-functions.php';
 backstage_access();
 
 if (isSet($_POST['lmtDataIndividual_changeName']))
@@ -40,7 +39,7 @@ else
 function display_individual($err, $selected_field) {
 	$row = DB::queryFirstRow('SELECT individuals.*, teams.name AS team_name, (SELECT name AS school_name FROM schools WHERE schools.school_id=teams.school) AS school_name'
 		. ' FROM individuals LEFT JOIN teams ON individuals.team=teams.team_id'
-		. ' WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"');
+		. ' WHERE id=%i',$_GET['ID']);
 	$name = htmlentities($row['name']);
 	$school = htmlentities($row['school_name']);
 	if ($row['grade'] == '6')
@@ -256,14 +255,13 @@ function do_change_name() {
 		die;
 	}
 	
-	DB::queryRaw('UPDATE individuals SET name="' . mysqli_real_escape_string(DB::get(),$_POST['name'])
-		. '" WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']). '" LIMIT 1');
+	DB::update('individuals', 'name=%s','id=%i LIMIT 1',$name, $_GET['ID']);
 	
 	if ($row)
-		add_alert('lmt_data_individual_update_name', 'Name was changed. WARNING: Another individual on the same team has that name.');
+		alert('Name was changed. WARNING: Another individual on the same team has that name.', 1);
 	else
-		add_alert('lmt_data_individual_update_name', 'Name was changed');
-	header('Location: Individual?ID=' . $_GET['ID']);
+		alert('Name was changed', 1);
+	lmt_location('Backstage/Data/Individual?ID=' . $_GET['ID']);
 }
 
 
@@ -278,7 +276,7 @@ function do_change_grade() {
 	if ($grade_msg !== true)
 		display_individual($grade_msg, 'document.forms[\'lmtDataIndividualGrade\'].grade.focus();');
 	
-	$row = DB::queryFirstRow('SELECT grade FROM individuals WHERE id="' . $_GET['ID'] . '"');
+	$row = DB::queryFirstRow('SELECT grade FROM individuals WHERE id=%i',$_GET['ID']);
 	if ($_POST['grade'] == $row['grade']) {
 		header('Location: Individual?ID=' . $_GET['ID']);
 		die;
@@ -287,8 +285,8 @@ function do_change_grade() {
 	DB::queryRaw('UPDATE individuals SET grade="' . mysqli_real_escape_string(DB::get(),$_POST['grade'])
 		. '" WHERE id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']). '" LIMIT 1');
 	
-	add_alert('lmt_data_individual_update_grade', 'Grade was changed');
-	header('Location: Individual?ID=' . $_GET['ID']);
+	alert('Grade was changed', 1);
+	lmt_location('Backstage/Data/Individual?ID=' . $_GET['ID']);
 }
 
 
@@ -348,7 +346,7 @@ function do_change_team() {
 	if ($_POST['xsrf_token'] != $_SESSION['xsrf_token'])
 		trigger_error('XSRF code incorrect', E_USER_ERROR);
 	
-	$row = DB::queryFirstRow('SELECT team FROM individuals WHERE id=%i'$_GET['ID']);
+	$row = DB::queryFirstRow('SELECT team FROM individuals WHERE id=%i',$_GET['ID']);
 	if ($row['team'] == $_POST['team'] || $_POST['team'] == '-2') {
 		header('Location: Individual?ID=' . $_GET['ID']);
 		die;
@@ -356,14 +354,13 @@ function do_change_team() {
 	
 	if ($_POST['team'] != '-1'){//If it's not not-assigned
 		if(!DB::queryFirstField('SELECT team_id FROM teams WHERE team_id=%i',$_POST['team'])){
-			add_alert('lmt_data_individual_update_team', 'Team does not exist')
+			add_alert('lmt_data_individual_update_team', 'Team does not exist');
 			header('Location: Individual?ID=' . $_GET['ID']);
 			die();
 		}
 	}
 	
-	$result = DB::queryRaw('SELECT id FROM individuals WHERE team=%i AND name = (SELECT name FROM individuals WHERE id=%i'
-		. '") AND team <> "-1" AND deleted="0"',$_POST['team'],$_GET['ID']);
+	$result = DB::queryRaw('SELECT id FROM individuals WHERE team=%i AND name IN (SELECT name FROM individuals WHERE id=%i) AND team <> "-1" AND deleted="0"',$_POST['team'],$_GET['ID']);
 	
 	DB::query('UPDATE individuals SET team=%i WHERE id=%i LIMIT 1',$_POST['team'],$_GET['ID']);
 	

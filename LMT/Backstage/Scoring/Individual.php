@@ -6,8 +6,7 @@
  * A page where staff enter scores for the individual round
  */
 
-$path_to_lmt_root = '../../';
-require_once $path_to_lmt_root . '../lib/lmt-functions.php';
+require_once '../../../lib/lmt-functions.php';
 backstage_access();
 scoring_access();
 
@@ -106,7 +105,7 @@ function do_enter_individual_score() {
 		show_page($msg, '');
 	}
 	
-	DB::query('UPDATE individuals SET score_individual=%s WHERE id=%i LIMIT 1', $_POST['score', $row['id']);
+	DB::query('UPDATE individuals SET score_individual=%s WHERE id=%i LIMIT 1', $_POST['score'], $row['id']);
 
 	$msg = 'A score of ' . htmlentities($_POST['score']) . ' was entered for '
 		. htmlentities($row['name']);

@@ -65,8 +65,8 @@ function validate_team_short_score($score) {
 	$int_score = (int) $score;
 	if ((String)$int_score != $score)
 		return 'Score must be an integer';
-	if ($int_score > 70 || $int_score < 0)
-		return 'Score must be between 0 and 70 inclusive';
+	if ($int_score > 85 || $int_score < 0)
+		return 'Score must be between 0 and 70 + 15 inclusive';
 	return true;
 }
 

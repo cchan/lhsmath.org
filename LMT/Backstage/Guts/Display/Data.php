@@ -18,7 +18,10 @@ show_page();
 
 function show_page() {
 	score_guts();
-	header('X-LMT-Guts-Data: 42');
+	
+	cancel_templateify();
+	
+	header('X-LMT-Guts-Data: 42'); //:)
 	echo <<<HEREDOC
 <meta http-equiv="refresh" content="10">
 <style type="text/css">.school {font-style:italic;} .score{font-weight:bold;text-align:center;} .currProb{text-align:center;}</style>

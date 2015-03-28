@@ -6,10 +6,9 @@
  * A dashboard page for staff running checkin
  */
 
-$path_to_lmt_root = '../../';
-require_once $path_to_lmt_root . '../lib/lmt-functions.php';
+require_once '../../../lib/lmt-functions.php';
 backstage_access();
-page_title('Check-in');
+lmt_page_header('Check-in');
 
 if (isSet($_GET['SCH_ID']))
 	find_school($_GET['SCH_ID']);
@@ -23,7 +22,7 @@ function find_school($id) {
 		return;
 	}
 	
-	//do stuff with $school_id
+	lmt_location("Backstage/Checkin/School?ID=".$id);
 }
 
 function find_individual($id) {
@@ -36,6 +35,8 @@ function find_individual($id) {
 		alert('Individual was registered as part of a team',-1);
 		return;
 	}
+	
+	lmt_location("Backstage/Checkin/Individual?ID=".$id);
 	
 	$individual_id = intval($row['id']);
 	$name = htmlentities($row['name']);
@@ -97,7 +98,7 @@ function find_individual($id) {
   </div></form>
   <div class="halfbreak"></div>
   
-  <form method="post" action="<?=$_SERVER['REQUEST_URI']?>"><div>
+  <form method="GET" action="<?=$_SERVER['REQUEST_URI']?>"><div>
 	Unaffiliated Individual ID:
 	<input type="text" name="IND_ID" size="5" />
 	<input type="submit" value="Find" />

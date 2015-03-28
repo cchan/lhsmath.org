@@ -37,7 +37,7 @@ function val_email_msg($subject,$body){
  */
 function send_email($bcc_list, $subject, $bb_body, $reply_to=NULL, $prefix=NULL, $footer=NULL, $headers=NULL) {
 	global $EMAIL_ADDRESS, $EMAIL_USERNAME, $EMAIL_PASSWORD,
-		$SMTP_SERVER, $SMTP_SERVER_PORT, $SMTP_SERVER_PROTOCOL, $LMT_EMAIL, $path_to_lmt_root;
+		$SMTP_SERVER, $SMTP_SERVER_PORT, $SMTP_SERVER_PROTOCOL, $LMT_EMAIL;
 		
 	//Instead of using parameter default values, so we can pass NULL. And it's more readable.
 	if(count($bcc_list)==0)return true;

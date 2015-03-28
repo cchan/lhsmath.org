@@ -9,8 +9,7 @@
  */
 
 $miniature_page = true;
-$path_to_lmt_root = '../../';
-require_once $path_to_lmt_root . '../lib/lmt-functions.php';
+require_once '../../../lib/lmt-functions.php';
 cancel_templateify();
 backstage_access();
 scoring_access();
@@ -66,6 +65,8 @@ $teams_dropdown
               <option value="9cf" style="background-color: #9cf;">Blue</option>
               <option value="ccf" style="background-color: #ccf;">Purple</option>
               <option value="fcf" style="background-color: #fcf;">Pink</option>
+              <option value="630" style="background-color: #630;">Brown</option>
+              <option value="000" style="background-color: #000;">Black</option>
               <option value="f6358a" style="background-color: #f6358a;">Dark Pink</option>
               <option value="eee" style="background-color: #eee;">Gray</option>
             </select>

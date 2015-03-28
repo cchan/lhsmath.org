@@ -30,6 +30,8 @@ function autocomplete_users_php($string/*,$where,...*/){
 	return call_user_func_array('user_data',$args);
 }
 
+//LMT USER DATA?
+
 //Returns a (rather large) array of all users, with all associative-array data things. Where-enabled.
 function user_data($where=NULL/*,...*/){
 	if(isSet($where)){//Allows replacement-parameters too.

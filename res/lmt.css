@@ -134,6 +134,11 @@ a img {
 .printOnly {
    display: none;
 }
+@media print{
+	.printOnly{
+		display: block;
+	}
+}
 
 .dontMess {
   color: red;

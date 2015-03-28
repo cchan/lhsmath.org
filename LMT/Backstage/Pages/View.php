@@ -6,8 +6,7 @@
  * ID: the ID of the page to show
  */
 
-$path_to_lmt_root = '../../';
-require_once $path_to_lmt_root . '../lib/lmt-functions.php';
+require_once '../../../lib/lmt-functions.php';
 restrict_access('A');
 
 show_page();

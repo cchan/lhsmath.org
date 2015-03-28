@@ -130,7 +130,7 @@ function process_add_event() {
  */
 function draw_calendar($current_month_timestamp) {
 	$currmonth = $currdate 	= strtotime('this month',$current_month_timestamp);
-	$nextmonth 				= strtotime('this month + 1 month',$current_month_timestamp);
+	$nextmonth 				= strtotime('next month',$current_month_timestamp);
 	
 	$pastnowfuture = function($timestamp){
 		$now = strtotime('today');
@@ -139,8 +139,9 @@ function draw_calendar($current_month_timestamp) {
 		if($timestamp < $now) return 'past';
 	};
 	
-	$events = DB::query('SELECT event_id, title, DAYOFMONTH(date) AS day FROM events WHERE %i < UNIX_TIMESTAMP(date) AND UNIX_TIMESTAMP(date) < %i ORDER BY day ASC',$currmonth,$nextmonth);
-	
+	$events = DB::query('SELECT event_id, title, DAYOFMONTH(date) AS day, UNIX_TIMESTAMP(date) FROM events WHERE %i < UNIX_TIMESTAMP(date) AND UNIX_TIMESTAMP(date) < %i ORDER BY day ASC',$currmonth,$nextmonth);
+	echo "<pre>";var_dump($events, $currmonth, $nextmonth);
+	echo "</pre>";
 	$calendar = '<table cellpadding="0" cellspacing="0" class="cal">';
 	
 	/* table headings */
@@ -163,16 +164,16 @@ function draw_calendar($current_month_timestamp) {
 		// Add in day number
 		$calendar .= '<div class="day-number">'.date('j',$currdate).'</div>';
 		
-		// Look for matching events from the earlier query
+		// Look for matching events in the query
 		while (count($events) > 0 && $events[0]['day'] == date('j',$currdate)) {
 			$event = array_shift($events);
 			$title = htmlentities($event['title']);
-			$calendar .= "<a href=\"View_Event?ID={$event['event_id']}\" style='display:block;width:100%;height:100%;' onclick=\"return true; popup_id('{$event['event_id']}'); return false;\">$title</a><br /><br />";
+			$calendar .= "<a href=\"View_Event?ID={$event['event_id']}\" style='display:block;width:100%;height:100%;' onclick=\"return true; popup_id('{$event['event_id']}'); return false;\">{$title}</a><br /><br />";
 		}
 		
 		$calendar .= "</td>";
 		
-		$currdate = strtotime("+1 day", $currdate);
+		$currdate += 60*60*24; // next day
 	}
 	
 	/* finish the rest of the days in the week */

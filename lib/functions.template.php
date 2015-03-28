@@ -1,50 +1,19 @@
 <?php
 
-
-//Upon shutdown, templateify() will run, emptying the output buffer into a page template and then sending *that* instead.
-ob_start();//Collect EVERYTHING that's outputted.
-function templateify(){
-	global $CANCEL_TEMPLATEIFY;//In case, for example, you want to send an attachment.
-	if(@$CANCEL_TEMPLATEIFY)return;
-	
-	global $page_title, $header_title, $header_class, $jquery_function, $LOCAL_BORDER_COLOR, $popup_code, $more_head_stuff;
-	
-	//Title bar: "Page_Name | LHS Math Club"
-	if(!isSet($header_title))$header_title = 'LHS Math Club'; //Also in main white-on-black header "LHS Math Club"
-	if(!isSet($page_title))$page_title = basename($_SERVER['REQUEST_URI'],'.php');
-	
-	global $logged_in_header;
-	if (isSet($_SESSION['user_id']))
-		$logged_in_header = '<div id="user"><span id="username">'.$_SESSION['user_name'].'</span><span id="bar"> | </span><a href="'.URL::root().'/Account/Signout">Sign Out</a></div>';
-	
-	if (isSet($meta_refresh))
-		$more_head_stuff .= '<meta http-equiv="refresh" content="' . $meta_refresh . '" />';
-	
-	$alerts_html = fetch_alerts_html();
-	
-	$content = ob_get_clean();
-	
-	//Very hacky solution to inserting alerts, but it works.
-	if(strpos($content,'</h1>')!==false)
-		$content = substr_replace($content,$alerts_html,strpos("\n".$content,'</h1>')+strlen('</h1>'),0);
-	else
-		$content = $alerts_html . $content;
-	
+//Start by sending all the non-content-dependent template stuff. It can already start loading the stylesheets and everything. It'll feel more responsive.
+function start_templateify(){
 	header('Content-Type: text/html; charset=utf-8');
 	
-	//We're on to HTML5 now!
+	//We're on to HTML5 now! No more XML/XHTML :P
 	/*echo '<?xml version="1.0" encoding="UTF-8"?>';//Uncooperative because it has the question mark tags.*/
 	//xmlns="http://www.w3.org/1999/xhtml"
 ?><!doctype html>
 <html lang="en">
   <head>
-	<?php //Driving home the message to a ridiculous degree. ?>
+	<?php //Driving home the message of UTF8 to a ridiculous degree. ?>
 	<meta charset="utf-8">
 	<meta name="charset" content="utf-8" />
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
-	
-    <title><?=$page_title?> | <?=$header_title?></title>
-	
 	<meta name="description" content="The Lexington (MA) High School Math Team website.">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="copyright" content="Lexington High School Math Team">
@@ -63,9 +32,9 @@ function templateify(){
 	
 	<?php //View_Event popups ?>
 	<script type="text/javascript" src="<?=URL::root()?>/res/popup.js"></script>
-    
-	<?php //Custom stuff - deprecated ?>
-	<script type="text/javascript"><?=$jquery_function?></script>
+	
+	<?php //Pi day celebration. ?>
+	<!--script type="text/javascript" src="<?=URL::root()?>/res/snowstorm.js"></script-->
 	
 	<script>//<![CDATA[
 	  (function(l,h,s,m,a,t,H){l['GoogleAnalyticsObject']=a;l[a]=l[a]||function(){
@@ -99,6 +68,52 @@ function templateify(){
         font-size: 12px;
       }
     </style>
+<?php
+	ob_flush();
+	flush();
+}
+
+//start_templateify(); ///BUT WAIT you can't cancel templateify anymore... (temporarily placed it back in the templateify())
+
+
+
+
+
+//Upon shutdown, templateify() will run, emptying the output buffer into a page template and then sending *that* instead.
+ob_start();//Start collecting EVERYTHING that's outputted.
+function templateify(){
+	global $CANCEL_TEMPLATEIFY;//In case, for example, you want to send an attachment.
+	if(@$CANCEL_TEMPLATEIFY)return;
+	
+	global $page_title, $header_title, $header_class, $jquery_function, $LOCAL_BORDER_COLOR, $popup_code, $more_head_stuff;
+	
+	//Title bar: "Page_Name | LHS Math Club"
+	if(!isSet($header_title))$header_title = 'LHS Math Club'; //Also in main white-on-black header "LHS Math Club"
+	if(!isSet($page_title))$page_title = basename($_SERVER['REQUEST_URI'],'.php');
+	
+	global $logged_in_header;
+	if (isSet($_SESSION['user_id']))
+		$logged_in_header = '<div id="user"><span id="username">'.$_SESSION['user_name'].'</span><span id="bar"> | </span><a href="'.URL::root().'/Account/Signout">Sign Out</a></div>';
+	
+	if (isSet($meta_refresh))
+		$more_head_stuff .= '<meta http-equiv="refresh" content="' . $meta_refresh . '" />';
+	
+	$alerts_html = fetch_alerts_html();
+	
+	$content = ob_get_clean();
+	
+	//Very hacky solution to inserting alerts after h1 titles, but it works.
+	if(strpos($content,'</h1>')!==false)
+		$content = substr_replace($content,$alerts_html,strpos("\n".$content,'</h1>')+strlen('</h1>'),0);
+	else
+		$content = $alerts_html . $content;
+	
+	start_templateify(); //:(
+?>
+    <title><?=$page_title?> | <?=$header_title?></title>
+	
+	<?php //Custom stuff - deprecated ?>
+	<script type="text/javascript"><?=$jquery_function?></script>
 	
 	<?=$more_head_stuff?>
   </head>
@@ -124,11 +139,16 @@ function templateify(){
 }
 register_shutdown_function('templateify');
 
+
 $CANCEL_TEMPLATEIFY=false;
 function cancel_templateify(){
 	global $CANCEL_TEMPLATEIFY;
 	$CANCEL_TEMPLATEIFY=true;
 }
+
+
+
+
 
 
 /*******************ALERTS*********************/

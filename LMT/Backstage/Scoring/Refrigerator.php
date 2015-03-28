@@ -6,8 +6,7 @@
  * Allows staff to freeze scoring
  */
 
-$path_to_lmt_root = '../../';
-require_once $path_to_lmt_root . '../lib/lmt-functions.php';
+require_once '../../../lib/lmt-functions.php';
 backstage_access();
 
 if (isSet($_POST['lmt_freeze_scoring']))

@@ -6,8 +6,7 @@
  * ID: the ID of the page to delete
  */
 
-$path_to_lmt_root = '../../';
-require_once $path_to_lmt_root . '../lib/lmt-functions.php';
+require_once '../../../lib/lmt-functions.php';
 
 if (isSet($_POST['lmt_do_delete_page']))
 	do_delete_page();

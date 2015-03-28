@@ -56,7 +56,8 @@ function subtractURLsEnd($a,$b){//Removes $b from the end of $a, if possible. El
 
 
 class PATH{//Actual system path - Used in require, file I/O, etc.
-	public static function root(){ return backslashToForward(dirname(__DIR__)); }									//Get the current dir (/lib) and go down one.
+	public static function root(){ return backslashToForward(dirname(__DIR__)); }
+	public static function lmt(){ return backslashToForward(dirname(__DIR__)).'/LMT'; }									//Get the current dir (/lib) and go down one.
 	public static function lib(){ return backslashToForward(__DIR__); }												//
 	public static function dir(){ return backslashToForward(dirname($_SERVER['SCRIPT_FILENAME'])); }				//
 	public static function filename(){ return basename($_SERVER['SCRIPT_FILENAME']); }			//
@@ -71,6 +72,7 @@ class URL{//Internet path - Used when constructing HTML, URLs, headers, etc.
 		subtractURLsStart(PATH::dir(), PATH::root())	//Gets C:/path/to/htdocs/path/to/lhsmath[/path/to/whatever]/file.php
 	)); }
 	public static function root(){ return concatURLNoBlanks(((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'], self::pathToRootFromURLRoot()); }
+	public static function lmt(){ return concatURLNoBlanks(((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'], self::pathToRootFromURLRoot(),"LMT"); }
 	public static function dir(){ return removeLeadingSlash(subtractURLsStart(removeLeadingSlash(backslashToForward(dirname(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)))), self::pathToRootFromURLRoot())); }
 	public static function filename(){ return basename($_SERVER['REQUEST_URI']); }
 	public static function filepath(){ return concatURLNoBlanks(self::dir(), self::filename()); }

@@ -6,8 +6,7 @@
  * Produces a database backup every 15 minutes
  */
 
-$path_to_lmt_root = '../../';
-require_once $path_to_lmt_root . '../lib/lmt-functions.php';
+require_once '../../../lib/lmt-functions.php';
 backstage_access();
 
 if (isSet($_GET['Download']))
@@ -48,6 +47,7 @@ function do_download() {
 	header('Content-Transfer-Encoding: binary');
 	header('Expires: 0');
 	header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+	cancel_templateify();
 	ob_clean();
 	flush();
 	

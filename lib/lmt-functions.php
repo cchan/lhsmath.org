@@ -91,7 +91,7 @@ if (isSet($_SESSION['LMT_user_id']) && time() >= $_SESSION['LMT_last_refresh'] +
 // significant worry.
 if (isSet($_SESSION['LMT_user_id']) && isSet($_SESSION['LMT_login_time']) && time() >= $_SESSION['LMT_login_time'] + 7200)
 	die('Signing Out... | ' . $_SESSION['LMT_user_id'] . ' | ' . $_SESSION['LMT_login_time'] . ' | ' . time());
-	//header('Location: ' . $path_to_lmt_root . 'Registration/Signout');
+	//header('Location: ' . URL::lmt() . '/Registration/Signout');
 
 
 
@@ -209,9 +209,8 @@ function backstage_access() {
  * Restricts access if scoring is disabled
  */
 function scoring_access() {
-	global $path_to_lmt_root;
 	if (!scoring_is_enabled())
-		require_once $path_to_lmt_root . 'Backstage/Scoring_Frozen.php';
+		require_once PATH::lmt() . '/Backstage/Scoring_Frozen.php';
 }
 
 

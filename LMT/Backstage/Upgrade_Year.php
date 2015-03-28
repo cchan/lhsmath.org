@@ -8,8 +8,7 @@
 
 
 //Standard stuff.
-$path_to_lmt_root = '../';
-require_once $path_to_lmt_root . '../lib/lmt-functions.php';
+require_once '../../lib/lmt-functions.php';
 restrict_access('A');
 
 $upyear_secret_code = 'hellofromLMT';
@@ -47,14 +46,13 @@ show_form();
 
 
 function show_form(){
-	global $path_to_lmt_root;
 	lmt_page_header('Upgrade Year');
 ?>
 	<h1>Upgrade Year</h1>
 	<p>This page is for upgrading things across the LMT website to reflect the next year's information,
 	and archiving the last year's information. If you're not an admin, you <b>should not be here</b>.</p>
 	<br>
-	<b style="color:red">Before doing this, you MUST download a <a href='<?=$path_to_lmt_root?>Backstage/Database/Backup.php' target='_blank'>backup</a> of the database. (opens in new window)</b><br>
+	<b style="color:red">Before doing this, you MUST download a <a href='<?=URL::lmt()?>/Backstage/Database/Backup.php' target='_blank'>backup</a> of the database. (opens in new window)</b><br>
 	<br>
 	<h3>Form</h3>
 	<form id='upyearform' autocomplete='off' method="POST" action="Upgrade_Year" onsubmit="return confirm('Are you sure?');" >

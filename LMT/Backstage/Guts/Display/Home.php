@@ -48,7 +48,6 @@ function show_page() {
         <li><a href="Test2">Another Test Page</a></li>
       </ul>
 HEREDOC;
-	lmt_backstage_footer('Guts Display');
 }
 
 ?>

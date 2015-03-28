@@ -6,8 +6,7 @@
  * The main Admin page; shows whether registration is open, etc.
  */
 
-$path_to_lmt_root = '../';
-require_once $path_to_lmt_root . '../lib/lmt-functions.php';
+require_once '../../lib/lmt-functions.php';
 restrict_access('A');
 
 
@@ -168,11 +167,11 @@ HEREDOC;
 
 function do_close_reg() {
 	map_set('registration', '0');
-	alert('Registration has been closed. Be sure to update the About page.', 1);
+	alert('Registration has been closed. Be sure to update the homepage.', 1);
 }
 function do_open_reg() {
 	map_set('registration', '1');
-	alert('Registration has been opened. Be sure to update the About page.', 1);
+	alert('Registration has been opened. Be sure to update the homepage.', 1);
 }
 function do_close_backstage() {
 	map_set('backstage', '0');
@@ -195,7 +194,7 @@ function do_update_date() {
 		show_page('Please limit all fields to 2000 characters');
 	
 	map_set('date', $_POST['date']);
-	alert('Date has been changed. Be sure to update the About page.', 1);
+	alert('Date has been changed. Be sure to update the homepage.', 1);
 }
 
 function do_update_year() {
@@ -204,7 +203,7 @@ function do_update_year() {
 		show_page('That\'s not a valid year');
 	
 	map_set('year', $year);
-	alert('Year has been changed. Be sure to update the About page.', 1);
+	alert('Year has been changed. Be sure to update the homepage.', 1);
 }
 
 function do_update_indiv_cost() {
@@ -236,7 +235,7 @@ function do_update_reg_close(){
 		show_page('Please limit all fields to 2000 characters');
 	
 	map_set('reg_close', $_POST['reg_close']);
-	alert('Registration closing date has been changed. Be sure to update the About page.', 1);
+	alert('Registration closing date has been changed. Be sure to update the homepage.', 1);
 }
 
 ?>
