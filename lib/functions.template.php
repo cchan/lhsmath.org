@@ -69,6 +69,7 @@ function start_templateify(){
       }
     </style>
 <?php
+	if( ob_get_level() == 0 ) trigger_error("ob_get_level is 0 [<b>".nl2br(var_export(debug_backtrace(),true))."</b>]",E_USER_ERROR);
 	ob_flush();
 	flush();
 }

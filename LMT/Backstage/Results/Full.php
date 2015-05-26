@@ -12,8 +12,51 @@ backstage_access();
 show_page();
 
 
-
-
+function linkifyNames($table, $idcol, $namecol, $page){
+	$url = URL::lmt()."/Backstage/Data/".$page;
+	foreach ($table as $row){
+		$row[$namecol] = "<a href='{$url}?ID={$row[$idcol]}'>{$row[$namecol]}</a>";
+		unset($row[$idcol]);
+	}
+}
+function rankTable($table, $cols, $sortcols){
+	echo '<table class="contrasting"><tr><th>Place</th>';
+	foreach ($othercols as $colname=>$col)
+		echo "<th>{$colname}</th>";
+	foreach ($sortcols as $colname=>$col)
+		echo "<th>{$colname}</th>";
+    echo '</tr>';
+	
+	usort($sortcols,function($a, $b)use($sortcols){
+		foreach($sortcols as $col){
+			if($a[$col] < $b[$col])return -1;
+			elseif($a[$col] > $b[$col]) return 1;
+		}
+		return 0;
+	});
+	
+	$place = 0;
+	$num = 0;
+	$last_row = [];
+	foreach($table as $row) {
+		$num++;
+		foreach($sortcols as $col)
+			if($row[$col] != $last_row[$col])
+				$place = $num;
+		$last_row = $row;
+		
+		echo "<tr><td class='b'>{$place}</td>";
+		foreach($othercols as $col){
+			echo "<td>";
+			if (is_null($row[$col]))echo '<span class="i">None</span>';
+			else echo $row[$col];
+			echo "</td>";
+		}
+		foreach($othercols as $col)
+			echo "<td class='b'>{$row[$col]}</td>";
+	}
+	echo "      </table>\n";
+}
 
 function show_page() {
 	if (scoring_is_enabled())
@@ -36,14 +79,6 @@ function show_page() {
       </div>
       
       <h2>Individuals by Composite</h2>
-      <table class="contrasting">
-        <tr>
-          <th>Place</th>
-          <th>Name</th>
-          <th>Individual Round</th>
-          <th>Theme Round</th>
-          <th>Composite</th>
-        </tr>
 HEREDOC;
 	
 	score_guts();
@@ -51,13 +86,16 @@ HEREDOC;
 	// INDIVIDUAL COMPOSITE
 	
 	$query = individual_composite('id, name, score_individual, score_theme, RAND() AS rand,', 'WHERE attendance="1" AND deleted="0" ORDER BY score_composite DESC, rand');
-	$result = DB::queryRaw($query);
+	echo rankTable(linkifyNames(DB::query($query),'id','name','Individual'),['Name'=>'name','Individual'=>'score_individual','Theme'=>'score_theme'],['Composite'=>'score_composite']);
+	
 	$row = mysqli_fetch_assoc($result);
 	$place = 0;
+	$num = 0;
 	$last_score = null;
 	while ($row) {
+		$num++;
 		if ($row['score_composite'] != $last_score)
-			$place++;
+			$place = $num;
 		$last_score = $row['score_composite'];
 		
 		$id = htmlentities($row['id']);
@@ -101,10 +139,12 @@ HEREDOC;
 	$result = DB::queryRaw($query);
 	$row = mysqli_fetch_assoc($result);
 	$place = 0;
+	$num = 0;
 	$last_score = null;
 	while ($row) {
+		$num++;
 		if ($row['score_individual'] != $last_score)
-			$place++;
+			$place=$num;
 		$last_score = $row['score_individual'];
 		
 		$id = htmlentities($row['id']);
@@ -142,10 +182,12 @@ HEREDOC;
 	$result = DB::queryRaw($query);
 	$row = mysqli_fetch_assoc($result);
 	$place = 0;
+	$num = 0;
 	$last_score = null;
 	while ($row) {
+		$num++;
 		if ($row['score_theme'] != $last_score)
-			$place++;
+			$place = $num;
 		$last_score = $row['score_theme'];
 		
 		$id = htmlentities($row['id']);
@@ -185,10 +227,12 @@ HEREDOC;
 	$result = DB::queryRaw($query);
 	$row = mysqli_fetch_assoc($result);
 	$place = 0;
+	$num = 0;
 	$last_score = null;
 	while ($row) {
+		$num++;
 		if ($row['team_composite'] != $last_score)
-			$place++;
+			$place = $num;
 		$last_score = $row['team_composite'];
 		
 		$id = htmlentities($row['team_id']);
@@ -232,10 +276,12 @@ HEREDOC;
 	$result = DB::queryRaw($query);
 	$row = mysqli_fetch_assoc($result);
 	$place = 0;
+	$num = 0;
 	$last_score = null;
 	while ($row) {
+		$num++;
 		if ($row['score_team'] != $last_score)
-			$place++;
+			$place=$num;
 		$last_score = $row['score_team'];
 		
 		$id = htmlentities($row['team_id']);
@@ -273,10 +319,12 @@ HEREDOC;
 	$result = DB::queryRaw($query);
 	$row = mysqli_fetch_assoc($result);
 	$place = 0;
+	$num = 0;
 	$last_score = null;
 	while ($row) {
+		$num++;
 		if ($row['score_guts'] != $last_score)
-			$place++;
+			$place = $num;
 		$last_score = $row['score_guts'];
 		
 		$id = htmlentities($row['team_id']);

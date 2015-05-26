@@ -29,10 +29,12 @@ function concatURLNoBlanks(){
 //https://stackoverflow.com/questions/834303/startswith-and-endswith-functions-in-php
 function stringStartsWith($haystack, $needle) {
     // search backwards starting from haystack length characters from the end
+	if(strlen($needle)>strlen($haystack))trigger_error("URL processing error [invalid lengths]: stringStartsWith('".htmlentities($haystack)."','".htmlentities($needle)."')",E_USER_ERROR);
     return $needle === "" || strrpos($haystack, $needle, -strlen($haystack)) !== FALSE;
 }
 function stringEndsWith($haystack, $needle) {
     // search forward starting from end minus needle length characters
+	if(strlen($needle)>strlen($haystack))trigger_error("URL processing error [invalid lengths]: stringEndsWith('".htmlentities($haystack)."','".htmlentities($needle)."')",E_USER_ERROR);
     return $needle === "" || strpos($haystack, $needle, strlen($haystack) - strlen($needle)) !== FALSE;
 }
 
@@ -43,13 +45,13 @@ function subtractURLsStart($a,$b){//Removes $b from the beginning of $a, if poss
 	if(stringStartsWith($a, $b))
 		return substr_b($a,strlen($b));
 	else
-		trigger_error("URL processing error: subtractURLsStart".var_export(debug_backtrace(),true),E_USER_ERROR);
+		trigger_error("URL processing error: subtractURLsStart('".htmlentities($a)."','".htmlentities($b)."')",E_USER_ERROR);
 }
 function subtractURLsEnd($a,$b){//Removes $b from the end of $a, if possible. Else errors.
 	if(stringEndsWith($a, $b))
 		return substr_b($a,0,strlen($a)-strlen($b));
 	else
-		trigger_error("URL processing error: subtractURLsEnd",E_USER_ERROR);
+		trigger_error("URL processing error: subtractURLsEnd('".htmlentities($a)."','".htmlentities($b)."')",E_USER_ERROR);
 }
 
 

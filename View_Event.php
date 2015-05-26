@@ -50,7 +50,7 @@ function show_full_page() {
 	$result = DB::queryRaw($query);
 	
 	if (mysqli_num_rows($result) == 0)
-		trigger_error('Event not found', E_USER_ERROR);
+		trigger_error('Event not found: ID '.htmlentities($_GET['ID']), E_USER_ERROR);
 	
 	$row = mysqli_fetch_assoc($result);
 	$title = htmlentities($row['title']);

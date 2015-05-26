@@ -449,11 +449,13 @@ function lmt_hash_pass($email, $pass) {
  *  - $to: who to send the email to, as: 'Name <email@address>' (no quotes)
  *  - $subject: the subject line; '[LMT {YEAR}]'  is automatically prefixed
  *  - $body: the body of the message
+ *
+ * Returns any error message, or TRUE if nothing wrong
  */
 function lmt_send_email($to, $subject, $body, $reply_to = NULL){
 	global $LMT_EMAIL;
 	if($reply_to === NULL)$reply_to = $LMT_EMAIL;
-	send_email($to,$subject,$body,$reply_to,'[LMT '.intval(map_value('year')).']',"Lexington Math Tournament\n".get_site_url().'/LMT');
+	return send_email($to,$subject,$body,$reply_to,'[LMT '.intval(map_value('year')).']',"Lexington Math Tournament\n".get_site_url().'/LMT');
 }
 
 

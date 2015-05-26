@@ -27,11 +27,14 @@ function val_email_msg($subject,$body){
 }
 
 /*
- * send_email($to, $subject, $bb_body, $reply_to)
- *  - $to: who to send the email to, as an string array of $email OR $email=>$name pairs
+ * send_email($bcc_list, $subject, $bb_body, $reply_to)
+ *  - $bcc_list: who to send the email to, as an string array of $email OR $email=>$name pairs
  *  - $subject: the subject line; $prefix is automatically prefixed
- *  - $body: the body of the message, in BBCode.
+ *  - $body: the body of the message, IN BBCODE!
  *  - $reply_to: the email address to send replies to, if different from the TO address
+ *
+ *
+ * Returns any error message, or True if nothing wrong
  *
  *  NOTE: THIS FUNCTION REQUIRES THE SWIFT MAIL PACKAGE
  */
@@ -46,6 +49,8 @@ function send_email($bcc_list, $subject, $bb_body, $reply_to=NULL, $prefix=NULL,
 	if(is_null($prefix))$prefix='[LHS Math Club]';
 	if(is_null($footer))$footer="LHS Math Club\n[url]".get_site_url()."[/url]\nTo stop receiving LHSMATH emails, contact [email]webmaster@lhsmath.org[/email].";
 	if(is_null($headers))$headers=array();
+	
+	if(is_string($bcc_list))$bcc_list = array($bcc_list);
 	
 	if(!is_array($bcc_list)||!is_string($subject)||!is_string($bb_body)||(!is_array($reply_to)&&!is_string($reply_to))||!is_string($prefix)||!is_string($footer)||!is_array($headers))
 		return 'Invalid email parameters.';

@@ -49,11 +49,11 @@ function edit_message() {//"$post_through"??
 	</td>
   </tr><tr>
 	<td>Subject:</td>
-	<td><input type="text" name="subject" value="<?=htmlentities($_POST['subject'])?>" size="45" maxlength="75" class="focus"/></td>
+	<td><input type="text" name="subject" value="<?php if(array_key_exists('subject',$_POST))echo htmlentities($_POST['subject']);?>" size="45" maxlength="75" class="focus"/></td>
   </tr><tr>
 	<td>Body:</td>
 	<td>
-	  <textarea name="body" rows="10" cols="80"><?=htmlentities($_POST['body'])?></textarea>
+	  <textarea name="body" rows="10" cols="80"><?php if(array_key_exists('body',$_POST))echo htmlentities($_POST['body']);?></textarea>
 	  <div class="small">LHSMATH features <a href="Captains#BBCode" target="_blank" rel="external">bbCode-like syntax</a>. [opens in new window]</div>
 	  <br /><br />
 	</td>
@@ -93,7 +93,7 @@ $(function(){
 		if(!e) e = window.event;
 		//e.cancelBubble is supported by IE - this will kill the bubbling process.
 		e.cancelBubble = true;
-		e.returnValue = "Don't go! You still have unsaved changes."; //This is displayed on the dialog
+		e.returnValue = "Don't go! Your message still has unsaved changes."; //This is displayed on the dialog
 		
 		//e.stopPropagation works in Firefox.
 		if (e.stopPropagation) {
@@ -101,7 +101,7 @@ $(function(){
 			e.preventDefault();
 		}
 		
-		return "Don't go! You still have unsaved changes.";
+		return "Don't go! Your message still has unsaved changes.";
 	}
 });
 </script>
