@@ -86,12 +86,7 @@ HEREDOC;
       <br />
       <br />
 
-      <span class="b">Besties</span>
-      $members_table
-      <br />
-      <br />
-      
-      <span class="b">Members</span>
+      <span class="b">Besties (members)</span>
       $members_table
       <br />
       <br />
