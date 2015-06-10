@@ -58,7 +58,6 @@ function process_form() {
 	$yog = (int)date('Y') - 1;
 	if ((int)date('n') > 4)
 		$yog++;
-	$yog++;	// because 'less than'
 	
 	$query = 'UPDATE users SET permissions="L", mailings="0" WHERE permissions="R" AND yog=' . $yog;
 	DB::queryRaw($query);
