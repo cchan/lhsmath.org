@@ -69,8 +69,10 @@ function start_templateify(){
       }
     </style>
 <?php
-	if( ob_get_level() == 0 ) trigger_error("ob_get_level is 0 [<b>".nl2br(var_export(debug_backtrace(),true))."</b>]",E_USER_ERROR);
-	ob_flush();
+	if( ob_get_level() <= 0 )
+		trigger_error("ob_get_level is ".ob_get_level()." [\n".var_export(debug_backtrace(),true)."\n]",E_USER_ERROR);
+	else
+		ob_flush();
 	flush();
 }
 
@@ -133,7 +135,10 @@ function templateify(){
 </html>
 <?php
 	
-	ob_flush();
+	if( ob_get_level() <= 0 )
+		trigger_error("ob_get_level is ".ob_get_level()." [\n".var_export(debug_backtrace(),true)."\n]",E_USER_ERROR);
+	else
+		ob_flush();
 	flush();
 	//die();//DO NOT. Will cause other shutdown functions to not work.
 	//--todo--For some reason it just keeps on "Waiting for localhost..." even though the script is done...

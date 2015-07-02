@@ -3,7 +3,7 @@
 function backslashToForward($url){
 	return str_replace("\\","/",$url);
 }
-function substr_b($str,$start,$len = NULL){
+function substr_b($str,$start,$len = NULL){ // behaves a bit better for edge cases.
 	if(strlen($str) == $start) return "";
 	if($len === 0) return "";
 	if($len === NULL)return substr($str, $start);
@@ -30,12 +30,12 @@ function concatURLNoBlanks(){
 function stringStartsWith($haystack, $needle) {
     // search backwards starting from haystack length characters from the end
 	if(strlen($needle)>strlen($haystack))trigger_error("URL processing error [invalid lengths]: stringStartsWith('".htmlentities($haystack)."','".htmlentities($needle)."')",E_USER_ERROR);
-    return $needle === "" || strrpos($haystack, $needle, -strlen($haystack)) !== FALSE;
+    return $needle === "" || strripos($haystack, $needle, -strlen($haystack)) !== FALSE;
 }
 function stringEndsWith($haystack, $needle) {
     // search forward starting from end minus needle length characters
 	if(strlen($needle)>strlen($haystack))trigger_error("URL processing error [invalid lengths]: stringEndsWith('".htmlentities($haystack)."','".htmlentities($needle)."')",E_USER_ERROR);
-    return $needle === "" || strpos($haystack, $needle, strlen($haystack) - strlen($needle)) !== FALSE;
+    return $needle === "" || stripos($haystack, $needle, strlen($haystack) - strlen($needle)) !== FALSE;
 }
 
 
