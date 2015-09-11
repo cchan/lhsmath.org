@@ -9,10 +9,10 @@
 
 require_once 'lib/functions.php';
 
-page_title('AMC 10/12 Signup');
+page_title('MAML Signup 2015-2016');
 ?>
 
-<h1>MAML Signup</h1>
+<h1>MAML Signup 2015-2016</h1>
 
 <h3 style="text-align:center;"><a href="http://goo.gl/forms/I3766aPkdh">http://goo.gl/forms/I3766aPkdh</a></h3>
 <div>
