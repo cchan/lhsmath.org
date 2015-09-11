@@ -7,7 +7,7 @@
 */
 
 
-require_once '../lib/functions.php';
+require_once 'lib/functions.php';
 
 page_title('AMC 10/12 Signup');
 ?>
