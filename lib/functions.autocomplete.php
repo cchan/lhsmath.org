@@ -43,6 +43,7 @@ function user_data($where=NULL/*,...*/){
 	else
 		$users = DB::query('SELECT * FROM users');
 	$results = array();
+	$order = array();
 	foreach($users as $user){
 		switch($user['permissions']){
 			case 'B': case 'P': case 'E':

@@ -59,6 +59,7 @@ function rankTable($table, $cols, $sortcols){
 }
 
 function show_page() {
+	$message = '';
 	if (scoring_is_enabled())
 		$message = '<div class="error">Score entry is still enabled! Disable it <a href="../Scoring/Refrigerator">here</a>.</div><br />';
 	

@@ -95,13 +95,15 @@ function process_form() {
 		alert('Name must have only letters, hyphens, apostrophes, and spaces, and be between 3 and 30 characters long',-1);
 	elseif(!val('i0+',$score) || ($score = intval($score)) > $total_points)//Validate Score
 		alert('Score must be a nonnegative integer not more than the total points',-1);
-	elseif (count($userdata = autocomplete_users_php($_REQUEST['user'])) == 0) { // Check for username - No such users found.
-		if($_GET['Temporary']){
+	elseif (count($userdata = autocomplete_users_php($user)) == 0) { // Check for username - No such users found.
+		if(@isSet($_GET['Temporary'])){
 			if (DB::queryFirstField('SELECT COUNT(*) FROM users WHERE name=%s',$user) > 0)
 				alert('User already exists!',-1);
 			
 			DB::insert('users',array('name'=>$user,'permissions'=>'T','approved'=>1));
 			DB::insert('test_scores',array('test_id'=>$test_id,'user_id'=>DB::insertId(),'score'=>$score));
+			
+			alert('Created new temporary user <b>'.$user.'</b>, and entered a score of '.$score.'.',1);
 		}
 		else
 			alert('Could not find <b>' . $user
@@ -128,7 +130,7 @@ function process_form() {
 			$prev_score = intval($prev_score);
 			if ($prev_score == $score)
 				alert('<b>'.$user.'</b>\'s score has already been entered as ' . $prev_score, -1);
-			else if (isSet($_REQUEST['Override'])){
+			else if (@isSet($_REQUEST['Override'])){
 				DB::update('test_scores',array('score'=>$score),'score_id=%i LIMIT 1',$score_id);
 				alert('Changed score from ' . $prev_score . ' to ' . $score . ' for <b>' . $user . '</b>',1);
 			}
