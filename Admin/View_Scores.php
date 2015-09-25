@@ -85,6 +85,11 @@ GROUP BY test_scores.test_id ORDER BY tests.date DESC
 	$query = "select users.name as name, ";
 		$sums = "";
 		$total = "sum(case tests.test_id ";
+		/*if(isSet($$$))//add a select for the CanGo
+			$sums .= ",GROUP_CONCAT(
+				case tests.test_id
+				when {$test_id} then CONCAT('<div style=\'height:4em;\' onmouseover=\"$(this).find(\'small\').css({display:\'inline\'});\"><b>',score,'</b> <small style=\"float:right;display:none;\">(z: ',round((score-{$avgs[$test_id]})/{$stddevs[$test_id]},3),')</small></div>')
+				else '' end SEPARATOR '') as t{$test_id} ";*/
 		foreach($test_ids as $test_id){
 			$sums .= ",GROUP_CONCAT(
 				case tests.test_id
@@ -118,6 +123,7 @@ GROUP BY test_scores.test_id ORDER BY tests.date DESC
 	$headdata[] = array();
 	
 	$querydata = DB::query($query, $test_ids);
+	//var_dump($querydata);
 	
 	foreach($querydata as &$row){
 		//The extra addition creates a significant bias toward people who have taken more tests.

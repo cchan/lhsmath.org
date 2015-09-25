@@ -57,7 +57,7 @@ function show_page() {
 			<input type="hidden" name="ID" value="<?=$test_id?>"/>
             <input type="hidden" name="xsrf_token" value="<?=$_SESSION['xsrf_token']?>"/>
             <input type="submit" name="do_add_score" value="Enter"/>
-            &nbsp;&nbsp;<a href="Tests">Cancel</a>
+            &nbsp;&nbsp;<a href="Tests">Back</a>
           </td>
         </tr>
       </table>
