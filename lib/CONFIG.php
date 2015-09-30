@@ -20,9 +20,9 @@ $ADVISOR_NAME =			'Wendy Cordero';
 
 
 // DATABASE INFORMATION:
-$DB_SERVER =			'lhsmath.db';  // to speficy a port, use 'hostname:port'
+$DB_SERVER =			'lhsmath.db';  // to specify a port, use 'hostname:port'
 $DB_USERNAME =			'php';
-$DB_PASSWORD =			'Dc8@O()oe.wmE7hhI?XYi1EP><';
+$DB_PASSWORD =			'iV=k?*drs{#D.Ur6^NF?G^xAHl/7';
 $DB_DATABASE =			'lhsmath';	// the name of the database for the regular site
 $LMT_DB_DATABASE =		'lmt';	// the LMT database name, should always be `lmt`
 $PHP_MY_ADMIN_LINK =	'https://phpmyadmin.nearlyfreespeech.net/index.php';
