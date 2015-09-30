@@ -271,7 +271,7 @@ function process_form() {
 	// For pre-approved members:
 	if ($approved == '1') {
 		global $WEBMASTER_EMAIL;
-		$to = $name . ' <' . $email . '>';
+		$to = array($email => $name);
 		$subject = 'Account Created';
 		$body = <<<HEREDOC
 Welcome to the LHS Math Club website, $name!

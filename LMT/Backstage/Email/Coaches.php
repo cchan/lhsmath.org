@@ -149,58 +149,9 @@ function post_message() {
 	if (!validate_message())
 		return;
 	
-	global $subject, $bb_body, $body, $email, $use_rel_external_script, $LMT_EMAIL;
+	global $subject, $bb_body;
 	
-	// SEND EMAIL
-	$reply_to = $LMT_EMAIL;
-	$site_url = str_replace('http://www.', '', get_site_url());
-	$site_url = str_replace('http://', '', $site_url);
-	$list_id = '<coaches.lmt.' . $site_url . '>';
-	
-	// remove bbCode from text-only version
-	$search = array(
-		'@\[(?i)b\](.*?)\[/(?i)b\]@si',
-		'@\[(?i)i\](.*?)\[/(?i)i\]@si',
-		'@\[(?i)u\](.*?)\[/(?i)u\]@si',
-		'@\[(?i)img\](.*?)\[/(?i)img\]@si',
-		'@\[(?i)url=(.*?)\](.*?)\[/(?i)url\]@si',
-		'@\[(?i)div=(.*?)\](.*?)\[/(?i)div\]@si',
-		'@\[(?i)span=(.*?)\](.*?)\[/(?i)span\]@si'
-	);
-	$replace = array(
-		'\\1',
-		'\\1',
-		'\\1',
-		'\\1',
-		'\\1',
-		'\\2',
-		'\\2'
-	);
-	$txt_body = htmlentities($body);
-	$txt_body = preg_replace($search, $replace, $txt_body);
-	
-	$html_body = $bb_body;
-	
-	// send individual emails
-	$result = DB::queryRaw('SELECT name, coach_email FROM schools WHERE deleted="0" AND coach_email!=""');
-	
-	$row = mysqli_fetch_assoc($result);
-	$count = 0;
-	$bcc_list = '';
-	while ($row) {
-		if ($count != 0)
-			$bcc_list .= ', ';
-		$bcc_list .= $row['name'] . ' <' . $row['coach_email'] . ' >';
-		
-		if ($count++ > 90) {
-			lmt_send_multipart_list_email($bcc_list, $subject, $txt_body, $html_body, $reply_to, $list_id);
-			$count = 0;
-		}
-		$row = mysqli_fetch_assoc($result);
-	}
-	
-	if ($count != 0)
-		lmt_send_multipart_list_email($bcc_list, $subject, $txt_body, $html_body, $reply_to, $list_id);
+	lmt_send_coaches_email($subject, $bb_body);
 	
 	alert('Your message has been sent', 1);
 	header('Location: Coaches');

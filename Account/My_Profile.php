@@ -233,7 +233,7 @@ function change_email() {
 	
 	// Send an email to the old address saying that someone changed the email
 	global $WEBMASTER_EMAIL;
-	$to = $name . ' <' . $old_email . '>';
+	$to = array($old_email => $name);
 	$subject = 'Change of Email Address';
 	$body = <<<HEREDOC
 Hi $name,

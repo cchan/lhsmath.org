@@ -193,7 +193,7 @@ function do_resend_login() {
 	$url = get_site_url() . '/LMT/Registration/Signin?ID=' . $row['school_id'] . '&Code=' . $row['access_code'];
 	global $LMT_EMAIL;
 	
-	$to = $school_name . ' <' . $email . '>';
+	$to = array($email => $school_name);
 	$subject = 'LMT Account';
 	$body = <<<HEREDOC
 To: $school_name

@@ -463,31 +463,31 @@ function lmt_send_email($to, $subject, $body, $reply_to = NULL){
 
 
 
-function lmt_send_list_email($bcc_list, $subject, $body, $list_id){
+function lmt_send_list_email($bcc_list, $subject, $bb_body, $list_id){
 	global $LMT_EMAIL;
 	$site_url = str_replace(array('http://www.','http://'), '', get_site_url());
-	return send_email($bcc_list, $subject, $body,
+	return send_email($bcc_list, $subject, $bb_body,
 		array($LMT_EMAIL=>'LMT Contact'),
 		'[LMT '.intval(map_value('year')).'] ',
 		"\n\n\n---\nLexington Mathematics Tournament\n[url]".get_site_url()."/LMT[/url]\n\nYou received this email because you registered for the LMT. To unsubscribe, please contact [email]lmt@lhsmath.org.[/email]",
 		array(
 			'Precedence' => 'bulk',
-			'List-Id' => $list_id,
-			'List-Unsubscribe' => '<' . $list_id . '.lmt.'.$site_url.'>'
+			'List-Id' => '<' . $list_id . '.lmt.'.$site_url.'>',
+			'List-Unsubscribe' => '<mailto:webmaster@lhsmath.org>'
 		)
 	);
 }
-function lmt_send_individuals_email($subject,$body){
+function lmt_send_individuals_email($subject,$bb_body){
 	$result = DB::query('SELECT name, email FROM individuals WHERE email != "" AND deleted="0"');
 	$list = DBHelper::verticalSlice($result,'email','name');
 	
-	return lmt_send_list_email($list,$subject,$body,'individuals');
+	return lmt_send_list_email($list,$subject,$bb_body,'individuals');
 }
-function lmt_send_coaches_email($subject,$body){
+function lmt_send_coaches_email($subject,$bb_body){
 	$result = DB::query('SELECT name, email FROM coaches WHERE email != "" AND deleted="0"');
 	$list = DBHelper::verticalSlice($result,'email','name');
 	
-	return lmt_send_list_email($list,$subject,$body,'coaches');
+	return lmt_send_list_email($list,$subject,$bb_body,'coaches');
 }
 
 

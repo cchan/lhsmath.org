@@ -9,7 +9,7 @@ function send_list_email($subject, $bb_body, $reply_to){
 		array(
 			'Precedence' => 'bulk',
 			'List-Id' => "<members.$stripped_url>",
-			'List-Unsubscribe' => "<$site_url/Account/My_Profile>"
+			'List-Unsubscribe' => "<$site_url/Account/My_Profile>, <mailto:webmaster@lhsmath.org>"
 		)
 	);
 }

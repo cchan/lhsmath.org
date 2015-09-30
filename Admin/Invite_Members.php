@@ -97,7 +97,7 @@ function process_form() {
 			
 			// Send email
 			global $WEBMASTER_EMAIL;
-			$to = ' <' . $email . '>';
+			$to = $email;
 			$subject = 'Welcome';
 			$body = <<<HEREDOC
 Welcome to the LHS Math Club!

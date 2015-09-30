@@ -47,6 +47,10 @@ function show_request_page($err, $selected_field) {
 	global $body_onload;
 	$body_onload = 'document.forms[\'initiatePasswordReset\'].' . $selected_field . '.focus()';
 	
+	$email = "";
+	if(@isSet($_POST['email']))
+		$email = $_POST['email'];
+	
 	// make page
 	page_header('Password Reset');
 	echo <<<HEREDOC
@@ -59,7 +63,7 @@ function show_request_page($err, $selected_field) {
         <table>
           <tr>
             <td>Email Address:</td>
-            <td><input type="text" name="email" value="{$_POST['email']}" size="25"/></td>
+            <td><input type="text" name="email" value="{$email}" size="25"/></td>
           </tr><tr>
             <td>Are you human?</td>
             <td>$recaptcha_code</td>
@@ -129,15 +133,14 @@ function process_request_page() {
 	
 	// Assemble the email
 	global $WEBMASTER_EMAIL;
-	$to = $row['name'] . ' <' . $row['email'] . '>';
+	$to = array($row['email'] => $row['name']);
 	$subject = 'Password Reset';
 	$body = <<<HEREDOC
 To reset your password, click this link:
 
 $link
 
-
-If you did not request a password reset, please contact <$WEBMASTER_EMAIL>.
+If you did not request a password reset, please contact <{$WEBMASTER_EMAIL}>.
 HEREDOC;
 
 	send_email($to, $subject, $body, $WEBMASTER_EMAIL);
