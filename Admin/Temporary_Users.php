@@ -99,7 +99,7 @@ function show_combine_page($err) {
 	$name = $row['name'];
 	
 	// Add some javascript for the jQuery Autocomplete
-	autocomplete_js('#userAutocomplete',autocomplete_users_data());
+	echo autocomplete_js('#userAutocomplete',autocomplete_users_data());
 	
 	// If an error message is given, put it inside this div
 	if ($err != '')
@@ -176,7 +176,7 @@ function do_combine() {
 	$id = $_GET['ID'];
 	
 	// Locate entered user
-	$completed = autocomplete_users_php($_POST['actual_user'],'permissions="T" AND id!=%i',$id);
+	$completed = autocomplete_users_php($_POST['actual_user'],'permissions!="T" AND id!=%i',$id);
 	if (count($completed)==0) {
 		show_combine_page('"' . htmlentities($_POST['actual_user']). '" could not be found');
 		return;
