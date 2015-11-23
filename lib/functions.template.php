@@ -223,10 +223,6 @@ $main_navbar = array( //Name => Page path, or if it's the same you can omit the 
 	//End result: flattens and concatenates all permissible pages into a list and then outputs it as a single navbar.
 	//Interestingly, for the Email-Verify, etc. people, it outputs nothing except Home, which was what was originally intended by Tidor. :)
 	'Home',
-	'XARL'=>[
-		'AMC',
-		'',
-	],
 	'E'=>[
 		'Verify Email'=>'Account/Verify_Email',
 	],
@@ -239,6 +235,8 @@ $main_navbar = array( //Name => Page path, or if it's the same you can omit the 
 	'X'=>[
 		'LMT',
 		'',
+		'AMC',
+		'',
 		'Calendar',
 		'Contests',
 		'Contact',
@@ -249,7 +247,8 @@ $main_navbar = array( //Name => Page path, or if it's the same you can omit the 
 	],
 	'ARL'=>[
 		'LMT',
-		'MAML',
+		'',
+		'AMC',
 		'',
 		'Contact',
 		'About',
