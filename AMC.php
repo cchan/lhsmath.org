@@ -27,8 +27,8 @@ page_title('AMC 10/12 Signup');
 	<p>Two different versions of the contests are given on two different dates, the A and the B.
 	You can take it on both test dates, or just on one.</p>
 	<ul style="margin:0px;">
-		<li>The AMC 10A and 12A are on <b>Tuesday, February 2, 2015 at 1:30 PM</b>.</li>
-		<li>The AMC 10B and 12B are on <b>Wednesday, February 17, 2015</b>. <b style="color:red">LHS will not be offering the AMC B (RSM will be).</b></li>
+		<li>The AMC 10A and 12A are on <b>Tuesday, February 2, 2016 at 1:30 PM</b>.</li>
+		<li>The AMC 10B and 12B are on <b>Wednesday, February 17, 2016</b>. <b style="color:red">LHS will not be offering the AMC B (RSM will be).</b></li>
 	</ul>
 </div>
 <div>
