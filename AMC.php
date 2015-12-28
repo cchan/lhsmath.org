@@ -14,8 +14,7 @@ page_title('AMC 10/12 Signup');
 
 <h1>AMC 10/12 Signup</h1>
 
-<h4 style="text-align:center"><a href="http://goo.gl/forms/o80RSTkAQ1" rel="external">Registration Form</a></h4>
-<h4 style="text-align:center">Registration Deadline: Friday, Dec. 4.</h4>
+<h4 style="text-align:center">The registration deadline has passed. We may still have extras! Just contact us at <a href="mailto:amc@lhsmath.org">amc@lhsmath.org</a>.</h4>
 
 <div>
 	<p>The AMC (American Mathematics Competition) is an international examination in secondary school mathematics consisting of 
