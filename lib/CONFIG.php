@@ -111,6 +111,8 @@ $BANNED_IPS =	array(
 $CATCH_ERRORS = false;			// For website debugging. Should normally be set to TRUE,
 								// which means it will just say "Whoops, something went wrong"
 								// rather than talk about the error.
+
+$DEBUG_ASSERTS = true; // Enables/disables assertTruth() statements - if assert is used while this is false, it simply does nothing.
 								
 $LOCAL_BORDER_COLOR = 'transparent';//For local development versions to set to something else in CONFIG.local.php.
 								

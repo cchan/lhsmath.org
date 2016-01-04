@@ -41,11 +41,12 @@ function val_email_msg($subject,$body){
 function send_email($bcc_list, $subject, $bb_body, $reply_to=NULL, $prefix=NULL, $footer=NULL, $headers=NULL) {
 	global $EMAIL_ADDRESS, $EMAIL_USERNAME, $EMAIL_PASSWORD,
 		$SMTP_SERVER, $SMTP_SERVER_PORT, $SMTP_SERVER_PROTOCOL, $LMT_EMAIL;
+	
+	require_once PATH::lib() . "/swiftmailer/swift_required.php";
 		
 	//Instead of using parameter default values, so we can pass NULL. And it's more readable.
 	if(count($bcc_list)==0)return true;
-	//--todo-- reply-to filtering doesn't work, and instead breaks when the empty string reaches SwiftMail.
-	if(is_null($reply_to) || !filter_var($reply_to, FILTER_VALIDATE_EMAIL))$reply_to=array($EMAIL_ADDRESS=>'LHS Math Club Mailbot');
+	if(is_null($reply_to))$reply_to=array($EMAIL_ADDRESS=>'LHS Math Club Mailbot');
 	if(is_null($prefix))$prefix='[LHS Math Club]';
 	if(is_null($footer))$footer="LHS Math Club\n[url]".get_site_url()."[/url]\nTo stop receiving LHSMATH emails, contact [email]webmaster@lhsmath.org[/email].";
 	if(is_null($headers))$headers=array();
@@ -63,7 +64,6 @@ function send_email($bcc_list, $subject, $bb_body, $reply_to=NULL, $prefix=NULL,
 	//preg_replace("/[^[:alnum][:space]]/ui", '', $string);?
 	
 	//Ok everything seems to be working, let's go ahead
-	require_once PATH::lib() . "/swiftmailer/swift_required.php";
 	Swift_Preferences::getInstance()->setCacheType('array'); //Prevents a ton of warnings about SwiftMail's DiskKeyCache, thus actually speeding things up considerably.
 	
 	//Connect to the SMTP server
@@ -87,10 +87,10 @@ function send_email($bcc_list, $subject, $bb_body, $reply_to=NULL, $prefix=NULL,
 			$message->getHeaders()->addTextHeader($field,$value);
 		
 		//Send the message
-		if(!$mailer->send($message))trigger_error('Error sending email', E_USER_ERROR);
+		if(!$mailer->send($message))LOG::fatal('Error sending email');
 	}
 	catch(Exception $e){
-		trigger_error('Email exception: '.$e->getMessage(),E_USER_ERROR);
+		LOG::fatal('Email exception: '.$e->getMessage());
 	}
 	return true;
 }

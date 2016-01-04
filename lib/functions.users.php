@@ -43,6 +43,7 @@ function user_access($levels){
 		$user_level = $_SESSION['permissions'];
 	return (stripos($levels, $user_level) !== false);
 }
+if(!isSet($_SESSION)) $_SESSION = [];
 
 
 

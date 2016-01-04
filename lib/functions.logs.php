@@ -1,39 +1,56 @@
 <?php
+/*
+ * lib/functions.logs.php
+ * LHS Math Club Website
+ *
+ */
 
+//$DB_LOG_EDITS = false; // to be implemented in MeekroDB for all table edits.
 
-$DB_LOG_EDITS = false; // to be implemented in MeekroDB for all table edits.
-$DEBUG_ASSERTS = false; // Enables/disables assert() statements - if assert is used while this is false, it simply does nothing.
+if(!isset($DEBUG_ASSERTS))
+	$DEBUG_ASSERTS = !$CATCH_ERRORS || false; // Enables/disables assertTruth() statements - if assert is used while this is false, it simply does nothing.
 
 //use GA for actual pages' stats
-
-
-function assert($truth){
-	if($DEBUG_ASSERTS && !$truth){
-		$d_bt = debug_backtrace();
-		LOG::fatal("Debug assertion failed at line ".$d_bt[0]['line']." of file ".$d_bt[0]['file'].".");
-	}
-}
 
 function log_pageload(){ //For notable pages such as Password_Reset
 	LOG::notice();
 }
 
-
 class LOG{
+	public static function write($txt){
+		write_log($txt);
+	}
 	public static function notice($txt){
-		
+		trigger_error($txt,E_USER_NOTICE);
 	}
 	public static function warning($txt){
-		
+		trigger_error($txt,E_USER_WARNING);
 	}
 	public static function error($txt){
-		
+		trigger_error($txt,E_USER_ERROR);
 	}
 	public static function fatal($txt){
-		die();
+		trigger_error($txt,E_USER_ERROR);
+		die("Fatal error occurred.");
+	}
+	public static function assert($truth){
+		global $DEBUG_ASSERTS;
+		if($DEBUG_ASSERTS && !$truth){
+			$d_bt = debug_backtrace();
+			LOG::fatal("Debug assertion failed at line ".$d_bt[0]['line']." of file ".$d_bt[0]['file'].".");
+			return false;
+		}
+		return true;
 	}
 }
 
+function write_log($txt){
+	//Generate error text
+	$logtext = ' DATE:' . date(DATE_RFC822) . ' IP:' . $_SERVER['REMOTE_ADDR'] . ' ' . $txt;
+	
+	//Log it in the proper file
+	file_put_contents(PATH::errfile(), $logtext, FILE_APPEND);
+}
 
 /*
  * custom_errors($errno, $errstr, $errfile, $errline)
@@ -51,15 +68,13 @@ set_error_handler(function($errno, $errstr, $errfile, $errline) {
     }
 	
 	if(stripos($errstr, 'Undefined variable')){
-		trigger_error($errstr, E_USER_NOTICE);//Whatever, doesn't matter, but log it anyway
+		trigger_error($errstr, E_USER_NOTICE);//Whatever, doesn't matter, but log it anyway as a notice
 		return TRUE;
 	}
 	
-	//Generate error text
-	$err = ' DATE:' . date(DATE_RFC822) . ' IP:' . $_SERVER['REMOTE_ADDR'] . ' Error [#' . $errno . '] on line ' . $errline . ' in ' . $errfile . ': ' . $errstr . "\n";
-	
-	//Log it in the proper file
-	file_put_contents(PATH::errfile(), $err, FILE_APPEND);
+	//Write to the logfile always
+	$err = 'Error [#' . $errno . '] on line ' . $errline . ' in ' . $errfile . ': ' . $errstr . "\n";
+	write_log($err);
 	
 	if(!$CATCH_ERRORS){//If catching errors is disabled, dump everything out.
 		alert($err,-1);

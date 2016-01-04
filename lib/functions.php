@@ -61,6 +61,8 @@ require_once PATH::lib() . '/functions.db.php';
 
 require_once PATH::lib() . '/functions.template.php';
 
+require_once PATH::lib() . '/functions.logs.php';
+
 require_once PATH::lib() . '/recaptchalib-1.11.php';
 	/*
 	 * validate_recaptcha()
