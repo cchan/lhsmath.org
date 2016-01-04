@@ -9,6 +9,7 @@
 
 require_once 'lib/functions.php';
 
+cancel_templateify();
 do_download();
 
 
