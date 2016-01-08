@@ -42,7 +42,7 @@ HEREDOC;
 ?>
 
 <h2>Welcome</h2>
-Welcome to the website of the Lexington High School Math Club!<br>
+Welcome to the website of the Lexington High School Math Club in Lexington, MA!<br>
 <br>
 <h2>Events</h2>
 <div>
