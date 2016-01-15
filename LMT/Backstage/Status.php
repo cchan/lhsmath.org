@@ -10,7 +10,7 @@ require_once '../../lib/lmt-functions.php';
 restrict_access('A');
 
 
-if ($_POST['xsrf_token'] == $_SESSION['xsrf_token']){
+if (array_key_exists('xsrf_token', $_POST) && array_key_exists('xsrf_token',$_SESSION) && $_POST['xsrf_token'] == $_SESSION['xsrf_token']){
 	if (isSet($_POST['lmt_close_reg']))
 		do_close_reg();
 	else if (isSet($_POST['lmt_open_reg']))
@@ -129,7 +129,7 @@ HEREDOC;
             </tr><tr>
               <td>Year:</td>
 			  <td><input type="text" name="year" value="$lmt_year" size="4" maxlength="4" onkeydown="return processKey(event, 'lmtChangeYear');" /></td>
-              <td><input id="lmtChangeYear" type="submit" name="lmt_update_year" value="Update" /><!--div style='color:red;'>Use <a href='Upgrade_Year'>Upgrade_Year</a> instead.</div--></td>
+              <td><input id="lmtChangeYear" type="submit" name="lmt_update_year" value="Update" /><div style='color:red;font-size:0.6em;'>Use <a href='Upgrade_Year'>Upgrade_Year</a> instead.</div></td>
             </tr><tr>
               <td>Individual Cost:</td>
               <td><input type="text" name="indiv_cost" value="$individual_cost" size="25" onkeydown="return processKey(event, 'lmtChangeIndiv');" /></td>

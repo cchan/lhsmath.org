@@ -4,6 +4,10 @@
  * LHS Math Club Website
  *
  * Super-secret page. Upgrades everything across the LMT thing to the next year, doing all necessary archiving.
+ * Specifically:
+ *   - Generate and post an archive page called {year}_Archive [based on the date currently in Status]
+ *   - Move the LMT database to LMT_{year} and create a new empty LMT database
+ *   - Reset status info
  */
 
 
@@ -70,6 +74,7 @@ function show_form(){
 	<b>In addition to this, you also need to...</b>
 	<ul>
 		<li>Depending whether you have an Archive page right now, you may have to delete the old one (Website)</li>
+		<li>Make sure the archive page has the right stuff</li>
 		<li>Link the flickr album on the archive page (Website)</li>
 		<li>Put all problems, solutions, and the full zip file into the LMT Dropbox folder</li>
 		<li>Change any necessary general information in <a href="Status" target="_blank">Status</a></li>

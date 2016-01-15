@@ -25,7 +25,7 @@ function show_form($err, $selected_field) {
 	
 	// If an error message is given, put it inside this div
 	if ($err != '')
-		$err = "\n        <div class=\"error\">$err</div><br />\n";
+		$err = "\n        <div class=\"error\">{$err}</div><br />\n";
 	
 	// If the form was submitted before but had errors, fill in the previous values;
 	// these were parsed when process_form was called
@@ -50,21 +50,21 @@ function show_form($err, $selected_field) {
       <div class="instruction">
       To register as an individual <span class="b">not affiliated with a school</span>, please fill out this form with your parents.<br />
       <br />
-      The Lexington Mathematics Tournament $lmt_year will be held on <span class="b">$lmt_date</span>
+      The Lexington Mathematics Tournament {$lmt_year} will be held on <span class="b">{$lmt_date}</span>
       at Lexington High School. Please read the rules before registering.<br />
       <br />
-      An individual registration costs <span class="b">$lmt_cost</span>, paid at the competition.
+      An individual registration costs <span class="b">{$lmt_cost}</span>, paid at the competition.
       </div>
       <br />
-      $err
+	  {$err}
       <form id="lmtRegIndividual" method="post" action="{$_SERVER['REQUEST_URI']}">
         <table>
           <tr>
             <td>Full Name:</td>
-            <td><input type="text" name="name" size="25" maxlength="25" value="$name" /></td>
+            <td><input type="text" name="name" size="25" maxlength="25" value="{$name}" /></td>
           </tr><tr>
             <td>Parent's Email Address:&nbsp;</td>
-            <td><input id="email" type="text" name="email" size="25" maxlength="320" value="$email" /></td>
+            <td><input id="email" type="text" name="email" size="25" maxlength="320" value="{$email}" /></td>
           </tr><tr>
             <td>Grade:</td>
             <td>
@@ -76,7 +76,7 @@ function show_form($err, $selected_field) {
             </td>
           </tr><tr>
             <td>Are you human?</td>
-            <td>$recaptcha_code</td>
+            <td>{$recaptcha_code}</td>
           </tr><tr>
             <td></td>
             <td>
@@ -138,25 +138,25 @@ function process_form() {
 	$url = get_site_url() . '/LMT';
 	global $LMT_EMAIL;
 	
-	$subject = "LMT $lmt_year Registration Receipt";
+	$subject = "LMT {$lmt_year} Registration Receipt";
 	$body = <<<HEREDOC
-Hi $name,
-You have successfully registered as an individual for LMT $lmt_year!
+Hi {$name},
+You have successfully registered as an individual for LMT {$lmt_year}!
 
 [b]Please print out this email and bring it to the competition
-along with the registration fee of $cost [/b].
+along with the registration fee of {$cost}[/b].
 
-Date: [b]$lmt_date [/b]
-Location: Lexington High School [url]http://www.lhsmath.org/LMT/Location [/url]
+Date: [b]{$lmt_date}[/b]
+Location: Lexington High School [url]http://www.lhsmath.org/LMT/Location[/url]
 
-If you have any questions, please contact us at [email]$LMT_EMAIL [/email].
+If you have any questions, please contact us at [email]{$LMT_EMAIL}[/email].
 ______________________________________________________________
 
 Registration: [b]Individual[/b]
-ID: [b]$id [/b]
-Name: [b]$name [/b]
-Email: [b]$email [/b]
-Grade: [b]$grade [/b]
+ID: [b]{$id}[/b]
+Name: [b]{$name}[/b]
+Email: [b]{$email}[/b]
+Grade: [b]{$grade}[/b]
 ______________________________________________________________
 HEREDOC;
 	lmt_send_email(array($email=>$name), $subject, $body);
@@ -166,7 +166,7 @@ HEREDOC;
       <h1>Individual Registration</h1>
       
       <div class="text-centered">
-        You have successfully registered for LMT $lmt_year! An email has been sent with more information.
+        You have successfully registered for LMT {$lmt_year}! An email has been sent with more information.
       </div>
 HEREDOC;
 }
