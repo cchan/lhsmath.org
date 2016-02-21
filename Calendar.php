@@ -138,10 +138,9 @@ function draw_calendar($current_month_timestamp) {
 		if($timestamp == $now) return 'now';
 		if($timestamp < $now) return 'past';
 	};
+	$currdate += 10000; //lol daylight savings time smh
 	
-	$events = DB::query('SELECT event_id, title, DAYOFMONTH(date) AS day, UNIX_TIMESTAMP(date) FROM events WHERE %i < UNIX_TIMESTAMP(date) AND UNIX_TIMESTAMP(date) < %i ORDER BY day ASC',$currmonth,$nextmonth);
-	echo "<pre>";var_dump($events, $currmonth, $nextmonth);
-	echo "</pre>";
+	$events = DB::query('SELECT event_id, title, DAYOFMONTH(date) AS day, UNIX_TIMESTAMP(date) FROM events WHERE %i <= UNIX_TIMESTAMP(date) AND UNIX_TIMESTAMP(date) < %i ORDER BY day ASC',$currmonth,$nextmonth);
 	$calendar = '<table cellpadding="0" cellspacing="0" class="cal">';
 	
 	/* table headings */
