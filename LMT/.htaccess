@@ -15,6 +15,9 @@ AddType application/x-java-jnlp-file .jnlp
 
 RewriteEngine on
 
+# To show a "Down for Repairs" message, uncomment this line:
+RewriteRule ^(.*)$ ../Site_Down.php
+
 # Send all page requests to PHP
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}\.php !-f
@@ -25,3 +28,10 @@ RewriteRule ^(.*)$ Show_Page.php?Name=$1 [L]
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}\.php -f
 RewriteRule ^(.*)$ $1.php [L]
+
+# Hide all files/directories starting with a dot
+#   for example, .htaccess, .content
+<FilesMatch "^\.(.*)$">
+  Require all denied
+</FilesMatch>
+
