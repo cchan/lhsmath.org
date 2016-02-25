@@ -1,6 +1,5 @@
 User-agent: *
 Disallow: /Account/
 Disallow: /Admin/
-Disallow: /lib/
 Disallow: /res/
 Disallow: /Download
