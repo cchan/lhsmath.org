@@ -219,7 +219,8 @@ pip-log.txt
 #LHSMATH
 
 #Local Configs
-*.local.php
+CONFIG.local.php
+CONFIG.server.php
 
 #Database backups
 db-backup-*.sql

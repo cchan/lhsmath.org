@@ -5,8 +5,7 @@
  *
  * !!!SAMPLE SAMPLE SAMPLE SAMPLE SAMPLE!!!
  *
- * This file is where information such as database connections, etc. are
- * specified. YOU MAY EDIT THIS FILE.
+ * A sample configuration file for CONFIG.local.php, for your own local DB settings.
  *
  *
  * DO NOT UPLOAD THIS FILE TO THE SERVER!!! Or bad things will happen.

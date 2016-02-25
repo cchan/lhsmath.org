@@ -16,7 +16,7 @@ AddType application/x-java-jnlp-file .jnlp
 RewriteEngine on
 
 # To show a "Down for Repairs" message, uncomment this line:
-RewriteRule ^(.*)$ ../Site_Down.php
+# RewriteRule ^(.*)$ ../Site_Down.php
 
 # Send all page requests to PHP
 RewriteCond %{REQUEST_FILENAME} !-d
