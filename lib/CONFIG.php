@@ -9,7 +9,7 @@
  */
 
 
-@include 'CONFIG.server.php';
+require 'CONFIG.server.php';
 
 @include 'CONFIG.local.php';	// DEVELOPERS: to override certain values in your
 								// testing environment, put them in 'CONFIG.local.php'
