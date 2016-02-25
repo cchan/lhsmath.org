@@ -31,7 +31,7 @@ AddType application/x-java-jnlp-file .jnlp
 RewriteEngine on
 
 # To show a "Down for Repairs" message, uncomment this line:
-RewriteRule ^(.*)$ Site_Down.php
+# RewriteRule ^(.*)$ Site_Down.php
 # (Alternatively, go to the lhsmath Site management page on NFSN and click "Enter Maintenance Mode", but that's not as pretty)
 
 # Allow access to files without typing '.php' extension
