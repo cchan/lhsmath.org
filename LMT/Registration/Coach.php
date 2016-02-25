@@ -5,7 +5,7 @@
  */
 
 
-require_once '../../lib/lmt-functions.php';
+require_once '../../.lib/lmt-functions.php';
 lmt_reg_restrict_access('X');
 
 lmt_page_header('Coach Registration');

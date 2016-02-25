@@ -1,6 +1,6 @@
 <?php
 /*
- * lib/functions.php
+ * .lib/functions.php
  * LHS Math Club Website
  *
  * A library of functions. All pages should require_once this file.

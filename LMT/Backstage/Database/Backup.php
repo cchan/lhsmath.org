@@ -6,7 +6,7 @@
  * Produces a database backup every 15 minutes
  */
 
-require_once '../../../lib/lmt-functions.php';
+require_once '../../../.lib/lmt-functions.php';
 backstage_access();
 
 if (isSet($_GET['Download']))

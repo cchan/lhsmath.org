@@ -1,6 +1,6 @@
 <?php
 /*
- * lib/functions.logs.php
+ * .lib/functions.logs.php
  * LHS Math Club Website
  *
  */

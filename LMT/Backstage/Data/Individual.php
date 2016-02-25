@@ -8,7 +8,7 @@
  * ID:	the id of the individual to display
  */
 
-require_once '../../../lib/lmt-functions.php';
+require_once '../../../.lib/lmt-functions.php';
 backstage_access();
 
 if (isSet($_POST['lmtDataIndividual_changeName']))

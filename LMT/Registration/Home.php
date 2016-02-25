@@ -6,7 +6,7 @@
  * A landing page with links to team and individual registration, and signin
  */
 
-require_once '../../lib/lmt-functions.php';
+require_once '../../.lib/lmt-functions.php';
 lmt_reg_restrict_access('');
 
 if (isSet($_SESSION['LMT_user_id']))

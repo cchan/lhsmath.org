@@ -8,7 +8,7 @@
  */
 
 
-require_once '../lib/functions.php';
+require_once '../.lib/functions.php';
 
 
 if (isSet($_POST['do_reset_new_password']))

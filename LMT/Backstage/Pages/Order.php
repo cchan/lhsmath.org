@@ -10,7 +10,7 @@
  * xsrf_token
  */
 
-require_once '../../../lib/lmt-functions.php';
+require_once '../../../.lib/lmt-functions.php';
 restrict_access('A');
 
 do_move();

@@ -6,7 +6,7 @@
  * A dashboard page for the Guts area
  */
 
-require_once '../../../lib/lmt-functions.php';
+require_once '../../../.lib/lmt-functions.php';
 backstage_access();
 
 show_page();

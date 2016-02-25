@@ -8,7 +8,7 @@
  */
 
 $path_to_lmt_root = '../../../';
-require_once $path_to_lmt_root . '../lib/lmt-functions.php';
+require_once $path_to_lmt_root . '../.lib/lmt-functions.php';
 
 show_page();
 

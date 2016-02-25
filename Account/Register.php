@@ -7,7 +7,7 @@
  */
 
 
-require_once '../lib/functions.php';
+require_once '../.lib/functions.php';
 restrict_access('X'); // only for logged-out users
 
 //Expire any pre-approved-email invitation if it's past the expiration (15 min).

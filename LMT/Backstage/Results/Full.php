@@ -6,7 +6,7 @@
  * Displays a full, detailed list of results and scores
  */
 
-require_once '../../../lib/lmt-functions.php';
+require_once '../../../.lib/lmt-functions.php';
 backstage_access();
 
 show_page();

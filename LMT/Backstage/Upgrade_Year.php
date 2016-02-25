@@ -12,7 +12,7 @@
 
 
 //Standard stuff.
-require_once '../../lib/lmt-functions.php';
+require_once '../../.lib/lmt-functions.php';
 restrict_access('A');
 
 $upyear_secret_code = 'hellofromLMT';

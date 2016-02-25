@@ -23,7 +23,7 @@
  * 	"Checkin Home":	the checkin home page
  */
 
-require_once '../../lib/lmt-functions.php';
+require_once '../../.lib/lmt-functions.php';
 backstage_access();
 
 do_search();

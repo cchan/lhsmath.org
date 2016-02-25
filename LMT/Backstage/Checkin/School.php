@@ -6,7 +6,7 @@
  * - ID: the ID of a school
  */
 
-require_once '../../../lib/lmt-functions.php';
+require_once '../../../.lib/lmt-functions.php';
 backstage_access();
 
 if (isSet($_POST['do_lmt_checkin_school']))

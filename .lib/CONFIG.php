@@ -1,6 +1,6 @@
 <?php
 /*
- * lib/CONFIG.php
+ * .lib/CONFIG.php
  * LHS Math Club Website
  *
  * This file is where information such as database connections, etc. are

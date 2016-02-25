@@ -6,7 +6,7 @@
  * Deletes a user's test score
  */
 
-require_once '../lib/functions.php';
+require_once '../.lib/functions.php';
 restrict_access('A');
 
 

@@ -8,7 +8,7 @@
  * session.
  */
 
-require_once '../lib/functions.php';
+require_once '../.lib/functions.php';
 restrict_access('X'); // only for logged-out users
 
 

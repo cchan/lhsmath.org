@@ -6,7 +6,7 @@
  * Allows users to view and change their stored personal information
  */
 
-require_once '../lib/functions.php';
+require_once '../.lib/functions.php';
 restrict_access('RLA');
 
 

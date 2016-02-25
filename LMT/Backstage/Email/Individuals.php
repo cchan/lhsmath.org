@@ -6,7 +6,7 @@
  * Allows Admins to send a message to all unaffiliated individuals
  */
 
-require_once '../../../lib/lmt-functions.php';
+require_once '../../../.lib/lmt-functions.php';
 restrict_access('A');
 
 if (isSet($_POST['lmti_do_preview_message']))

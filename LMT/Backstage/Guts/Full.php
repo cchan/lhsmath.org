@@ -9,7 +9,7 @@
  * scores, and allows it to be modified.
  */
 
-require_once '../../../lib/lmt-functions.php';
+require_once '../../../.lib/lmt-functions.php';
 backstage_access();
 scoring_access();
 

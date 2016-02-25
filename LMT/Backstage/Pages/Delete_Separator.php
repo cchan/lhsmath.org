@@ -9,7 +9,7 @@
  * Deletes the given separator
  */
 
-require_once '../../../lib/lmt-functions.php';
+require_once '../../../.lib/lmt-functions.php';
 restrict_access('A');
 
 do_add_separator();

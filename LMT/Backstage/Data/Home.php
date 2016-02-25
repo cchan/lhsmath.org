@@ -6,7 +6,7 @@
  * Displays a home page for the data section
  */
 
-require_once '../../../lib/lmt-functions.php';
+require_once '../../../.lib/lmt-functions.php';
 backstage_access();
 
 show_page();

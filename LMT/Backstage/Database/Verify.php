@@ -6,7 +6,7 @@
  * Checks the database for errors
  */
 
-require_once '../../../lib/lmt-functions.php';
+require_once '../../../.lib/lmt-functions.php';
 backstage_access();
 
 show_page();

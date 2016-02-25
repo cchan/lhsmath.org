@@ -1,6 +1,6 @@
 <?php
 /*
- * lib/lmt-scoring.php
+ * .lib/lmt-scoring.php
  * LHS Math Club Website
  *
  * This file is where scoring algorithms for the LMT

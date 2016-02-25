@@ -6,7 +6,7 @@
 * Contains information for site Webmasters.
 */
 
-require_once '../lib/functions.php';
+require_once '../.lib/functions.php';
 restrict_access('A');
 
 page_header('Webmaster Guide');
@@ -76,7 +76,7 @@ page_header('Webmaster Guide');
   <p>If all Admins lose access to the site, you can use the Super-Admin account to restore your account.
   To activate this feature, you will need to edit the Config file. First, log in to the server
   via SFTP (See "Developing the Website"). Then, navigate to
-  <span class="monospace">/home/public/lib</span> and edit the file <span class="monospace">CONFIG.php</span>.
+  <span class="monospace">/home/public/.lib</span> and edit the file <span class="monospace">CONFIG.php</span>.
   Find the section titled <span class="i">Super-Admin Feature</span> and follow the directions. Your
   User ID is below. Make sure to disable Super-Admin when you're done!</p>
   <p>Your User ID is: <span class="b"><?=$_SESSION['user_id']?></span>.</p>
@@ -98,7 +98,7 @@ page_header('Webmaster Guide');
   <h3>LMT</h3>
   <p>Running the LMT is considerably more involved. The best way to do this is probably to be trained by the last
   Tech Czar. Knowing PHP is a must (just for the Guts round - ask a predecessor for help (nicely) if necessary)
-  me to). Edit <span class="monospace">lib/lmt-scoring.php</span>, and mind the preconditions and posconditions!
+  me to). Edit <span class="monospace">.lib/lmt-scoring.php</span>, and mind the preconditions and posconditions!
   Content on the public part of the LMT website is updated through the web interface (in database rather than files). 
   Please write in <a href="http://validator.w3.org/">valid XHTML 1.0</a> for those pages!</p>
   
@@ -112,7 +112,7 @@ page_header('Webmaster Guide');
 	<li>Text editor. <a href="http://www.sublimetext.com/">Sublime Text</a> or 
 		<a href="http://notepad-plus-plus.org/">Notepad++</a> work excellently. Avoid Vim or Emacs :).</li>
 	<li>Local test server. Probably the easiest and most flexible way is to download 
-		<a href="https://www.apachefriends.org/index.html">XAMPP</a>. Use <span class="monospace">lib/CONFIG.local.php</span> 
+		<a href="https://www.apachefriends.org/index.html">XAMPP</a>. Use <span class="monospace">.lib/CONFIG.local.php</span> 
 		to override configuration values for local testing (don't upload this). Never test code on the real lhsmath.org server. 
 		To set this up properly you'll also have to go to LHSMATH PHPMyAdmin and export the database, and import it into your 
 		XAMPP's PHPMyAdmin. Be careful of what you do - sending mail <i>still actually works</i>! (you can, of course, abuse your local 

@@ -8,7 +8,7 @@
  * ID:	the school_id of the school to display
  */
 
-require_once '../../../lib/lmt-functions.php';
+require_once '../../../.lib/lmt-functions.php';
 backstage_access();
 
 if (isSet($_POST['lmtDataSchool_changeName']))

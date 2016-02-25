@@ -6,7 +6,7 @@
  * A convenient thing to help send results to coaches via email.
  */
 
-require_once '../../../lib/lmt-functions.php';
+require_once '../../../.lib/lmt-functions.php';
 backstage_access();
 
 show_page();

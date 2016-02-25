@@ -6,7 +6,7 @@
  * Allows Admins to back up and optimize the database
  */
 
-require_once '../lib/functions.php';
+require_once '../.lib/functions.php';
 restrict_access('A');
 
 page_title('Database');

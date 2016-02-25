@@ -6,7 +6,7 @@
 * Contains information for Captains.
 */
 
-require_once '../lib/functions.php';
+require_once '../.lib/functions.php';
 restrict_access('A');
 
 page_title('Captains Guide');
@@ -142,7 +142,7 @@ page_title('Captains Guide');
   <h3>LMT</h3>
   <p>Running the LMT is considerably more involved. The best way to do this is probably to be trained by the last
   Tech Czar. Knowing PHP is a must (just for the Guts round - I can help with this if you need
-  me to). Edit <span class="monospace">lib/lmt-scoring.php</span>, and mind the preconditions and posconditions!
+  me to). Edit <span class="monospace">.lib/lmt-scoring.php</span>, and mind the preconditions and posconditions!
   Content on the public part of the LMT website is updated through the web interface (in database rather than files). 
   Please write in <a href="http://validator.w3.org/">valid XHTML 1.0</a> for those pages!</p>
   

@@ -59,7 +59,7 @@ function subtractURLsEnd($a,$b){//Removes $b from the end of $a, if possible. El
 
 class PATH{//Actual system path - Used in require, file I/O, etc.
 	public static function root(){ return backslashToForward(dirname(__DIR__)); }
-	public static function lmt(){ return backslashToForward(dirname(__DIR__)).'/LMT'; }									//Get the current dir (/lib) and go down one.
+	public static function lmt(){ return backslashToForward(dirname(__DIR__)).'/LMT'; }									//Get the current dir (/.lib) and go down one.
 	public static function lib(){ return backslashToForward(__DIR__); }												//
 	public static function dir(){ return backslashToForward(dirname($_SERVER['SCRIPT_FILENAME'])); }				//
 	public static function filename(){ return basename($_SERVER['SCRIPT_FILENAME']); }			//

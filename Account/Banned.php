@@ -6,7 +6,7 @@
  * Displays a message to banned users.
  */
 
-if (!defined('FUNCTIONSPHP'))require_once '../lib/functions.php';
+if (!defined('FUNCTIONSPHP'))require_once '../.lib/functions.php';
 	//If functions hasn't been included, get functions.
 	//(if it has been, that means someone's including this file, so rootpath may be messed up and the require will fail)
 

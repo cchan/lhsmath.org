@@ -6,7 +6,7 @@
  * Allows Admins to send a message to all unaffiliated coaches
  */
 
-require_once '../../../lib/lmt-functions.php';
+require_once '../../../.lib/lmt-functions.php';
 restrict_access('A');
 
 if (isSet($_POST['lmtc_do_preview_message']))

@@ -13,7 +13,7 @@
  * Unaffiliated:search unaffiliated individual names
  */
 
-require_once '../../lib/lmt-functions.php';
+require_once '../../.lib/lmt-functions.php';
 backstage_access();
 
 generate_results();

@@ -6,7 +6,7 @@
  * A landing page for people going Backstage
  */
 
-require_once '../../lib/lmt-functions.php';
+require_once '../../.lib/lmt-functions.php';
 backstage_access();
 
 global $use_rel_external_script;

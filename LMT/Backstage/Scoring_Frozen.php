@@ -7,7 +7,7 @@
  */
 
 if (!defined("FUNCTIONSPHP")) {	// not being included
-	require_once '../../lib/lmt-functions.php';
+	require_once '../../.lib/lmt-functions.php';
 	backstage_access();
 }
 

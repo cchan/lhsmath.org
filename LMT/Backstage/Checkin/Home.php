@@ -6,7 +6,7 @@
  * A dashboard page for staff running checkin
  */
 
-require_once '../../../lib/lmt-functions.php';
+require_once '../../../.lib/lmt-functions.php';
 backstage_access();
 lmt_page_header('Check-in');
 

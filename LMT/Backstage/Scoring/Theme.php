@@ -6,7 +6,7 @@
  * A page where staff enter scores for the theme round
  */
 
-require_once '../../../lib/lmt-functions.php';
+require_once '../../../.lib/lmt-functions.php';
 backstage_access();
 scoring_access();
 

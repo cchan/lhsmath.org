@@ -6,7 +6,7 @@
  * ID: the ID of the page to show
  */
 
-require_once '../../../lib/lmt-functions.php';
+require_once '../../../.lib/lmt-functions.php';
 restrict_access('A');
 
 show_page();

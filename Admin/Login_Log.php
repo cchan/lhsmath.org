@@ -7,7 +7,7 @@
  */
 
 
-require_once '../lib/functions.php';
+require_once '../.lib/functions.php';
 restrict_access('A');
 
 page_title('Login Log');
@@ -19,7 +19,7 @@ DB::query($query);
 <h1>Login Log</h1>
 
 <span class="i right">
-	To ban an IP address, edit /lib/CONFIG.php<br />
+	To ban an IP address, edit /.lib/CONFIG.php<br />
 	Note that all data is for <span class="b">the past 7 days only</span>.
 </span>
 

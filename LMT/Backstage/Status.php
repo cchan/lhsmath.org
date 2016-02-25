@@ -6,7 +6,7 @@
  * The main Admin page; shows whether registration is open, etc.
  */
 
-require_once '../../lib/lmt-functions.php';
+require_once '../../.lib/lmt-functions.php';
 restrict_access('A');
 
 

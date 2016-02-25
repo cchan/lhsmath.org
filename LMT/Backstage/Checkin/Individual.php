@@ -6,7 +6,7 @@
  * - ID: the ID of an individual
  */
 
-require_once '../../../lib/lmt-functions.php';
+require_once '../../../.lib/lmt-functions.php';
 backstage_access();
 
 lmt_page_header('Check-in');

@@ -6,7 +6,7 @@
  * The front page of the Admin control panel - lots of administrative information.
  */
 
-require_once '../lib/functions.php';
+require_once '../.lib/functions.php';
 restrict_access('A');
 
 if(isSet($_REQUEST['do_download_errors'])){

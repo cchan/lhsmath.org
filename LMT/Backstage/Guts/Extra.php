@@ -5,7 +5,7 @@
  * Produces a list of results (LMT 2011 only)
  */
 
-require_once '../../../lib/lmt-functions.php';
+require_once '../../../.lib/lmt-functions.php';
 backstage_access();
 
 if (isSet($_GET['Download']))

@@ -11,7 +11,7 @@
  */
 
 
-require_once 'lib/functions.php';
+require_once '.lib/functions.php';
 restrict_access('XRLA');
 
 if (isSet($_GET['Popup'])) {

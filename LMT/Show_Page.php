@@ -7,7 +7,7 @@
  * underscores instead of spaces
  */
  
-require_once '../lib/lmt-functions.php';
+require_once '../.lib/lmt-functions.php';
 
 show_page();
 

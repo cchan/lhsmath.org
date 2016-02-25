@@ -11,7 +11,7 @@ $being_included = true;	// this page can be INCLUDE'd into another page, so, for
 							// when a user wants to access /Scores but isn't logged in, they
 							// are shown a login form *without* being redirected.
 if (!defined('FUNCTIONSPHP')) {
-	require_once '../lib/functions.php';
+	require_once '../.lib/functions.php';
 	$being_included = false;
 }
 else{

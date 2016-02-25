@@ -11,7 +11,7 @@
 //Next steps: Add a field "remind_when" that indicates a time to remind at. Can specify multiple comma-separated, I suppose.
 //auto_remind will then hold the number of notifications that have so far been sent through this.
 
-require_once '../lib/functions.php';
+require_once '../.lib/functions.php';
 cancel_templateify();
 
 $current_events = DB::query('SELECT * FROM events WHERE auto_remind = 0 AND %l',DBExt::timeInInterval('date','','+17d'));

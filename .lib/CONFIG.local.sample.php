@@ -1,6 +1,6 @@
 <?php
 /*
- * lib/CONFIG.local.sample.php
+ * .lib/CONFIG.local.sample.php
  * LHS Math Club Website
  *
  * !!!SAMPLE SAMPLE SAMPLE SAMPLE SAMPLE!!!

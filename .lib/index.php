@@ -1,6 +1,6 @@
 <?php
 /*
- * lib/index.php
+ * .lib/index.php
  * LHS Math Club Website
  *
  * Redirects people to /Home

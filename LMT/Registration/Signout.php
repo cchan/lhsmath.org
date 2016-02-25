@@ -5,7 +5,7 @@
  */
 
 
-require_once '../../lib/lmt-functions.php';
+require_once '../../.lib/lmt-functions.php';
 
 do_signout();
 

@@ -1,6 +1,6 @@
 <?php
 /*
- * lib/lmt-functions.php
+ * .lib/lmt-functions.php
  * LHS Math Club Website
  */
 

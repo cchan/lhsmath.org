@@ -6,7 +6,7 @@
  * for inclusion in the Welcome Packet
  */
 
-require_once '../../../lib/lmt-functions.php';
+require_once '../../../.lib/lmt-functions.php';
 backstage_access();
 
 if (isSet($_GET['Download']))

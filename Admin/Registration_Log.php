@@ -7,7 +7,7 @@
  */
 
 
-require_once '../lib/functions.php';
+require_once '../.lib/functions.php';
 restrict_access('A');
 
 
@@ -74,7 +74,7 @@ function show_detail_page() {
       <h1>Registration Log</h1>
       
       <a href="Registration_Log" class="small">&lt; Back to Full List</a><br /><br />
-      <span class="i">IP addresses that are spamming the site can be banned by editing /lib/CONFIG.php</span><br /><br />
+      <span class="i">IP addresses that are spamming the site can be banned by editing /.lib/CONFIG.php</span><br /><br />
       <span class="b">Accounts Created From $ip</span>
       <table class="visible">
         <tr>

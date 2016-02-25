@@ -7,7 +7,7 @@
 */
 
 
-require_once 'lib/functions.php';
+require_once '.lib/functions.php';
 
 page_title('MAML Signup 2015-2016');
 ?>

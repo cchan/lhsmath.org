@@ -5,7 +5,7 @@
  */
 
 
-require_once '../../lib/lmt-functions.php';
+require_once '../../.lib/lmt-functions.php';
 lmt_reg_restrict_access('L');
 
 if (isSet($_POST['lmt_do_reg_add']))

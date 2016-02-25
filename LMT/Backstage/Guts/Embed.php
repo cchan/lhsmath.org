@@ -9,7 +9,7 @@
  */
 
 $miniature_page = true;
-require_once '../../../lib/lmt-functions.php';
+require_once '../../../.lib/lmt-functions.php';
 cancel_templateify();
 backstage_access();
 scoring_access();

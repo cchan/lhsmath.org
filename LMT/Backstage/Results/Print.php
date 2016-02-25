@@ -6,7 +6,7 @@
  * A page to print score sheets for coaches
  */
 
-require_once '../../../lib/lmt-functions.php';
+require_once '../../../.lib/lmt-functions.php';
 backstage_access();
 
 show_page();

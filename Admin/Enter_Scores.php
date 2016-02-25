@@ -10,7 +10,7 @@
 //NOTE: WHAT IF YOU'RE TRYING TO CREATE A TEMPORARY USER WITH THE SAME
 //NAME AS SOMEONE ELSE IN A DIFFERENT GRADE
 
-require_once '../lib/functions.php';
+require_once '../.lib/functions.php';
 restrict_access('A');
 if (isSet($_POST['do_add_score']) || isSet($_GET['Override']) || isSet($_GET['Temporary']))
 	process_form();
