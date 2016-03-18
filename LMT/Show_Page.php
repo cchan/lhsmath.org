@@ -17,7 +17,12 @@ show_page();
 
 function show_page() {
 	$name = str_replace('_', ' ', $_GET['Name']);//Why?
-	
+  
+  if($name == "Register"){
+    header("Location: Registration");
+    die;
+	}
+  
 	$content=DB::queryFirstField('SELECT content FROM pages WHERE name=%s',$name);
 	if (!$content) {
 		header("HTTP/1.1 404 Not Found");
