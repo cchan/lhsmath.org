@@ -31,11 +31,13 @@ else
 
 
 function display_school($err, $selected_field) {
-	$row = DB::queryFirstRow('SELECT * FROM schools WHERE school_id="' . mysqli_real_escape_string(DB::get(),$_GET['ID']) . '"');
+  $id = (int)$_GET['ID'];
+	$row = DB::queryFirstRow('SELECT * FROM schools WHERE school_id=%i', $id);
 	$school_name = htmlentities($row['name']);
 	$coach_email = htmlentities($row['coach_email']);
 	$team_list = make_teams_list();
 	$paid = htmlentities($row['teams_paid']);
+  $login_url = URL::lmt().'/Registration/Signin?ID='.$id.'&Code='.htmlentities($row['access_code']);
 	
 	global $body_onload;
 	$body_onload = $selected_field . 'externalLinks();';
@@ -72,9 +74,8 @@ function display_school($err, $selected_field) {
             <form method="post" action="{$_SERVER['REQUEST_URI']}"><div>
               <input type="hidden" name="xsrf_token" value="{$_SESSION['xsrf_token']}" />
               <input type="submit" name="lmtDataSchool_resendLogin" value="Resend Login Information" />
+              <a href="{$login_url}" style="display:block;font-size:0.7em;">{$login_url}</a>
             </div></form>
-            <div class="halfbreak"></div>
-            <a href="mailto:$coach_email" rel="external">Send Email</a>
             <br /><br />
           </td>
         </tr><tr>
