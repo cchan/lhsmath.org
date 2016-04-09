@@ -30,57 +30,89 @@ function autocomplete_users_php($string/*,$where,...*/){
 	return call_user_func_array('user_data',$args);
 }
 
-//LMT USER DATA?
-
-//Returns a (rather large) array of all users, with all associative-array data things. Where-enabled.
-function user_data($where=NULL/*,...*/){
-	if(isSet($where)){//Allows replacement-parameters too.
-		$args=func_get_args();
-		array_shift($args);
-		array_unshift($args,'SELECT * FROM users WHERE '.$where);
-		$users = call_user_func_array("DB::query",$args);
-	}
-	else
-		$users = DB::query('SELECT * FROM users');
+function autocomplete_data($query, $orderCallback/*, ...replacement parameters for $query...*/){
+  //Will sort by $orderCallback and then ['name']
+  //You may wish to take $user by reference and add ['label'] and ['category'] to it
+	//Allows replacement-parameters too.
+  $args=func_get_args();
+  array_shift($args);
+  array_shift($args);
+  array_unshift($args,$query);
+  $data = call_user_func_array("DB::query",$args);
+  
 	$results = array();
 	$order = array();
-	foreach($users as $user){
-		switch($user['permissions']){
-			case 'B': case 'P': case 'E':
-				continue 2; //Banned, pending approval, email verification pending aren't include (continues the foreach loop)
-			case 'T':
-				$categ = 'Temporary';
-				$user["yog"] = 'Temporary';
-				$order[] = 1;//Temporary users go first
-				break;
-			case 'R': case 'L':
-				$categ = getTextGradeFromYOG($user["yog"]);
-				$order[] = 30000 - intval($user["yog"]);//Reverse order of yog
-				break;
-			case 'A': case 'C':
-				$categ = 'Captain';
-				$order[] = 30000;//Captains after all the stuff
-					//Assumes we're using this between 1 and 30000AD.
-				break;
-			default:
-				$categ = '???error???';
-				$order[] = 0;//Questionmark ones go very first, but they shouldn't happen.
-				break;
-		}
-		$user['category'] = $categ;
-		$results[] = $user;
+	foreach($data as &$datum){
+    $order[] = $orderCallback($datum);
+		$results[] = $datum;
 	}
-	//Order: Temporary, YOG (largest to smallest), ???, Captain
 	uksort($results,function($ind1,$ind2)use($results,$order){//Sorts with respect to order specified in $order
-		if($order[$ind1]==$order[$ind2])//Sorts alphabetically within a category
-			return strcasecmp($results[$ind1]["name"],$results[$ind2]["name"]);
-		else //Uses the given ordering numbers to sort categories
+		if($order[$ind1]==$order[$ind2]){//Sorts alphabetically within a category
+      if(array_key_exists("name",$results[$ind1]))
+        return strcasecmp($results[$ind1]["name"],$results[$ind2]["name"]);
+      else return 0;
+		}else //Uses the given ordering numbers to sort categories
 			return ($order[$ind1] > $order[$ind2]) ? 1 : -1;
 	});
 	return array_values($results);//Reassigns keys, since uksort will maintain disordered numerical keys.
 }
+
+
+//Returns a (rather large) array of all users, with all associative-array data things. Where-enabled.
+function user_data($where=NULL/*,...*/){
+  return autocomplete_data("SELECT * FROM users".(is_null($where)?" WHERE ".$where:""),
+  function(&$user){
+    //Order: Temporary, YOG (largest to smallest), ???, Captain
+    switch($user['permissions']){
+      case 'B': case 'P': case 'E':
+        continue 2; //Banned, pending approval, email verification pending aren't include (continues the foreach loop)
+      case 'T':
+        $user['category'] = 'Temporary';
+        return 1;//Temporary users go first
+      case 'R': case 'L':
+        $user['category'] = getTextGradeFromYOG($user["yog"]);
+        return 30000 - intval($user["yog"]);//Reverse order of yog
+      case 'A': case 'C':
+        $user['category'] = 'Captain';
+        return 30000;//Captains after all the stuff
+          //Assumes we're using this between 1 and 30000AD.
+      default:
+        $user['category'] = '???error???';
+        return 0;//Questionmark ones go very first, but they shouldn't happen.
+    }
+    $user['label'] = $user['name'];
+  }, $where);
+}
+
+
+function lmt_indiv_data($where=NULL/*,...*/){
+  if(!is_null($where))
+    $where .= " AND deleted=0";
+  else
+    $where = "deleted=0";
+  return autocomplete_data("SELECT individuals.name as indiv_name, teams.name as team_name FROM individuals LEFT JOIN teams on individuals.team=teams.team_id WHERE individuals.deleted=0",
+    function(&$user){
+      $user['label'] = $user['indiv_name'];
+      $user['category'] = $user['team_name'];
+      if(is_null($user['category']))$user['category'] = "<i>None</i>";
+      $user['name'] = $user['team_name'];
+      return 0;
+    }, $where);
+}
+
+
+
 function autocomplete_js($jqselector,$data){
-	$json = json_encode($data);
+  $filteredData = [];
+  
+  foreach($data as $datum){
+    $filteredDatum = [];
+    if(array_key_exists('label',$datum))$filteredDatum['label']=$datum['label'];
+    if(array_key_exists('category',$datum))$filteredDatum['category']=$datum['category'];
+    $filteredData[] = $filteredDatum;
+  }
+  
+	$json = json_encode($filteredData);
 	
 	return <<<HEREDOC
 <style>
