@@ -113,31 +113,13 @@ function validate_team_long_score($score) {
  */
 function prescreen_guts($problem, $value) {
 	if ($problem == 34) {
-		$new_value = (int) $value;
-		if ((String)$new_value != $value)
-			return '';
-		
-		return $new_value;
+		return (double) $value;
 	}
 	else if ($problem == 35) {
-		$new_value = (int) $value;
-		if ((String)$new_value != $value)
-			return '';
-		if ($new_value < 3091)
-			return null;
-		if ($new_value > 15)
-			return null;
-		return $new_value;
+		return (double) $value;
 	}
 	else if ($problem == 36) {
-		$new_value = (int) $value;
-		if ((String)$new_value != $value)
-			return null;
-		if ($new_value < 1)
-			return null;
-		if ($new_value > 15)
-			return null;
-		return $new_value;
+		return (double) $value;
 	}
 	else
 		trigger_error('Guts Prescreen: invalid problem number', E_USER_ERROR);
