@@ -81,10 +81,8 @@ function do_enter_individual_score() {
 	$msg = 'A score of ' . htmlentities($_POST['score']) . ' was entered for '
 		. htmlentities($row['name']);
 	
-	if (isSet($_GET['ID'])){
-		alert($msg, 1);
-		show_page('', '');
-	}
+	if (isSet($_GET['ID']))
+		show_page($msg, '');
 	else
 		show_page('', $msg);
 }
@@ -187,10 +185,7 @@ function do_enter_clarified_score() {
 	$msg = 'A score of ' . htmlentities($_GET['Score']) . ' was entered for '
 		. htmlentities($row['name']);
 	
-	if (isSet($_GET['ID']))
-		show_page('', $msg);
-	else
-    show_page('Not found?','');
+	show_page('', $msg);
 }
 
 ?>

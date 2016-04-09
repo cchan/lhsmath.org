@@ -22,6 +22,8 @@ else
 
 
 function show_page($err, $msg) {
+  if($err)alert($err, -1);
+  if($msg)alert($msg, 1);
 	lmt_page_header('Score Entry');
 ?>
       <h1>Theme Round Score Entry</h1>
@@ -189,13 +191,7 @@ function do_enter_clarified_score() {
 	$msg = 'A score of ' . htmlentities($_GET['Score']) . ' was entered for '
 		. htmlentities($row['name']);
 	
-	if (isSet($_GET['ID'])) {
-		alert($msg, 1);
-		header('Location: Theme');
-		die;
-	}
-	
-	show_page('', $msg);
+	show_page($msg, '');
 }
 
 ?>
