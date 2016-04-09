@@ -19,14 +19,14 @@
  * Checks that a score for the individual round is valid. If so, returns
  * true. Otherwise, returns an HTML error message.
  *
- * CURRENT RULE: any integer between 0 and 20, inclusive
+ * CURRENT RULE: any integer between 0 and 60, inclusive
  */
 function validate_individual_score($score) {
 	$int_score = (int) $score;
 	if ((String)$int_score != $score)
 		return 'Score must be an integer';
-	if ($int_score > 20 || $int_score < 0)
-		return 'Score must be between 0 and 20 inclusive';
+	if ($int_score > 60 || $int_score < 0)
+		return 'Score must be between 0 and 60 inclusive';
 	return true;
 }
 
@@ -39,14 +39,14 @@ function validate_individual_score($score) {
  *
  * See above. Not to be confused with the TEAM round.
  *
- * CURRENT RULE: any integer between 0 and 15, inclusive
+ * CURRENT RULE: any integer between 0 and 60, inclusive
  */
 function validate_theme_score($score) {
 	$int_score = (int) $score;
 	if ((String)$int_score != $score)
 		return 'Score must be an integer';
-	if ($int_score > 15 || $int_score < 0)
-		return 'Score must be between 0 and 15 inclusive';
+	if ($int_score > 60 || $int_score < 0)
+		return 'Score must be between 0 and 60 inclusive';
 	return true;
 }
 
@@ -65,8 +65,8 @@ function validate_team_short_score($score) {
 	$int_score = (int) $score;
 	if ((String)$int_score != $score)
 		return 'Score must be an integer';
-	if ($int_score > 85 || $int_score < 0)
-		return 'Score must be between 0 and 70 + 15 inclusive';
+	if ($int_score > 70 || $int_score < 0)
+		return 'Score must be between 0 and 70 inclusive';
 	return true;
 }
 
@@ -159,7 +159,7 @@ function prescreen_guts($problem, $value) {
  * RULE: sum individual and theme round scores
  */
 function individual_composite($fields, $where) {
-	return "SELECT $fields IFNULL(score_individual, 0)*3 + IFNULL(score_theme, 0)*4 AS score_composite FROM individuals $where";
+	return "SELECT $fields IFNULL(score_individual, 0) + IFNULL(score_theme, 0) AS score_composite FROM individuals $where";
 }
 
 
