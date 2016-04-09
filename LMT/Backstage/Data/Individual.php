@@ -255,7 +255,7 @@ function do_change_name() {
 		die;
 	}
 	
-	DB::update('individuals', 'name=%s','id=%i LIMIT 1',$name, $_GET['ID']);
+	DB::update('individuals', ['name'=>$_POST['name']],'id=%i LIMIT 1', $_GET['ID']);
 	
 	if ($row)
 		alert('Name was changed. WARNING: Another individual on the same team has that name.', 1);
