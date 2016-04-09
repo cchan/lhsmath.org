@@ -35,7 +35,7 @@ function rankTable($table, $cols, $sortcols){
 		return 0;
 	});
 	
-	$place = 0;
+	$place = 1;
 	$num = 0;
 	$last_row = [];
 	foreach($table as $row) {
@@ -90,7 +90,7 @@ HEREDOC;
 	echo rankTable(linkifyNames(DB::query($query),'id','name','Individual'),['Name'=>'name','Individual'=>'score_individual','Theme'=>'score_theme'],['Composite'=>'score_composite']);
 	
 	$row = mysqli_fetch_assoc($result);
-	$place = 0;
+	$place = 1;
 	$num = 0;
 	$last_score = null;
 	while ($row) {
@@ -139,7 +139,7 @@ HEREDOC;
 	$query = 'SELECT id, name, score_individual, RAND() AS rand FROM individuals WHERE attendance="1" AND deleted="0" ORDER BY score_individual DESC, rand';
 	$result = DB::queryRaw($query);
 	$row = mysqli_fetch_assoc($result);
-	$place = 0;
+	$place = 1;
 	$num = 0;
 	$last_score = null;
 	while ($row) {
@@ -182,7 +182,7 @@ HEREDOC;
 	$query = 'SELECT id, name, score_theme, RAND() AS rand FROM individuals WHERE attendance="1" AND deleted="0" ORDER BY score_theme DESC, rand';
 	$result = DB::queryRaw($query);
 	$row = mysqli_fetch_assoc($result);
-	$place = 0;
+	$place = 1;
 	$num = 0;
 	$last_score = null;
 	while ($row) {

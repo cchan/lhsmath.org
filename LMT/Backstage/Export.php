@@ -76,7 +76,7 @@ HEREDOC;
 	$query = 'SELECT team_id, name, IFNULL(score_team_short, 0) + IFNULL(score_team_long, 0) AS score_team, (SELECT name FROM schools WHERE schools.school_id=teams.school) AS school_name, RAND() AS rand FROM teams WHERE deleted="0" ORDER BY score_team DESC, rand';
 	$result = DB::queryRaw($query);
 	$row = mysqli_fetch_assoc($result);
-	$place = 0;
+	$place = 1;
 	$num = 0;
 	$last_score = null;
 	while ($row) {
