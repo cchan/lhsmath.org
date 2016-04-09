@@ -238,8 +238,8 @@ function score_guts() {
 					else 0
 				end
 			)),0) FROM guts WHERE team=teams.team_id)".
-		"+ IFNULL(GREATEST( 0, FLOOR(15 - 5*LOG10(guts_ans_a - 3090))), 0)". /*Scoring #34 */
-		"+ IFNULL(GREATEST( 0, FLOOR(15 * LEAST(283086/guts_ans_b, guts_ans_b/283086))), 0)". /*Scoring #35 */
+		"+ IFNULL(GREATEST( 0, FLOOR(15 - 0.5 * ABS(guts_ans_a - 524.755))), 0)". /*Scoring #34 */
+		"+ IFNULL(GREATEST( 0, CEILING(15 * LEAST(15170.76/guts_ans_b, 2-15170.76/guts_ans_b))), 0)". /*Scoring #35 */
 		"+ IFNULL(guts_ans_c, 0))"); /*Scoring #36 -- was done manually, because numbers are really big */
 }
 

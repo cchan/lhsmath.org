@@ -96,7 +96,7 @@ function formatSeconds(secs){
 	
 	return h+":"+m+":"+s;
 }
-var targetTime = 1427562022 + 360 - 180 + 360 + 300 + 65+30*60+3*60 + 75*60 + 7*60 + 6*60 + 15*60 - 3*60 - 2*60 - 2*60;
+var targetTime = 1460180400 + 90 * 60 + 12 * 60 * 60 + 10 * 60;
 function updateTime(){
 	var currTime = (new Date()).getTime()/1000;
 	if(targetTime - currTime > 90*60){
