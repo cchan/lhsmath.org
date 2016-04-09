@@ -22,6 +22,8 @@ else
 
 
 function show_page($err, $msg) {
+  if($err)alert($err, -1);
+  if($msg)alert($msg, 1);
 	lmt_page_header('Score Entry');
 ?>
       <h1>Individual Round Score Entry</h1>
@@ -50,20 +52,20 @@ function do_enter_individual_score() {
 	
 	$score_msg = validate_individual_score($_POST['score']);
 	if ($score_msg !== true)
-		show_page($score_msg, '');
-	
+    show_page($score_msg, '');
+  
 	$result = DB::queryRaw('SELECT id, name, attendance, score_individual FROM individuals WHERE name=%s AND deleted="0"', $_POST['name']);
 	
 	if (mysqli_num_rows($result) == 0)
 		show_page('An individual named "' . htmlentities($_POST['name']) .'" not found', '');
 	if (mysqli_num_rows($result) > 1)
 		show_multiple_results_page();
-	
+  
 	$row = mysqli_fetch_assoc($result);
 	
 	if ($row['attendance'] == '0')
 		show_page(htmlentities($row['name']) . ' is absent', '');
-	
+  
 	if (!is_null($row['score_individual'])) {
 		$msg = 'A score of ' . htmlentities($row['score_individual'])
 			. ' has already been entered for ' . htmlentities($row['name']);
@@ -185,13 +187,10 @@ function do_enter_clarified_score() {
 	$msg = 'A score of ' . htmlentities($_GET['Score']) . ' was entered for '
 		. htmlentities($row['name']);
 	
-	if (isSet($_GET['ID'])) {
-		alert($msg, 1);
-		header('Location: Individual');
-		die;
-	}
-	
-	show_page('', $msg);
+	if (isSet($_GET['ID']))
+		show_page('', $msg);
+	else
+    show_page('Not found?','');
 }
 
 ?>
