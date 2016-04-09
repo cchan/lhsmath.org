@@ -73,6 +73,13 @@ function display_individual($err, $selected_field) {
 		$composite_score = 'None';
 	else
 		$composite_score = htmlentities($composite_score);
+  
+  if(!isSet($scoring_warning))$scoring_warning='';
+  if(!isSet($grade7_sel))$grade7_sel='';
+  if(!isSet($grade8_sel))$grade8_sel='';
+  if(!isSet($email_link))$email_link='';
+  if(!isSet($scoring_freeze))$scoring_freeze='';
+  
 	
 	global $body_onload;
 	$body_onload = $selected_field . 'nullboxSetState(-1);externalLinks();';
