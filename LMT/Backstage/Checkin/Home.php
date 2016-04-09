@@ -185,7 +185,7 @@ function find_individual($id) {
         <tr>
           <td>$i</td>
           <td style="color:$attendanceColor">$attendanceTotal/$teamMembersTotal</td>
-          <td><a href="School?ID=$id">$team_name</a> [T$id]</td>
+          <td><a href="School?ID=$sid">$team_name</a> [T$id]</td>
           <td><a href="School?ID=$sid">$school_name</a> [S$sid]</td>
         </tr>
 		

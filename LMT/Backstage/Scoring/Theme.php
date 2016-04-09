@@ -22,55 +22,21 @@ else
 
 
 function show_page($err, $msg) {
-	global $body_onload;
-	$body_onload = 'document.forms[\'lmtIndivScore\'].autocomplete.focus()';
-	
-	global $jquery_function;
-	$jquery_function = <<<HEREDOC
-      //<![CDATA[
-      $.widget( "custom.catcomplete", $.ui.autocomplete, {
-        _renderMenu: function( ul, items ) {
-          var self = this,
-          currentCategory = "";
-          $.each( items, function( index, item ) {
-            if ( item.category != currentCategory ) {
-              ul.append( "<li class='ui-autocomplete-category'>" + item.category + "</li>" );
-              currentCategory = item.category;
-            }
-            self._renderItem( ul, item );
-          });
-        }
-      });
-      $(function() {
-        $( "#autocomplete" ).catcomplete({
-          source: "../Autocomplete?Individual",
-          delay: 0
-        });
-      });
-      //]]>
-HEREDOC;
-	
-	if ($err != '')
-		$err = "\n        <div class=\"error\">$err</div><br />\n";
-	
-	if ($msg != '')
-		$msg = "\n        <div class=\"alert\">$msg</div><br />\n";
-	
 	lmt_page_header('Score Entry');
-	echo <<<HEREDOC
+?>
       <h1>Theme Round Score Entry</h1>
-      $err$redirAlert$msg
-      <form id="lmtIndivScore" method="post" action="{$_SERVER['REQUEST_URI']}"><div class="text-centered">
+      <form id="lmtIndivScore" method="post" action="<?=$_SERVER['REQUEST_URI']?>"><div class="text-centered">
         Name:
-        <input type="text" id="autocomplete" name="name" size="35" />
+        <input type="text" id="autocomplete" name="name" size="35" class="focus" />
         &nbsp;&nbsp;&nbsp;&nbsp;
         Score:
         <input type="text" name="score" size="5" />
         &nbsp;
-        <input type="hidden" name="xsrf_token" value="{$_SESSION['xsrf_token']}" />
+        <input type="hidden" name="xsrf_token" value="<?=$_SESSION['xsrf_token']?>" />
         <input type="submit" name="do_enter_theme_score" value="Enter" />
       </div></form>
-HEREDOC;
+<?php
+  echo autocomplete_js("#autocomplete",lmt_indiv_data());
 	die;
 }
 
