@@ -37,8 +37,8 @@ HEREDOC;
 	
 	$indiv_query = 'SELECT individuals.name AS name, (SELECT name FROM schools WHERE school_id=teams.school) AS school_name, IFNULL(%l,0) AS score FROM (individuals LEFT JOIN teams ON team=teams.team_id) WHERE individuals.deleted="0" AND teams.deleted="0" AND individuals.attendance="1" ORDER BY score DESC, RAND()';
 	$rankings = array(
-		array('Top Individuals in Individual Round',str_replace('%l','score_individual',$indiv_query),					5),
-		array('Top Individuals in Theme Round',		str_replace('%l','score_theme',$indiv_query),						5),
+		array('Top Individuals in Individual Round',str_replace('%l','score_individual',$indiv_query),					10),
+		array('Top Individuals in Theme Round',		str_replace('%l','score_theme',$indiv_query),						10),
 		array('Top Individuals Overall',			str_replace('%l','(score_individual + score_theme)',$indiv_query),	10)
 	);
 	foreach($rankings as $rankparams){
@@ -46,7 +46,7 @@ HEREDOC;
 		$query = $rankparams[1];
 		$maxrank = $rankparams[2];
 		
-		$code.='<h4>'.htmlentities($title).'</h4><table class="contrasting"><tr><th>Place</th><th>Name</th><th>School</th><th>Score</th></tr>';
+		$code.='<h4>'.htmlentities($title).'</h4>'."\n".'<table class="contrasting"><tr><th>Place</th><th>Name</th><th>School</th><th>Score</th></tr>';
 		$result = DB::query($query);
 		
 		$prev_score = NULL; //Null never equals anything.
@@ -64,7 +64,7 @@ HEREDOC;
 			
 			if($rank > $maxrank) break;//Only specified number of top places.
 			
-			$code .= "<tr><td>$rank</td><td>$name</td><td>$school</td><td>$score</td></tr>";
+			$code .= "  <tr>\n    <td>$rank</td>\n    <td>$name</td>\n    <td>$school</td>\n    <td>$score</td>\n  </tr>\n";
 		}
 		$code .= "</table>\n";
 	}
@@ -84,7 +84,7 @@ HEREDOC;
 		if ($row['score_team'] != $last_score)
 			$place = $num;
 		$last_score = $row['score_team'];
-		if ($place > 5)
+		if ($place > 10)
 			break;
 		$id = htmlentities($row['team_id']);
 		$name = htmlentities($row['name']);
@@ -133,7 +133,7 @@ HEREDOC;
 		if ($row['score_guts'] != $last_score)
 			$place = $num;
 		$last_score = $row['score_guts'];
-		if ($place > 5)
+		if ($place > 10)
 			break;
 		$id = htmlentities($row['team_id']);
 		$name = htmlentities($row['name']);
@@ -182,7 +182,7 @@ HEREDOC;
 		if ($row['team_composite'] != $last_score)
 			$place = $num;
 		$last_score = $row['team_composite'];
-		if ($place > 5)
+		if ($place > 10)
 			break;
 		$id = htmlentities($row['team_id']);
 		$name = htmlentities($row['name']);
