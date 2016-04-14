@@ -55,24 +55,30 @@ function show_form(){
 	and archiving the last year's information. If you're not an admin, you <b>should not be here</b>. 
   <b>If you are an admin, please follow <i>every</i> step on this page.</b></p>
 	<br>
-	<b>Before doing this:</b>
+	<h3>Before doing this:</h3>
   <ul>
     <li style="color:red">You MUST download a <a href='<?=URL::lmt()?>/Backstage/Database/Backup.php' target='_blank'>backup</a> of the database and upload it to the Dropbox. This script doesn't necessarily work, so you need this to restore everything if it messes up.</li>
-    <li>On <a href="<?=URL::lmt()?>/Backstage/Status" target='_blank'>Status</a>, make sure scoring is frozen, registration is closed, and backstage is closed to regular members.</li>
+    <li>On <a href="<?=URL::lmt()?>/Backstage/Status" target='_blank'>Status</a>, make sure scoring is frozen, registration is closed, and backstage is closed to regular members. Post_LMT will handle the rest.</li>
   </ul>
 	<br>
-	<h3>Form</h3>
 	<form id='upyearform' autocomplete='off' method="POST" onsubmit="return confirm('Are you sure?');" >
-		<input type='hidden' name='xsrf_token' value='<?=$_SESSION['xsrf_token']?>'/>
-		<table>
-			<tr><td>Webmaster Secret Code (see server config):<td><input type="password" name="code" />
-			<tr><td>Year upgrading from:<td> <input type="text" name="yrfrom" value="" length=4/><br>
-			<tr><td>Year upgrading to:<td> <input type="text" name="yrto" value="" length=4 />
-		</table>
-		<input type="submit" name="upyear" value="Upgrade Year" />
-		<div style='color:#f00'>This is a very complicated operation, and CANNOT be undone. Please be careful that you only run this once, and that you enter the correct inputs.</div>
+    <fieldset>
+      <!--To discourage autocomplete-->
+      <input type="text" style="display:none">
+      <input type="password" style="display:none">
+      
+      <input type='hidden' name='xsrf_token' value='<?=$_SESSION['xsrf_token']?>'/>
+      <table>
+        <tr><td>Webmaster Secret Code (see server config):<td><input type="password" autocomplete='off' name="code" />
+        <tr><td>Year upgrading from:<td> <input type="text" name="yrfrom" value="" length=4/><br>
+        <tr><td>Year upgrading to:<td> <input type="text" name="yrto" value="" length=4 />
+      </table>
+      <input type="submit" name="upyear" value="Upgrade Year" />
+      <div style='color:#f00'>This is a very complicated operation, and CANNOT be undone (other than restoring from the backup you made, which is unpleasant). Please be careful that you only run this once, and that you enter the correct inputs.</div>
+    </fieldset>
 	</form>
-	<b>After this, you also need to...</b>
+  <br>
+	<h3>After this, you also need to...</h3>
 	<ul>
 		<li>Change any necessary general information in <a href="Status" target="_blank">Status</a></li>
     <br>
