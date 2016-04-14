@@ -5,6 +5,6 @@
  */
 
 
-header('Location: Home');
+header('Location: Display');
 
 ?>
