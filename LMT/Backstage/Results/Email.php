@@ -18,10 +18,13 @@ function show_page() {
 	$header_noprint = true;
 	lmt_page_header('Score Sheets');
 	$message = '';
+  $lmt_year = intval(map_value('year'));
+  $lmt_nextyear = $lmt_year + 1;
+  $lmt_archive_url = "http://www.lhsmath.org/LMT/{$lmt_year}_Archive";
 	if (scoring_is_enabled())
 		$message = '<div class="error noPrint">Score entry is still enabled! Disable it <a href="../Scoring/Refrigerator">here</a>.</div><br />';
 	echo <<<HEREDOC
-      <h1 class="noPrint">Score Sheets</h1>
+      <h1 class="noPrint">Score Emails</h1>
       $message
 	  
 	  <style>textarea{width: 100%;height: 400px;}</style>
@@ -44,7 +47,7 @@ HEREDOC;
 		$body = <<<HEREDOC
 Hello,
 
-Thanks for coming to LMT 2015; here are your individual results!
+Thanks for coming to LMT {$lmt_year}; here are your individual results!
 [b]Name:[/b] {$ind['ind_name']}
 [b]Individual Score:[/b] {$ind['score_ind']}
 [b]Theme Score:[/b] {$ind['score_theme']}
@@ -54,11 +57,11 @@ As an unaffiliated individual, you were also randomly placed onto a team. Here's
 [b]Team Round Score:[/b] {$ind['score_team']}
 [b]Guts Round Score:[/b] {$ind['score_guts']}
 
-You can also find useful things such as overall results, photos, and problems and solutions at [url]http://www.lhsmath.org/LMT/2015_Archive[/url].
+You can also find useful things such as overall results, photos, and problems and solutions at [url]{$lmt_archive_url}[/url].
 
 Finally, we'd love to hear from you! Any feedback at all about how we did this year and how we might improve for next year is greatly appreciated.
 
-Thanks for coming, and we hope to see you at LMT 2016!
+Thanks for coming, and we hope to see you at LMT {$lmt_nextyear}!
 LHS Math Team Captains
 HEREDOC;
 		if(array_key_exists('Send',$_POST) && $_POST['xsrf_token'] == $_SESSION['xsrf_token']){
@@ -97,7 +100,7 @@ HEREDOC;
 				$body = <<<HEREDOC
 Hello,
 
-Thanks for coming to LMT 2015; here are the results for your team(s)!
+Thanks for coming to LMT {$lmt_year}; here are the results for your team(s)!
 
 [b]School Name:[/b] $school
 
@@ -142,11 +145,11 @@ HEREDOC;
 
 		$body .= <<<HEREDOC
 
-You can also find useful things such as overall results, photos, and problems and solutions at [url]http://www.lhsmath.org/LMT/2015_Archive[/url].
+You can also find useful things such as overall results, photos, and problems and solutions at [url]{$lmt_archive_url}[/url].
 
 Finally, we'd love to hear from you! Any feedback at all about how we did this year and how we might improve for next year is greatly appreciated.
 
-Thanks for coming, and we hope to see you at LMT 2016!
+Thanks for coming, and we hope to see you at LMT {$lmt_nextyear}!
 LHS Math Team Captains
 HEREDOC;
 

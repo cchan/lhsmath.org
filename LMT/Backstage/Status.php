@@ -129,7 +129,7 @@ HEREDOC;
             </tr><tr>
               <td>Year:</td>
 			  <td><input type="text" name="year" value="$lmt_year" size="4" maxlength="4" onkeydown="return processKey(event, 'lmtChangeYear');" /></td>
-              <td><input id="lmtChangeYear" type="submit" name="lmt_update_year" value="Update" /><div style='color:red;font-size:0.6em;'>Use <a href='Upgrade_Year'>Upgrade_Year</a> instead.</div></td>
+              <td><input id="lmtChangeYear" type="submit" name="lmt_update_year" value="Update" /><div style='color:red;font-size:0.6em;'>Use <a href='Upgrade_Year'>Upgrade_Year</a> directly after the LMT event ends.</div></td>
             </tr><tr>
               <td>Individual Cost:</td>
               <td><input type="text" name="indiv_cost" value="$individual_cost" size="25" onkeydown="return processKey(event, 'lmtChangeIndiv');" /></td>
