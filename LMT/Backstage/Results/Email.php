@@ -7,7 +7,7 @@
  */
 
 require_once '../../../.lib/lmt-functions.php';
-backstage_access();
+restrict_access('A');
 
 show_page();
 
@@ -20,7 +20,7 @@ function show_page() {
 	$message = '';
   $lmt_year = intval(map_value('year'));
   $lmt_nextyear = $lmt_year + 1;
-  $lmt_archive_url = "http://www.lhsmath.org/LMT/{$lmt_year}_Archive";
+  $lmt_archive_url = URL::lmt()."/{$lmt_year}_Archive";
 	if (scoring_is_enabled())
 		$message = '<div class="error noPrint">Score entry is still enabled! Disable it <a href="../Scoring/Refrigerator">here</a>.</div><br />';
 	echo <<<HEREDOC
@@ -38,12 +38,15 @@ function show_page() {
 
 HEREDOC;
 	
-	$individuals = DB::query('SELECT individuals.name as ind_name, '
+	$individuals = DB::query('SELECT individuals.name as ind_name, individuals.grade as grade, '
 		. 'IFNULL(score_team_short, 0) + IFNULL(score_team_long, 0) AS score_team, '
 		. 'score_guts, teams.name AS team_name, score_individual as score_ind, score_theme, email '
 		. 'FROM individuals LEFT JOIN teams ON team=team_id '
 		. 'WHERE email != "" AND individuals.deleted = 0 ORDER BY ind_name');
 	foreach ($individuals as $ind){
+    $if_not_eighth = "";
+    if($ind['grade'] != 8)
+      ", and we hope to see you at LMT {$lmt_nextyear}";
 		$body = <<<HEREDOC
 Hello,
 
@@ -52,7 +55,7 @@ Thanks for coming to LMT {$lmt_year}; here are your individual results!
 [b]Individual Score:[/b] {$ind['score_ind']}
 [b]Theme Score:[/b] {$ind['score_theme']}
 
-As an unaffiliated individual, you were also randomly placed onto a team. Here's how you did:
+As an unaffiliated individual, you were also placed onto a team. Here's how you did:
 [b]Team Name:[/b] {$ind['team_name']}
 [b]Team Round Score:[/b] {$ind['score_team']}
 [b]Guts Round Score:[/b] {$ind['score_guts']}
@@ -61,7 +64,7 @@ You can also find useful things such as overall results, photos, and problems an
 
 Finally, we'd love to hear from you! Any feedback at all about how we did this year and how we might improve for next year is greatly appreciated.
 
-Thanks for coming, and we hope to see you at LMT {$lmt_nextyear}!
+Thanks for coming{$if_not_eighth}!
 LHS Math Team Captains
 HEREDOC;
 		if(array_key_exists('Send',$_POST) && $_POST['xsrf_token'] == $_SESSION['xsrf_token']){

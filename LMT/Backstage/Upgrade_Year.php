@@ -1,6 +1,6 @@
 <?php
 /*
- * LMT/Backstage/Upgrade_Year.php
+ * LMT/Backstage/Post_LMT.php
  * LHS Math Club Website
  *
  * Super-secret page. Upgrades everything across the LMT thing to the next year, doing all necessary archiving.
@@ -50,13 +50,18 @@ show_form();
 
 
 function show_form(){
-	lmt_page_header('Upgrade Year');
+	lmt_page_header('Post-LMT');
 ?>
-	<h1>Upgrade Year</h1>
+	<h1>Post-LMT</h1>
 	<p>This page is for upgrading things across the LMT website to reflect the next year's information,
 	and archiving the last year's information. If you're not an admin, you <b>should not be here</b>.</p>
 	<br>
-	<b style="color:red">Before doing this, you MUST download a <a href='<?=URL::lmt()?>/Backstage/Database/Backup.php' target='_blank'>backup</a> of the database. (opens in new window)</b><br>
+	<b>Before doing this:</b>
+  <ul>
+    <li style="color:red">You MUST download a <a href='<?=URL::lmt()?>/Backstage/Database/Backup.php' target='_blank'>backup</a> of the database and upload it to the Dropbox.</li>
+    <li>On <a href="<?=URL::lmt()?>/Backstage/Status" target='_blank'>Status</a>, make sure scoring is frozen, registration is closed, and backstage is closed to regular members.</li>
+    <li>Check <a href="<?=URL::lmt()?>/Backstage/Export">Export</a> to verify its correctness</li>
+  </ul>
 	<br>
 	<h3>Form</h3>
 	<form id='upyearform' autocomplete='off' method="POST" action="Upgrade_Year" onsubmit="return confirm('Are you sure?');" >
@@ -71,13 +76,17 @@ function show_form(){
 		<input type="submit" name="upyear" value="Upgrade Year" />
 		<div style='color:#f00'>This is a very complicated operation, and CANNOT be undone. Please be careful that you only run this once, and that you enter the correct inputs.</div>
 	</form>
-	<b>In addition to this, you also need to...</b>
+	<b>After this, you also need to...</b>
 	<ul>
-		<li>Depending whether you have an Archive page right now, you may have to delete the old one (Website)</li>
-		<li>Make sure the archive page has the right stuff</li>
-		<li>Link the flickr album on the archive page (Website)</li>
-		<li>Put all problems, solutions, and the full zip file into the LMT Dropbox folder</li>
 		<li>Change any necessary general information in <a href="Status" target="_blank">Status</a></li>
+    <br>
+		<li>Depending whether you have already manually created an Archive page, you may have to delete the old one (<a href="<?=URL::lmt()?>/Backstage/Pages/List" target='_blank'>Website</a>)</li>
+		<li>Verify that the archive page has the right stuff, and add a "Stats" section (getting accurate participant counts is difficult, so ask the webmaster).</li>
+		<li>Link the flickr album on the archive page (<a href="<?=URL::lmt()?>/Backstage/Pages/List" target='_blank'>Website</a>)</li>
+		<li>Put all problems, solutions, and the full zip file into the LMT Dropbox folder</li>
+    <br>
+    <li>Send the mass "Thanks for coming to LMT!" email</li>
+    <li><a href="<?=URL::lmt()?>/Backstage/Results/Email" target='_blank'>Send individual results emails</a></li>
 	</ul>
 <?php
 	die();

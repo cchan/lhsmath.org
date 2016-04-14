@@ -210,7 +210,7 @@ HEREDOC;
 	$code .= "</table>\n";
 	
 	if($EXPORT_STR)return $code;
-	else echo "Exported results (to paste into website page):<br><textarea cols='100' rows='10' onclick='this.setSelectionRange(0, this.value.length)'>".(str_replace(' ', '&nbsp;', htmlentities($code)))."</textarea>";
+	else echo "Exported results (to paste into website page):<br><textarea cols='100' rows='10' onclick='this.setSelectionRange(0, this.value.length)'>".(str_replace(' ', '&nbsp;', htmlentities($code)))."</textarea>$code";
 }
 
 ?>
