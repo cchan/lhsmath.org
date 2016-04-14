@@ -15,8 +15,6 @@
 require_once '../../.lib/lmt-functions.php';
 restrict_access('A');
 
-$upyear_secret_code = 'hellofromLMT';
-
 if(@$_POST['upyear']){
 	$good=true;
 	
@@ -40,9 +38,9 @@ if(@$_POST['upyear']){
 	if($good){
 		global $show_debug_backtrace;$show_debug_backtrace=true;
 		insert_archive_page($yrfrom,$yrto);
-		archive_lmt_db($_POST['uname'],$_POST['passw'],$yrfrom,$yrto);
+		archive_lmt_db($DB_ROOT_USER,$DB_ROOT_PASSWORD,$yrfrom,$yrto);
 		reset_map_data($yrfrom,$yrto);//should be pretty much last
-		alert("Successfully upgraded year from $yrfrom to $yrto.",1);
+		alert("Successfully upgraded year from $yrfrom to $yrto. Follow other instructions to complete the process.",1);
 	}
 }
 show_form();
@@ -54,11 +52,12 @@ function show_form(){
 ?>
 	<h1>Post-LMT</h1>
 	<p>This page is for upgrading things across the LMT website to reflect the next year's information,
-	and archiving the last year's information. If you're not an admin, you <b>should not be here</b>.</p>
+	and archiving the last year's information. If you're not an admin, you <b>should not be here</b>. 
+  <b>If you are an admin, please follow <i>every</i> step on this page.</b></p>
 	<br>
 	<b>Before doing this:</b>
   <ul>
-    <li style="color:red">You MUST download a <a href='<?=URL::lmt()?>/Backstage/Database/Backup.php' target='_blank'>backup</a> of the database and upload it to the Dropbox.</li>
+    <li style="color:red">You MUST download a <a href='<?=URL::lmt()?>/Backstage/Database/Backup.php' target='_blank'>backup</a> of the database and upload it to the Dropbox. This script doesn't necessarily work, so you need this to restore everything if it messes up.</li>
     <li>On <a href="<?=URL::lmt()?>/Backstage/Status" target='_blank'>Status</a>, make sure scoring is frozen, registration is closed, and backstage is closed to regular members.</li>
   </ul>
 	<br>
@@ -66,9 +65,7 @@ function show_form(){
 	<form id='upyearform' autocomplete='off' method="POST" onsubmit="return confirm('Are you sure?');" >
 		<input type='hidden' name='xsrf_token' value='<?=$_SESSION['xsrf_token']?>'/>
 		<table>
-			<tr><td>Webmaster Secret Code (see PHP code):<td><input type="password" name="code" />
-			<tr><td>PMA Username:<td> <input type="text" name="uname" /><br>
-			<tr><td>PMA Password:<td> <input type="password" name="passw" /><br>
+			<tr><td>Webmaster Secret Code (see server config):<td><input type="password" name="code" />
 			<tr><td>Year upgrading from:<td> <input type="text" name="yrfrom" value="" length=4/><br>
 			<tr><td>Year upgrading to:<td> <input type="text" name="yrto" value="" length=4 />
 		</table>
@@ -79,13 +76,12 @@ function show_form(){
 	<ul>
 		<li>Change any necessary general information in <a href="Status" target="_blank">Status</a></li>
     <br>
-		<li>Depending whether you have already manually created an Archive page, you may have to delete the old one (<a href="<?=URL::lmt()?>/Backstage/Pages/List" target='_blank'>Website</a>)</li>
 		<li>Verify that the archive page has the right stuff (e.g. if you broke any ties manually, they will not be shown accurately), and add a "Stats" section (getting accurate participant counts is difficult, so ask the webmaster).</li>
 		<li>Link the flickr album on the archive page (<a href="<?=URL::lmt()?>/Backstage/Pages/List" target='_blank'>Website</a>)</li>
 		<li>Put all problems, solutions, and the full zip file into the LMT Dropbox folder</li>
     <br>
     <li>Send the mass "Thanks for coming to LMT!" email</li>
-    <li><a href="<?=URL::lmt()?>/Backstage/Results/Email" target='_blank'>Send individual results emails</a></li>
+    <li><a href="<?=URL::lmt()?>/Backstage/Results/Email" target='_blank'>Send all the results emails</a></li>
 	</ul>
 <?php
 	die();
