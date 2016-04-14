@@ -82,7 +82,7 @@ function show_form(){
 	<ul>
 		<li>Change any necessary general information in <a href="Status" target="_blank">Status</a></li>
     <br>
-		<li>Verify that the archive page has the right stuff (e.g. if you broke any ties manually, they will not be shown accurately), and add a "Stats" section (getting accurate participant counts is difficult, so ask the webmaster).</li>
+		<li>Verify that the archive page has the right stuff (e.g. if you broke any ties manually, they will not be shown accurately).</li>
 		<li>Link the flickr album on the archive page (<a href="<?=URL::lmt()?>/Backstage/Pages/List" target='_blank'>Website</a>)</li>
 		<li>Put all problems, solutions, and the full zip file into the LMT Dropbox folder</li>
     <br>
@@ -97,12 +97,24 @@ function insert_archive_page($yrfrom,$yrto){
 	//Get the page data
 	$dropbox_link='https://www.dropbox.com/sh/6wo6f5i8il42m1c/q8Vv_FHnxM/LMT';
 	
-	$date=map_value('date');
-	
+  $nth = (intval(map_value('year')) - 2009) . 'th'; //This will last until the 21st LMT. Wow.
+	$date = map_value('date');
+  $num_participants = DB::queryFirstField("SELECT COUNT(*) FROM `individuals` WHERE (score_theme IS NOT NULL OR score_individual IS NOT NULL) AND deleted=0");;
+  $num_teams = DB::queryFirstField("SELECT COUNT(*) FROM `teams` WHERE (score_team_short IS NOT NULL OR score_team_long IS NOT NULL) AND deleted=0");
+	$num_schools = DB::queryFirstField("SELECT COUNT(DISTINCT school_id) FROM `schools` RIGHT JOIN teams ON schools.school_id=teams.school WHERE (teams.score_team_short IS NOT NULL OR teams.score_team_long IS NOT NULL) AND teams.deleted=0 AND schools.deleted=0");
+  
 	$content=<<<HEREDOC
 <h1>$yrfrom Archive</h1>
-<p><strong>Date: </strong>$date</p>
-<!--<p><strong>View photos of the event </strong><a href="??" rel="external">on Flickr</a>.</p><br/>-->
+<h3>$nth Annual LMT</h3>
+<strong>Date: </strong>$date<br>
+<strong>Number of participants: </strong>$num_participants<br>
+<strong>Number of teams: </strong>$num_teams<br>
+<strong>Number of schools represented: </strong>$num_schools<br>
+<br>
+
+<!--Fill in the questionmarks and un-comment the Flickr link below!-->
+<!--<p><strong>View photos of the event </strong><a href="?????????" rel="external">on Flickr</a>.</p><br/>-->
+
 <h3>Problems and Solutions</h3>All archived problems and solutions can be found at <a href="$dropbox_link" rel="external">this Dropbox folder</a>.<br/>
 HEREDOC;
 	
@@ -112,17 +124,10 @@ HEREDOC;
 	$content.=show_page();
 	
 	//Insert it
-	$order_num=3000-$yrfrom;//specially determined formula for ordering in reverse, yet never overflowing. Not for 900 years.
+	$order_num=3000-$yrfrom;
+    //specially determined formula for ordering in reverse, yet never overflowing. Not for 900 years. As long as stuff stays consistent, orderings should be able to stay the same.
+    //--todo-- check to make sure the order number doesn't already exist, because that vastly messes things up
 	DB::insert('pages',array('name'=>"$yrfrom Archive",'content'=>$content,'order_num'=>$order_num));
-}
-
-
-function reset_map_data($yrfrom,$yrto){
-	map_set('date','TBD');
-	map_set('year',strval($yrto));
-	map_set('scoring','0');
-	map_set('registration','0');
-	map_set('backstage','0');
 }
 
 function archive_lmt_db($uname,$passw,$yrfrom,$yrto){
@@ -149,6 +154,14 @@ function archive_lmt_db($uname,$passw,$yrfrom,$yrto){
 	$tables_truncate=array('guts','individuals','schools','teams');
 	foreach($tables_truncate as $table)
 		$adminDB->query("TRUNCATE TABLE `lmt`.`$table`");
+}
+
+function reset_map_data($yrfrom,$yrto){
+	map_set('date','TBD');
+	map_set('year',strval($yrto));
+	map_set('scoring','0');
+	map_set('registration','0');
+	map_set('backstage','0');
 }
 
 ?>

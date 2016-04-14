@@ -21,7 +21,7 @@ function do_add_separator() {
 	if ($_GET['xsrf_token'] != $_SESSION['xsrf_token'])
 		trigger_error('XSRF code incorrect', E_USER_ERROR);
 	
-	$row = DB::queryFirstRow('SELECT MAX(order_num + 1) AS new_order FROM pages');
+	$row = DB::queryFirstRow('SELECT MIN(order_num - 1) AS new_order FROM pages');
 	$new_order = $row['new_order'];
 	
 	DB::queryRaw('INSERT INTO pages (name, content, order_num) VALUES ("", "", "'

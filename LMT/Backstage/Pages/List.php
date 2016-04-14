@@ -18,7 +18,7 @@ show_page();
 function show_page() {
 	// If the Registration page does not exist, add it
 	if (DB::queryFirstField('SELECT COUNT(*) FROM pages WHERE page_id="-1"') == 0) {
-		$new_order_num = DB::queryFirstField('SELECT (MAX(order_num) + 1) AS new_order FROM pages');
+		$new_order_num = DB::queryFirstField('SELECT (MIN(order_num) - 1) AS new_order FROM pages');
 		DB::insert('pages',array('page_id'=>'-1','name'=>'Registration','content'=>'','order_num'=>$new_order_num));
 	}
 	
