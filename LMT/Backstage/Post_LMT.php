@@ -60,11 +60,10 @@ function show_form(){
   <ul>
     <li style="color:red">You MUST download a <a href='<?=URL::lmt()?>/Backstage/Database/Backup.php' target='_blank'>backup</a> of the database and upload it to the Dropbox.</li>
     <li>On <a href="<?=URL::lmt()?>/Backstage/Status" target='_blank'>Status</a>, make sure scoring is frozen, registration is closed, and backstage is closed to regular members.</li>
-    <li>Check <a href="<?=URL::lmt()?>/Backstage/Export">Export</a> to verify its correctness</li>
   </ul>
 	<br>
 	<h3>Form</h3>
-	<form id='upyearform' autocomplete='off' method="POST" action="Upgrade_Year" onsubmit="return confirm('Are you sure?');" >
+	<form id='upyearform' autocomplete='off' method="POST" onsubmit="return confirm('Are you sure?');" >
 		<input type='hidden' name='xsrf_token' value='<?=$_SESSION['xsrf_token']?>'/>
 		<table>
 			<tr><td>Webmaster Secret Code (see PHP code):<td><input type="password" name="code" />
@@ -81,7 +80,7 @@ function show_form(){
 		<li>Change any necessary general information in <a href="Status" target="_blank">Status</a></li>
     <br>
 		<li>Depending whether you have already manually created an Archive page, you may have to delete the old one (<a href="<?=URL::lmt()?>/Backstage/Pages/List" target='_blank'>Website</a>)</li>
-		<li>Verify that the archive page has the right stuff, and add a "Stats" section (getting accurate participant counts is difficult, so ask the webmaster).</li>
+		<li>Verify that the archive page has the right stuff (e.g. if you broke any ties manually, they will not be shown accurately), and add a "Stats" section (getting accurate participant counts is difficult, so ask the webmaster).</li>
 		<li>Link the flickr album on the archive page (<a href="<?=URL::lmt()?>/Backstage/Pages/List" target='_blank'>Website</a>)</li>
 		<li>Put all problems, solutions, and the full zip file into the LMT Dropbox folder</li>
     <br>
