@@ -58,7 +58,7 @@ HEREDOC;
 			$score = intval($row['score']);
 			
 			//Finding the rank
-			if($prev_score != $score)$prev_rank = $rank = $ind;//If score is below, set it to the actual ranking.
+			if($prev_score != $score)$prev_rank = $rank = $ind + 1;//If score is below, set it to the actual ranking.
 			//If it's tied, leave the ranking as it was.
 			$prev_score = $score;//update previous score.
 			
