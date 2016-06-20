@@ -68,6 +68,16 @@ class PATH{//Actual system path - Used in require, file I/O, etc.
 	public static function errfile(){ return self::content() . '/Errors.txt'; }					//
 }
 
+
+// https://gist.github.com/synox/5785d04ebadf47b2548d
+// set https if behind https-proxy
+if ( empty($_SERVER['HTTPS']) && !empty($_SERVER["HTTP_X_FORWARDED_PROTO"] )  ) {
+    $_SERVER['HTTPS'] = $_SERVER["HTTP_X_FORWARDED_PROTO"];
+    if ( $_SERVER["HTTP_X_FORWARDED_PROTO"] == "https" ) {
+        $_SERVER['SERVER_PORT'] = 443;
+    }
+}
+
 class URL{//Internet path - Used when constructing HTML, URLs, headers, etc.
 	public static function pathToRootFromURLRoot(){return removeLeadingSlash(subtractURLsEnd(
 		backslashToForward(dirname(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH))),	//Gets http://website[/path/to/lhsmath/path/to/whatever]/file.php
