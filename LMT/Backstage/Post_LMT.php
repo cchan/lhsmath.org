@@ -52,7 +52,8 @@ function show_form(){
 ?>
 	<h1>Post-LMT</h1>
 	<p>This page is for upgrading things across the LMT website to reflect the next year's information,
-	and archiving the last year's information. If you're not an admin, you <b>should not be here</b>. 
+  archiving the last year's information, and various other operations. Use this right after every LMT.
+  If you're not an admin, you <b>should not be here</b>. 
   <b>If you are an admin, please follow <i>every</i> step on this page.</b></p>
 	<br>
 	<h3>Before doing this:</h3>
