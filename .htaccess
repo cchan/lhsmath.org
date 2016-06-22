@@ -22,9 +22,9 @@ AddType application/x-java-jnlp-file .jnlp
 
 # Hide all files/directories starting with a dot
 #   for example, .htaccess, .content
-<FilesMatch "^\.(.*)$">
-  Require all denied
-</FilesMatch>
+#<FilesMatch "^\.(.*)$">
+#  Require all denied
+#</FilesMatch>
 
 
 # URL REWRITING SECTION
@@ -44,4 +44,4 @@ RewriteRule ^(.*)$ $1.php
 RewriteRule ^lmt(.*) LMT$1
 
 # Block all files and directories (and their contents) starting with a dot
-RewriteRule ^\.((.*)/(.*))*$ - [F]
+# RewriteRule ^\.((.*)/(.*))*$ - [F]
