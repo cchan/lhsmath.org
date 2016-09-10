@@ -116,8 +116,10 @@ function show_form() {
               <label for="mailings">Receive Math Club announcements</label><br /><br />
             </td>
           </tr><tr>
+	  <!--
             <td>Are you human?</td>
             <td>$recaptcha_code</td>
+	    -->
           </tr><tr>
             <td></td>
             <td><input type="submit" name="do_register" value="Create Account"/></td>
