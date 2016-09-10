@@ -209,12 +209,15 @@ function process_form() {
 	}
 	
 	// CHECK THAT THEY ENTERED THE RECAPTCHA CORRECTLY
+	// CURRENTLY BROKEN: NEED TO UPDATE RECAPTCHA
+	/* 
 	$recaptcha_msg = validate_recaptcha();
 	if ($recaptcha_msg !== true) {
 		alert($recaptcha_msg, -1);
 		show_form();
 		return;
 	}
+	*/
 	
 	// CHECK THAT AN ACCOUNT WITH THAT EMAIL DOES NOT ALREADY EXIST
 	// this is done *after* checking the reCaptcha to prevent bots from harvesting our email
