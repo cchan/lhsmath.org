@@ -116,8 +116,10 @@ function show_form() {
               <label for="mailings">Receive Math Club announcements</label><br /><br />
             </td>
           </tr><tr>
+	  <!--
             <td>Are you human?</td>
             <td>$recaptcha_code</td>
+	    -->
           </tr><tr>
             <td></td>
             <td><input type="submit" name="do_register" value="Create Account"/></td>
@@ -209,12 +211,15 @@ function process_form() {
 	}
 	
 	// CHECK THAT THEY ENTERED THE RECAPTCHA CORRECTLY
+	// CURRENTLY BROKEN: NEED TO UPDATE RECAPTCHA
+	/* 
 	$recaptcha_msg = validate_recaptcha();
 	if ($recaptcha_msg !== true) {
 		alert($recaptcha_msg, -1);
 		show_form();
 		return;
 	}
+	*/
 	
 	// CHECK THAT AN ACCOUNT WITH THAT EMAIL DOES NOT ALREADY EXIST
 	// this is done *after* checking the reCaptcha to prevent bots from harvesting our email
