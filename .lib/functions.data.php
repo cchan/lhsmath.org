@@ -33,7 +33,10 @@ function val($type /*,$x1,$x2,...*/){
 		trigger_error('val(): Nothing to validate.',E_USER_ERROR);
 		return false;
 	}
+  
+  $x = $args[0];
 	
+  /*
 	if(is_string($type)&&strpos($type,',')!==false)$type=explode(',',$type);
 	
 	if(is_array($type)){//MULTIPLE TYPES, MULTIPLE VALIDATEES
@@ -51,9 +54,11 @@ function val($type /*,$x1,$x2,...*/){
 		return true;
 	}
 	elseif(!is_string($type)){trigger_error('val(): $type neither string nor array',E_USER_ERROR);return false;}//Invalid $type.
-	
+	*/
+  
 	/*********SINGLE VALIDATEE*********/
 	
+  /*
 	$x=$args[0];//Already confirmed that it's only one validatee, so let's go do just this one arg.
 	
 	$firstchar = substr($type,0,1);
@@ -77,7 +82,7 @@ function val($type /*,$x1,$x2,...*/){
 			while(val('d',$chr)){$tmpnum.=$chr;$chr=$str_shift($morechars);}//Appends digits to the end of the number as long as there's more digits,
 			$dim+=intval($tmpnum);//and then adds them to the dimension number.
 			
-			if($chr!=$firstchar)break;//If there's no more useful chars (no digits, no */@) then exit.
+			if($chr!=$firstchar)break;//If there's no more useful chars (no digits, no * / @) then exit.
 		}
 		$morechars = $chr.$morechars;//Add the detected one back
 		
@@ -101,9 +106,11 @@ function val($type /*,$x1,$x2,...*/){
 		};
 		return $rec_check($x,$dim);
 	}
+  */
 	
 	//SINGLE SIMPLE TYPE
 	switch(strtolower($type)){//All of these must begin with an alphabetic character.
+    case '*':                 return is_array($x);
 		case 's':case 'string':		return is_string($x);	//String
 		
 		case 'd':case 'digit':		return intval($x) == $x		//Digit
@@ -134,7 +141,7 @@ function val($type /*,$x1,$x2,...*/){
 										&& preg_match('/^[A-Za-z0-9]([A-Za-z0-9\_\-\.]+[A-Za-z0-9])?$/i',$x)
 										&& !strpos($x,'..');
 		
-		default:					trigger_error('val(): Invalid validation type.',E_USER_ERROR);return false;
+		default:					debug_print_backtrace();trigger_error('val(): Invalid validation type.',E_USER_ERROR);return false;
 	}
 }
 

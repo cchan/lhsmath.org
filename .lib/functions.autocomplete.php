@@ -60,28 +60,33 @@ function autocomplete_data($query, $orderCallback/*, ...replacement parameters f
 
 //Returns a (rather large) array of all users, with all associative-array data things. Where-enabled.
 function user_data($where=NULL/*,...*/){
-  return autocomplete_data("SELECT * FROM users".(is_null($where)?" WHERE ".$where:""),
-  function(&$user){
-    //Order: Temporary, YOG (largest to smallest), ???, Captain
-    switch($user['permissions']){
-      case 'B': case 'P': case 'E':
-        continue 2; //Banned, pending approval, email verification pending aren't include (continues the foreach loop)
-      case 'T':
-        $user['category'] = 'Temporary';
-        return 1;//Temporary users go first
-      case 'R': case 'L':
-        $user['category'] = getTextGradeFromYOG($user["yog"]);
-        return 30000 - intval($user["yog"]);//Reverse order of yog
-      case 'A': case 'C':
-        $user['category'] = 'Captain';
-        return 30000;//Captains after all the stuff
-          //Assumes we're using this between 1 and 30000AD.
-      default:
-        $user['category'] = '???error???';
-        return 0;//Questionmark ones go very first, but they shouldn't happen.
-    }
-    $user['label'] = $user['name'];
-  }, $where);
+  $params = array(
+    "SELECT * FROM users".(!empty($where)?" WHERE ".$where:""),
+    function(&$user){
+      //Order: Temporary, YOG (largest to smallest), ???, Captain
+      switch($user['permissions']){
+        case 'B': case 'P': case 'E':
+          continue 2; //Banned, pending approval, email verification pending aren't include (continues the foreach loop)
+        case 'T':
+          $user['category'] = 'Temporary';
+          return 1;//Temporary users go first
+        case 'R': case 'L':
+          $user['category'] = getTextGradeFromYOG($user["yog"]);
+          return 30000 - intval($user["yog"]);//Reverse order of yog
+        case 'A': case 'C':
+          $user['category'] = 'Captain';
+          return 30000;//Captains after all the stuff
+            //Assumes we're using this between 1 and 30000AD.
+        default:
+          $user['category'] = '???error???';
+          return 0;//Questionmark ones go very first, but they shouldn't happen.
+      }
+      $user['label'] = $user['name'];
+    });
+  $args = func_get_args();
+  array_shift($args);
+  $params = array_merge($params, $args);
+  return call_user_func_array("autocomplete_data",$params);
 }
 
 
