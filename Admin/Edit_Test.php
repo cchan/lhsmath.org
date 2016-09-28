@@ -320,9 +320,9 @@ function show_add_form($err) {
 		$err = "\n        <div class=\"error\">$err</div><br />\n";
 	
 	// Fetch previous data from POST
-	$name = htmlentities($_POST['name']);
-	$date = htmlentities($_POST['date']);
-	$total_points = htmlentities($_POST['total_points']);
+	$name = htmlentities(POST('name'));
+	$date = htmlentities(POST('date'));
+	$total_points = htmlentities(POST('total_points'));
 	
 	$request_uri = htmlentities($_SERVER['REQUEST_URI']);
 	
