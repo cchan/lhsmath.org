@@ -235,6 +235,7 @@ $main_navbar = array( //Name => Page path, or if it's the same you can omit the 
 	'X'=>[
 		'LMT',
 		'',
+		'MAML',
 		'AMC',
 		'',
 		'Calendar',
