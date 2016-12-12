@@ -14,8 +14,8 @@ page_title('AMC 10/12 Signup');
 
 <h1>AMC 10/12 Signup</h1>
 
-<h3 style="text-align:center;"><a href="https://goo.gl/forms/SE1qgH29LDU0RIg72">https://goo.gl/forms/SE1qgH29LDU0RIg72</a></h3>
-<h3 style="text-align:center;"><a href="https://goo.gl/forms/ZrsN3iI9JBu1FwAh1">https://goo.gl/forms/ZrsN3iI9JBu1FwAh1</a></h3>
+<h3 style="text-align:center;">AMC A Signup: <a href="https://goo.gl/forms/SE1qgH29LDU0RIg72">https://goo.gl/forms/SE1qgH29LDU0RIg72</a></h3>
+<h3 style="text-align:center;">AMC B Signup: <a href="https://goo.gl/forms/ZrsN3iI9JBu1FwAh1">https://goo.gl/forms/ZrsN3iI9JBu1FwAh1</a></h3>
 
 <div>
 	<p>The AMC (American Mathematics Competition) is an international examination in secondary school mathematics consisting of 
@@ -27,8 +27,8 @@ page_title('AMC 10/12 Signup');
 	<p>Two different versions of the contests are given on two different dates, the A and the B.
 	You can take it on both test dates, or just on one.</p>
 	<ul style="margin:0px;">
-		<li>The AMC 10A and 12A are on <b>Tuesday, February 2, 2016 at 1:30 PM</b>.</li>
-		<li>The AMC 10B and 12B are on <b>Wednesday, February 17, 2016</b>. <b style="color:red">LHS will not be offering the AMC B (RSM will be).</b></li>
+		<li>The AMC 10A and 12A are on <b>Tuesday, February 07, 2017</b>.</li>
+		<li>The AMC 10B and 12B are on <b>Wednesday, February 15, 2017</b>.
 	</ul>
 </div>
 <div>
