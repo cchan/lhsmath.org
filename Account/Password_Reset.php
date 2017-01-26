@@ -94,11 +94,11 @@ function process_request_page() {
 	restrict_access('X');
 	
 	// Check the reCaptcha
-	$recaptcha_msg = validate_recaptcha();
-	if($recaptcha_msg !== true){
-		show_request_page($recaptcha_msg,'recaptcha_response_field');
-		return;
-	}
+	// $recaptcha_msg = validate_recaptcha();
+	// if($recaptcha_msg !== true){
+	//	show_request_page($recaptcha_msg,'recaptcha_response_field');
+	//	return;
+	// }
 	
 	// Check that an account with that email address exists.
 	$email = mysqli_real_escape_string(DB::get(),strtolower($_POST['email']));
