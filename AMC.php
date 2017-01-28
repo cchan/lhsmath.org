@@ -36,3 +36,4 @@ page_title('AMC 10/12 Signup');
 	If you have any questions, you can contact us at <a href="mailto:amc@lhsmath.org">amc@lhsmath.org</a>.</p>
 </div>
 
+
