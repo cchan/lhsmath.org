@@ -75,7 +75,7 @@ function show_form($err, $selected_field) {
               </select><br /><br />
             </td>
           </tr><tr>
-            <td>Are you human?</td>
+            <!--td>Are you human?</td>-->
             <td>{$recaptcha_code}</td>
           </tr><tr>
             <td></td>
@@ -114,9 +114,9 @@ function process_form() {
 	if ($grade_msg !== true)
 		show_form($grade_msg, 'grade');
 	
-	$recaptcha_msg = validate_recaptcha();
-	if ($recaptcha_msg !== true)
-		show_form($recaptcha_msg, 'recaptcha_response_field');
+	// $recaptcha_msg = validate_recaptcha();
+	// if ($recaptcha_msg !== true)
+	//	show_form($recaptcha_msg, 'recaptcha_response_field');
 	
 	$email_msg = validate_email($email);
 	if ($email_msg !== true)
