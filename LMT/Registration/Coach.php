@@ -57,8 +57,8 @@ function show_form() {
             <td>Coach's Email Address:</td>
             <td><input id="email" type="text" name="email" size="25" maxlength="320" value="$email" /></td>
           </tr><tr>
-            <td>Security Check:</td>
-            <td>$recaptcha_code</td>
+            <!--td>Security Check:</td>
+            <td>$recaptcha_code</td>-->
           </tr><tr>
             <td></td>
             <td>
@@ -87,7 +87,7 @@ function process_form() {
 	$recaptcha_msg = validate_recaptcha();
 	$email_msg = validate_coach_email($email);
 	if ($name_msg !== true) alert($name_msg,-1);
-	else if ($recaptcha_msg !== true) alert($recaptcha_msg,-1);
+	// else if ($recaptcha_msg !== true) alert($recaptcha_msg,-1);
 	else if ($email_msg !== true) alert($email_msg,-1);
 	else {
 		// ** All information has been validated at this point **
