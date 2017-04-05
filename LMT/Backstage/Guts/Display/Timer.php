@@ -8,6 +8,9 @@
 
 $path_to_lmt_root = '../../../';
 require_once $path_to_lmt_root . '../.lib/lmt-functions.php';
+backstage_access();
+
+lmt_page_header('Guts Timer Target');
 
 // Yes, the str_replace thing is sketchy af. Just don't use this for Javascripted attributes please.
 function input($label, $attrs, $cb){
@@ -38,7 +41,7 @@ function input($label, $attrs, $cb){
 ?>
 
 <h1>Set Guts Timer Target</h1>
-<?=input("Guts Timer Target, as any unambiguous English date-time string: ",
+<?=input("Guts Timer Target, as any unambiguous date-time string: ",
   ["placeholder" => "3:10pm April 8 2017"],
 function($formval){
   $timestamp = strtotime($formval);
