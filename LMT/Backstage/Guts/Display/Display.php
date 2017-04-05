@@ -27,6 +27,7 @@ function show_page() {
 <style type="text/css">
 body{
 	font-family:"Georgia";
+  zoom:0.9;
 }
 
 .box{
