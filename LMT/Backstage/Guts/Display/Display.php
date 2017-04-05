@@ -96,7 +96,7 @@ function formatSeconds(secs){
 	
 	return h+":"+m+":"+s;
 }
-var targetTime = 1460180400 + 90 * 60 + 12 * 60 * 60 + 10 * 60 + 60 + 60 + 2 * 60;
+var targetTime = <?=map_value("guts-timer-target")?>;
 function updateTime(){
 	var currTime = (new Date()).getTime()/1000;
 	if(targetTime - currTime > 90*60){

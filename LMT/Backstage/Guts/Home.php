@@ -22,7 +22,8 @@ function show_page() {
       
       <div class="registration-box">
         <a href="Enter_Scores">Enter Scores</a>
-        <a href="Display/Home">Guts Display</a>
+        <a href="Display/Display">Guts Display</a>
+        <a href="Display/Timer">Guts Timer Settings</a>
 		<a href="Extra" class="box-light">Extra</a>
       </div>
 HEREDOC;
