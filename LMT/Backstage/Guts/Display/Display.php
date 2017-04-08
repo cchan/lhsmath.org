@@ -101,16 +101,17 @@ function show_page() {
             }
 
             #box0 {
-                background-color: #0039e6;
+                background-color: #4d79ff;
             }
 
             #box1 {
-                background-color: #1a53ff;
+                background-color: #8090ff;
             }
 
             #box2 {
-                background-color: #4d79ff;
+                background-color: #b3c6ff;
             }
+
 
             /*#box5 {*/
                 /*background-color: #e6ecff;*/
