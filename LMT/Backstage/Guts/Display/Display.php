@@ -165,6 +165,14 @@ function updateTime(){
 function timerOut(a){
 	document.getElementById("timer").innerHTML=a;
 }
+</script>
+<center>
+
+<h1>
+<img src="../../../../res/lmt/header.png" alt="LMT" width="525" height="110">
+Goots Round
+<span id="timer">(timer here)</span>
+</h1>
 
 //Avoiding a brief whiteout on every update is hard. But I think this works!
 //It updates each box in sequence, replacing it with a new document.createElement.
