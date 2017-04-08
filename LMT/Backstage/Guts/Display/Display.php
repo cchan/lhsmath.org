@@ -128,7 +128,7 @@ function timerOut(a){
 
 <h1>
 <img src="../../../../res/lmt/header.png" alt="LMT" width="525" height="110">
-Guts Round
+Goots Round
 <span id="timer">(timer here)</span>
 </h1>
 
