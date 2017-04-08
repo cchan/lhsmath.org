@@ -112,14 +112,6 @@ function show_page() {
                 background-color: #4d79ff;
             }
 
-            #box3 {
-                background-color: #8090ff;
-            }
-
-            #box4 {
-                background-color: #b3c6ff;
-            }
-
             /*#box5 {*/
                 /*background-color: #e6ecff;*/
             /*}*/
