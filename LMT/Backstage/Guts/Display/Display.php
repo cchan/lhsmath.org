@@ -101,8 +101,29 @@ function show_page() {
             }
 
             #box0 {
-                background-color: #1f7cdb;
+                background-color: #0039e6;
             }
+
+            #box1 {
+                background-color: #1a53ff;
+            }
+
+            #box2 {
+                background-color: #4d79ff;
+            }
+
+            #box3 {
+                background-color: #8090ff;
+            }
+
+            #box4 {
+                background-color: #b3c6ff;
+            }
+
+            /*#box5 {*/
+                /*background-color: #e6ecff;*/
+            /*}*/
+
         </style>
     </head>
     <body>
