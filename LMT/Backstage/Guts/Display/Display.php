@@ -99,6 +99,10 @@ function show_page() {
                 position: absolute;
                 top: 0; left: 0; right: 0;
             }
+
+            #scoreboxes:first-child {
+                background-color: #1f7cdb;
+            }
         </style>
     </head>
     <body>
