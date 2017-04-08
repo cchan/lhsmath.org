@@ -100,7 +100,7 @@ function show_page() {
                 top: 0; left: 0; right: 0;
             }
 
-            #scoreboxes:first-child {
+            #box0 {
                 background-color: #1f7cdb;
             }
         </style>
