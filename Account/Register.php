@@ -70,7 +70,7 @@ function show_form() {
       
       <p>Create an account to access scores, handouts and other information.</p>
       <p><span class="b">These accounts are intended for members of the LHS Math Club only.</span>
-		If you're trying to register for LMT, visit <a href="http://www.lhsmath.org/LMT/Registration/">http://www.lhsmath.org/LMT/Registration/</a> once registration is open.</p>
+		If you're trying to register for LMT, visit <a href="/LMT/Registration/">www.lhsmath.org/LMT/Registration/</a> once registration is open.</p>
 	  <small>Please contact <a href="mailto:webmaster@lhsmath.org">webmaster@lhsmath.org</a> if this page doesn't work!</small>
       <br>
 	  <form id="register" method="post" action="{$_SERVER['REQUEST_URI']}" autocomplete="off">

@@ -23,7 +23,7 @@ show_main_page();
  *
  * Calculate the size of a directory
  *
- * http://stackoverflow.com/a/18288029/1181387
+ * https://stackoverflow.com/a/18288029/1181387
  */
 function dirsize($path){
     $bytestotal = 0;

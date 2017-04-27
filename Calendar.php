@@ -126,7 +126,7 @@ function process_add_event() {
  * function draw_calendar($month, $year)
  *
  * Returns code for a calendar.
- * Vaguely inspired by the disappointingly verbose David Walsh [http://davidwalsh.name/php-calendar]
+ * Vaguely inspired by the disappointingly verbose David Walsh [https://davidwalsh.name/php-calendar]
  */
 function draw_calendar($current_month_timestamp) {
 	$currmonth = $currdate 	= strtotime('this month',$current_month_timestamp);

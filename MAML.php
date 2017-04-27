@@ -14,7 +14,7 @@ page_title('MAML Signup 2016-2017');
 
 <h1>MAML Signup 2016-2017</h1>
 
-<h3 style="text-align:center;"><a href="http://goo.gl/forms/DQYc9U5nSfugKXAn2">http://goo.gl/forms/DQYc9U5nSfugKXAn2</a></h3>
+<h3 style="text-align:center;"><a href="https://goo.gl/forms/DQYc9U5nSfugKXAn2">https://goo.gl/forms/DQYc9U5nSfugKXAn2</a></h3>
 <div>
 	<p>
 	The MAML (Massachusetts Association of Mathematics Leagues) is an MA-wide high school math contest, with 

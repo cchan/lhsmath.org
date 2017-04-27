@@ -32,7 +32,7 @@ page_title('AMC 10/12 Signup');
 	</ul>
 </div>
 <div>
-	<p>See <a href="http://www.maa.org/math-competitions/amc-contests">the AMC website</a> for more information on this series of contests.
+	<p>See <a href="http://www.maa.org/math-competitions/amc-1012">the AMC website</a> for more information on these contests.
 	If you have any questions, you can contact us at <a href="mailto:amc@lhsmath.org">amc@lhsmath.org</a>.</p>
 </div>
 

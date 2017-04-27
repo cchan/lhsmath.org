@@ -134,7 +134,7 @@ function val($type /*,$x1,$x2,...*/){
 								// .'+@((((([a-z0-9]{1}[a-z0-9\-]{0,62}[a-z0-9]{1})|[a-z])\.)+[a-z]{2,6})|(\d{1,3}\.){3}\d{1,3}(\:\d{1,5})?)$/i'
 								// , $email);
 								// ^^^ a really long regex to *properly* validate email addresses
-								// from http://fightingforalostcause.net/misc/2006/compare-email-regex.php
+								// from https://fightingforalostcause.net/misc/2006/compare-email-regex.php
 								// credit to James Watts and Francisco Jose Martin Moreno
 		
 		case 'f':case 'file':		return is_string($x)	//Filename

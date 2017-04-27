@@ -231,7 +231,7 @@ function do_change_name() {
 	$name = htmlentities(ucwords(trim($_POST['name'])));
 		// capitalizes first letters if they didn't do it; removes whitespace before and after.
 		// and makes sure to escape the name
-	$name = preg_replace('/\s\s+/', ' ', $name);	// removes multiple consecutive spaces, thanks to juglesh at http://bytes.com/topic/php/answers/160400-delete-multiple-spaces-special-characters
+	$name = preg_replace('/\s\s+/', ' ', $name);	// removes multiple consecutive spaces, thanks to juglesh at https://bytes.com/topic/php/answers/160400-delete-multiple-spaces-special-characters
 	
 	
 	if (strlen($name) > 25)

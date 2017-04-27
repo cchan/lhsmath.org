@@ -60,4 +60,4 @@ else echo "[no events]";
 </div>
 
 <h2>LMT</h2>
-The Lexington Math Tournament website is at <a href="/LMT">http://www.lhsmath.org/LMT</a>.
+The Lexington Math Tournament website is at <a href="/LMT">www.lhsmath.org/LMT</a>.

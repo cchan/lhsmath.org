@@ -69,7 +69,7 @@ form button:hover{
 	</div>
 
 	<div>
-		<input type="email" name="entry.494551155" value="" placeholder="email@email.com" title="Must be a valid email address" required aria-required="true">
+		<input type="email" name="entry.494551155" placeholder="email@email.com" title="Must be a valid email address" required aria-required="true">
 	</div>
 
 	<div>
@@ -77,7 +77,7 @@ form button:hover{
 	</div>
 </form>
 
-<!--http://stackoverflow.com/a/30666118/1181387-->
+<!--https://stackoverflow.com/a/30666118/1181387-->
 <iframe id="hiddenFrame" name="hiddenFrame" style="display: none;"></iframe>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>

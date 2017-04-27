@@ -18,7 +18,7 @@ $WEBMASTER_EMAIL =		'webmaster@lhsmath.org';// public
 $PUBLIC_EMAIL =			'contact@lhsmath.org';	// public
 $CAPTAIN_EMAIL =		'captains@lhsmath.org';	// address for all captains; shown to members only
 $LMT_EMAIL =			'lmt@lhsmath.org';
-$TIMEZONE =				'America/New_York';	// See [http://www.php.net/manual/en/timezones.php]
+$TIMEZONE =				'America/New_York';	// See [https://php.net/manual/en/timezones.php]
 $ADVISOR_NAME =			'Wendy Cordero';
 
 

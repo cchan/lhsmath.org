@@ -71,39 +71,9 @@ page_title('Captains Guide');
   ~<a href="Webmaster#Cheers">LHS Math Webmasters</a>
   
   
+  <hr>
   
   
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  <h3>Introduction</h3>
-
   
   <h3>Responsibilities</h3>
   <ul>
@@ -123,7 +93,7 @@ page_title('Captains Guide');
 	
 	<li><span class="b">Renewing Payment.</span> You should receive an email alert when the website is
 	running low on funds. To load more, log in to the 
-	<a href="http://members.nearlyfreespeech.net/">NearlyFreeSpeech.NET control panel</a> and refill the
+	<a href="https://members.nearlyfreespeech.net/">NearlyFreeSpeech.NET control panel</a> and refill the
 	account with money via PayPal or other methods (talk to the club advisor about getting money). 
 	Please be aware that you will also need to renew the domain name periodically. The site draws between 
 	$25 and $35 a year, including domain registration costs.<br /><br /></li>
@@ -144,12 +114,12 @@ page_title('Captains Guide');
   Tech Czar. Knowing PHP is a must (just for the Guts round - I can help with this if you need
   me to). Edit <span class="monospace">.lib/lmt-scoring.php</span>, and mind the preconditions and posconditions!
   Content on the public part of the LMT website is updated through the web interface (in database rather than files). 
-  Please write in <a href="http://validator.w3.org/">valid XHTML 1.0</a> for those pages!</p>
+  Please write in <a href="https://validator.w3.org/">valid XHTML 1.0</a> for those pages!</p>
   
   <h3>Help!</h3>
   <p>Webmastering is hard. If anything comes up, we're happy to help. Just email any of us who have listed our emails below.</p>
   
-  <p><br /><br /><br /><img src="http://imgs.xkcd.com/comics/devotion_to_duty.png" title="The weird sense of duty really good sysadmins have can border on the sociopathic, but it&#39;s nice to know that it stands between the forces of darkness and your cat blog&#39;s servers." alt="XCDK #705: Devotion to Duty" /></p>
+  <p><br /><br /><br /><img src="//imgs.xkcd.com/comics/devotion_to_duty.png" title="The weird sense of duty really good sysadmins have can border on the sociopathic, but it&#39;s nice to know that it stands between the forces of darkness and your cat blog&#39;s servers." alt="xkcd #705: Devotion to Duty" /></p>
   
   <br />
   <br />

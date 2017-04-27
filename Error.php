@@ -15,7 +15,7 @@
   if($HttpStatus==403) echo "Forbidden";
   if($HttpStatus==500) echo "Internal Server Error";
   if($HttpStatus==418)
-	echo "<h1>Error <a href='http://tools.ietf.org/html/rfc2324#section-2.3.2'>418 I'm a teapot</a></h1>
+	echo "<h1>Error <a href='https://tools.ietf.org/html/rfc2324#section-2.3.2'>418 I'm a teapot</a></h1>
 		<p>In other words, the server went crazy and we're fixing it. Check back in a moment to see if it's back.</p>
 		<p>Thanks for your patience, and we hope it'll be working again soon!</p>
 		<p>-LHSMATH Webmaster(s)</p>";

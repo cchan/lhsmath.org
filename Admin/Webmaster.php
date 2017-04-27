@@ -54,7 +54,7 @@ page_header('Webmaster Guide');
 	
 	<li><span class="b">Renewing Payment.</span> You should receive an email alert when the website is
 	running low on funds. To load more, log in to the 
-	<a href="http://members.nearlyfreespeech.net/">NearlyFreeSpeech.NET control panel</a> and refill the
+	<a href="https://members.nearlyfreespeech.net/">NearlyFreeSpeech.NET control panel</a> and refill the
 	account with money via PayPal or other methods (talk to the club advisor about getting money). 
 	Please be aware that you will also need to renew the domain name periodically. The site draws between 
 	$25 and $35 a year, including domain registration costs.<br /><br /></li>
@@ -100,24 +100,24 @@ page_header('Webmaster Guide');
   Tech Czar. Knowing PHP is a must (just for the Guts round - ask a predecessor for help (nicely) if necessary)
   me to). Edit <span class="monospace">.lib/lmt-scoring.php</span>, and mind the preconditions and posconditions!
   Content on the public part of the LMT website is updated through the web interface (in database rather than files). 
-  Please write in <a href="http://validator.w3.org/">valid XHTML 1.0</a> for those pages!</p>
+  Please write in <a href="https://validator.w3.org/">valid XHTML 1.0</a> for those pages!</p>
   
   <h3>Developing the Website</h3>
   <p>If you would like to improve upon the Math Club website, awesome!</p>
   <ul>
 	<li>We use Git on BitBucket (because private repositories) for source control. Before editing anything you must get 
-		<a href="http://git-scm.com/">Git</a> command line, or 
+		<a href="https://git-scm.com/">Git</a> command line, or 
 		<a href="https://windows.github.com/">GitHub for Windows</a> beginner UI. 
 		Demand some Git help from the previous webmaster if you don't already know it.</li>
-	<li>Text editor. <a href="http://www.sublimetext.com/">Sublime Text</a> or 
-		<a href="http://notepad-plus-plus.org/">Notepad++</a> work excellently. Avoid Vim or Emacs :).</li>
+	<li>Text editor. <a href="https://www.sublimetext.com/">Sublime Text</a> or 
+		<a href="https://notepad-plus-plus.org/">Notepad++</a> work excellently. Avoid Vim or Emacs :).</li>
 	<li>Local test server. Probably the easiest and most flexible way is to download 
 		<a href="https://www.apachefriends.org/index.html">XAMPP</a>. Use <span class="monospace">.lib/CONFIG.local.php</span> 
 		to override configuration values for local testing (don't upload this). Never test code on the real lhsmath.org server. 
 		To set this up properly you'll also have to go to LHSMATH PHPMyAdmin and export the database, and import it into your 
 		XAMPP's PHPMyAdmin. Be careful of what you do - sending mail <i>still actually works</i>! (you can, of course, abuse your local 
 		data however you like as long as it's not uploaded back up.)</li>
-	<li>Editing the production copy via SFTP. Try <a href="http://winscp.net/eng/index.php">WinSCP</a> or 
+	<li>Editing the production copy via SFTP. Try <a href="https://winscp.net/eng/index.php">WinSCP</a> or 
 		<a href="https://filezilla-project.org/">FileZilla</a>. Don't upload the <span class="monospace">.git</span> directory.</li>
 	<li>A lot of secret and important stuff is on the Dropbox. Ask your predecessor if they haven't 
 		already shared it with you. Most of the accounts are fairly self-explanatory.</li>
@@ -157,7 +157,7 @@ If it's crashing on the website but working on your computer, check that CONFIG.
   <h3>Help!</h3>
   <p>Webmastering is hard. If anything comes up, we're happy to help. Just email any of us who have listed our emails below.</p>
   
-  <p><br /><br /><br /><img src="http://imgs.xkcd.com/comics/devotion_to_duty.png" title="The weird sense of duty really good sysadmins have can border on the sociopathic, but it&#39;s nice to know that it stands between the forces of darkness and your cat blog&#39;s servers." alt="XCDK #705: Devotion to Duty" /></p>
+  <p><br /><br /><br /><img src="//imgs.xkcd.com/comics/devotion_to_duty.png" title="The weird sense of duty really good sysadmins have can border on the sociopathic, but it&#39;s nice to know that it stands between the forces of darkness and your cat blog&#39;s servers." alt="xkcd #705: Devotion to Duty" /></p>
   
   <br />
   <br />

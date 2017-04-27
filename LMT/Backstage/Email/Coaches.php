@@ -60,7 +60,7 @@ function show_page($err) {
             <td>
               <textarea name="body" rows="25" cols="80">$body</textarea>
               <div class="small">You may use bold, italic, underline, named links and images with
-              <a href="http://www.bbcode.org/reference.php" rel="external">bbCode</a>.</div>
+              <a href="https://www.bbcode.org/reference.php" rel="external">bbCode</a>.</div>
               <br />
             </td>
           </tr><tr>

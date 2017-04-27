@@ -77,9 +77,9 @@ catch(Exception $e){$swift_version = '(ERROR)';}
 		<h4>Library/Software Versions</h4>
 		<ul>
 			<li><a href="http://blog.swiftmailer.org/">SwiftMailer</a> <?=$swift_version?> (<a href="https://github.com/swiftmailer/swiftmailer">zip download</a>)</li>
-			<li><a href="http://www.meekro.com/updates.php">MeekroDB</a> <?=$meekro_version?></li>
+			<li><a href="http://meekro.com/updates.php">MeekroDB</a> <?=$meekro_version?></li>
 			<li><a href="https://jquery.com/download/">jQuery</a> <span onclick="this.innerHTML=jQuery.fn.jquery"><small><b>(click)</b></small></span></li>
-			<li><a href="http://php.net/">PHP</a> <?=phpversion()?> (in the <a href="https://members.nearlyfreespeech.net/lhsmath/sites">NFSN control panel</a> &gt; Server Type)</li>
+			<li><a href="https://php.net/">PHP</a> <?=phpversion()?> (in the <a href="https://members.nearlyfreespeech.net/lhsmath/sites">NFSN control panel</a> &gt; Server Type)</li>
 			<li><a href="https://httpd.apache.org/">Apache</a> [unknown] (also in NFSN Server Type)</li>
 			<li><b>Updates often break things. Update carefully.</b></li>
 		</ul>

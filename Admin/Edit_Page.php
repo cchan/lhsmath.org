@@ -49,7 +49,7 @@ function show_page($err) {
       <h1>Edit $name Page</h1>
       
       <div class="instruction">You may use bold, italic, underline,
-      named links and images with <a href="http://www.bbcode.org/reference.php" rel="external">bbCode</a>.</div>
+      named links and images with <a href="https://www.bbcode.org/reference.php" rel="external">bbCode</a>.</div>
       
       <h3>$name</h3>$err
       <form method="post" action="{$_SERVER['REQUEST_URI']}"><div>

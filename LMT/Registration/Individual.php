@@ -147,7 +147,7 @@ You have successfully registered as an individual for LMT {$lmt_year}!
 along with the registration fee of {$cost}[/b].
 
 Date: [b]{$lmt_date}[/b]
-Location: Lexington High School [url]http://www.lhsmath.org/LMT/Location[/url]
+Location: Lexington High School [url]https://www.lhsmath.org/LMT/Location[/url]
 
 If you have any questions, please contact us at [email]{$LMT_EMAIL}[/email].
 ______________________________________________________________
