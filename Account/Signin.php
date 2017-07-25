@@ -45,7 +45,7 @@ function show_login_form($email) {
         <table>
           <tr>
             <td>Email Address:&nbsp;</td>
-            <td><input type="text" name="email" size="25" value="$email" class="focus"/></td>
+            <td><input type="text" name="email" size="25" value="htmlspecialchars($email)" class="focus"/></td>
           </tr><tr>
             <td>Password:</td>
             <td>
