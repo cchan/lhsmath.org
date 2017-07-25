@@ -38,6 +38,3 @@ page_title('AMC 10/12 Signup');
 
 
 
-
-
-
