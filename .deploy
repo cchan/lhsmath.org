@@ -1,3 +1,4 @@
 #!/bin/sh
 git push rhos master
 scp .lib/CONFIG.server.php lhsmath:~/app-root/data
+scp .content/Todo.txt lhsmath:~/app-root/data

@@ -1,1 +1,2 @@
 cp ~/app-root/data/CONFIG.server.php ~/app-root/repo/.lib
+cp ~/app-root/data/Todo.txt ~/app-root/repo/.content
