@@ -25,6 +25,9 @@ function show_page($err) {
 	} else if (isSet($_GET['Contests'])) {
 		$file = '../.content/Contests.txt';
 		$name = 'Contests';
+	} else if (isSet($_GET['Todo'])) {
+		$file = '../.content/Todo.txt';
+		$name = 'Todo';
 	} else
 		trigger_error('Show: Unknown contest', E_USER_ERROR);
 	
@@ -78,6 +81,9 @@ function process_form() {
 	} else if (isSet($_GET['Contests'])) {
 		$file = '../.content/Contests.txt';
 		$name = 'Contests';
+	} else if (isSet($_GET['Todo'])) {
+		$file = '../.content/Todo.txt';
+		$name = 'Todo';
 	} else
 		trigger_error('Show: Unknown contest', E_USER_ERROR);
 	
