@@ -1,4 +1,4 @@
 #!/bin/sh
-scp .content/Todo.txt lhsmath:~/app-root/data
+ssh lhsmath "cp ~/app-root/repo/.content/Todo.txt ~/app-root/data"  # The copy back into the repo is done in .openshift/action_hooks/deploy
 git push rhos master
 scp .lib/CONFIG.server.php lhsmath:~/app-root/data
