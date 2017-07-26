@@ -18,15 +18,19 @@ else
 
 function show_page($err) {
 	$file = '';
+	$file_safe = '';
 	$name = '';
 	if (isSet($_GET['Home'])) {
 		$file = '../.content/Home.txt';
+		$file_safe = '../../data/Home.txt'
 		$name = 'Home';
 	} else if (isSet($_GET['Contests'])) {
 		$file = '../.content/Contests.txt';
+		$file_safe = '../../data/Contests.txt'
 		$name = 'Contests';
 	} else if (isSet($_GET['Todo'])) {
 		$file = '../.content/Todo.txt';
+		$file_safe = '../../data/Todo.txt'
 		$name = 'Todo';
 	} else
 		trigger_error('Show: Unknown contest', E_USER_ERROR);
@@ -74,20 +78,25 @@ function process_form() {
 		trigger_error('XSRF code incorrect', E_USER_ERROR);
 	
 	$file = '';
+	$file_safe = '';
 	$name = '';
 	if (isSet($_GET['Home'])) {
 		$file = '../.content/Home.txt';
+		$file_safe = '../../data/Home.txt'
 		$name = 'Home';
 	} else if (isSet($_GET['Contests'])) {
 		$file = '../.content/Contests.txt';
+		$file_safe = '../../data/Contests.txt'
 		$name = 'Contests';
 	} else if (isSet($_GET['Todo'])) {
 		$file = '../.content/Todo.txt';
+		$file_safe = '../../data/Todo.txt'
 		$name = 'Todo';
 	} else
 		trigger_error('Show: Unknown contest', E_USER_ERROR);
 	
 	file_put_contents($file, $_POST['text']);
+	file_put_contents($file_safe, $_POST['text']);
 	
 	page_header('Edit Page');
 	echo <<<HEREDOC
