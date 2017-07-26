@@ -88,7 +88,6 @@ function process_form() {
 		trigger_error('Show: Unknown contest', E_USER_ERROR);
 	
 	file_put_contents($file, $_POST['text']);
-	file_put_contents($file_safe, $_POST['text']);
 	
 	page_header('Edit Page');
 	echo <<<HEREDOC
