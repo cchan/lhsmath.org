@@ -1,2 +1,3 @@
 cp ~/app-root/data/CONFIG.server.php ~/app-root/repo/.lib
 cp ~/app-root/data/Todo.txt ~/app-root/repo/.content
+cp ~/app-root/data/Contests.txt ~/app-root/repo/.content
