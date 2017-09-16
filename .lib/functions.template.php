@@ -235,7 +235,7 @@ $main_navbar = array( //Name => Page path, or if it's the same you can omit the 
 	'X'=>[
 		'LMT',
 		'',
-		'AMC',
+		'MAML',
 		'',
 		'Calendar',
 		'Contests',
@@ -248,7 +248,7 @@ $main_navbar = array( //Name => Page path, or if it's the same you can omit the 
 	'ARL'=>[
 		'LMT',
 		'',
-		'AMC',
+		'MAML',
 		'',
 		'Contact',
 		'About',
