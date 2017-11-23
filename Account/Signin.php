@@ -15,7 +15,7 @@ if (!defined('FUNCTIONSPHP')) {
 	$being_included = false;
 }
 else{
-	DB::useDB('lhsmath');
+	DB::useDB($DB_DATABASE);
 }
 
 restrict_access('X'); // Will restrict to non-logged-in: redirects logged in users back home.

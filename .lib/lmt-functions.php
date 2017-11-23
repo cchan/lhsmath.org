@@ -6,8 +6,8 @@
 
 // include regular functions and all of its stuff
 require_once __DIR__ . '/functions.php';
-//class LMT_DB extends DB{}; LMT_DB::useDB('lmt');
-DB::useDB('lmt');// except use the LMT db
+//class LMT_DB extends DB{}; LMT_DB::useDB($LMT_DB_DATABASE);
+DB::useDB($LMT_DB_DATABASE);// except use the LMT db
 
 // include scoring
 require_once PATH::lib() . '/lmt-scoring.php';
