@@ -45,7 +45,7 @@ function show_login_form($email) {
         <table>
           <tr>
             <td>Email Address:&nbsp;</td>
-            <td><input type="text" name="email" size="25" value="htmlspecialchars($email)" class="focus"/></td>
+            <td><input type="text" name="email" size="25" value="" class="focus"/></td>
           </tr><tr>
             <td>Password:</td>
             <td>
@@ -74,7 +74,7 @@ HEREDOC;
  * Processes the login form and, if the credentials are correct, logs the user in.
  */
 function process_login_form() {
-	$email = strtolower($_POST['email']);
+	$email = htmlspecialchars(strtolower($_POST['email']));
 	$passhash = hash_pass($email, $_POST['pass']);
 	
 	// Check to see if the user/ip is temporarily banned:
